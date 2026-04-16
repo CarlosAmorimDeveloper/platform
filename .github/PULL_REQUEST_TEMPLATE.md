@@ -1,9 +1,8 @@
 ## 📝 Descrição
 ## 🎯 Escopo
-- [ ] `apps/web` (Next.js)
-- [ ] `apps/mobile` (Expo/React Native)
-- [ ] `packages/ui` (Componentes compartilhados)
-- [ ] `packages/api` (Serviços/Hooks)
+- [ ] `apps/web`
+- [ ] `apps/mobile`
+- [ ] `packages/ui`
 - [ ] Outro: _________
 
 ## 🏷️ Tipo de Alteração
