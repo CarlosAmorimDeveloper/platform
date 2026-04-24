@@ -2,7 +2,27 @@
   "permissions": {
     "allow": [
       "Bash(git add *)",
-      "Bash(git commit -m ' *)"
+      "Bash(git commit -m ' *)",
+      "Bash(yarn workspace *)",
+      "Bash(yarn workspaces *)",
+      "Bash(yarn add *)",
+      "Bash(npm install *)",
+      "Bash(grep -E \"^jest$|^jest-environment|^ts-jest\")",
+      "Bash(node ../../node_modules/.bin/jest --testPathPattern=\"TaskItem\")",
+      "Bash(node ../../../node_modules/.bin/jest --testPathPattern=\"TaskItem\")",
+      "Bash(node ../../../node_modules/jest/bin/jest.js --testPathPattern=\"TaskItem\")",
+      "Bash(node ../../../node_modules/jest/bin/jest.js TaskItem)",
+      "Bash(npm list *)",
+      "Bash(npm ls *)",
+      "Bash(npm ci *)",
+      "Bash(npm --version)",
+      "Bash(grep -E \"^react$|^react-dom$\")",
+      "Bash(node ../../../node_modules/jest/bin/jest.js)",
+      "Bash(node ../../../node_modules/next/dist/bin/next dev --port 3001)",
+      "Bash(node node_modules/.bin/next dev --port 3001)",
+      "Bash(grep -E \"^next$\")",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\(list\\(d.get\\('packages',{}\\).keys\\(\\)\\)[:20]\\)\")",
+      "Read(//c/Users/HP/AppData/Local/npm-cache/_logs/**)"
     ]
   }
 }
