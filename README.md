@@ -1,159 +1,233 @@
-# Turborepo starter
+# Platform
 
-This Turborepo starter is maintained by the Turborepo core team.
+Monorepo contendo uma aplicação Todo e um Design System de componentes React compartilhados, construído com [Turborepo](https://turborepo.dev), [Next.js](https://nextjs.org) e [Yarn Workspaces](https://classic.yarnpkg.com/en/docs/workspaces/).
 
-## Using this example
+## Pré-requisitos
 
-Run the following command:
+| Ferramenta | Versão mínima |
+|---|---|
+| Node.js | 18 |
+| Yarn | 1.22.x |
 
-```sh
-npx create-turbo@latest
+> O projeto usa **Yarn v1 (Classic)**. Não use `npm` ou `pnpm` — o lockfile e os workspaces são específicos do Yarn.
+
+## Estrutura do projeto
+
+```
+platform/
+├── apps/
+│   └── web/
+│       └── todo-app/          # Aplicação Next.js 16
+│           ├── src/
+│           │   ├── app/       # App Router (layout, page, globals.css)
+│           │   ├── components/
+│           │   │   ├── TaskForm/
+│           │   │   ├── TaskItem/
+│           │   │   └── TaskList/
+│           │   └── redux/     # Store, slice e provider
+│           └── package.json
+├── packages/
+│   ├── ui/                    # Design System (@repo/ui)
+│   │   ├── components/
+│   │   │   ├── Button/
+│   │   │   └── Input/
+│   │   └── package.json
+│   ├── eslint-config/         # Configuração ESLint compartilhada
+│   └── typescript-config/     # tsconfig base compartilhado
+├── turbo.json
+└── package.json
 ```
 
-## What's inside?
+## Instalação
 
-This Turborepo includes the following packages/apps:
-
-### Apps and Packages
-
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
+Clone o repositório e instale as dependências a partir da raiz do monorepo:
 
 ```sh
-cd my-turborepo
-turbo build
+git clone <url-do-repositorio>
+cd platform
+yarn install
 ```
 
-Without global `turbo`, use your package manager:
+O Yarn Workspaces instala as dependências de todos os pacotes em uma única etapa.
+
+## Desenvolvimento
+
+### Tudo ao mesmo tempo (recomendado)
+
+Inicia a Todo App e o Storybook em paralelo via Turborepo:
 
 ```sh
-cd my-turborepo
-npx turbo build
-yarn dlx turbo build
-yarn exec turbo build
+yarn dev
 ```
 
-You can build a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
+### Somente a Todo App
 
 ```sh
-turbo build --filter=docs
+yarn dev --filter=todo-app
+# ou diretamente:
+cd apps/web/todo-app
+yarn dev
 ```
 
-Without global `turbo`:
+A aplicação ficará disponível em `http://localhost:3000`.
+
+### Somente o Storybook
 
 ```sh
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-yarn exec turbo build --filter=docs
+yarn workspace @repo/ui storybook
+# ou via turbo:
+yarn turbo storybook
 ```
 
-### Develop
+O Storybook ficará disponível em `http://localhost:6006`.
 
-To develop all apps and packages, run the following command:
+## Scripts disponíveis
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
+Execute os scripts abaixo a partir da **raiz do monorepo**:
+
+| Comando | Descrição |
+|---|---|
+| `yarn dev` | Inicia todos os servidores em modo desenvolvimento |
+| `yarn build` | Compila todas as aplicações e pacotes |
+| `yarn lint` | Executa o ESLint em todo o projeto |
+| `yarn check-types` | Verifica os tipos TypeScript em todo o projeto |
+| `yarn format` | Formata o código com Prettier |
+| `yarn format:check` | Verifica a formatação sem aplicar mudanças |
+
+### Scripts da Todo App
 
 ```sh
-cd my-turborepo
-turbo dev
+cd apps/web/todo-app
+
+yarn dev        # Servidor de desenvolvimento Next.js (Turbopack)
+yarn build      # Build de produção
+yarn start      # Inicia o servidor de produção (requer build)
+yarn test       # Executa os testes com Jest
+yarn lint       # Lint do projeto
 ```
 
-Without global `turbo`, use your package manager:
+### Scripts do Design System (`packages/ui`)
 
 ```sh
-cd my-turborepo
-npx turbo dev
-yarn exec turbo dev
-yarn exec turbo dev
+cd packages/ui
+
+yarn storybook        # Inicia o Storybook em modo desenvolvimento
+yarn build-storybook  # Gera o build estático do Storybook
+yarn check-types      # Verificação de tipos TypeScript
+yarn lint             # Lint do pacote
 ```
 
-You can develop a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
+## Build de produção
 
 ```sh
-turbo dev --filter=web
+# Build completo do monorepo
+yarn build
+
+# Build somente da Todo App
+yarn build --filter=todo-app
 ```
 
-Without global `turbo`:
+O output da Todo App fica em `apps/web/todo-app/.next/`.
+
+## Testes
 
 ```sh
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
-yarn exec turbo dev --filter=web
+# A partir da raiz (roda testes de todos os pacotes que os possuem)
+cd apps/web/todo-app
+yarn test
+
+# Com watch mode
+yarn test --watch
 ```
 
-### Remote Caching
+Os testes usam **Jest** + **Testing Library**. Cada componente tem seu arquivo `*.spec.tsx` no mesmo diretório.
 
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
+## Design System (`@repo/ui`)
 
-Turborepo can use a technique known as [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
+O pacote `@repo/ui` exporta componentes React reutilizáveis estilizados com CSS Modules (SCSS). Ele é consumido pela Todo App via alias de workspace.
 
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
+### `Button`
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
+```tsx
+import { Button } from "@repo/ui/components/Button";
 
-```sh
-cd my-turborepo
-turbo login
+<Button>Adicionar</Button>
+<Button variant="secondary">Cancelar</Button>
+<Button variant="ghost" size="sm">Editar</Button>
+<Button variant="danger" size="sm">Remover</Button>
+<Button type="submit" disabled={!value}>Salvar</Button>
 ```
 
-Without global `turbo`, use your package manager:
+| Prop | Tipo | Padrão | Opções |
+|---|---|---|---|
+| `variant` | string | `"primary"` | `"primary"` `"secondary"` `"ghost"` `"danger"` |
+| `size` | string | `"md"` | `"md"` `"sm"` |
+| `type` | string | `"button"` | `"button"` `"submit"` `"reset"` |
+| `disabled` | boolean | `false` | — |
 
-```sh
-cd my-turborepo
-npx turbo login
-yarn exec turbo login
-yarn exec turbo login
+### `Input`
+
+```tsx
+import { Input } from "@repo/ui/components/Input";
+
+<Input placeholder="Nova tarefa…" />
+<Input variant="inline" autoFocus />
+<Input type="checkbox" checked={done} onChange={handleToggle} />
+<Input disabled placeholder="Desativado" />
 ```
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
+| Prop | Tipo | Padrão | Opções |
+|---|---|---|---|
+| `variant` | string | `"default"` | `"default"` `"inline"` |
+| `type` | string | `"text"` | qualquer tipo nativo de `<input>` |
 
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
+> Quando `type="checkbox"`, o `variant` é ignorado e o estilo de checkbox é aplicado automaticamente.
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
+## Arquitetura da Todo App
 
-```sh
-turbo link
+### Estado global (Redux)
+
+O estado das tarefas é gerenciado com **Redux Toolkit** e persiste automaticamente no `localStorage`.
+
+```
+src/redux/
+├── store.ts          # configureStore + subscribe para persistência
+├── taskSlice.ts      # actions: addTask, toggleTask, editTask, removeTask, hydrateState
+└── ReduxProvider.tsx # Provider com hidratação segura via useEffect (evita mismatch de SSR)
 ```
 
-Without global `turbo`:
+**Modelo de dados (`Task`):**
 
-```sh
-npx turbo link
-yarn exec turbo link
-yarn exec turbo link
+```ts
+interface Task {
+  id: string;         // UUID gerado com crypto.randomUUID()
+  title: string;
+  completed: boolean;
+  createdAt: string;  // ISO 8601
+}
 ```
 
-## Useful Links
+### Componentes
 
-Learn more about the power of Turborepo:
+| Componente | Responsabilidade |
+|---|---|
+| `TaskForm` | Formulário para criar ou editar uma tarefa |
+| `TaskList` | Lista todas as tarefas do store |
+| `TaskItem` | Renderiza uma tarefa individual com toggle, edição inline e remoção |
 
-- [Tasks](https://turborepo.dev/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.dev/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.dev/docs/reference/configuration)
-- [CLI Usage](https://turborepo.dev/docs/reference/command-line-reference)
+A edição inline no `TaskItem` é ativada por duplo clique ou pela tecla `Enter`/`Espaço` quando o item está focado.
+
+## Tecnologias
+
+| Camada | Tecnologia |
+|---|---|
+| Monorepo | Turborepo + Yarn Workspaces v1 |
+| Framework | Next.js 16 (App Router, Turbopack) |
+| UI | React 19 |
+| Estado | Redux Toolkit |
+| Estilização | Tailwind CSS v4 + SCSS Modules |
+| Design System | `@repo/ui` (componentes próprios) |
+| Documentação de componentes | Storybook 8 |
+| Testes | Jest + Testing Library |
+| Tipos | TypeScript 5.9 |
+| Lint / Formato | ESLint + Prettier |
