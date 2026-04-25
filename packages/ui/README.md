@@ -13,6 +13,8 @@ import { Input } from "@repo/ui/components/Input";
 
 ## Storybook
 
+**Storybook publicado:** [69ec244d49e023068a441802-efkfuzwurv.chromatic.com](https://69ec244d49e023068a441802-efkfuzwurv.chromatic.com/?path=/docs/components-button--docs)
+
 Para rodar o Storybook localmente:
 
 ```bash
