@@ -11,7 +11,8 @@
     "generate:component": "turbo gen react-component",
     "check-types": "tsc --noEmit",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "chromatic": "chromatic --exit-zero-on-changes"
   },
   "devDependencies": {
     "@repo/eslint-config": "*",
@@ -23,6 +24,7 @@
     "@types/node": "^22.15.3",
     "@types/react": "19.2.2",
     "@types/react-dom": "19.2.2",
+    "chromatic": "^16.6.0",
     "eslint": "^9.39.1",
     "sass": "^1",
     "storybook": "^8.6.14",
