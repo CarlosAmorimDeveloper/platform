@@ -54,7 +54,15 @@
       "Bash(git -C /Users/kadu/Documents/platform log --oneline -10)",
       "Bash(git -C /Users/kadu/Documents/platform diff .claude/settings.local.json)",
       "Bash(git -C /Users/kadu/Documents/platform diff package-lock.json)",
-      "Bash(git -C /Users/kadu/Documents/platform add .claude/settings.local.json package-lock.json)"
+      "Bash(git -C /Users/kadu/Documents/platform add .claude/settings.local.json package-lock.json)",
+      "Bash(node_modules/.bin/yarn workspace *)",
+      "Bash(node_modules/.bin/chromatic --exit-zero-on-changes)",
+      "Bash(node_modules/.bin/storybook build *)",
+      "Bash(node_modules/.bin/chromatic --exit-zero-on-changes --storybook-build-dir=storybook-static)",
+      "Bash(git -C /Users/kadu/Documents/platform diff --stat)",
+      "Bash(git -C /Users/kadu/Documents/platform log --oneline -5)",
+      "Bash(git -C /Users/kadu/Documents/platform add packages/ui/package.json packages/ui/README.md yarn.lock)",
+      "Bash(git -C /Users/kadu/Documents/platform add .claude/settings.local.json)"
     ]
   }
 }
