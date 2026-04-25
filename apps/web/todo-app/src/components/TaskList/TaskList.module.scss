@@ -1,0 +1,14 @@
+$text-empty: #9ca3af;
+$font-size: 0.875rem;
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.empty {
+  text-align: center;
+  font-size: $font-size;
+  color: $text-empty;
+}

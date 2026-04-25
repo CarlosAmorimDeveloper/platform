@@ -1,0 +1,40 @@
+$border-color: #e5e7eb;
+$text-active: #1f2937;
+$text-completed: #9ca3af;
+$font-size: 0.875rem;
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid $border-color;
+  background-color: #fff;
+  padding: 0.75rem 1rem;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 5%);
+}
+
+.title {
+  flex: 1;
+  font-size: $font-size;
+  color: $text-active;
+  cursor: pointer;
+}
+
+.titleCompleted {
+  flex: 1;
+  font-size: $font-size;
+  color: $text-completed;
+  text-decoration: line-through;
+  cursor: default;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.editInput {
+  flex: 1;
+}
