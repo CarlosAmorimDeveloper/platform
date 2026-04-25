@@ -3,18 +3,19 @@
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { TaskItem } from "../TaskItem/TaskItem";
+import styles from "./TaskList.module.scss";
 
 export function TaskList() {
   const tasks = useSelector((state: RootState) => state.tasks.tasks);
 
   if (tasks.length === 0) {
     return (
-      <p className="text-center text-sm text-gray-400">No tasks yet. Add one above!</p>
+      <p className={styles.empty}>Nenhuma tarefa ainda. Adicione uma acima!</p>
     );
   }
 
   return (
-    <ul className="flex flex-col gap-2">
+    <ul className={styles.list}>
       {tasks.map((task) => (
         <TaskItem key={task.id} task={task} />
       ))}

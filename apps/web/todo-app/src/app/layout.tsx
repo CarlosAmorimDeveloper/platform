@@ -3,8 +3,8 @@ import ReduxProvider from "@/redux/ReduxProvider";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Todo App",
-  description: "Task management app",
+  title: "Tarefas",
+  description: "Aplicativo de gerenciamento de tarefas",
 };
 
 export default function RootLayout({
@@ -13,7 +13,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="pt-BR">
       <body>
         <ReduxProvider>{children}</ReduxProvider>
       </body>

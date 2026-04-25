@@ -4,6 +4,9 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { addTask, editTask, Task } from "@/redux/taskSlice";
 import { AppDispatch } from "@/redux/store";
+import { Button } from "@repo/ui/components/Button";
+import { Input } from "@repo/ui/components/Input";
+import styles from "./TaskForm.module.scss";
 
 interface TaskFormProps {
   task?: Task;
@@ -31,30 +34,22 @@ export function TaskForm({ task, onDone }: TaskFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} aria-label="Task form" className="flex gap-2">
-      <input
+    <form onSubmit={handleSubmit} aria-label="Task form" className={styles.form}>
+      <Input
         type="text"
         value={value}
         onChange={(e) => setValue(e.target.value)}
-        placeholder={isEditing ? "Edit task…" : "New task…"}
-        aria-label={isEditing ? "Edit task title" : "New task title"}
-        className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-200"
+        placeholder={isEditing ? "Editar tarefa…" : "Nova tarefa…"}
+        aria-label={isEditing ? "Editar título da tarefa" : "Título da nova tarefa"}
+        className={styles.input}
       />
-      <button
-        type="submit"
-        disabled={!value.trim()}
-        className="rounded-lg bg-blue-500 px-4 py-2 text-sm font-medium text-white hover:bg-blue-600 disabled:cursor-not-allowed disabled:opacity-40"
-      >
-        {isEditing ? "Save" : "Add"}
-      </button>
+      <Button type="submit" disabled={!value.trim()}>
+        {isEditing ? "Salvar" : "Adicionar"}
+      </Button>
       {isEditing && onDone && (
-        <button
-          type="button"
-          onClick={onDone}
-          className="rounded-lg border border-gray-300 px-4 py-2 text-sm text-gray-600 hover:bg-gray-50"
-        >
-          Cancel
-        </button>
+        <Button type="button" variant="secondary" onClick={onDone}>
+          Cancelar
+        </Button>
       )}
     </form>
   );
