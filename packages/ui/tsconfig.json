@@ -4,6 +4,6 @@
     "outDir": "dist",
     "strictNullChecks": true
   },
-  "include": ["src"],
+  "include": ["components", ".storybook", "scss.d.ts"],
   "exclude": ["node_modules", "dist"]
 }
