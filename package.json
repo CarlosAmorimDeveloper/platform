@@ -31,9 +31,20 @@
     "node": ">=18"
   },
   "packageManager": "yarn@1.22.22",
-  "workspaces": [
-    "apps/*",
-    "apps/web/*",
-    "packages/*"
-  ]
+  "workspaces": {
+    "packages": [
+      "apps/*",
+      "apps/web/*",
+      "packages/*"
+    ],
+    "nohoist": [
+      "todo-app/sass",
+      "todo-app/sass/**",
+      "todo-app/scheduler",
+      "todo-app/scheduler/**"
+    ]
+  },
+  "dependencies": {
+    "yarn": "^1.22.22"
+  }
 }

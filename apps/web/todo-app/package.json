@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.11.2",
+    "@repo/ui": "*",
     "next": "16.2.4",
     "react": "19.2.4",
     "react-dom": "19.2.4",
@@ -29,6 +30,8 @@
     "eslint-config-next": "16.2.4",
     "jest": "^30.3.0",
     "jest-environment-jsdom": "^30.3.0",
+    "sass": "^1",
+    "scheduler": "*",
     "tailwindcss": "^4",
     "ts-jest": "^29.4.9",
     "typescript": "^5"
