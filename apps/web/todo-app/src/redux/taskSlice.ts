@@ -7,7 +7,7 @@ export interface Task {
   createdAt: string;
 }
 
-interface TaskState {
+export interface TaskState {
   tasks: Task[];
 }
 
@@ -38,8 +38,11 @@ const taskSlice = createSlice({
     removeTask(state, action: PayloadAction<string>) {
       state.tasks = state.tasks.filter((t) => t.id !== action.payload);
     },
+    hydrateState(_state, action: PayloadAction<TaskState>) {
+      return action.payload;
+    },
   },
 });
 
-export const { addTask, toggleTask, editTask, removeTask } = taskSlice.actions;
+export const { addTask, toggleTask, editTask, removeTask, hydrateState } = taskSlice.actions;
 export const taskReducer = taskSlice.reducer;
