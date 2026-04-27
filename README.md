@@ -2,6 +2,8 @@
 
 Monorepo contendo uma aplicação Todo e um Design System de componentes React compartilhados, construído com [Turborepo](https://turborepo.dev), [Next.js](https://nextjs.org) e [Yarn Workspaces](https://classic.yarnpkg.com/en/docs/workspaces/).
 
+**Todo App:** [https://todo-app-vuotto.vercel.app](https://todo-app-vuotto.vercel.app)
+
 ## Pré-requisitos
 
 | Ferramenta | Versão mínima |
