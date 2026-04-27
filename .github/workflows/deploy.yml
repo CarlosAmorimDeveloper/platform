@@ -15,6 +15,9 @@ env:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/web/todo-app
     steps:
       - uses: actions/checkout@v4
 
@@ -22,19 +25,18 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: yarn
+          cache: npm
+          cache-dependency-path: apps/web/todo-app/package-lock.json
 
       - name: Install Vercel CLI
         run: npm install -g vercel@latest
+        working-directory: .
 
       - name: Pull Vercel environment
         run: vercel pull --yes --environment=${{ github.ref == 'refs/heads/main' && 'production' || 'preview' }} --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Build project
         run: vercel build ${{ github.ref == 'refs/heads/main' && '--prod' || '' }} --token=${{ secrets.VERCEL_TOKEN }}
-
-      - name: Debug build output
-        run: find . -path ./node_modules -prune -o -name "*.json" -path "*/.vercel/*" -print && ls -la .vercel/ 2>/dev/null || echo "no .vercel at root" && ls -la apps/web/todo-app/.vercel/ 2>/dev/null || echo "no .vercel in todo-app"
 
       - name: Deploy to Vercel
         id: deploy
