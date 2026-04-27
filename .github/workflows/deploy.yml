@@ -29,18 +29,15 @@ jobs:
 
       - name: Pull Vercel environment
         run: vercel pull --yes --environment=${{ github.ref == 'refs/heads/main' && 'production' || 'preview' }} --token=${{ secrets.VERCEL_TOKEN }}
-        working-directory: apps/web/todo-app
 
       - name: Build project
         run: vercel build ${{ github.ref == 'refs/heads/main' && '--prod' || '' }} --token=${{ secrets.VERCEL_TOKEN }}
-        working-directory: apps/web/todo-app
 
       - name: Deploy to Vercel
         id: deploy
         run: |
           URL=$(vercel deploy --prebuilt ${{ github.ref == 'refs/heads/main' && '--prod' || '' }} --token=${{ secrets.VERCEL_TOKEN }})
           echo "url=$URL" >> $GITHUB_OUTPUT
-        working-directory: apps/web/todo-app
 
       - name: Comment PR with preview URL
         if: github.event_name == 'pull_request'
