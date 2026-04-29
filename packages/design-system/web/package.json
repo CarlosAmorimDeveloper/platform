@@ -33,6 +33,7 @@
     "vite": "^6"
   },
   "dependencies": {
+    "@ds/tokens": "*",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
   }
