@@ -35,7 +35,8 @@
     "packages": [
       "apps/*",
       "apps/web/*",
-      "packages/*"
+      "packages/*",
+      "packages/design-system/*"
     ],
     "nohoist": [
       "todo-app/sass",
