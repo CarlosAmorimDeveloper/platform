@@ -1,36 +1,85 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Todo App
 
-## Getting Started
+Aplicação de gerenciamento de tarefas construída com [Next.js 16](https://nextjs.org) e [Redux Toolkit](https://redux-toolkit.js.org). Parte do monorepo `platform`.
 
-First, run the development server:
+**Deploy:** [https://todo-app-vuotto.vercel.app](https://todo-app-vuotto.vercel.app)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Desenvolvimento
+
+A partir da raiz do monorepo:
+
+```sh
+yarn dev --filter=todo-app
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Ou diretamente neste diretório:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```sh
+yarn dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+A aplicação ficará disponível em `http://localhost:3000`.
 
-## Learn More
+## Scripts
 
-To learn more about Next.js, take a look at the following resources:
+| Comando | Descrição |
+|---|---|
+| `yarn dev` | Servidor de desenvolvimento Next.js |
+| `yarn build` | Build de produção |
+| `yarn start` | Inicia o servidor de produção (requer build) |
+| `yarn test` | Executa os testes com Jest |
+| `yarn lint` | Lint do projeto |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Estrutura
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+src/
+├── app/
+│   ├── layout.tsx        # Layout raiz (fonte, metadados)
+│   ├── page.tsx          # Página principal
+│   └── globals.css       # Estilos globais + Tailwind
+├── components/
+│   ├── TaskForm/         # Formulário de criação/edição de tarefas
+│   ├── TaskItem/         # Item individual com toggle, edição inline e remoção
+│   └── TaskList/         # Lista de tarefas do store
+└── redux/
+    ├── store.ts          # configureStore + persistência no localStorage
+    ├── taskSlice.ts      # Slice com actions: addTask, toggleTask, editTask, removeTask
+    └── ReduxProvider.tsx # Provider com hidratação SSR-safe
+```
 
-## Deploy on Vercel
+## Estado global
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+O estado é gerenciado com **Redux Toolkit** e persiste automaticamente no `localStorage`.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+**Modelo de dados:**
+
+```ts
+interface Task {
+  id: string;         // crypto.randomUUID()
+  title: string;
+  completed: boolean;
+  createdAt: string;  // ISO 8601
+}
+```
+
+## Testes
+
+```sh
+yarn test
+
+# Watch mode
+yarn test --watch
+```
+
+Os testes usam **Jest** + **Testing Library**. Cada componente tem seu arquivo `*.spec.tsx` no mesmo diretório.
+
+## Dependências principais
+
+| Pacote | Versão |
+|---|---|
+| Next.js | 16 |
+| React | 19 |
+| Redux Toolkit | ^2 |
+| `@ds/web` | workspace |
+| Tailwind CSS | v4 |

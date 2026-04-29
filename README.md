@@ -19,23 +19,33 @@ Monorepo contendo uma aplicação Todo e um Design System de componentes React c
 platform/
 ├── apps/
 │   └── web/
-│       └── todo-app/          # Aplicação Next.js 16
+│       └── todo-app/                  # Aplicação Next.js 16
 │           ├── src/
-│           │   ├── app/       # App Router (layout, page, globals.css)
+│           │   ├── app/               # App Router (layout, page, globals.css)
 │           │   ├── components/
 │           │   │   ├── TaskForm/
 │           │   │   ├── TaskItem/
 │           │   │   └── TaskList/
-│           │   └── redux/     # Store, slice e provider
+│           │   └── redux/             # Store, slice e provider
 │           └── package.json
 ├── packages/
-│   ├── ui/                    # Design System (@repo/ui)
-│   │   ├── components/
-│   │   │   ├── Button/
-│   │   │   └── Input/
-│   │   └── package.json
-│   ├── eslint-config/         # Configuração ESLint compartilhada
-│   └── typescript-config/     # tsconfig base compartilhado
+│   ├── design-system/
+│   │   ├── web/                       # Componentes React (@ds/web)
+│   │   │   ├── components/
+│   │   │   │   ├── Button/
+│   │   │   │   └── Input/
+│   │   │   └── package.json
+│   │   └── tokens/                    # Tokens de design (@ds/tokens)
+│   │       ├── src/
+│   │       │   ├── colors.ts
+│   │       │   ├── spacing.ts
+│   │       │   ├── font-sizes.ts
+│   │       │   ├── radii.ts
+│   │       │   ├── global.css
+│   │       │   └── index.ts
+│   │       └── package.json
+│   ├── eslint-config/                 # Configuração ESLint compartilhada
+│   └── typescript-config/             # tsconfig base compartilhado
 ├── turbo.json
 └── package.json
 ```
@@ -76,7 +86,7 @@ A aplicação ficará disponível em `http://localhost:3000`.
 ### Somente o Storybook
 
 ```sh
-yarn workspace @repo/ui storybook
+yarn workspace @ds/web storybook
 # ou via turbo:
 yarn turbo storybook
 ```
@@ -101,17 +111,17 @@ Execute os scripts abaixo a partir da **raiz do monorepo**:
 ```sh
 cd apps/web/todo-app
 
-yarn dev        # Servidor de desenvolvimento Next.js (Turbopack)
+yarn dev        # Servidor de desenvolvimento Next.js
 yarn build      # Build de produção
 yarn start      # Inicia o servidor de produção (requer build)
 yarn test       # Executa os testes com Jest
 yarn lint       # Lint do projeto
 ```
 
-### Scripts do Design System (`packages/ui`)
+### Scripts do Design System (`packages/design-system/web`)
 
 ```sh
-cd packages/ui
+cd packages/design-system/web
 
 yarn storybook        # Inicia o Storybook em modo desenvolvimento
 yarn build-storybook  # Gera o build estático do Storybook
@@ -134,7 +144,6 @@ O output da Todo App fica em `apps/web/todo-app/.next/`.
 ## Testes
 
 ```sh
-# A partir da raiz (roda testes de todos os pacotes que os possuem)
 cd apps/web/todo-app
 yarn test
 
@@ -144,14 +153,18 @@ yarn test --watch
 
 Os testes usam **Jest** + **Testing Library**. Cada componente tem seu arquivo `*.spec.tsx` no mesmo diretório.
 
-## Design System (`@repo/ui`)
+## Design System
 
-O pacote `@repo/ui` exporta componentes React reutilizáveis estilizados com CSS Modules (SCSS). Ele é consumido pela Todo App via alias de workspace.
+O monorepo possui dois pacotes de design system:
 
-### `Button`
+### `@ds/web` — Componentes React
+
+Exporta componentes React reutilizáveis estilizados com CSS Modules (SCSS) e Tailwind CSS. Consumido pela Todo App via alias de workspace.
+
+#### `Button`
 
 ```tsx
-import { Button } from "@repo/ui/components/Button";
+import { Button } from "@ds/web/components/Button";
 
 <Button>Adicionar</Button>
 <Button variant="secondary">Cancelar</Button>
@@ -167,10 +180,10 @@ import { Button } from "@repo/ui/components/Button";
 | `type` | string | `"button"` | `"button"` `"submit"` `"reset"` |
 | `disabled` | boolean | `false` | — |
 
-### `Input`
+#### `Input`
 
 ```tsx
-import { Input } from "@repo/ui/components/Input";
+import { Input } from "@ds/web/components/Input";
 
 <Input placeholder="Nova tarefa…" />
 <Input variant="inline" autoFocus />
@@ -184,6 +197,17 @@ import { Input } from "@repo/ui/components/Input";
 | `type` | string | `"text"` | qualquer tipo nativo de `<input>` |
 
 > Quando `type="checkbox"`, o `variant` é ignorado e o estilo de checkbox é aplicado automaticamente.
+
+### `@ds/tokens` — Tokens de design
+
+Exporta constantes TypeScript e variáveis CSS para cores, espaçamentos, tamanhos de fonte e raios de borda.
+
+```ts
+import { colors, spacing, fontSizes, radii } from "@ds/tokens";
+import "@ds/tokens/global.css";
+```
+
+Consulte [`packages/design-system/tokens`](packages/design-system/tokens/README.md) para a referência completa.
 
 ## Arquitetura da Todo App
 
@@ -224,12 +248,13 @@ A edição inline no `TaskItem` é ativada por duplo clique ou pela tecla `Enter
 | Camada | Tecnologia |
 |---|---|
 | Monorepo | Turborepo + Yarn Workspaces v1 |
-| Framework | Next.js 16 (App Router, Turbopack) |
+| Framework | Next.js 16 (App Router) |
 | UI | React 19 |
 | Estado | Redux Toolkit |
 | Estilização | Tailwind CSS v4 + SCSS Modules |
-| Design System | `@repo/ui` (componentes próprios) |
+| Design System | `@ds/web` + `@ds/tokens` |
 | Documentação de componentes | Storybook 8 |
+| Testes visuais | Chromatic |
 | Testes | Jest + Testing Library |
 | Tipos | TypeScript 5.9 |
 | Lint / Formato | ESLint + Prettier |
