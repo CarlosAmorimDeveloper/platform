@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import { AppRouterCacheProvider } from "@mui/material-nextjs/v15-appRouter";
 import ReduxProvider from "@/redux/ReduxProvider";
+import { ThemeRegistry } from "./ThemeRegistry";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -15,7 +17,11 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body>
-        <ReduxProvider>{children}</ReduxProvider>
+        <AppRouterCacheProvider>
+          <ThemeRegistry>
+            <ReduxProvider>{children}</ReduxProvider>
+          </ThemeRegistry>
+        </AppRouterCacheProvider>
       </body>
     </html>
   );

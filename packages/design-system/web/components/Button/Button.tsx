@@ -1,5 +1,5 @@
 import { ButtonHTMLAttributes } from "react";
-import styles from "./Button.module.scss";
+import MuiButton from "@mui/material/Button";
 
 type Variant = "primary" | "secondary" | "ghost" | "danger";
 type Size = "md" | "sm";
@@ -10,26 +10,40 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   type?: "button" | "submit" | "reset";
 }
 
+const muiVariant: Record<Variant, "contained" | "outlined" | "text"> = {
+  primary: "contained",
+  secondary: "outlined",
+  ghost: "text",
+  danger: "text",
+};
+
+const muiSize: Record<Size, "medium" | "small"> = {
+  md: "medium",
+  sm: "small",
+};
+
 export function Button({
   type = "button",
   variant = "primary",
   size = "md",
   className,
   children,
+  disabled,
+  onClick,
   ...props
 }: ButtonProps) {
-  const classes = [
-    styles.base,
-    styles[variant],
-    styles[size],
-    className,
-  ]
-    .filter(Boolean)
-    .join(" ");
-
   return (
-    <button type={type} className={classes} {...props}>
+    <MuiButton
+      type={type}
+      variant={muiVariant[variant]}
+      size={muiSize[size]}
+      className={className}
+      disabled={disabled}
+      onClick={onClick as React.MouseEventHandler<HTMLButtonElement>}
+      color={variant === "danger" ? "error" : "primary"}
+      {...(props as object)}
+    >
       {children}
-    </button>
+    </MuiButton>
   );
 }
