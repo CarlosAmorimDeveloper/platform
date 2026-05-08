@@ -1,4 +1,5 @@
 import { ButtonHTMLAttributes } from "react";
+import MuiButton from "@mui/material/Button";
 
 type Variant = "primary" | "secondary" | "ghost" | "danger";
 type Size = "md" | "sm";
@@ -9,22 +10,16 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   type?: "button" | "submit" | "reset";
 }
 
-const base =
-  "inline-flex items-center justify-center font-medium cursor-pointer outline-none transition-colors duration-150 focus-visible:outline-2 focus-visible:outline focus-visible:outline-black focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-40";
-
-const sizes: Record<Size, string> = {
-  md: "rounded-lg py-2 px-4 text-sm",
-  sm: "rounded py-1 px-2 text-xs",
+const muiVariant: Record<Variant, "contained" | "outlined" | "text"> = {
+  primary: "contained",
+  secondary: "outlined",
+  ghost: "text",
+  danger: "text",
 };
 
-const variants: Record<Variant, string> = {
-  primary: "bg-black text-white enabled:hover:bg-gray-800",
-  secondary:
-    "bg-transparent text-gray-600 border border-gray-300 enabled:hover:bg-gray-50",
-  ghost:
-    "bg-transparent text-gray-700 border border-transparent enabled:hover:bg-gray-100",
-  danger:
-    "bg-transparent text-rose-600 border border-transparent enabled:hover:bg-rose-50",
+const muiSize: Record<Size, "medium" | "small"> = {
+  md: "medium",
+  sm: "small",
 };
 
 export function Button({
@@ -33,15 +28,22 @@ export function Button({
   size = "md",
   className,
   children,
+  disabled,
+  onClick,
   ...props
 }: ButtonProps) {
-  const classes = [base, sizes[size], variants[variant], className]
-    .filter(Boolean)
-    .join(" ");
-
   return (
-    <button type={type} className={classes} {...props}>
+    <MuiButton
+      type={type}
+      variant={muiVariant[variant]}
+      size={muiSize[size]}
+      className={className}
+      disabled={disabled}
+      onClick={onClick as React.MouseEventHandler<HTMLButtonElement>}
+      color={variant === "danger" ? "error" : "primary"}
+      {...(props as object)}
+    >
       {children}
-    </button>
+    </MuiButton>
   );
 }

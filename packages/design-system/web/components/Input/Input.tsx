@@ -1,4 +1,6 @@
 import { InputHTMLAttributes } from "react";
+import MuiCheckbox from "@mui/material/Checkbox";
+import MuiOutlinedInput from "@mui/material/OutlinedInput";
 
 type Variant = "default" | "inline";
 
@@ -6,28 +8,53 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   variant?: Variant;
 }
 
-const variants: Record<Variant, string> = {
-  default:
-    "rounded-lg border border-gray-300 py-2 px-3 text-sm leading-5 text-gray-800 outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-gray-400 focus:border-black focus:ring-2 focus:ring-black/10 disabled:cursor-not-allowed disabled:opacity-50",
-  inline:
-    "rounded border border-black py-0.5 px-2 text-sm leading-5 text-gray-800 outline-none transition-shadow duration-150 focus:ring-2 focus:ring-black/15 disabled:cursor-not-allowed disabled:opacity-50",
+const sizeByVariant: Record<Variant, "medium" | "small"> = {
+  default: "medium",
+  inline: "small",
 };
-
-const checkboxClasses = "w-4 h-4 cursor-pointer accent-black";
 
 export function Input({
   type = "text",
   variant = "default",
   className,
+  value,
+  onChange,
+  onBlur,
+  onKeyDown,
+  disabled,
+  placeholder,
+  autoFocus,
+  checked,
+  "aria-label": ariaLabel,
   ...props
 }: InputProps) {
-  const base = type === "checkbox" ? checkboxClasses : variants[variant];
+  if (type === "checkbox") {
+    return (
+      <MuiCheckbox
+        checked={checked}
+        onChange={onChange as React.ChangeEventHandler<HTMLInputElement>}
+        disabled={disabled}
+        inputProps={{ "aria-label": ariaLabel }}
+        size="small"
+        sx={{ padding: 0, color: "black", "&.Mui-checked": { color: "black" } }}
+      />
+    );
+  }
 
   return (
-    <input
+    <MuiOutlinedInput
       type={type}
-      className={[base, className].filter(Boolean).join(" ")}
-      {...props}
+      size={sizeByVariant[variant]}
+      className={className}
+      value={value}
+      onChange={onChange as React.ChangeEventHandler<HTMLInputElement>}
+      onBlur={onBlur as React.FocusEventHandler<HTMLInputElement>}
+      onKeyDown={onKeyDown as React.KeyboardEventHandler<HTMLInputElement>}
+      disabled={disabled}
+      placeholder={placeholder}
+      autoFocus={autoFocus}
+      inputProps={{ "aria-label": ariaLabel }}
+      sx={{ fontSize: "0.875rem" }}
     />
   );
 }
