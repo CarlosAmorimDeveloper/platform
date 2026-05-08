@@ -1,0 +1,80 @@
+name: Test Coverage
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  coverage:
+    name: Coverage ≥ 95% on changed files
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npx yarn install
+
+      - name: Identify changed source files
+        id: changed
+        run: |
+          # Exclude test files and Next.js infrastructure (layout, page, providers)
+          FILES=$(git diff --name-only ${{ github.event.pull_request.base.sha }}...HEAD \
+            | grep -E '^apps/web/todo-app/src/.*\.(ts|tsx)$' \
+            | grep -Ev '\.(spec|test)\.' \
+            | grep -Ev '/(layout|page|ThemeRegistry)\.')
+
+          if [ -z "$FILES" ]; then
+            echo "has_files=false" >> $GITHUB_OUTPUT
+            echo "No testable source files changed — skipping coverage check."
+          else
+            echo "has_files=true" >> $GITHUB_OUTPUT
+            echo "Files to check:"
+            echo "$FILES"
+            echo "$FILES" > /tmp/changed_files.txt
+          fi
+
+      - name: Run Jest with coverage on changed files
+        if: steps.changed.outputs.has_files == 'true'
+        working-directory: apps/web/todo-app
+        run: |
+          COLLECT_ARGS=$(cat /tmp/changed_files.txt \
+            | sed 's|apps/web/todo-app/||' \
+            | awk '{print "--collectCoverageFrom=" $0}' \
+            | tr '\n' ' ')
+
+          eval "../../../node_modules/.bin/jest --coverage --coverageReporters=json-summary $COLLECT_ARGS"
+
+      - name: Enforce 95% threshold
+        if: steps.changed.outputs.has_files == 'true'
+        working-directory: apps/web/todo-app
+        run: |
+          node -e "
+            const fs = require('fs');
+            const summary = JSON.parse(fs.readFileSync('coverage/coverage-summary.json'));
+            const total = summary.total;
+            const metrics = ['lines', 'statements', 'functions', 'branches'];
+            let failed = false;
+
+            for (const m of metrics) {
+              const pct = total[m].pct;
+              const pass = pct >= 95;
+              console.log((pass ? '✓' : '✗') + ' ' + m + ': ' + pct + '%');
+              if (!pass) failed = true;
+            }
+
+            if (failed) {
+              console.error('\nCoverage below 95% on changed files. Add tests to reach the threshold.');
+              process.exit(1);
+            }
+
+            console.log('\nAll coverage checks passed.');
+          "

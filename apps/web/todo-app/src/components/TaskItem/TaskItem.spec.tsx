@@ -72,4 +72,27 @@ describe("TaskItem", () => {
     renderItem(completedTask);
     expect(screen.queryByRole("button", { name: /editar tarefa/i })).not.toBeInTheDocument();
   });
+
+  it("closes edit mode without dispatching when title is unchanged", () => {
+    renderItem();
+    fireEvent.click(screen.getByRole("button", { name: /editar tarefa/i }));
+    const input = screen.getByRole("textbox", { name: /editar:/i });
+    fireEvent.keyDown(input, { key: "Enter" });
+    expect(screen.queryByRole("textbox", { name: /editar:/i })).not.toBeInTheDocument();
+    expect(screen.getByText("Buy milk")).toBeInTheDocument();
+  });
+
+  it("enters edit mode on Space key press on title span", () => {
+    renderItem();
+    const span = screen.getByRole("button", { name: /pressione enter para editar/i });
+    fireEvent.keyDown(span, { key: " " });
+    expect(screen.getByRole("textbox", { name: /editar:/i })).toBeInTheDocument();
+  });
+
+  it("enters edit mode on double click on title span", () => {
+    renderItem();
+    const span = screen.getByRole("button", { name: /pressione enter para editar/i });
+    fireEvent.doubleClick(span);
+    expect(screen.getByRole("textbox", { name: /editar:/i })).toBeInTheDocument();
+  });
 });
