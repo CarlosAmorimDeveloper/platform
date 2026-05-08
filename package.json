@@ -39,8 +39,6 @@
       "packages/design-system/*"
     ],
     "nohoist": [
-      "todo-app/sass",
-      "todo-app/sass/**",
       "todo-app/scheduler",
       "todo-app/scheduler/**"
     ]

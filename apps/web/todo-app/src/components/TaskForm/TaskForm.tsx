@@ -6,7 +6,6 @@ import { addTask, editTask, Task } from "@/redux/taskSlice";
 import { AppDispatch } from "@/redux/store";
 import { Button } from "@ds/web/components/Button";
 import { Input } from "@ds/web/components/Input";
-import styles from "./TaskForm.module.scss";
 
 interface TaskFormProps {
   task?: Task;
@@ -34,14 +33,14 @@ export function TaskForm({ task, onDone }: TaskFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} aria-label="Task form" className={styles.form}>
+    <form onSubmit={handleSubmit} aria-label="Task form" className="flex gap-2">
       <Input
         type="text"
         value={value}
         onChange={(e) => setValue(e.target.value)}
         placeholder={isEditing ? "Editar tarefa…" : "Nova tarefa…"}
         aria-label={isEditing ? "Editar título da tarefa" : "Título da nova tarefa"}
-        className={styles.input}
+        className="flex-1"
       />
       <Button type="submit" disabled={!value.trim()}>
         {isEditing ? "Salvar" : "Adicionar"}

@@ -6,11 +6,13 @@ import { toggleTask, editTask, removeTask, Task } from "@/redux/taskSlice";
 import { AppDispatch } from "@/redux/store";
 import { Button } from "@ds/web/components/Button";
 import { Input } from "@ds/web/components/Input";
-import styles from "./TaskItem.module.scss";
 
 interface TaskItemProps {
   task: Task;
 }
+
+const TITLE_ACTIVE = "flex-1 text-sm text-gray-800 cursor-pointer";
+const TITLE_COMPLETED = "flex-1 text-sm text-gray-400 line-through cursor-default";
 
 export function TaskItem({ task }: TaskItemProps) {
   const dispatch = useDispatch<AppDispatch>();
@@ -55,7 +57,7 @@ export function TaskItem({ task }: TaskItemProps) {
   }
 
   return (
-    <li className={styles.item}>
+    <li className="flex items-center gap-3 rounded-lg border border-gray-200 bg-white py-3 px-4 shadow-sm">
       <Input
         type="checkbox"
         checked={task.completed}
@@ -73,11 +75,11 @@ export function TaskItem({ task }: TaskItemProps) {
           onKeyDown={handleKeyDown}
           autoFocus
           aria-label={`Editar: ${task.title}`}
-          className={styles.editInput}
+          className="flex-1"
         />
       ) : (
         <span
-          className={task.completed ? styles.titleCompleted : styles.title}
+          className={task.completed ? TITLE_COMPLETED : TITLE_ACTIVE}
           role={task.completed ? undefined : "button"}
           tabIndex={task.completed ? undefined : 0}
           onDoubleClick={() => !task.completed && setIsEditing(true)}
@@ -88,7 +90,7 @@ export function TaskItem({ task }: TaskItemProps) {
         </span>
       )}
 
-      <div className={styles.actions}>
+      <div className="flex items-center gap-2">
         {!task.completed && !isEditing && (
           <Button variant="ghost" size="sm" onClick={() => setIsEditing(true)} aria-label="Editar tarefa">
             Editar
