@@ -22,19 +22,19 @@ function renderForm(props: { task?: Task; onDone?: () => void } = {}) {
 describe("TaskForm — add mode", () => {
   it("renders input and Add button", () => {
     renderForm();
-    expect(screen.getByRole("textbox", { name: /new task title/i })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /add/i })).toBeInTheDocument();
+    expect(screen.getByRole("textbox", { name: /título da nova tarefa/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /adicionar/i })).toBeInTheDocument();
   });
 
   it("Add button is disabled when input is empty", () => {
     renderForm();
-    expect(screen.getByRole("button", { name: /add/i })).toBeDisabled();
+    expect(screen.getByRole("button", { name: /adicionar/i })).toBeDisabled();
   });
 
   it("Add button is enabled when input has text", () => {
     renderForm();
     fireEvent.change(screen.getByRole("textbox"), { target: { value: "Walk the dog" } });
-    expect(screen.getByRole("button", { name: /add/i })).toBeEnabled();
+    expect(screen.getByRole("button", { name: /adicionar/i })).toBeEnabled();
   });
 
   it("clears input after submit", () => {
@@ -62,13 +62,13 @@ describe("TaskForm — edit mode", () => {
 
   it("renders Save button instead of Add", () => {
     renderForm({ task });
-    expect(screen.getByRole("button", { name: /save/i })).toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: /^add$/i })).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /salvar/i })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /^adicionar$/i })).not.toBeInTheDocument();
   });
 
   it("renders Cancel button when onDone is provided", () => {
     renderForm({ task, onDone: jest.fn() });
-    expect(screen.getByRole("button", { name: /cancel/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /cancelar/i })).toBeInTheDocument();
   });
 
   it("calls onDone after save", () => {
@@ -82,7 +82,7 @@ describe("TaskForm — edit mode", () => {
   it("calls onDone when Cancel is clicked", () => {
     const onDone = jest.fn();
     renderForm({ task, onDone });
-    fireEvent.click(screen.getByRole("button", { name: /cancel/i }));
+    fireEvent.click(screen.getByRole("button", { name: /cancelar/i }));
     expect(onDone).toHaveBeenCalledTimes(1);
   });
 });

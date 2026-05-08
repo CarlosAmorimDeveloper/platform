@@ -39,37 +39,37 @@ describe("TaskItem", () => {
 
   it("enters edit mode on edit button click", () => {
     renderItem();
-    fireEvent.click(screen.getByRole("button", { name: /edit task/i }));
-    expect(screen.getByRole("textbox", { name: /edit task title/i })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: /editar tarefa/i }));
+    expect(screen.getByRole("textbox", { name: /editar:/i })).toBeInTheDocument();
   });
 
   it("submits edit on Enter key", () => {
     renderItem();
-    fireEvent.click(screen.getByRole("button", { name: /edit task/i }));
-    const input = screen.getByRole("textbox", { name: /edit task title/i });
+    fireEvent.click(screen.getByRole("button", { name: /editar tarefa/i }));
+    const input = screen.getByRole("textbox", { name: /editar:/i });
     fireEvent.change(input, { target: { value: "Buy eggs" } });
     fireEvent.keyDown(input, { key: "Enter" });
-    expect(screen.queryByRole("textbox", { name: /edit task title/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("textbox", { name: /editar:/i })).not.toBeInTheDocument();
   });
 
   it("cancels edit on Escape key", () => {
     renderItem();
-    fireEvent.click(screen.getByRole("button", { name: /edit task/i }));
-    const input = screen.getByRole("textbox", { name: /edit task title/i });
+    fireEvent.click(screen.getByRole("button", { name: /editar tarefa/i }));
+    const input = screen.getByRole("textbox", { name: /editar:/i });
     fireEvent.change(input, { target: { value: "Changed" } });
     fireEvent.keyDown(input, { key: "Escape" });
-    expect(screen.queryByRole("textbox", { name: /edit task title/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("textbox", { name: /editar:/i })).not.toBeInTheDocument();
     expect(screen.getByText("Buy milk")).toBeInTheDocument();
   });
 
   it("dispatches removeTask on remove button click", () => {
     renderItem();
-    fireEvent.click(screen.getByRole("button", { name: /remove task/i }));
+    fireEvent.click(screen.getByRole("button", { name: /remover tarefa/i }));
     // no error = dispatch was called
   });
 
   it("hides edit button when task is completed", () => {
     renderItem(completedTask);
-    expect(screen.queryByRole("button", { name: /edit task/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /editar tarefa/i })).not.toBeInTheDocument();
   });
 });

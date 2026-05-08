@@ -25,7 +25,7 @@ function renderList(storeTasks = tasks) {
 describe("TaskList", () => {
   it("renders empty state when there are no tasks", () => {
     renderList([]);
-    expect(screen.getByText(/no tasks yet/i)).toBeInTheDocument();
+    expect(screen.getByText(/nenhuma tarefa/i)).toBeInTheDocument();
   });
 
   it("renders all tasks", () => {
@@ -41,6 +41,6 @@ describe("TaskList", () => {
 
   it("does not render empty state when tasks exist", () => {
     renderList();
-    expect(screen.queryByText(/no tasks yet/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/nenhuma tarefa/i)).not.toBeInTheDocument();
   });
 });
