@@ -2,6 +2,8 @@
 
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
+import List from "@mui/material/List";
+import Typography from "@mui/material/Typography";
 import { TaskItem } from "../TaskItem/TaskItem";
 
 export function TaskList() {
@@ -9,17 +11,17 @@ export function TaskList() {
 
   if (tasks.length === 0) {
     return (
-      <p className="text-center text-sm text-gray-400">
+      <Typography variant="body2" color="text.secondary" align="center">
         Nenhuma tarefa ainda. Adicione uma acima!
-      </p>
+      </Typography>
     );
   }
 
   return (
-    <ul className="flex flex-col gap-2">
+    <List disablePadding sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
       {tasks.map((task) => (
         <TaskItem key={task.id} task={task} />
       ))}
-    </ul>
+    </List>
   );
 }

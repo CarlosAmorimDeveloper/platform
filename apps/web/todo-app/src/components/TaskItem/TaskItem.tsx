@@ -4,15 +4,16 @@ import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { toggleTask, editTask, removeTask, Task } from "@/redux/taskSlice";
 import { AppDispatch } from "@/redux/store";
+import ListItem from "@mui/material/ListItem";
+import Paper from "@mui/material/Paper";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
 import { Button } from "@ds/web/components/Button";
 import { Input } from "@ds/web/components/Input";
 
 interface TaskItemProps {
   task: Task;
 }
-
-const TITLE_ACTIVE = "flex-1 text-sm text-gray-800 cursor-pointer";
-const TITLE_COMPLETED = "flex-1 text-sm text-gray-400 line-through cursor-default";
 
 export function TaskItem({ task }: TaskItemProps) {
   const dispatch = useDispatch<AppDispatch>();
@@ -57,49 +58,83 @@ export function TaskItem({ task }: TaskItemProps) {
   }
 
   return (
-    <li className="flex items-center gap-3 rounded-lg border border-gray-200 bg-white py-3 px-4 shadow-sm">
-      <Input
-        type="checkbox"
-        checked={task.completed}
-        onChange={handleToggle}
-        aria-label={`Marcar "${task.title}" como ${task.completed ? "incompleta" : "completa"}`}
-      />
-
-      {isEditing ? (
+    <ListItem disablePadding>
+      <Paper
+        variant="outlined"
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          gap: 1.5,
+          py: 1.5,
+          px: 2,
+          width: "100%",
+          borderRadius: 2,
+        }}
+      >
         <Input
-          type="text"
-          variant="inline"
-          value={editValue}
-          onChange={(e) => setEditValue(e.target.value)}
-          onBlur={handleEditSubmit}
-          onKeyDown={handleKeyDown}
-          autoFocus
-          aria-label={`Editar: ${task.title}`}
-          className="flex-1"
+          type="checkbox"
+          checked={task.completed}
+          onChange={handleToggle}
+          aria-label={`Marcar "${task.title}" como ${task.completed ? "incompleta" : "completa"}`}
         />
-      ) : (
-        <span
-          className={task.completed ? TITLE_COMPLETED : TITLE_ACTIVE}
-          role={task.completed ? undefined : "button"}
-          tabIndex={task.completed ? undefined : 0}
-          onDoubleClick={() => !task.completed && setIsEditing(true)}
-          onKeyDown={task.completed ? undefined : handleSpanKeyDown}
-          aria-label={task.completed ? task.title : `${task.title} — pressione Enter para editar`}
-        >
-          {task.title}
-        </span>
-      )}
 
-      <div className="flex items-center gap-2">
-        {!task.completed && !isEditing && (
-          <Button variant="ghost" size="sm" onClick={() => setIsEditing(true)} aria-label="Editar tarefa">
-            Editar
-          </Button>
+        {isEditing ? (
+          <Input
+            type="text"
+            variant="inline"
+            value={editValue}
+            onChange={(e) => setEditValue(e.target.value)}
+            onBlur={handleEditSubmit}
+            onKeyDown={handleKeyDown}
+            autoFocus
+            aria-label={`Editar: ${task.title}`}
+            className="flex-1"
+          />
+        ) : (
+          <Typography
+            component="span"
+            variant="body2"
+            sx={{
+              flex: 1,
+              color: task.completed ? "text.disabled" : "text.primary",
+              textDecoration: task.completed ? "line-through" : "none",
+              cursor: task.completed ? "default" : "pointer",
+            }}
+            role={task.completed ? undefined : "button"}
+            tabIndex={task.completed ? undefined : 0}
+            onDoubleClick={() => !task.completed && setIsEditing(true)}
+            onKeyDown={task.completed ? undefined : handleSpanKeyDown}
+            aria-label={
+              task.completed
+                ? task.title
+                : `${task.title} — pressione Enter para editar`
+            }
+          >
+            {task.title}
+          </Typography>
         )}
-        <Button variant="danger" size="sm" onClick={handleRemove} aria-label="Remover tarefa">
-          Remover
-        </Button>
-      </div>
-    </li>
+
+        <Stack direction="row" spacing={1} alignItems="center">
+          {!task.completed && !isEditing && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsEditing(true)}
+              aria-label="Editar tarefa"
+            >
+              Editar
+            </Button>
+          )}
+          <Button
+            variant="danger"
+            size="sm"
+            onClick={handleRemove}
+            aria-label="Remover tarefa"
+          >
+            Remover
+          </Button>
+        </Stack>
+      </Paper>
+    </ListItem>
   );
 }

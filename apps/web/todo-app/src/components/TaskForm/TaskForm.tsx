@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { addTask, editTask, Task } from "@/redux/taskSlice";
 import { AppDispatch } from "@/redux/store";
+import Stack from "@mui/material/Stack";
 import { Button } from "@ds/web/components/Button";
 import { Input } from "@ds/web/components/Input";
 
@@ -33,7 +34,13 @@ export function TaskForm({ task, onDone }: TaskFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} aria-label="Task form" className="flex gap-2">
+    <Stack
+      component="form"
+      direction="row"
+      spacing={1}
+      onSubmit={handleSubmit}
+      aria-label="Task form"
+    >
       <Input
         type="text"
         value={value}
@@ -50,6 +57,6 @@ export function TaskForm({ task, onDone }: TaskFormProps) {
           Cancelar
         </Button>
       )}
-    </form>
+    </Stack>
   );
 }
