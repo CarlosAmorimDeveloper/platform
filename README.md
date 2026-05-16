@@ -35,6 +35,15 @@ platform/
 │   │   │   │   ├── Button/
 │   │   │   │   └── Input/
 │   │   │   └── package.json
+│   │   ├── mobile/                    # Componentes React Native (@ds/mobile)
+│   │   │   ├── src/
+│   │   │   │   └── index.ts
+│   │   │   ├── tailwind.config.js
+│   │   │   ├── tailwind-utils.js
+│   │   │   ├── babel.config.js
+│   │   │   ├── metro.config.js
+│   │   │   ├── global.css
+│   │   │   └── package.json
 │   │   └── tokens/                    # Tokens de design (@ds/tokens)
 │   │       ├── src/
 │   │       │   ├── colors.ts
@@ -118,7 +127,7 @@ yarn test       # Executa os testes com Jest
 yarn lint       # Lint do projeto
 ```
 
-### Scripts do Design System (`packages/design-system/web`)
+### Scripts do Design System Web (`packages/design-system/web`)
 
 ```sh
 cd packages/design-system/web
@@ -127,6 +136,15 @@ yarn storybook        # Inicia o Storybook em modo desenvolvimento
 yarn build-storybook  # Gera o build estático do Storybook
 yarn check-types      # Verificação de tipos TypeScript
 yarn lint             # Lint do pacote
+```
+
+### Scripts do Design System Mobile (`packages/design-system/mobile`)
+
+```sh
+cd packages/design-system/mobile
+
+yarn test             # Executa os testes com Jest
+yarn check-types      # Verificação de tipos TypeScript
 ```
 
 ## Build de produção
@@ -155,7 +173,7 @@ Os testes usam **Jest** + **Testing Library**. Cada componente tem seu arquivo `
 
 ## Design System
 
-O monorepo possui dois pacotes de design system:
+O monorepo possui três pacotes de design system:
 
 ### `@ds/web` — Componentes React
 
@@ -197,6 +215,16 @@ import { Input } from "@ds/web/components/Input";
 | `type` | string | `"text"` | qualquer tipo nativo de `<input>` |
 
 > Quando `type="checkbox"`, o `variant` é ignorado e o estilo de checkbox é aplicado automaticamente.
+
+### `@ds/mobile` — Componentes React Native
+
+Configura o [NativeWind v4](https://www.nativewind.dev) para React Native com o tema do design system. Importa os tokens de `@ds/tokens` e os mapeia para o Tailwind CSS, gerando classes de estilo compatíveis com React Native StyleSheet.
+
+```ts
+import { styled, useColorScheme, vars } from "@ds/mobile";
+```
+
+Inclui `tailwind.config.js`, `babel.config.js` e `metro.config.js` prontos para uso. Consulte [`packages/design-system/mobile`](packages/design-system/mobile/README.md) para a referência completa.
 
 ### `@ds/tokens` — Tokens de design
 
@@ -252,7 +280,8 @@ A edição inline no `TaskItem` é ativada por duplo clique ou pela tecla `Enter
 | UI | React 19 |
 | Estado | Redux Toolkit |
 | Estilização | Tailwind CSS v4 + SCSS Modules |
-| Design System | `@ds/web` + `@ds/tokens` |
+| Design System (web) | `@ds/web` + `@ds/tokens` |
+| Design System (mobile) | `@ds/mobile` + NativeWind v4 |
 | Documentação de componentes | Storybook 8 |
 | Testes visuais | Chromatic |
 | Testes | Jest + Testing Library |
