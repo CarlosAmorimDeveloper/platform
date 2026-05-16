@@ -49,12 +49,20 @@ jobs:
         if: steps.changed.outputs.has_files == 'true'
         working-directory: apps/web/todo-app
         run: |
-          COLLECT_ARGS=$(cat /tmp/changed_files.txt \
-            | sed 's|apps/web/todo-app/||' \
+          # Paths relative to this working directory (strip the repo prefix)
+          CHANGED=$(sed 's|apps/web/todo-app/||' /tmp/changed_files.txt | tr '\n' ' ')
+          COLLECT=$(sed 's|apps/web/todo-app/||' /tmp/changed_files.txt \
             | awk '{print "--collectCoverageFrom=" $0}' \
             | tr '\n' ' ')
 
-          eval "../../../node_modules/.bin/jest --coverage --coverageReporters=json-summary $COLLECT_ARGS"
+          # --findRelatedTests runs only the test suites that import the changed
+          # files, instead of the full test suite. --collectCoverageFrom limits
+          # the coverage report to those same files.
+          eval "../../../node_modules/.bin/jest \
+            --findRelatedTests $CHANGED \
+            --coverage \
+            --coverageReporters=json-summary \
+            $COLLECT"
 
       - name: Enforce 95% threshold
         if: steps.changed.outputs.has_files == 'true'
