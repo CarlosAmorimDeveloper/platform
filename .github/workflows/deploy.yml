@@ -4,9 +4,13 @@ on:
   push:
     branches:
       - main
+    paths:
+      - "apps/web/todo-app/**"
   pull_request:
     branches:
       - main
+    paths:
+      - "apps/web/todo-app/**"
 
 env:
   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
