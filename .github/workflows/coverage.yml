@@ -27,10 +27,13 @@ jobs:
         id: changed
         run: |
           # Exclude test files and Next.js infrastructure (layout, page, providers)
+          # || true prevents grep's exit code 1 (no match) from failing the
+          # step when pipefail is active (GitHub Actions default shell)
           FILES=$(git diff --name-only ${{ github.event.pull_request.base.sha }}...HEAD \
             | grep -E '^apps/web/todo-app/src/.*\.(ts|tsx)$' \
             | grep -Ev '\.(spec|test)\.' \
-            | grep -Ev '/(layout|page|ThemeRegistry)\.')
+            | grep -Ev '/(layout|page|ThemeRegistry)\.' \
+            || true)
 
           if [ -z "$FILES" ]; then
             echo "has_files=false" >> $GITHUB_OUTPUT
