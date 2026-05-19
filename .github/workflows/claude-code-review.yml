@@ -38,7 +38,14 @@ jobs:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           plugin_marketplaces: 'https://github.com/anthropics/claude-code.git'
           plugins: 'code-review@claude-code-plugins'
-          prompt: '/code-review:code-review ${{ github.repository }}/pull/${{ github.event.pull_request.number }}'
+          prompt: |
+            /code-review:code-review ${{ github.repository }}/pull/${{ github.event.pull_request.number }}
+
+            Além da revisão padrão, verifique também:
+            - Over-engineering: abstrações desnecessárias, generalizações prematuras ou padrões complexos onde uma solução simples bastaria
+            - Violações de YAGNI: código escrito para casos de uso hipotéticos não requeridos agora
+            - Camadas de indireção excessivas (wrappers, helpers, utilitários) que não agregam valor real
+            - Extração prematura de componentes ou funções antes do padrão estar claro
           # See https://github.com/anthropics/claude-code-action/blob/main/docs/usage.md
           # or https://code.claude.com/docs/en/cli-reference for available options
 

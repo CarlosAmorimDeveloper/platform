@@ -1,0 +1,31 @@
+name: Auto-update PRs with main
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  update-prs:
+    name: Merge main into open PRs
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Update open PRs with latest main
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr list \
+            --repo ${{ github.repository }} \
+            --base main \
+            --state open \
+            --json number \
+            --jq '.[].number' | while read pr; do
+              echo "Updating PR #$pr..."
+              gh pr update-branch "$pr" \
+                --repo ${{ github.repository }} || \
+                echo "PR #$pr already up to date or could not be updated."
+          done
