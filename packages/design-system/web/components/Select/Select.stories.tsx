@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import type React from "react";
 import { useState } from "react";
 import { Select } from "./Select";
 
@@ -23,9 +24,21 @@ const meta: Meta<typeof Select> = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-function SelectWithState(args: any) {
-  const [value, setValue] = useState(args.value || "ativo");
-  return <Select {...args} value={value} onChange={setValue} />;
+function SelectWithState(args: Partial<React.ComponentProps<typeof Select>>) {
+  const [value, setValue] = useState(args.value ?? "");
+  return (
+    <Select
+      label={args.label || ""}
+      options={args.options || []}
+      value={value}
+      onChange={setValue}
+      disabled={args.disabled}
+      error={args.error}
+      helperText={args.helperText}
+      fullWidth={args.fullWidth}
+      sx={args.sx}
+    />
+  );
 }
 
 export const Default: Story = {
@@ -41,4 +54,9 @@ export const WithError: Story = {
 export const Disabled: Story = {
   render: (args) => <SelectWithState {...args} />,
   args: { label: "Status", options: OPTIONS, value: "ativo", disabled: true },
+};
+
+export const FullWidth: Story = {
+  render: (args) => <SelectWithState {...args} />,
+  args: { label: "Status", options: OPTIONS, value: "ativo", fullWidth: true },
 };

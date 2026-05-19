@@ -1,3 +1,4 @@
+import { useId } from "react";
 import {
   FormControl,
   FormHelperText,
@@ -36,7 +37,8 @@ export function Select({
   fullWidth = false,
   sx,
 }: SelectProps) {
-  const labelId = `select-label-${label.replace(/\s+/g, "-").toLowerCase()}`;
+  const generatedId = useId();
+  const labelId = `select-label-${generatedId}`;
 
   const handleChange = (event: SelectChangeEvent) => {
     onChange(event.target.value);
