@@ -36,6 +36,7 @@
     "@ds/tokens": "*",
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
+    "@mui/icons-material": "^6",
     "@mui/material": "^6",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
