@@ -2,7 +2,10 @@ import type { StorybookConfig } from "@storybook/react-vite";
 import tailwindcss from "@tailwindcss/vite";
 
 const config: StorybookConfig = {
-  stories: ["../components/**/*.stories.@(ts|tsx)"],
+  stories: [
+    "../docs/**/*.mdx",
+    "../components/**/*.stories.@(ts|tsx)",
+  ],
   addons: ["@storybook/addon-essentials"],
   framework: {
     name: "@storybook/react-vite",

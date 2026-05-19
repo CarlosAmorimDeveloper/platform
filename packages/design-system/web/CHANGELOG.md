@@ -1,0 +1,35 @@
+# Changelog — @ds/web
+
+All notable changes to this package follow [Semantic Versioning](https://semver.org).
+
+---
+
+## [0.1.0] — 2026-05-19
+
+### Added
+
+- **Select** — dropdown controlado com suporte a `label`, `options`, `error`, `helperText`, `fullWidth` e `disabled`
+- **Checkbox** — controle de seleção com suporte a estado `indeterminate`
+- **Radio** — grupo de opções com layout `row` opcional e ID acessível via `useId()`
+- **Dialog** — modal de confirmação com variante `destructive` (botão de confirmação em vermelho)
+- **Snackbar** — notificação temporária com quatro severidades: `success`, `error`, `warning`, `info`
+- **Card** — cartão de conteúdo com suporte a `title`, `subtitle`, `media` (imagem) e `actions`
+- **AppBar** — barra de navegação com botão de menu opcional e área de `actions`
+- **Menu** — menu de contexto com ícones, itens desabilitados e divisores via `dividerAfter`
+
+### Changed
+
+- **theme.ts** — paleta e forma agora derivadas de `@ds/tokens` em vez de valores hardcoded
+- **Storybook** — todas as stories envolvidas com `ThemeProvider` via decorator global, garantindo que as cores do design system sejam aplicadas corretamente
+
+### Fixed
+
+- **Select** — `labelId` substituído por `useId()` para evitar colisão de IDs quando múltiplos `Select` aparecem na mesma página
+- **Select** — tipo da função helper em stories alterado de `any` para `Partial<React.ComponentProps<typeof Select>>`
+
+---
+
+## [0.0.0] — inicial
+
+- **Button** — botão com variantes `primary`, `secondary`, `ghost`, `danger` e tamanhos `md`, `sm`
+- **Input** — campo de texto com variantes `default` e `inline`; suporte a `type="checkbox"` embutido
