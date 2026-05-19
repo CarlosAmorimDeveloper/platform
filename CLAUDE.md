@@ -16,6 +16,18 @@ packages/eslint-config/     # @repo/eslint-config — ESLint v9 flat configs
 packages/typescript-config/ # @repo/typescript-config — shared tsconfigs
 ```
 
+## Git workflow
+
+**Always create a feature branch before starting any new task.** Never develop directly on `main`.
+
+```sh
+git checkout -b feat/<short-description>   # new feature
+git checkout -b fix/<short-description>    # bug fix
+git checkout -b chore/<short-description>  # tooling / maintenance
+```
+
+Open a pull request targeting `main` when the work is ready for review.
+
 ## Commands
 
 ### From repo root
