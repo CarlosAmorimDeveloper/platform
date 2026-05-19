@@ -14,8 +14,6 @@
     "@ds/tokens": "*",
     "@ds/web": "*",
     "@emotion/cache": "^11",
-    "@emotion/react": "^11",
-    "@emotion/styled": "^11",
     "@mui/material": "^6",
     "@mui/material-nextjs": "^6",
     "next": "16.2.4",
