@@ -44,6 +44,7 @@
     "typescript": "5.9.2",
     "chromatic": "^16",
     "react-native-paper": "^5",
+    "react-native-vector-icons": "^10",
     "vite": "^6"
   },
   "peerDependencies": {
