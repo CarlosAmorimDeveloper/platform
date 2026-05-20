@@ -1,0 +1,38 @@
+name: Version Packages
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "packages/design-system/web/**"
+      - "packages/design-system/mobile/**"
+      - "packages/design-system/tokens/**"
+      - ".changeset/**"
+
+jobs:
+  version:
+    name: Criar Version PR ou aplicar versões
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - run: yarn install
+
+      - uses: changesets/action@v1
+        with:
+          version: yarn version-packages
+          title: "chore: version packages"
+          commit: "chore: version packages"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
