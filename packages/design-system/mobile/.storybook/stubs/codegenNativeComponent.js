@@ -3,8 +3,10 @@
 // react-native-safe-area-context (and other libraries) import this to register
 // native view specs; in a browser context the registration is a no-op.
 exports.__esModule = true;
-exports.default = function codegenNativeComponent(_name, _options) {
-  return function NativeComponent() {
-    return null;
-  };
+exports.default = function codegenNativeComponent(name, _options) {
+  function NativeComponent(props) {
+    return props.children ?? null;
+  }
+  NativeComponent.displayName = name;
+  return NativeComponent;
 };

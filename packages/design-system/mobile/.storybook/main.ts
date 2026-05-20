@@ -19,7 +19,10 @@ const codegenStubPlugin: Plugin = {
       // Must return a component function, not null — callers do:
       //   export default codegenNativeComponent('RNCSafeAreaProvider')
       // and React renders the result. Returning null causes error #130.
-      return 'export default function codegenNativeComponent() { return function NativeComponent() { return null; }; }';
+      // The component returned here IS rendered by callers such as SafeAreaProvider:
+      //   <NativeSafeAreaProvider>{children}</NativeSafeAreaProvider>
+      // Returning null discards those children. Pass props.children through instead.
+      return 'export default function codegenNativeComponent(name) { function NativeComponent(props) { return props.children ?? null; } NativeComponent.displayName = name; return NativeComponent; }';
     }
   },
 };
