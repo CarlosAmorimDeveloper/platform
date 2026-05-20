@@ -1,8 +1,43 @@
 # Platform
 
+[![Contributors][contributors-shield]][contributors-url]
+[![Forks][forks-shield]][forks-url]
+[![Stargazers][stars-shield]][stars-url]
+[![Issues][issues-shield]][issues-url]
+[![Vercel][vercel-shield]][vercel-url]
+
 Monorepo contendo uma aplicação Todo e um Design System de componentes React compartilhados, construído com [Turborepo](https://turborepo.dev), [Next.js](https://nextjs.org) e [Yarn Workspaces](https://classic.yarnpkg.com/en/docs/workspaces/).
 
 **Todo App:** [https://todo-app-vuotto.vercel.app](https://todo-app-vuotto.vercel.app)
+
+## Índice
+
+- [Construído com](#construído-com)
+- [Pré-requisitos](#pré-requisitos)
+- [Estrutura do projeto](#estrutura-do-projeto)
+- [Instalação](#instalação)
+- [Desenvolvimento](#desenvolvimento)
+- [Scripts disponíveis](#scripts-disponíveis)
+- [Build de produção](#build-de-produção)
+- [Testes](#testes)
+- [Design System](#design-system)
+- [Arquitetura da Todo App](#arquitetura-da-todo-app)
+- [Tecnologias](#tecnologias)
+- [Contribuindo](#contribuindo)
+- [Licença](#licença)
+
+## Construído com
+
+[![Turborepo][turborepo-shield]][turborepo-url]
+[![Next.js][nextjs-shield]][nextjs-url]
+[![React][react-shield]][react-url]
+[![Redux][redux-shield]][redux-url]
+[![TypeScript][typescript-shield]][typescript-url]
+[![Tailwind CSS][tailwind-shield]][tailwind-url]
+[![Storybook][storybook-shield]][storybook-url]
+[![Chromatic][chromatic-shield]][chromatic-url]
+[![Vercel][vercel-shield]][vercel-url]
+[![Yarn][yarn-shield]][yarn-url]
 
 ## Pré-requisitos
 
@@ -114,6 +149,7 @@ Execute os scripts abaixo a partir da **raiz do monorepo**:
 | `yarn check-types`  | Verifica os tipos TypeScript em todo o projeto     |
 | `yarn format`       | Formata o código com Prettier                      |
 | `yarn format:check` | Verifica a formatação sem aplicar mudanças         |
+| `yarn changeset`    | Cria um changeset para versionamento de pacotes    |
 
 ### Scripts da Todo App
 
@@ -287,3 +323,48 @@ A edição inline no `TaskItem` é ativada por duplo clique ou pela tecla `Enter
 | Testes                      | Jest + Testing Library         |
 | Tipos                       | TypeScript 5.9                 |
 | Lint / Formato              | ESLint + Prettier              |
+
+## Contribuindo
+
+Pull requests são bem-vindos. Para mudanças maiores, abra uma issue primeiro para discutir o que você gostaria de mudar.
+
+Ao alterar pacotes do design system (`@ds/web`, `@ds/mobile` ou `@ds/tokens`), lembre-se de criar um changeset:
+
+```sh
+yarn changeset
+```
+
+## Licença
+
+Uso interno — repositório privado.
+
+---
+
+[contributors-shield]: https://img.shields.io/github/contributors/CarlosAmorimDeveloper/platform.svg?style=for-the-badge
+[contributors-url]: https://github.com/CarlosAmorimDeveloper/platform/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/CarlosAmorimDeveloper/platform.svg?style=for-the-badge
+[forks-url]: https://github.com/CarlosAmorimDeveloper/platform/network/members
+[stars-shield]: https://img.shields.io/github/stars/CarlosAmorimDeveloper/platform.svg?style=for-the-badge
+[stars-url]: https://github.com/CarlosAmorimDeveloper/platform/stargazers
+[issues-shield]: https://img.shields.io/github/issues/CarlosAmorimDeveloper/platform.svg?style=for-the-badge
+[issues-url]: https://github.com/CarlosAmorimDeveloper/platform/issues
+[vercel-shield]: https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white
+[vercel-url]: https://todo-app-vuotto.vercel.app
+[turborepo-shield]: https://img.shields.io/badge/Turborepo-EF4444?style=for-the-badge&logo=turborepo&logoColor=white
+[turborepo-url]: https://turborepo.dev
+[nextjs-shield]: https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white
+[nextjs-url]: https://nextjs.org
+[react-shield]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
+[react-url]: https://react.dev
+[redux-shield]: https://img.shields.io/badge/Redux-593D88?style=for-the-badge&logo=redux&logoColor=white
+[redux-url]: https://redux-toolkit.js.org
+[typescript-shield]: https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white
+[typescript-url]: https://www.typescriptlang.org
+[tailwind-shield]: https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white
+[tailwind-url]: https://tailwindcss.com
+[storybook-shield]: https://img.shields.io/badge/Storybook-FF4785?style=for-the-badge&logo=storybook&logoColor=white
+[storybook-url]: https://storybook.js.org
+[chromatic-shield]: https://img.shields.io/badge/Chromatic-FC521F?style=for-the-badge&logo=chromatic&logoColor=white
+[chromatic-url]: https://www.chromatic.com
+[yarn-shield]: https://img.shields.io/badge/Yarn-2C8EBB?style=for-the-badge&logo=yarn&logoColor=white
+[yarn-url]: https://classic.yarnpkg.com

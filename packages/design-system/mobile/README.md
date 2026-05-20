@@ -1,8 +1,33 @@
 # @ds/mobile
 
+[![React Native][reactnative-shield]][reactnative-url]
+[![NativeWind][nativewind-shield]][nativewind-url]
+[![TypeScript][typescript-shield]][typescript-url]
+
 Pacote de design system para React Native. Parte do monorepo `platform`, em `packages/design-system/mobile`.
 
 Configura o [NativeWind v4](https://www.nativewind.dev) com o tema completo de `@ds/tokens` (cores, espaçamentos, tamanhos de fonte e raios de borda), gerando classes Tailwind CSS compatíveis com React Native StyleSheet.
+
+## Índice
+
+- [Construído com](#construído-com)
+- [Instalação](#instalação)
+- [Uso](#uso)
+- [Tema](#tema)
+- [Exports](#exports)
+- [Arquivos](#arquivos)
+- [Testes](#testes)
+- [Scripts](#scripts)
+- [Contribuindo](#contribuindo)
+- [Licença](#licença)
+
+## Construído com
+
+[![React Native][reactnative-shield]][reactnative-url]
+[![NativeWind][nativewind-shield]][nativewind-url]
+[![Tailwind CSS][tailwind-shield]][tailwind-url]
+[![TypeScript][typescript-shield]][typescript-url]
+[![Jest][jest-shield]][jest-url]
 
 ## Instalação
 
@@ -180,3 +205,28 @@ Cobertura atual: **20 testes** — utilidades `toPx`/`mapToPx` e integração do
 | ------------------ | ------------------------------- |
 | `yarn test`        | Executa os testes com Jest      |
 | `yarn check-types` | Verificação de tipos TypeScript |
+
+## Contribuindo
+
+Consulte o [README raiz do monorepo](../../README.md) para instruções de configuração e fluxo de contribuição. Ao alterar o pacote, lembre-se de criar um changeset:
+
+```sh
+yarn changeset
+```
+
+## Licença
+
+Uso interno — repositório privado.
+
+---
+
+[reactnative-shield]: https://img.shields.io/badge/React_Native-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
+[reactnative-url]: https://reactnative.dev
+[nativewind-shield]: https://img.shields.io/badge/NativeWind-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white
+[nativewind-url]: https://www.nativewind.dev
+[tailwind-shield]: https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white
+[tailwind-url]: https://tailwindcss.com
+[typescript-shield]: https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white
+[typescript-url]: https://www.typescriptlang.org
+[jest-shield]: https://img.shields.io/badge/Jest-C21325?style=for-the-badge&logo=jest&logoColor=white
+[jest-url]: https://jestjs.io
