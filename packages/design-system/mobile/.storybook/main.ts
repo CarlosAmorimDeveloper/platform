@@ -1,5 +1,23 @@
+import fs from 'fs';
+import path from 'path';
 import type { StorybookConfig } from '@storybook/react-vite';
 import type { Plugin } from 'vite';
+
+// ---------------------------------------------------------------------------
+// Embed MaterialCommunityIcons font as base64 for reliable @font-face injection.
+// Reading at config-load time avoids any dev-server / staticDirs path issues.
+// ---------------------------------------------------------------------------
+let mciFontBase64 = '';
+for (const root of [process.cwd(), path.resolve(process.cwd(), '../../..')]) {
+  const candidate = path.join(
+    root,
+    'node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf',
+  );
+  if (fs.existsSync(candidate)) {
+    mciFontBase64 = fs.readFileSync(candidate).toString('base64');
+    break;
+  }
+}
 
 // ---------------------------------------------------------------------------
 // Stub: react-native codegen APIs absent from react-native-web
@@ -55,15 +73,22 @@ const ICON_MODULE_IDS = [
 function buildIconStub(glyphMapStr: string): string {
   return `import React from 'react';
 const glyphs = ${glyphMapStr};
-function MCIcons({ name, size, color, style, allowFontScaling, pointerEvents, selectable, testID }) {
+// Deliberately ignores the RN \`style\` prop to avoid passing any non-string keys
+// (e.g. array indices from StyleSheet.create) to React DOM's setValueForStyles,
+// which throws on indexed property assignment.
+function MCIcons({ name, size, color, pointerEvents, testID }) {
   const code = glyphs[name];
   const char = code != null ? String.fromCodePoint(code) : '\\u25A1';
   return React.createElement('span', {
     'data-testid': testID,
-    style: Object.assign(
-      { fontFamily: 'MaterialCommunityIcons', fontSize: size || 24, color: color || 'black', lineHeight: 1, userSelect: 'none', pointerEvents: pointerEvents || 'none' },
-      style
-    )
+    style: {
+      fontFamily: 'MaterialCommunityIcons',
+      fontSize: size || 24,
+      color: color || 'black',
+      lineHeight: 1,
+      userSelect: 'none',
+      pointerEvents: pointerEvents || 'none',
+    }
   }, char);
 }
 MCIcons.displayName = 'MCIcons';
@@ -89,14 +114,19 @@ const config: StorybookConfig = {
   stories: ['../src/**/*.stories.@(ts|tsx)'],
   addons: ['@storybook/addon-essentials'],
   framework: { name: '@storybook/react-vite', options: {} },
+  // Inject MaterialCommunityIcons @font-face as a base64 data URL so it works
+  // in both the dev server and the Chromatic production build without any static
+  // file serving configuration.
+  previewHead: (head) =>
+    mciFontBase64
+      ? `${head}<style>@font-face{font-family:"MaterialCommunityIcons";src:url("data:font/ttf;base64,${mciFontBase64}") format("truetype");font-display:block;}</style>`
+      : head,
   // react-docgen-typescript avoids invoking Babel, which would pick up
   // babel.config.js referencing metro-react-native-babel-preset.
   typescript: { reactDocgen: 'react-docgen-typescript' },
 
   async viteFinal(config) {
     const { mergeConfig } = await import('vite');
-    const { default: fs } = await import('fs');
-    const { default: path } = await import('path');
 
     // Read the glyph map from the installed react-native-vector-icons package.
     // The package is hoisted to the workspace root node_modules, so we try the
