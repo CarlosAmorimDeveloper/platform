@@ -2,8 +2,6 @@
 module.exports = {
   testEnvironment: 'node',
   testMatch: ['**/__tests__/**/*.test.{js,ts,tsx}'],
-  // configFile: false prevents babel.config.js (metro-react-native-babel-preset)
-  // from being loaded in the test environment
   transform: {
     '^.+\\.(js|ts|tsx)$': [
       'babel-jest',
@@ -17,7 +15,12 @@ module.exports = {
       },
     ],
   },
+  // Transform react-native and Paper source (they ship as JSX/TS)
+  transformIgnorePatterns: [
+    'node_modules/(?!(react-native|@react-native|react-native-paper|react-native-safe-area-context)/)',
+  ],
   moduleNameMapper: {
-    '^react-native$': '<rootDir>/__mocks__/react-native.js',
+    '^react-native-safe-area-context$': '<rootDir>/__mocks__/react-native-safe-area-context.js',
   },
+  setupFiles: ['<rootDir>/jest.setup.js'],
 };
