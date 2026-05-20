@@ -1,4 +1,4 @@
-import { InputHTMLAttributes } from "react";
+import type { InputHTMLAttributes } from "react";
 import MuiCheckbox from "@mui/material/Checkbox";
 import MuiOutlinedInput from "@mui/material/OutlinedInput";
 
@@ -26,7 +26,7 @@ export function Input({
   autoFocus,
   checked,
   "aria-label": ariaLabel,
-  ...props
+  ..._props
 }: InputProps) {
   if (type === "checkbox") {
     return (
