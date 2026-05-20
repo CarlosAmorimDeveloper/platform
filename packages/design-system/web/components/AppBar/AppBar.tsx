@@ -1,29 +1,17 @@
-import {
-  AppBar as MuiAppBar,
-  Box,
-  IconButton,
-  Toolbar,
-  Typography,
-} from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
-import type { SxProps, Theme } from "@mui/material/styles";
-import type { ReactNode } from "react";
+import { AppBar as MuiAppBar, Box, IconButton, Toolbar, Typography } from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
+import type { SxProps, Theme } from '@mui/material/styles';
+import type { ReactNode } from 'react';
 
 interface AppBarProps {
   title: string;
   onMenuClick?: () => void;
   actions?: ReactNode;
-  position?: "static" | "sticky" | "fixed";
+  position?: 'static' | 'sticky' | 'fixed';
   sx?: SxProps<Theme>;
 }
 
-export function AppBar({
-  title,
-  onMenuClick,
-  actions,
-  position = "static",
-  sx,
-}: AppBarProps) {
+export function AppBar({ title, onMenuClick, actions, position = 'static', sx }: AppBarProps) {
   return (
     <MuiAppBar position={position} sx={sx}>
       <Toolbar>

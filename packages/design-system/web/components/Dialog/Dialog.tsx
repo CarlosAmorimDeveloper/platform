@@ -5,9 +5,9 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-} from "@mui/material";
-import type { SxProps, Theme } from "@mui/material/styles";
-import type { ReactNode } from "react";
+} from '@mui/material';
+import type { SxProps, Theme } from '@mui/material/styles';
+import type { ReactNode } from 'react';
 
 interface DialogProps {
   open: boolean;
@@ -27,8 +27,8 @@ export function Dialog({
   children,
   onClose,
   onConfirm,
-  confirmLabel = "Confirmar",
-  cancelLabel = "Cancelar",
+  confirmLabel = 'Confirmar',
+  cancelLabel = 'Cancelar',
   destructive = false,
   sx,
 }: DialogProps) {
@@ -41,11 +41,7 @@ export function Dialog({
       <DialogActions>
         <Button onClick={onClose}>{cancelLabel}</Button>
         {onConfirm && (
-          <Button
-            onClick={onConfirm}
-            color={destructive ? "error" : "primary"}
-            variant="contained"
-          >
+          <Button onClick={onConfirm} color={destructive ? 'error' : 'primary'} variant="contained">
             {confirmLabel}
           </Button>
         )}

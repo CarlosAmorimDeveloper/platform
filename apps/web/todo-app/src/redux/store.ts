@@ -1,7 +1,7 @@
-import { configureStore } from "@reduxjs/toolkit";
-import { taskReducer } from "./taskSlice";
+import { configureStore } from '@reduxjs/toolkit';
+import { taskReducer } from './taskSlice';
 
-export const STORAGE_KEY = "todo-app:tasks";
+export const STORAGE_KEY = 'todo-app:tasks';
 
 export const store = configureStore({
   reducer: {
@@ -10,7 +10,7 @@ export const store = configureStore({
 });
 
 store.subscribe(() => {
-  if (typeof window === "undefined") return;
+  if (typeof window === 'undefined') return;
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(store.getState().tasks));
   } catch {

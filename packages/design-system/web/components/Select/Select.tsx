@@ -1,4 +1,4 @@
-import { useId } from "react";
+import { useId } from 'react';
 import {
   FormControl,
   FormHelperText,
@@ -6,8 +6,8 @@ import {
   MenuItem,
   Select as MuiSelect,
   type SelectChangeEvent,
-} from "@mui/material";
-import type { SxProps, Theme } from "@mui/material/styles";
+} from '@mui/material';
+import type { SxProps, Theme } from '@mui/material/styles';
 
 interface SelectOption {
   value: string;

@@ -1,24 +1,18 @@
 'use strict';
 
 // Mock jiti antes de qualquer require do config
-jest.mock('jiti', () =>
-  () => () => ({
-    colors: {
-      primary: { 50: '#EEF2FF', 500: '#6366F1', 900: '#312E81' },
-      neutral: { 0: '#FFFFFF', 500: '#6B7280', 1000: '#000000' },
-    },
-    spacing: { 0: 0, 1: 4, 2: 8, 4: 16, 8: 32 },
-    fontSizes: { xs: 12, sm: 14, base: 16, lg: 18 },
-    radii: { none: 0, sm: 2, base: 4, lg: 8, full: 9999 },
-  })
-);
+jest.mock('jiti', () => () => () => ({
+  colors: {
+    primary: { 50: '#EEF2FF', 500: '#6366F1', 900: '#312E81' },
+    neutral: { 0: '#FFFFFF', 500: '#6B7280', 1000: '#000000' },
+  },
+  spacing: { 0: 0, 1: 4, 2: 8, 4: 16, 8: 32 },
+  fontSizes: { xs: 12, sm: 14, base: 16, lg: 18 },
+  radii: { none: 0, sm: 2, base: 4, lg: 8, full: 9999 },
+}));
 
 // Mock do preset do NativeWind (módulo virtual — não instalado no ambiente de testes)
-jest.mock(
-  'nativewind/preset',
-  () => ({ plugins: [], theme: {} }),
-  { virtual: true }
-);
+jest.mock('nativewind/preset', () => ({ plugins: [], theme: {} }), { virtual: true });
 
 const config = require('../tailwind.config');
 

@@ -1,13 +1,13 @@
-import React from "react";
+import React from 'react';
 import {
   Divider,
   ListItemIcon,
   ListItemText,
   Menu as MuiMenu,
   MenuItem as MuiMenuItem,
-} from "@mui/material";
-import type { SxProps, Theme } from "@mui/material/styles";
-import type { ReactNode } from "react";
+} from '@mui/material';
+import type { SxProps, Theme } from '@mui/material/styles';
+import type { ReactNode } from 'react';
 
 interface MenuItemConfig {
   label: string;

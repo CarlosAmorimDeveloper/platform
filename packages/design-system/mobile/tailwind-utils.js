@@ -13,9 +13,7 @@ function toPx(val) {
  * @returns {Record<string, string>}
  */
 function mapToPx(obj) {
-  return Object.fromEntries(
-    Object.entries(obj).map(([k, v]) => [k, toPx(v)])
-  );
+  return Object.fromEntries(Object.entries(obj).map(([k, v]) => [k, toPx(v)]));
 }
 
 module.exports = { toPx, mapToPx };

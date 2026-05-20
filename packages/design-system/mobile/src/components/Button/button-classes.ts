@@ -4,8 +4,7 @@ type Size = 'md' | 'sm';
 const VARIANT_CONTAINER: Record<Variant, string> = {
   primary:
     'bg-primary-500 border-2 border-primary-500 active:bg-primary-600 active:border-primary-600',
-  secondary:
-    'bg-transparent border-2 border-primary-500 active:bg-primary-50',
+  secondary: 'bg-transparent border-2 border-primary-500 active:bg-primary-50',
   ghost: 'bg-transparent active:bg-primary-50',
   danger: 'bg-transparent active:bg-error-50',
 };

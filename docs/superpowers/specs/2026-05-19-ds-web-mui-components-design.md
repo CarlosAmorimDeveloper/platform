@@ -51,21 +51,21 @@ packages/design-system/web/components/
 
 O `theme.ts` atual tem valores hardcoded. Será atualizado para importar `@ds/tokens`:
 
-| Slot MUI | Token |
-|---|---|
-| `palette.primary.main` | `colors.primary[600]` → `#4F46E5` |
-| `palette.primary.light` | `colors.primary[400]` → `#818CF8` |
-| `palette.primary.dark` | `colors.primary[800]` → `#3730A3` |
-| `palette.primary.contrastText` | `colors.neutral[0]` → `#FFFFFF` |
-| `palette.error.main` | `colors.error[500]` → `#F43F5E` |
-| `palette.success.main` | `colors.success[500]` → `#22C55E` |
-| `palette.warning.main` | `colors.warning[500]` → `#F59E0B` |
-| `palette.text.primary` | `colors.neutral[900]` → `#111827` |
-| `palette.text.secondary` | `colors.neutral[500]` → `#6B7280` |
-| `palette.divider` | `colors.neutral[200]` → `#E5E7EB` |
-| `palette.background.default` | `colors.neutral[50]` → `#F9FAFB` |
-| `palette.background.paper` | `colors.neutral[0]` → `#FFFFFF` |
-| `shape.borderRadius` | `radii.lg` → `8` |
+| Slot MUI                       | Token                             |
+| ------------------------------ | --------------------------------- |
+| `palette.primary.main`         | `colors.primary[600]` → `#4F46E5` |
+| `palette.primary.light`        | `colors.primary[400]` → `#818CF8` |
+| `palette.primary.dark`         | `colors.primary[800]` → `#3730A3` |
+| `palette.primary.contrastText` | `colors.neutral[0]` → `#FFFFFF`   |
+| `palette.error.main`           | `colors.error[500]` → `#F43F5E`   |
+| `palette.success.main`         | `colors.success[500]` → `#22C55E` |
+| `palette.warning.main`         | `colors.warning[500]` → `#F59E0B` |
+| `palette.text.primary`         | `colors.neutral[900]` → `#111827` |
+| `palette.text.secondary`       | `colors.neutral[500]` → `#6B7280` |
+| `palette.divider`              | `colors.neutral[200]` → `#E5E7EB` |
+| `palette.background.default`   | `colors.neutral[50]` → `#F9FAFB`  |
+| `palette.background.paper`     | `colors.neutral[0]` → `#FFFFFF`   |
+| `shape.borderRadius`           | `radii.lg` → `8`                  |
 
 Spacing não é mapeado diretamente (MUI usa multiplicador de base 8; tokens são valores absolutos — usar padrão MUI de `8` como base).
 
@@ -137,9 +137,9 @@ interface DialogProps {
   children: React.ReactNode;
   onClose: () => void;
   onConfirm?: () => void;
-  confirmLabel?: string;   // default: "Confirmar"
-  cancelLabel?: string;    // default: "Cancelar"
-  destructive?: boolean;   // torna o botão de confirm vermelho (color="error")
+  confirmLabel?: string; // default: "Confirmar"
+  cancelLabel?: string; // default: "Cancelar"
+  destructive?: boolean; // torna o botão de confirm vermelho (color="error")
   sx?: SxProps;
 }
 ```
@@ -151,14 +151,14 @@ Baseado em `MuiDialog` + `DialogTitle` + `DialogContent` + `DialogActions`.
 ### `Snackbar`
 
 ```tsx
-type Severity = "success" | "error" | "warning" | "info";
+type Severity = 'success' | 'error' | 'warning' | 'info';
 
 interface SnackbarProps {
   open: boolean;
   message: string;
-  severity?: Severity;     // default: "info"
+  severity?: Severity; // default: "info"
   onClose: () => void;
-  duration?: number;       // default: 6000ms
+  duration?: number; // default: 6000ms
   sx?: SxProps;
 }
 ```
@@ -189,9 +189,9 @@ Baseado em `MuiCard` + `CardHeader` + `CardMedia` + `CardContent` + `CardActions
 ```tsx
 interface AppBarProps {
   title: string;
-  onMenuClick?: () => void;   // se fornecido, exibe ícone de menu à esquerda
+  onMenuClick?: () => void; // se fornecido, exibe ícone de menu à esquerda
   actions?: React.ReactNode;
-  position?: "static" | "sticky" | "fixed";  // default: "static"
+  position?: 'static' | 'sticky' | 'fixed'; // default: "static"
   sx?: SxProps;
 }
 ```
@@ -228,16 +228,16 @@ Baseado em `MuiMenu` + `MuiMenuItem` + `ListItemIcon` + `ListItemText` + `Divide
 
 Cada componente tem uma story file com pelo menos os estados:
 
-| Componente | Stories mínimas |
-|---|---|
-| Select | `Default`, `WithError`, `Disabled` |
-| Checkbox | `Default`, `Checked`, `Indeterminate`, `Disabled` |
-| Radio | `Default`, `Row`, `Disabled` |
-| Dialog | story com `render` + `useState` para `open`; variante `Destructive` |
-| Snackbar | story com `render` + `useState`; variantes por `severity` |
-| Card | `Default`, `WithMedia`, `WithActions` |
-| AppBar | `Default`, `WithMenuButton`, `WithActions` |
-| Menu | story com `render` + `useState` para `anchorEl` |
+| Componente | Stories mínimas                                                     |
+| ---------- | ------------------------------------------------------------------- |
+| Select     | `Default`, `WithError`, `Disabled`                                  |
+| Checkbox   | `Default`, `Checked`, `Indeterminate`, `Disabled`                   |
+| Radio      | `Default`, `Row`, `Disabled`                                        |
+| Dialog     | story com `render` + `useState` para `open`; variante `Destructive` |
+| Snackbar   | story com `render` + `useState`; variantes por `severity`           |
+| Card       | `Default`, `WithMedia`, `WithActions`                               |
+| AppBar     | `Default`, `WithMenuButton`, `WithActions`                          |
+| Menu       | story com `render` + `useState` para `anchorEl`                     |
 
 ---
 

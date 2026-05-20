@@ -12,28 +12,29 @@
 
 ## File Map
 
-| File | Action | Purpose |
-|---|---|---|
-| `packages/design-system/tokens/eslint.config.mjs` | Create | ESLint config for @ds/tokens |
-| `packages/design-system/tokens/package.json` | Modify | Add `lint` script + ESLint devDeps |
-| `packages/design-system/mobile/eslint.config.mjs` | Create | ESLint config for @ds/mobile (ignores CJS config files) |
-| `packages/design-system/mobile/package.json` | Modify | Add `lint` script + ESLint devDeps + NativeWind/RN devDeps |
-| `packages/design-system/mobile/tsconfig.json` | Modify | Add `nativewind/types` to resolve `className` prop errors |
-| `packages/design-system/mobile/src/components/Button/Button.tsx` | Modify | Remove unused `import React` (new JSX transform, React not needed) |
-| `packages/design-system/web/components/Button/Button.tsx` | Modify | Fix `import type` for type-only import |
-| `packages/design-system/web/components/Input/Input.tsx` | Modify | Fix `import type` + rename `...props` → `..._props` |
-| `apps/web/todo-app/eslint.config.mjs` | Replace | Use `@repo/eslint-config/next-js` instead of raw `eslint-config-next` |
-| `.prettierignore` | Create | Exclude generated/lock files from Prettier |
-| `lint-staged.config.mjs` | Create | Per-extension lint + format commands for staged files |
-| `.husky/pre-commit` | Create | Git hook: lint-staged + check-types |
-| `package.json` (root) | Modify | Add `prepare: husky` + husky/lint-staged devDeps |
-| `yarn.lock` | Updated | After yarn install |
+| File                                                             | Action  | Purpose                                                               |
+| ---------------------------------------------------------------- | ------- | --------------------------------------------------------------------- |
+| `packages/design-system/tokens/eslint.config.mjs`                | Create  | ESLint config for @ds/tokens                                          |
+| `packages/design-system/tokens/package.json`                     | Modify  | Add `lint` script + ESLint devDeps                                    |
+| `packages/design-system/mobile/eslint.config.mjs`                | Create  | ESLint config for @ds/mobile (ignores CJS config files)               |
+| `packages/design-system/mobile/package.json`                     | Modify  | Add `lint` script + ESLint devDeps + NativeWind/RN devDeps            |
+| `packages/design-system/mobile/tsconfig.json`                    | Modify  | Add `nativewind/types` to resolve `className` prop errors             |
+| `packages/design-system/mobile/src/components/Button/Button.tsx` | Modify  | Remove unused `import React` (new JSX transform, React not needed)    |
+| `packages/design-system/web/components/Button/Button.tsx`        | Modify  | Fix `import type` for type-only import                                |
+| `packages/design-system/web/components/Input/Input.tsx`          | Modify  | Fix `import type` + rename `...props` → `..._props`                   |
+| `apps/web/todo-app/eslint.config.mjs`                            | Replace | Use `@repo/eslint-config/next-js` instead of raw `eslint-config-next` |
+| `.prettierignore`                                                | Create  | Exclude generated/lock files from Prettier                            |
+| `lint-staged.config.mjs`                                         | Create  | Per-extension lint + format commands for staged files                 |
+| `.husky/pre-commit`                                              | Create  | Git hook: lint-staged + check-types                                   |
+| `package.json` (root)                                            | Modify  | Add `prepare: husky` + husky/lint-staged devDeps                      |
+| `yarn.lock`                                                      | Updated | After yarn install                                                    |
 
 ---
 
 ## Task 1 — Add lint to `@ds/tokens`
 
 **Files:**
+
 - Create: `packages/design-system/tokens/eslint.config.mjs`
 - Modify: `packages/design-system/tokens/package.json`
 
@@ -105,6 +106,7 @@ git commit -m "chore(tokens): add ESLint config"
 ## Task 2 — Fix NativeWind TypeScript errors in `@ds/mobile`
 
 **Files:**
+
 - Modify: `packages/design-system/mobile/package.json`
 - Modify: `packages/design-system/mobile/tsconfig.json`
 
@@ -115,6 +117,7 @@ yarn workspace @ds/mobile check-types
 ```
 
 Expected output includes:
+
 ```
 src/index.ts(1,46): error TS2307: Cannot find module 'nativewind'
 src/index.ts(2,34): error TS2307: Cannot find module 'react-native'
@@ -201,6 +204,7 @@ git commit -m "fix(mobile): add nativewind + react-native devDeps to resolve Typ
 ## Task 3 — Add lint to `@ds/mobile`
 
 **Files:**
+
 - Create: `packages/design-system/mobile/eslint.config.mjs`
 - Modify: `packages/design-system/mobile/package.json`
 - Modify: `packages/design-system/mobile/src/components/Button/Button.tsx`
@@ -347,6 +351,7 @@ git commit -m "chore(mobile): add ESLint config and fix unused React import"
 ## Task 4 — Fix `@ds/web` lint warnings
 
 **Files:**
+
 - Modify: `packages/design-system/web/components/Button/Button.tsx`
 - Modify: `packages/design-system/web/components/Input/Input.tsx`
 
@@ -357,6 +362,7 @@ yarn workspace @ds/web lint
 ```
 
 Expected: 3 warnings → exits 1 (`--max-warnings 0`).
+
 ```
 Button.tsx:1:1  warning  All imports in the declaration are only used as types. Use `import type`
 Input.tsx:1:1   warning  All imports in the declaration are only used as types. Use `import type`
@@ -366,12 +372,15 @@ Input.tsx:29:6  warning  'props' is defined but never used
 - [ ] **Fix `packages/design-system/web/components/Button/Button.tsx` line 1**
 
 Change:
+
 ```tsx
-import { ButtonHTMLAttributes } from "react";
+import { ButtonHTMLAttributes } from 'react';
 ```
+
 To:
+
 ```tsx
-import type { ButtonHTMLAttributes } from "react";
+import type { ButtonHTMLAttributes } from 'react';
 ```
 
 - [ ] **Fix `packages/design-system/web/components/Input/Input.tsx`**
@@ -379,17 +388,20 @@ import type { ButtonHTMLAttributes } from "react";
 Two changes in one edit:
 
 1. Line 1 — use `import type`:
+
 ```tsx
-import type { InputHTMLAttributes } from "react";
+import type { InputHTMLAttributes } from 'react';
 ```
 
 2. Line 29 — rename rest param to satisfy `argsIgnorePattern: '^_'`:
+
 ```tsx
   ..._props
 }: InputProps) {
 ```
 
 Full updated destructure (lines 16–30):
+
 ```tsx
 export function Input({
   type = "text",
@@ -436,6 +448,7 @@ git commit -m "fix(ds-web): resolve ESLint warnings — import type + unused res
 ## Task 5 — Align `todo-app` ESLint config
 
 **Files:**
+
 - Modify: `apps/web/todo-app/eslint.config.mjs`
 
 **Context:** The current config manually composes `@repo/eslint-config/base` + raw `eslint-config-next` imports. The shared `@repo/eslint-config/next-js` already bundles everything (base + Next.js plugin + React + React Hooks + global ignores). Using it directly matches the pattern in `@ds/web`.
@@ -468,6 +481,7 @@ git commit -m "chore(todo-app): align ESLint config to use @repo/eslint-config/n
 ## Task 6 — Add `.prettierignore`
 
 **Files:**
+
 - Create: `.prettierignore`
 
 - [ ] **Create `.prettierignore` at repo root**
@@ -503,6 +517,7 @@ git commit -m "chore: add .prettierignore"
 ## Task 7 — Install Husky + lint-staged + configure pre-commit hook
 
 **Files:**
+
 - Modify: `package.json` (root)
 - Create: `lint-staged.config.mjs`
 - Create: `.husky/pre-commit`
@@ -510,17 +525,20 @@ git commit -m "chore: add .prettierignore"
 - [ ] **Add `husky`, `lint-staged`, and `prepare` script to root `package.json`**
 
 Add to `devDependencies`:
+
 ```json
 "husky": "^9",
 "lint-staged": "^15"
 ```
 
 Add to `scripts` (alongside existing scripts):
+
 ```json
 "prepare": "husky"
 ```
 
 The root `scripts` block should look like:
+
 ```json
 "scripts": {
   "build": "turbo run build",
@@ -576,6 +594,7 @@ git commit -m "test: verify pre-commit hook"
 Expected: lint-staged runs (prints filenames processed), then `yarn check-types` runs (prints turbo output), commit succeeds.
 
 Then revert:
+
 ```bash
 git reset HEAD~1
 git checkout README.md

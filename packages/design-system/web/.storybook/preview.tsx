@@ -1,7 +1,7 @@
-import type { Preview, Decorator } from "@storybook/react";
-import { ThemeProvider, CssBaseline } from "@mui/material";
-import { theme } from "../theme";
-import "../styles/globals.css";
+import type { Preview, Decorator } from '@storybook/react';
+import { ThemeProvider, CssBaseline } from '@mui/material';
+import { theme } from '../theme';
+import '../styles/globals.css';
 
 const withTheme: Decorator = (Story) => (
   <ThemeProvider theme={theme}>

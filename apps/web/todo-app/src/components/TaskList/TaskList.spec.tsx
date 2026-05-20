@@ -1,17 +1,17 @@
-import { render, screen } from "@testing-library/react";
-import { Provider } from "react-redux";
-import { configureStore } from "@reduxjs/toolkit";
-import { taskReducer } from "@/redux/taskSlice";
-import type { Task } from "@/redux/taskSlice";
-import { TaskList } from "./TaskList";
+import { render, screen } from '@testing-library/react';
+import { Provider } from 'react-redux';
+import { configureStore } from '@reduxjs/toolkit';
+import { taskReducer } from '@/redux/taskSlice';
+import type { Task } from '@/redux/taskSlice';
+import { TaskList } from './TaskList';
 
 function makeStore(tasks: Task[] = []) {
   return configureStore({ reducer: { tasks: taskReducer }, preloadedState: { tasks: { tasks } } });
 }
 
 const tasks = [
-  { id: "1", title: "Buy milk", completed: false, createdAt: new Date().toISOString() },
-  { id: "2", title: "Walk the dog", completed: true, createdAt: new Date().toISOString() },
+  { id: '1', title: 'Buy milk', completed: false, createdAt: new Date().toISOString() },
+  { id: '2', title: 'Walk the dog', completed: true, createdAt: new Date().toISOString() },
 ];
 
 function renderList(storeTasks = tasks) {
@@ -19,28 +19,28 @@ function renderList(storeTasks = tasks) {
   return render(
     <Provider store={store}>
       <TaskList />
-    </Provider>
+    </Provider>,
   );
 }
 
-describe("TaskList", () => {
-  it("renders empty state when there are no tasks", () => {
+describe('TaskList', () => {
+  it('renders empty state when there are no tasks', () => {
     renderList([]);
     expect(screen.getByText(/nenhuma tarefa/i)).toBeInTheDocument();
   });
 
-  it("renders all tasks", () => {
+  it('renders all tasks', () => {
     renderList();
-    expect(screen.getByText("Buy milk")).toBeInTheDocument();
-    expect(screen.getByText("Walk the dog")).toBeInTheDocument();
+    expect(screen.getByText('Buy milk')).toBeInTheDocument();
+    expect(screen.getByText('Walk the dog')).toBeInTheDocument();
   });
 
-  it("renders a list item for each task", () => {
+  it('renders a list item for each task', () => {
     renderList();
-    expect(screen.getAllByRole("listitem")).toHaveLength(tasks.length);
+    expect(screen.getAllByRole('listitem')).toHaveLength(tasks.length);
   });
 
-  it("does not render empty state when tasks exist", () => {
+  it('does not render empty state when tasks exist', () => {
     renderList();
     expect(screen.queryByText(/nenhuma tarefa/i)).not.toBeInTheDocument();
   });

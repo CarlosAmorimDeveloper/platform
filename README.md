@@ -7,9 +7,9 @@ Monorepo contendo uma aplicação Todo e um Design System de componentes React c
 ## Pré-requisitos
 
 | Ferramenta | Versão mínima |
-|---|---|
-| Node.js | 18 |
-| Yarn | 1.22.x |
+| ---------- | ------------- |
+| Node.js    | 18            |
+| Yarn       | 1.22.x        |
 
 > O projeto usa **Yarn v1 (Classic)**. Não use `npm` ou `pnpm` — o lockfile e os workspaces são específicos do Yarn.
 
@@ -106,14 +106,14 @@ O Storybook ficará disponível em `http://localhost:6006`.
 
 Execute os scripts abaixo a partir da **raiz do monorepo**:
 
-| Comando | Descrição |
-|---|---|
-| `yarn dev` | Inicia todos os servidores em modo desenvolvimento |
-| `yarn build` | Compila todas as aplicações e pacotes |
-| `yarn lint` | Executa o ESLint em todo o projeto |
-| `yarn check-types` | Verifica os tipos TypeScript em todo o projeto |
-| `yarn format` | Formata o código com Prettier |
-| `yarn format:check` | Verifica a formatação sem aplicar mudanças |
+| Comando             | Descrição                                          |
+| ------------------- | -------------------------------------------------- |
+| `yarn dev`          | Inicia todos os servidores em modo desenvolvimento |
+| `yarn build`        | Compila todas as aplicações e pacotes              |
+| `yarn lint`         | Executa o ESLint em todo o projeto                 |
+| `yarn check-types`  | Verifica os tipos TypeScript em todo o projeto     |
+| `yarn format`       | Formata o código com Prettier                      |
+| `yarn format:check` | Verifica a formatação sem aplicar mudanças         |
 
 ### Scripts da Todo App
 
@@ -191,12 +191,12 @@ import { Button } from "@ds/web/components/Button";
 <Button type="submit" disabled={!value}>Salvar</Button>
 ```
 
-| Prop | Tipo | Padrão | Opções |
-|---|---|---|---|
-| `variant` | string | `"primary"` | `"primary"` `"secondary"` `"ghost"` `"danger"` |
-| `size` | string | `"md"` | `"md"` `"sm"` |
-| `type` | string | `"button"` | `"button"` `"submit"` `"reset"` |
-| `disabled` | boolean | `false` | — |
+| Prop       | Tipo    | Padrão      | Opções                                         |
+| ---------- | ------- | ----------- | ---------------------------------------------- |
+| `variant`  | string  | `"primary"` | `"primary"` `"secondary"` `"ghost"` `"danger"` |
+| `size`     | string  | `"md"`      | `"md"` `"sm"`                                  |
+| `type`     | string  | `"button"`  | `"button"` `"submit"` `"reset"`                |
+| `disabled` | boolean | `false`     | —                                              |
 
 #### `Input`
 
@@ -209,10 +209,10 @@ import { Input } from "@ds/web/components/Input";
 <Input disabled placeholder="Desativado" />
 ```
 
-| Prop | Tipo | Padrão | Opções |
-|---|---|---|---|
-| `variant` | string | `"default"` | `"default"` `"inline"` |
-| `type` | string | `"text"` | qualquer tipo nativo de `<input>` |
+| Prop      | Tipo   | Padrão      | Opções                            |
+| --------- | ------ | ----------- | --------------------------------- |
+| `variant` | string | `"default"` | `"default"` `"inline"`            |
+| `type`    | string | `"text"`    | qualquer tipo nativo de `<input>` |
 
 > Quando `type="checkbox"`, o `variant` é ignorado e o estilo de checkbox é aplicado automaticamente.
 
@@ -221,7 +221,7 @@ import { Input } from "@ds/web/components/Input";
 Configura o [NativeWind v4](https://www.nativewind.dev) para React Native com o tema do design system. Importa os tokens de `@ds/tokens` e os mapeia para o Tailwind CSS, gerando classes de estilo compatíveis com React Native StyleSheet.
 
 ```ts
-import { styled, useColorScheme, vars } from "@ds/mobile";
+import { styled, useColorScheme, vars } from '@ds/mobile';
 ```
 
 Inclui `tailwind.config.js`, `babel.config.js` e `metro.config.js` prontos para uso. Consulte [`packages/design-system/mobile`](packages/design-system/mobile/README.md) para a referência completa.
@@ -231,8 +231,8 @@ Inclui `tailwind.config.js`, `babel.config.js` e `metro.config.js` prontos para 
 Exporta constantes TypeScript e variáveis CSS para cores, espaçamentos, tamanhos de fonte e raios de borda.
 
 ```ts
-import { colors, spacing, fontSizes, radii } from "@ds/tokens";
-import "@ds/tokens/global.css";
+import { colors, spacing, fontSizes, radii } from '@ds/tokens';
+import '@ds/tokens/global.css';
 ```
 
 Consulte [`packages/design-system/tokens`](packages/design-system/tokens/README.md) para a referência completa.
@@ -254,36 +254,36 @@ src/redux/
 
 ```ts
 interface Task {
-  id: string;         // UUID gerado com crypto.randomUUID()
+  id: string; // UUID gerado com crypto.randomUUID()
   title: string;
   completed: boolean;
-  createdAt: string;  // ISO 8601
+  createdAt: string; // ISO 8601
 }
 ```
 
 ### Componentes
 
-| Componente | Responsabilidade |
-|---|---|
-| `TaskForm` | Formulário para criar ou editar uma tarefa |
-| `TaskList` | Lista todas as tarefas do store |
+| Componente | Responsabilidade                                                    |
+| ---------- | ------------------------------------------------------------------- |
+| `TaskForm` | Formulário para criar ou editar uma tarefa                          |
+| `TaskList` | Lista todas as tarefas do store                                     |
 | `TaskItem` | Renderiza uma tarefa individual com toggle, edição inline e remoção |
 
 A edição inline no `TaskItem` é ativada por duplo clique ou pela tecla `Enter`/`Espaço` quando o item está focado.
 
 ## Tecnologias
 
-| Camada | Tecnologia |
-|---|---|
-| Monorepo | Turborepo + Yarn Workspaces v1 |
-| Framework | Next.js 16 (App Router) |
-| UI | React 19 |
-| Estado | Redux Toolkit |
-| Estilização | Tailwind CSS v4 + SCSS Modules |
-| Design System (web) | `@ds/web` + `@ds/tokens` |
-| Design System (mobile) | `@ds/mobile` + NativeWind v4 |
-| Documentação de componentes | Storybook 8 |
-| Testes visuais | Chromatic |
-| Testes | Jest + Testing Library |
-| Tipos | TypeScript 5.9 |
-| Lint / Formato | ESLint + Prettier |
+| Camada                      | Tecnologia                     |
+| --------------------------- | ------------------------------ |
+| Monorepo                    | Turborepo + Yarn Workspaces v1 |
+| Framework                   | Next.js 16 (App Router)        |
+| UI                          | React 19                       |
+| Estado                      | Redux Toolkit                  |
+| Estilização                 | Tailwind CSS v4 + SCSS Modules |
+| Design System (web)         | `@ds/web` + `@ds/tokens`       |
+| Design System (mobile)      | `@ds/mobile` + NativeWind v4   |
+| Documentação de componentes | Storybook 8                    |
+| Testes visuais              | Chromatic                      |
+| Testes                      | Jest + Testing Library         |
+| Tipos                       | TypeScript 5.9                 |
+| Lint / Formato              | ESLint + Prettier              |

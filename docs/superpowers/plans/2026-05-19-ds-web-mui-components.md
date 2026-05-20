@@ -12,43 +12,44 @@
 
 ## Arquivos que serão criados ou modificados
 
-| Arquivo | Ação |
-|---|---|
-| `packages/design-system/web/package.json` | Modificar — adicionar `@mui/icons-material` |
-| `packages/design-system/web/theme.ts` | Modificar — mapear `@ds/tokens` |
-| `packages/design-system/web/.storybook/preview.tsx` | Criar — substitui `preview.ts` com ThemeProvider decorator |
-| `packages/design-system/web/.storybook/preview.ts` | Deletar |
-| `packages/design-system/web/components/index.ts` | Modificar — adicionar 8 exports |
-| `packages/design-system/web/components/Select/Select.tsx` | Criar |
-| `packages/design-system/web/components/Select/index.ts` | Criar |
-| `packages/design-system/web/components/Select/Select.stories.tsx` | Criar |
-| `packages/design-system/web/components/Checkbox/Checkbox.tsx` | Criar |
-| `packages/design-system/web/components/Checkbox/index.ts` | Criar |
-| `packages/design-system/web/components/Checkbox/Checkbox.stories.tsx` | Criar |
-| `packages/design-system/web/components/Radio/Radio.tsx` | Criar |
-| `packages/design-system/web/components/Radio/index.ts` | Criar |
-| `packages/design-system/web/components/Radio/Radio.stories.tsx` | Criar |
-| `packages/design-system/web/components/Dialog/Dialog.tsx` | Criar |
-| `packages/design-system/web/components/Dialog/index.ts` | Criar |
-| `packages/design-system/web/components/Dialog/Dialog.stories.tsx` | Criar |
-| `packages/design-system/web/components/Snackbar/Snackbar.tsx` | Criar |
-| `packages/design-system/web/components/Snackbar/index.ts` | Criar |
-| `packages/design-system/web/components/Snackbar/Snackbar.stories.tsx` | Criar |
-| `packages/design-system/web/components/Card/Card.tsx` | Criar |
-| `packages/design-system/web/components/Card/index.ts` | Criar |
-| `packages/design-system/web/components/Card/Card.stories.tsx` | Criar |
-| `packages/design-system/web/components/AppBar/AppBar.tsx` | Criar |
-| `packages/design-system/web/components/AppBar/index.ts` | Criar |
-| `packages/design-system/web/components/AppBar/AppBar.stories.tsx` | Criar |
-| `packages/design-system/web/components/Menu/Menu.tsx` | Criar |
-| `packages/design-system/web/components/Menu/index.ts` | Criar |
-| `packages/design-system/web/components/Menu/Menu.stories.tsx` | Criar |
+| Arquivo                                                               | Ação                                                       |
+| --------------------------------------------------------------------- | ---------------------------------------------------------- |
+| `packages/design-system/web/package.json`                             | Modificar — adicionar `@mui/icons-material`                |
+| `packages/design-system/web/theme.ts`                                 | Modificar — mapear `@ds/tokens`                            |
+| `packages/design-system/web/.storybook/preview.tsx`                   | Criar — substitui `preview.ts` com ThemeProvider decorator |
+| `packages/design-system/web/.storybook/preview.ts`                    | Deletar                                                    |
+| `packages/design-system/web/components/index.ts`                      | Modificar — adicionar 8 exports                            |
+| `packages/design-system/web/components/Select/Select.tsx`             | Criar                                                      |
+| `packages/design-system/web/components/Select/index.ts`               | Criar                                                      |
+| `packages/design-system/web/components/Select/Select.stories.tsx`     | Criar                                                      |
+| `packages/design-system/web/components/Checkbox/Checkbox.tsx`         | Criar                                                      |
+| `packages/design-system/web/components/Checkbox/index.ts`             | Criar                                                      |
+| `packages/design-system/web/components/Checkbox/Checkbox.stories.tsx` | Criar                                                      |
+| `packages/design-system/web/components/Radio/Radio.tsx`               | Criar                                                      |
+| `packages/design-system/web/components/Radio/index.ts`                | Criar                                                      |
+| `packages/design-system/web/components/Radio/Radio.stories.tsx`       | Criar                                                      |
+| `packages/design-system/web/components/Dialog/Dialog.tsx`             | Criar                                                      |
+| `packages/design-system/web/components/Dialog/index.ts`               | Criar                                                      |
+| `packages/design-system/web/components/Dialog/Dialog.stories.tsx`     | Criar                                                      |
+| `packages/design-system/web/components/Snackbar/Snackbar.tsx`         | Criar                                                      |
+| `packages/design-system/web/components/Snackbar/index.ts`             | Criar                                                      |
+| `packages/design-system/web/components/Snackbar/Snackbar.stories.tsx` | Criar                                                      |
+| `packages/design-system/web/components/Card/Card.tsx`                 | Criar                                                      |
+| `packages/design-system/web/components/Card/index.ts`                 | Criar                                                      |
+| `packages/design-system/web/components/Card/Card.stories.tsx`         | Criar                                                      |
+| `packages/design-system/web/components/AppBar/AppBar.tsx`             | Criar                                                      |
+| `packages/design-system/web/components/AppBar/index.ts`               | Criar                                                      |
+| `packages/design-system/web/components/AppBar/AppBar.stories.tsx`     | Criar                                                      |
+| `packages/design-system/web/components/Menu/Menu.tsx`                 | Criar                                                      |
+| `packages/design-system/web/components/Menu/index.ts`                 | Criar                                                      |
+| `packages/design-system/web/components/Menu/Menu.stories.tsx`         | Criar                                                      |
 
 ---
 
 ## Task 1: Setup — feature branch e dependência
 
 **Files:**
+
 - Modify: `packages/design-system/web/package.json`
 
 - [ ] **Criar feature branch**
@@ -99,13 +100,14 @@ git commit -m "feat(ds-web): add @mui/icons-material dependency"
 ## Task 2: Atualizar `theme.ts` com `@ds/tokens`
 
 **Files:**
+
 - Modify: `packages/design-system/web/theme.ts`
 
 - [ ] **Substituir o conteúdo de `theme.ts`**
 
 ```ts
-import { createTheme } from "@mui/material/styles";
-import { colors, radii } from "@ds/tokens";
+import { createTheme } from '@mui/material/styles';
+import { colors, radii } from '@ds/tokens';
 
 export const theme = createTheme({
   palette: {
@@ -135,7 +137,7 @@ export const theme = createTheme({
     },
   },
   typography: {
-    fontFamily: "inherit",
+    fontFamily: 'inherit',
     fontSize: 14,
   },
   shape: {
@@ -149,7 +151,7 @@ export const theme = createTheme({
       },
       styleOverrides: {
         root: {
-          textTransform: "none",
+          textTransform: 'none',
           fontWeight: 500,
         },
       },
@@ -180,6 +182,7 @@ git commit -m "feat(ds-web): map @ds/tokens to MUI theme"
 ## Task 3: Adicionar ThemeProvider ao Storybook
 
 **Files:**
+
 - Create: `packages/design-system/web/.storybook/preview.tsx`
 - Delete: `packages/design-system/web/.storybook/preview.ts`
 
@@ -194,10 +197,10 @@ rm packages/design-system/web/.storybook/preview.ts
 - [ ] **Criar `packages/design-system/web/.storybook/preview.tsx`**
 
 ```tsx
-import type { Preview, Decorator } from "@storybook/react";
-import { ThemeProvider, CssBaseline } from "@mui/material";
-import { theme } from "../theme";
-import "../styles/globals.css";
+import type { Preview, Decorator } from '@storybook/react';
+import { ThemeProvider, CssBaseline } from '@mui/material';
+import { theme } from '../theme';
+import '../styles/globals.css';
 
 const withTheme: Decorator = (Story) => (
   <ThemeProvider theme={theme}>
@@ -241,6 +244,7 @@ git commit -m "feat(ds-web): wrap Storybook stories with ThemeProvider"
 ## Task 4: Componente `Select`
 
 **Files:**
+
 - Create: `packages/design-system/web/components/Select/Select.tsx`
 - Create: `packages/design-system/web/components/Select/index.ts`
 - Create: `packages/design-system/web/components/Select/Select.stories.tsx`
@@ -255,8 +259,8 @@ import {
   MenuItem,
   Select as MuiSelect,
   type SelectChangeEvent,
-} from "@mui/material";
-import type { SxProps, Theme } from "@mui/material/styles";
+} from '@mui/material';
+import type { SxProps, Theme } from '@mui/material/styles';
 
 interface SelectOption {
   value: string;
@@ -286,7 +290,7 @@ export function Select({
   fullWidth = false,
   sx,
 }: SelectProps) {
-  const labelId = `select-label-${label.replace(/\s+/g, "-").toLowerCase()}`;
+  const labelId = `select-label-${label.replace(/\s+/g, '-').toLowerCase()}`;
 
   const handleChange = (event: SelectChangeEvent) => {
     onChange(event.target.value);
@@ -311,31 +315,31 @@ export function Select({
 - [ ] **Criar `packages/design-system/web/components/Select/index.ts`**
 
 ```ts
-export { Select } from "./Select";
+export { Select } from './Select';
 ```
 
 - [ ] **Criar `packages/design-system/web/components/Select/Select.stories.tsx`**
 
 ```tsx
-import type { Meta, StoryObj } from "@storybook/react";
-import { useState } from "react";
-import { Select } from "./Select";
+import type { Meta, StoryObj } from '@storybook/react';
+import { useState } from 'react';
+import { Select } from './Select';
 
 const OPTIONS = [
-  { value: "ativo", label: "Ativo" },
-  { value: "inativo", label: "Inativo" },
-  { value: "pendente", label: "Pendente" },
+  { value: 'ativo', label: 'Ativo' },
+  { value: 'inativo', label: 'Inativo' },
+  { value: 'pendente', label: 'Pendente' },
 ];
 
 const meta: Meta<typeof Select> = {
-  title: "Components/Select",
+  title: 'Components/Select',
   component: Select,
-  tags: ["autodocs"],
+  tags: ['autodocs'],
   argTypes: {
-    disabled: { control: "boolean" },
-    error: { control: "boolean" },
-    fullWidth: { control: "boolean" },
-    helperText: { control: "text" },
+    disabled: { control: 'boolean' },
+    error: { control: 'boolean' },
+    fullWidth: { control: 'boolean' },
+    helperText: { control: 'text' },
   },
 };
 
@@ -344,26 +348,26 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   render: (args) => {
-    const [value, setValue] = useState("ativo");
+    const [value, setValue] = useState('ativo');
     return <Select {...args} value={value} onChange={setValue} />;
   },
-  args: { label: "Status", options: OPTIONS },
+  args: { label: 'Status', options: OPTIONS },
 };
 
 export const WithError: Story = {
   render: (args) => {
-    const [value, setValue] = useState("");
+    const [value, setValue] = useState('');
     return <Select {...args} value={value} onChange={setValue} />;
   },
-  args: { label: "Status", options: OPTIONS, error: true, helperText: "Campo obrigatório" },
+  args: { label: 'Status', options: OPTIONS, error: true, helperText: 'Campo obrigatório' },
 };
 
 export const Disabled: Story = {
   render: (args) => {
-    const [value, setValue] = useState("ativo");
+    const [value, setValue] = useState('ativo');
     return <Select {...args} value={value} onChange={setValue} />;
   },
-  args: { label: "Status", options: OPTIONS, disabled: true },
+  args: { label: 'Status', options: OPTIONS, disabled: true },
 };
 ```
 
@@ -387,6 +391,7 @@ git commit -m "feat(ds-web): add Select component"
 ## Task 5: Componente `Checkbox`
 
 **Files:**
+
 - Create: `packages/design-system/web/components/Checkbox/Checkbox.tsx`
 - Create: `packages/design-system/web/components/Checkbox/index.ts`
 - Create: `packages/design-system/web/components/Checkbox/Checkbox.stories.tsx`
@@ -394,11 +399,8 @@ git commit -m "feat(ds-web): add Select component"
 - [ ] **Criar `packages/design-system/web/components/Checkbox/Checkbox.tsx`**
 
 ```tsx
-import {
-  Checkbox as MuiCheckbox,
-  FormControlLabel,
-} from "@mui/material";
-import type { SxProps, Theme } from "@mui/material/styles";
+import { Checkbox as MuiCheckbox, FormControlLabel } from '@mui/material';
+import type { SxProps, Theme } from '@mui/material/styles';
 
 interface CheckboxProps {
   label: string;
@@ -437,23 +439,23 @@ export function Checkbox({
 - [ ] **Criar `packages/design-system/web/components/Checkbox/index.ts`**
 
 ```ts
-export { Checkbox } from "./Checkbox";
+export { Checkbox } from './Checkbox';
 ```
 
 - [ ] **Criar `packages/design-system/web/components/Checkbox/Checkbox.stories.tsx`**
 
 ```tsx
-import type { Meta, StoryObj } from "@storybook/react";
-import { useState } from "react";
-import { Checkbox } from "./Checkbox";
+import type { Meta, StoryObj } from '@storybook/react';
+import { useState } from 'react';
+import { Checkbox } from './Checkbox';
 
 const meta: Meta<typeof Checkbox> = {
-  title: "Components/Checkbox",
+  title: 'Components/Checkbox',
   component: Checkbox,
-  tags: ["autodocs"],
+  tags: ['autodocs'],
   argTypes: {
-    disabled: { control: "boolean" },
-    indeterminate: { control: "boolean" },
+    disabled: { control: 'boolean' },
+    indeterminate: { control: 'boolean' },
   },
 };
 
@@ -465,7 +467,7 @@ export const Default: Story = {
     const [checked, setChecked] = useState(false);
     return <Checkbox {...args} checked={checked} onChange={setChecked} />;
   },
-  args: { label: "Aceito os termos" },
+  args: { label: 'Aceito os termos' },
 };
 
 export const Checked: Story = {
@@ -473,7 +475,7 @@ export const Checked: Story = {
     const [checked, setChecked] = useState(true);
     return <Checkbox {...args} checked={checked} onChange={setChecked} />;
   },
-  args: { label: "Aceito os termos" },
+  args: { label: 'Aceito os termos' },
 };
 
 export const Indeterminate: Story = {
@@ -481,7 +483,7 @@ export const Indeterminate: Story = {
     const [checked, setChecked] = useState(false);
     return <Checkbox {...args} checked={checked} onChange={setChecked} />;
   },
-  args: { label: "Selecionar todos", indeterminate: true },
+  args: { label: 'Selecionar todos', indeterminate: true },
 };
 
 export const Disabled: Story = {
@@ -489,7 +491,7 @@ export const Disabled: Story = {
     const [checked, setChecked] = useState(false);
     return <Checkbox {...args} checked={checked} onChange={setChecked} />;
   },
-  args: { label: "Opção desativada", disabled: true },
+  args: { label: 'Opção desativada', disabled: true },
 };
 ```
 
@@ -513,6 +515,7 @@ git commit -m "feat(ds-web): add Checkbox component"
 ## Task 6: Componente `Radio`
 
 **Files:**
+
 - Create: `packages/design-system/web/components/Radio/Radio.tsx`
 - Create: `packages/design-system/web/components/Radio/index.ts`
 - Create: `packages/design-system/web/components/Radio/Radio.stories.tsx`
@@ -526,8 +529,8 @@ import {
   FormLabel,
   Radio as MuiRadio,
   RadioGroup,
-} from "@mui/material";
-import type { SxProps, Theme } from "@mui/material/styles";
+} from '@mui/material';
+import type { SxProps, Theme } from '@mui/material/styles';
 
 interface RadioOption {
   value: string;
@@ -574,29 +577,29 @@ export function Radio({
 - [ ] **Criar `packages/design-system/web/components/Radio/index.ts`**
 
 ```ts
-export { Radio } from "./Radio";
+export { Radio } from './Radio';
 ```
 
 - [ ] **Criar `packages/design-system/web/components/Radio/Radio.stories.tsx`**
 
 ```tsx
-import type { Meta, StoryObj } from "@storybook/react";
-import { useState } from "react";
-import { Radio } from "./Radio";
+import type { Meta, StoryObj } from '@storybook/react';
+import { useState } from 'react';
+import { Radio } from './Radio';
 
 const OPTIONS = [
-  { value: "email", label: "E-mail" },
-  { value: "sms", label: "SMS" },
-  { value: "push", label: "Push notification" },
+  { value: 'email', label: 'E-mail' },
+  { value: 'sms', label: 'SMS' },
+  { value: 'push', label: 'Push notification' },
 ];
 
 const meta: Meta<typeof Radio> = {
-  title: "Components/Radio",
+  title: 'Components/Radio',
   component: Radio,
-  tags: ["autodocs"],
+  tags: ['autodocs'],
   argTypes: {
-    disabled: { control: "boolean" },
-    row: { control: "boolean" },
+    disabled: { control: 'boolean' },
+    row: { control: 'boolean' },
   },
 };
 
@@ -605,26 +608,26 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   render: (args) => {
-    const [value, setValue] = useState("email");
+    const [value, setValue] = useState('email');
     return <Radio {...args} value={value} onChange={setValue} />;
   },
-  args: { label: "Notificações", options: OPTIONS },
+  args: { label: 'Notificações', options: OPTIONS },
 };
 
 export const Row: Story = {
   render: (args) => {
-    const [value, setValue] = useState("email");
+    const [value, setValue] = useState('email');
     return <Radio {...args} value={value} onChange={setValue} />;
   },
-  args: { label: "Notificações", options: OPTIONS, row: true },
+  args: { label: 'Notificações', options: OPTIONS, row: true },
 };
 
 export const Disabled: Story = {
   render: (args) => {
-    const [value, setValue] = useState("email");
+    const [value, setValue] = useState('email');
     return <Radio {...args} value={value} onChange={setValue} />;
   },
-  args: { label: "Notificações", options: OPTIONS, disabled: true },
+  args: { label: 'Notificações', options: OPTIONS, disabled: true },
 };
 ```
 
@@ -648,6 +651,7 @@ git commit -m "feat(ds-web): add Radio component"
 ## Task 7: Componente `Dialog`
 
 **Files:**
+
 - Create: `packages/design-system/web/components/Dialog/Dialog.tsx`
 - Create: `packages/design-system/web/components/Dialog/index.ts`
 - Create: `packages/design-system/web/components/Dialog/Dialog.stories.tsx`
@@ -662,9 +666,9 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-} from "@mui/material";
-import type { SxProps, Theme } from "@mui/material/styles";
-import type { ReactNode } from "react";
+} from '@mui/material';
+import type { SxProps, Theme } from '@mui/material/styles';
+import type { ReactNode } from 'react';
 
 interface DialogProps {
   open: boolean;
@@ -684,8 +688,8 @@ export function Dialog({
   children,
   onClose,
   onConfirm,
-  confirmLabel = "Confirmar",
-  cancelLabel = "Cancelar",
+  confirmLabel = 'Confirmar',
+  cancelLabel = 'Cancelar',
   destructive = false,
   sx,
 }: DialogProps) {
@@ -698,11 +702,7 @@ export function Dialog({
       <DialogActions>
         <Button onClick={onClose}>{cancelLabel}</Button>
         {onConfirm && (
-          <Button
-            onClick={onConfirm}
-            color={destructive ? "error" : "primary"}
-            variant="contained"
-          >
+          <Button onClick={onConfirm} color={destructive ? 'error' : 'primary'} variant="contained">
             {confirmLabel}
           </Button>
         )}
@@ -715,23 +715,23 @@ export function Dialog({
 - [ ] **Criar `packages/design-system/web/components/Dialog/index.ts`**
 
 ```ts
-export { Dialog } from "./Dialog";
+export { Dialog } from './Dialog';
 ```
 
 - [ ] **Criar `packages/design-system/web/components/Dialog/Dialog.stories.tsx`**
 
 ```tsx
-import type { Meta, StoryObj } from "@storybook/react";
-import { useState } from "react";
-import { Button } from "@mui/material";
-import { Dialog } from "./Dialog";
+import type { Meta, StoryObj } from '@storybook/react';
+import { useState } from 'react';
+import { Button } from '@mui/material';
+import { Dialog } from './Dialog';
 
 const meta: Meta<typeof Dialog> = {
-  title: "Components/Dialog",
+  title: 'Components/Dialog',
   component: Dialog,
-  tags: ["autodocs"],
+  tags: ['autodocs'],
   argTypes: {
-    destructive: { control: "boolean" },
+    destructive: { control: 'boolean' },
   },
 };
 
@@ -743,7 +743,9 @@ export const Default: Story = {
     const [open, setOpen] = useState(false);
     return (
       <>
-        <Button variant="outlined" onClick={() => setOpen(true)}>Abrir dialog</Button>
+        <Button variant="outlined" onClick={() => setOpen(true)}>
+          Abrir dialog
+        </Button>
         <Dialog
           {...args}
           open={open}
@@ -754,10 +756,10 @@ export const Default: Story = {
     );
   },
   args: {
-    title: "Confirmar ação",
-    children: "Tem certeza que deseja continuar? Esta ação não pode ser desfeita.",
-    confirmLabel: "Confirmar",
-    cancelLabel: "Cancelar",
+    title: 'Confirmar ação',
+    children: 'Tem certeza que deseja continuar? Esta ação não pode ser desfeita.',
+    confirmLabel: 'Confirmar',
+    cancelLabel: 'Cancelar',
   },
 };
 
@@ -766,7 +768,9 @@ export const Destructive: Story = {
     const [open, setOpen] = useState(false);
     return (
       <>
-        <Button variant="outlined" color="error" onClick={() => setOpen(true)}>Deletar item</Button>
+        <Button variant="outlined" color="error" onClick={() => setOpen(true)}>
+          Deletar item
+        </Button>
         <Dialog
           {...args}
           open={open}
@@ -777,10 +781,10 @@ export const Destructive: Story = {
     );
   },
   args: {
-    title: "Deletar item",
-    children: "Esta ação é permanente. O item será removido e não poderá ser recuperado.",
-    confirmLabel: "Deletar",
-    cancelLabel: "Cancelar",
+    title: 'Deletar item',
+    children: 'Esta ação é permanente. O item será removido e não poderá ser recuperado.',
+    confirmLabel: 'Deletar',
+    cancelLabel: 'Cancelar',
     destructive: true,
   },
 };
@@ -806,6 +810,7 @@ git commit -m "feat(ds-web): add Dialog component"
 ## Task 8: Componente `Snackbar`
 
 **Files:**
+
 - Create: `packages/design-system/web/components/Snackbar/Snackbar.tsx`
 - Create: `packages/design-system/web/components/Snackbar/index.ts`
 - Create: `packages/design-system/web/components/Snackbar/Snackbar.stories.tsx`
@@ -813,10 +818,10 @@ git commit -m "feat(ds-web): add Dialog component"
 - [ ] **Criar `packages/design-system/web/components/Snackbar/Snackbar.tsx`**
 
 ```tsx
-import { Alert, Snackbar as MuiSnackbar } from "@mui/material";
-import type { SxProps, Theme } from "@mui/material/styles";
+import { Alert, Snackbar as MuiSnackbar } from '@mui/material';
+import type { SxProps, Theme } from '@mui/material/styles';
 
-type Severity = "success" | "error" | "warning" | "info";
+type Severity = 'success' | 'error' | 'warning' | 'info';
 
 interface SnackbarProps {
   open: boolean;
@@ -830,7 +835,7 @@ interface SnackbarProps {
 export function Snackbar({
   open,
   message,
-  severity = "info",
+  severity = 'info',
   onClose,
   duration = 6000,
   sx,
@@ -840,13 +845,13 @@ export function Snackbar({
       open={open}
       autoHideDuration={duration}
       onClose={(_e, reason) => {
-        if (reason === "clickaway") return;
+        if (reason === 'clickaway') return;
         onClose();
       }}
-      anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+      anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
       sx={sx}
     >
-      <Alert onClose={onClose} severity={severity} variant="filled" sx={{ width: "100%" }}>
+      <Alert onClose={onClose} severity={severity} variant="filled" sx={{ width: '100%' }}>
         {message}
       </Alert>
     </MuiSnackbar>
@@ -857,25 +862,25 @@ export function Snackbar({
 - [ ] **Criar `packages/design-system/web/components/Snackbar/index.ts`**
 
 ```ts
-export { Snackbar } from "./Snackbar";
+export { Snackbar } from './Snackbar';
 ```
 
 - [ ] **Criar `packages/design-system/web/components/Snackbar/Snackbar.stories.tsx`**
 
 ```tsx
-import type { Meta, StoryObj } from "@storybook/react";
-import { useState } from "react";
-import { Button } from "@mui/material";
-import { Snackbar } from "./Snackbar";
+import type { Meta, StoryObj } from '@storybook/react';
+import { useState } from 'react';
+import { Button } from '@mui/material';
+import { Snackbar } from './Snackbar';
 
 const meta: Meta<typeof Snackbar> = {
-  title: "Components/Snackbar",
+  title: 'Components/Snackbar',
   component: Snackbar,
-  tags: ["autodocs"],
+  tags: ['autodocs'],
   argTypes: {
     severity: {
-      control: "radio",
-      options: ["success", "error", "warning", "info"],
+      control: 'radio',
+      options: ['success', 'error', 'warning', 'info'],
     },
   },
 };
@@ -888,12 +893,14 @@ export const Success: Story = {
     const [open, setOpen] = useState(false);
     return (
       <>
-        <Button variant="outlined" onClick={() => setOpen(true)}>Mostrar notificação</Button>
+        <Button variant="outlined" onClick={() => setOpen(true)}>
+          Mostrar notificação
+        </Button>
         <Snackbar {...args} open={open} onClose={() => setOpen(false)} />
       </>
     );
   },
-  args: { message: "Operação realizada com sucesso!", severity: "success" },
+  args: { message: 'Operação realizada com sucesso!', severity: 'success' },
 };
 
 export const Error: Story = {
@@ -901,12 +908,14 @@ export const Error: Story = {
     const [open, setOpen] = useState(false);
     return (
       <>
-        <Button variant="outlined" onClick={() => setOpen(true)}>Mostrar erro</Button>
+        <Button variant="outlined" onClick={() => setOpen(true)}>
+          Mostrar erro
+        </Button>
         <Snackbar {...args} open={open} onClose={() => setOpen(false)} />
       </>
     );
   },
-  args: { message: "Ocorreu um erro. Tente novamente.", severity: "error" },
+  args: { message: 'Ocorreu um erro. Tente novamente.', severity: 'error' },
 };
 
 export const Warning: Story = {
@@ -914,12 +923,14 @@ export const Warning: Story = {
     const [open, setOpen] = useState(false);
     return (
       <>
-        <Button variant="outlined" onClick={() => setOpen(true)}>Mostrar aviso</Button>
+        <Button variant="outlined" onClick={() => setOpen(true)}>
+          Mostrar aviso
+        </Button>
         <Snackbar {...args} open={open} onClose={() => setOpen(false)} />
       </>
     );
   },
-  args: { message: "Atenção: esta ação afeta outros registros.", severity: "warning" },
+  args: { message: 'Atenção: esta ação afeta outros registros.', severity: 'warning' },
 };
 
 export const Info: Story = {
@@ -927,12 +938,14 @@ export const Info: Story = {
     const [open, setOpen] = useState(false);
     return (
       <>
-        <Button variant="outlined" onClick={() => setOpen(true)}>Mostrar info</Button>
+        <Button variant="outlined" onClick={() => setOpen(true)}>
+          Mostrar info
+        </Button>
         <Snackbar {...args} open={open} onClose={() => setOpen(false)} />
       </>
     );
   },
-  args: { message: "Atualização disponível. Recarregue a página.", severity: "info" },
+  args: { message: 'Atualização disponível. Recarregue a página.', severity: 'info' },
 };
 ```
 
@@ -956,6 +969,7 @@ git commit -m "feat(ds-web): add Snackbar component"
 ## Task 9: Componente `Card`
 
 **Files:**
+
 - Create: `packages/design-system/web/components/Card/Card.tsx`
 - Create: `packages/design-system/web/components/Card/index.ts`
 - Create: `packages/design-system/web/components/Card/Card.stories.tsx`
@@ -963,15 +977,9 @@ git commit -m "feat(ds-web): add Snackbar component"
 - [ ] **Criar `packages/design-system/web/components/Card/Card.tsx`**
 
 ```tsx
-import {
-  Card as MuiCard,
-  CardActions,
-  CardContent,
-  CardHeader,
-  CardMedia,
-} from "@mui/material";
-import type { SxProps, Theme } from "@mui/material/styles";
-import type { ReactNode } from "react";
+import { Card as MuiCard, CardActions, CardContent, CardHeader, CardMedia } from '@mui/material';
+import type { SxProps, Theme } from '@mui/material/styles';
+import type { ReactNode } from 'react';
 
 interface CardProps {
   title?: string;
@@ -987,12 +995,7 @@ export function Card({ title, subtitle, children, actions, media, sx }: CardProp
     <MuiCard sx={sx}>
       {(title || subtitle) && <CardHeader title={title} subheader={subtitle} />}
       {media && (
-        <CardMedia
-          component="img"
-          height={media.height ?? 194}
-          image={media.src}
-          alt={media.alt}
-        />
+        <CardMedia component="img" height={media.height ?? 194} image={media.src} alt={media.alt} />
       )}
       {children && <CardContent>{children}</CardContent>}
       {actions && <CardActions>{actions}</CardActions>}
@@ -1004,20 +1007,20 @@ export function Card({ title, subtitle, children, actions, media, sx }: CardProp
 - [ ] **Criar `packages/design-system/web/components/Card/index.ts`**
 
 ```ts
-export { Card } from "./Card";
+export { Card } from './Card';
 ```
 
 - [ ] **Criar `packages/design-system/web/components/Card/Card.stories.tsx`**
 
 ```tsx
-import type { Meta, StoryObj } from "@storybook/react";
-import { Button, Typography } from "@mui/material";
-import { Card } from "./Card";
+import type { Meta, StoryObj } from '@storybook/react';
+import { Button, Typography } from '@mui/material';
+import { Card } from './Card';
 
 const meta: Meta<typeof Card> = {
-  title: "Components/Card",
+  title: 'Components/Card',
   component: Card,
-  tags: ["autodocs"],
+  tags: ['autodocs'],
 };
 
 export default meta;
@@ -1025,8 +1028,8 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    title: "Título do card",
-    subtitle: "Subtítulo opcional",
+    title: 'Título do card',
+    subtitle: 'Subtítulo opcional',
     children: (
       <Typography variant="body2" color="text.secondary">
         Conteúdo do card. Pode conter texto, listas ou qualquer elemento React.
@@ -1037,8 +1040,8 @@ export const Default: Story = {
 
 export const WithActions: Story = {
   args: {
-    title: "Card com ações",
-    subtitle: "Última atualização: hoje",
+    title: 'Card com ações',
+    subtitle: 'Última atualização: hoje',
     children: (
       <Typography variant="body2" color="text.secondary">
         Este card possui botões de ação na parte inferior.
@@ -1047,7 +1050,9 @@ export const WithActions: Story = {
     actions: (
       <>
         <Button size="small">Ver mais</Button>
-        <Button size="small" color="error">Remover</Button>
+        <Button size="small" color="error">
+          Remover
+        </Button>
       </>
     ),
   },
@@ -1055,11 +1060,11 @@ export const WithActions: Story = {
 
 export const WithMedia: Story = {
   args: {
-    title: "Card com imagem",
-    subtitle: "Foto de capa",
+    title: 'Card com imagem',
+    subtitle: 'Foto de capa',
     media: {
-      src: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400",
-      alt: "Montanha ao amanhecer",
+      src: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400',
+      alt: 'Montanha ao amanhecer',
       height: 160,
     },
     children: (
@@ -1091,6 +1096,7 @@ git commit -m "feat(ds-web): add Card component"
 ## Task 10: Componente `AppBar`
 
 **Files:**
+
 - Create: `packages/design-system/web/components/AppBar/AppBar.tsx`
 - Create: `packages/design-system/web/components/AppBar/index.ts`
 - Create: `packages/design-system/web/components/AppBar/AppBar.stories.tsx`
@@ -1098,32 +1104,20 @@ git commit -m "feat(ds-web): add Card component"
 - [ ] **Criar `packages/design-system/web/components/AppBar/AppBar.tsx`**
 
 ```tsx
-import {
-  AppBar as MuiAppBar,
-  Box,
-  IconButton,
-  Toolbar,
-  Typography,
-} from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
-import type { SxProps, Theme } from "@mui/material/styles";
-import type { ReactNode } from "react";
+import { AppBar as MuiAppBar, Box, IconButton, Toolbar, Typography } from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
+import type { SxProps, Theme } from '@mui/material/styles';
+import type { ReactNode } from 'react';
 
 interface AppBarProps {
   title: string;
   onMenuClick?: () => void;
   actions?: ReactNode;
-  position?: "static" | "sticky" | "fixed";
+  position?: 'static' | 'sticky' | 'fixed';
   sx?: SxProps<Theme>;
 }
 
-export function AppBar({
-  title,
-  onMenuClick,
-  actions,
-  position = "static",
-  sx,
-}: AppBarProps) {
+export function AppBar({ title, onMenuClick, actions, position = 'static', sx }: AppBarProps) {
   return (
     <MuiAppBar position={position} sx={sx}>
       <Toolbar>
@@ -1152,24 +1146,24 @@ export function AppBar({
 - [ ] **Criar `packages/design-system/web/components/AppBar/index.ts`**
 
 ```ts
-export { AppBar } from "./AppBar";
+export { AppBar } from './AppBar';
 ```
 
 - [ ] **Criar `packages/design-system/web/components/AppBar/AppBar.stories.tsx`**
 
 ```tsx
-import type { Meta, StoryObj } from "@storybook/react";
-import { Button } from "@mui/material";
-import { AppBar } from "./AppBar";
+import type { Meta, StoryObj } from '@storybook/react';
+import { Button } from '@mui/material';
+import { AppBar } from './AppBar';
 
 const meta: Meta<typeof AppBar> = {
-  title: "Components/AppBar",
+  title: 'Components/AppBar',
   component: AppBar,
-  tags: ["autodocs"],
+  tags: ['autodocs'],
   argTypes: {
     position: {
-      control: "radio",
-      options: ["static", "sticky", "fixed"],
+      control: 'radio',
+      options: ['static', 'sticky', 'fixed'],
     },
   },
 };
@@ -1178,22 +1172,27 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  args: { title: "Minha Aplicação" },
+  args: { title: 'Minha Aplicação' },
 };
 
 export const WithMenuButton: Story = {
   args: {
-    title: "Dashboard",
-    onMenuClick: () => alert("Menu clicado"),
+    title: 'Dashboard',
+    onMenuClick: () => alert('Menu clicado'),
   },
 };
 
 export const WithActions: Story = {
   args: {
-    title: "Dashboard",
-    onMenuClick: () => alert("Menu clicado"),
+    title: 'Dashboard',
+    onMenuClick: () => alert('Menu clicado'),
     actions: (
-      <Button color="inherit" variant="outlined" size="small" sx={{ borderColor: "rgba(255,255,255,0.5)" }}>
+      <Button
+        color="inherit"
+        variant="outlined"
+        size="small"
+        sx={{ borderColor: 'rgba(255,255,255,0.5)' }}
+      >
         Login
       </Button>
     ),
@@ -1221,6 +1220,7 @@ git commit -m "feat(ds-web): add AppBar component"
 ## Task 11: Componente `Menu`
 
 **Files:**
+
 - Create: `packages/design-system/web/components/Menu/Menu.tsx`
 - Create: `packages/design-system/web/components/Menu/index.ts`
 - Create: `packages/design-system/web/components/Menu/Menu.stories.tsx`
@@ -1228,16 +1228,16 @@ git commit -m "feat(ds-web): add AppBar component"
 - [ ] **Criar `packages/design-system/web/components/Menu/Menu.tsx`**
 
 ```tsx
-import React from "react";
+import React from 'react';
 import {
   Divider,
   ListItemIcon,
   ListItemText,
   Menu as MuiMenu,
   MenuItem as MuiMenuItem,
-} from "@mui/material";
-import type { SxProps, Theme } from "@mui/material/styles";
-import type { ReactNode } from "react";
+} from '@mui/material';
+import type { SxProps, Theme } from '@mui/material/styles';
+import type { ReactNode } from 'react';
 
 interface MenuItemConfig {
   label: string;
@@ -1281,24 +1281,24 @@ export function Menu({ anchorEl, open, onClose, items, sx }: MenuProps) {
 - [ ] **Criar `packages/design-system/web/components/Menu/index.ts`**
 
 ```ts
-export { Menu } from "./Menu";
+export { Menu } from './Menu';
 ```
 
 - [ ] **Criar `packages/design-system/web/components/Menu/Menu.stories.tsx`**
 
 ```tsx
-import type { Meta, StoryObj } from "@storybook/react";
-import { useState } from "react";
-import { Button } from "@mui/material";
-import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import { Menu } from "./Menu";
+import type { Meta, StoryObj } from '@storybook/react';
+import { useState } from 'react';
+import { Button } from '@mui/material';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { Menu } from './Menu';
 
 const meta: Meta<typeof Menu> = {
-  title: "Components/Menu",
+  title: 'Components/Menu',
   component: Menu,
-  tags: ["autodocs"],
+  tags: ['autodocs'],
 };
 
 export default meta;
@@ -1323,9 +1323,14 @@ export const Default: Story = {
   },
   args: {
     items: [
-      { label: "Editar", onClick: () => alert("Editar"), icon: <EditIcon fontSize="small" /> },
-      { label: "Copiar", onClick: () => alert("Copiar"), icon: <ContentCopyIcon fontSize="small" />, dividerAfter: true },
-      { label: "Excluir", onClick: () => alert("Excluir"), icon: <DeleteIcon fontSize="small" /> },
+      { label: 'Editar', onClick: () => alert('Editar'), icon: <EditIcon fontSize="small" /> },
+      {
+        label: 'Copiar',
+        onClick: () => alert('Copiar'),
+        icon: <ContentCopyIcon fontSize="small" />,
+        dividerAfter: true,
+      },
+      { label: 'Excluir', onClick: () => alert('Excluir'), icon: <DeleteIcon fontSize="small" /> },
     ],
   },
 };
@@ -1349,9 +1354,9 @@ export const WithDisabledItem: Story = {
   },
   args: {
     items: [
-      { label: "Editar", onClick: () => alert("Editar"), icon: <EditIcon fontSize="small" /> },
-      { label: "Publicar", onClick: () => alert("Publicar"), disabled: true },
-      { label: "Excluir", onClick: () => alert("Excluir"), icon: <DeleteIcon fontSize="small" /> },
+      { label: 'Editar', onClick: () => alert('Editar'), icon: <EditIcon fontSize="small" /> },
+      { label: 'Publicar', onClick: () => alert('Publicar'), disabled: true },
+      { label: 'Excluir', onClick: () => alert('Excluir'), icon: <DeleteIcon fontSize="small" /> },
     ],
   },
 };
@@ -1377,21 +1382,22 @@ git commit -m "feat(ds-web): add Menu component"
 ## Task 12: Atualizar `components/index.ts` e verificação final
 
 **Files:**
+
 - Modify: `packages/design-system/web/components/index.ts`
 
 - [ ] **Substituir o conteúdo de `packages/design-system/web/components/index.ts`**
 
 ```ts
-export { AppBar }  from "./AppBar";
-export { Button }  from "./Button";
-export { Card }    from "./Card";
-export { Checkbox } from "./Checkbox";
-export { Dialog }  from "./Dialog";
-export { Input }   from "./Input";
-export { Menu }    from "./Menu";
-export { Radio }   from "./Radio";
-export { Select }  from "./Select";
-export { Snackbar } from "./Snackbar";
+export { AppBar } from './AppBar';
+export { Button } from './Button';
+export { Card } from './Card';
+export { Checkbox } from './Checkbox';
+export { Dialog } from './Dialog';
+export { Input } from './Input';
+export { Menu } from './Menu';
+export { Radio } from './Radio';
+export { Select } from './Select';
+export { Snackbar } from './Snackbar';
 ```
 
 - [ ] **Verificação final de tipos**
