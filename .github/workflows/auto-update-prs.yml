@@ -22,8 +22,9 @@ jobs:
             --repo ${{ github.repository }} \
             --base main \
             --state open \
-            --json number \
-            --jq '.[].number' | while read pr; do
+            --json number,headRefName \
+            --jq '.[] | select(.headRefName != "changeset-release/main") | .number' \
+          | while read pr; do
               echo "Updating PR #$pr..."
               gh pr update-branch "$pr" \
                 --repo ${{ github.repository }} || \

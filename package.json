@@ -8,9 +8,12 @@
     "format": "prettier --write \"**/*.{ts,tsx,js,mjs,cjs,json,md,css}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,mjs,cjs,json,md,css}\"",
     "check-types": "turbo run check-types",
-    "prepare": "husky"
+    "prepare": "husky",
+    "changeset": "changeset",
+    "version-packages": "changeset version"
   },
   "devDependencies": {
+    "@changesets/cli": "^2.27.12",
     "@babel/plugin-transform-flow-strip-types": "^7.27.1",
     "@babel/preset-env": "^7.29.2",
     "@babel/preset-react": "^7.28.5",
