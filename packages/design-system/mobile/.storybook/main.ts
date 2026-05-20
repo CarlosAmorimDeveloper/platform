@@ -46,11 +46,17 @@ const config: StorybookConfig = {
           'react-native': 'react-native-web',
         },
       },
-      // react-native-web lives in this package's local node_modules (not hoisted).
-      // Pre-bundling it here ensures Vite can resolve it when react-native-paper
-      // (which lives in the root node_modules) imports it.
       optimizeDeps: {
+        // Pre-bundle react-native-web so Rollup finds it from root node_modules
+        // (react-native-paper lives there and traverses up the tree).
         include: ['react-native-web'],
+        // Keep safe-area-context out of esbuild pre-bundling.
+        // Its specs/ files import codegenNativeComponent via the react-native alias;
+        // esbuild doesn't run Vite plugins so the virtual-module stub never fires
+        // and the aliased path is treated as a literal file that doesn't exist.
+        // Excluding it forces resolution through Vite's plugin pipeline at request
+        // time, where codegenStubPlugin can intercept the import correctly.
+        exclude: ['react-native-safe-area-context'],
       },
     });
   },
