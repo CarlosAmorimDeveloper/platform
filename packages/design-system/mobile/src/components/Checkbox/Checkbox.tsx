@@ -19,6 +19,13 @@ export function Checkbox({
   testID,
   accessibilityLabel,
 }: CheckboxProps) {
+  /*
+   * Dual-disable pattern:
+   *   - `disabled` on TouchableRipple: provides visual feedback (greyed-out appearance)
+   *   - `onPress` guard: ensures onValueChange is never called when disabled,
+   *     covering test environments where TouchableRipple's disabled prop may not
+   *     suppress the press handler.
+   */
   return (
     <TouchableRipple
       onPress={disabled ? undefined : () => onValueChange(!checked)}
@@ -30,7 +37,9 @@ export function Checkbox({
     >
       <View style={styles.container}>
         <Text>{label}</Text>
-        <PaperCheckbox.Android status={checked ? 'checked' : 'unchecked'} disabled={disabled} />
+        {/* PaperCheckbox (no .Android) is the platform-adaptive variant — renders
+            Material on Android and Cupertino-style on iOS */}
+        <PaperCheckbox status={checked ? 'checked' : 'unchecked'} disabled={disabled} />
       </View>
     </TouchableRipple>
   );
