@@ -55,7 +55,13 @@
     ],
     "nohoist": [
       "todo-app/scheduler",
-      "todo-app/scheduler/**"
+      "todo-app/scheduler/**",
+      "@app/tickets/react",
+      "@app/tickets/react/**",
+      "@app/tickets/react-native",
+      "@app/tickets/react-native/**",
+      "@app/tickets/react-dom",
+      "@app/tickets/react-dom/**"
     ]
   },
   "dependencies": {
