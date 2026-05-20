@@ -4,31 +4,51 @@
   "private": true,
   "main": "src/index.ts",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./theme": "./src/theme.ts"
   },
   "scripts": {
     "test": "jest",
     "check-types": "tsc --noEmit",
-    "lint": "eslint . --max-warnings 0"
+    "lint": "eslint . --max-warnings 0",
+    "storybook": "storybook dev -p 6007",
+    "build-storybook": "storybook build"
   },
   "dependencies": {
-    "@ds/tokens": "*"
+    "@ds/tokens": "*",
+    "react-native-paper": "^5"
   },
   "devDependencies": {
     "@repo/eslint-config": "*",
     "@repo/typescript-config": "*",
+    "@storybook/addon-essentials": "^8",
+    "@storybook/react": "^8",
+    "@storybook/react-vite": "^8",
+    "@testing-library/react-native": "^12",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
     "@types/react-native": "*",
+    "@types/react-test-renderer": "^19",
     "eslint": "^9",
     "globals": "*",
     "jiti": "^1.21.0",
     "nativewind": "^4.0.36",
+    "react": "^19",
+    "react-dom": "^19",
     "react-native": ">=0.72",
+    "react-native-safe-area-context": "^4",
+    "react-native-web": "^0.19",
+    "react-test-renderer": "^19",
+    "storybook": "^8",
     "tailwindcss": "^3.4.17",
-    "typescript": "5.9.2"
+    "typescript": "5.9.2",
+    "vite": "^6"
   },
   "peerDependencies": {
     "nativewind": "^4.0.36",
     "react": ">=18",
-    "react-native": ">=0.72"
+    "react-native": ">=0.72",
+    "react-native-paper": "^5",
+    "react-native-safe-area-context": "^4"
   }
 }
