@@ -1,6 +1,22 @@
 # @ds/tokens
 
+[![TypeScript][typescript-shield]][typescript-url]
+
 Tokens de design do monorepo `platform`. Exporta constantes TypeScript tipadas e variáveis CSS para cores, espaçamentos, tamanhos de fonte e raios de borda.
+
+## Índice
+
+- [Construído com](#construído-com)
+- [Instalação](#instalação)
+- [Tokens disponíveis](#tokens-disponíveis)
+- [Uso no React Native](#uso-no-react-native)
+- [Scripts](#scripts)
+- [Contribuindo](#contribuindo)
+- [Licença](#licença)
+
+## Construído com
+
+[![TypeScript][typescript-shield]][typescript-url]
 
 ## Instalação
 
@@ -128,3 +144,20 @@ Consulte [`packages/design-system/mobile`](../mobile/README.md) para mais detalh
 | Comando            | Descrição                       |
 | ------------------ | ------------------------------- |
 | `yarn check-types` | Verificação de tipos TypeScript |
+
+## Contribuindo
+
+Consulte o [README raiz do monorepo](../../README.md) para instruções de configuração e fluxo de contribuição. Ao alterar tokens, lembre-se de criar um changeset:
+
+```sh
+yarn changeset
+```
+
+## Licença
+
+Uso interno — repositório privado.
+
+---
+
+[typescript-shield]: https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white
+[typescript-url]: https://www.typescriptlang.org

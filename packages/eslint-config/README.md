@@ -1,6 +1,24 @@
 # @repo/eslint-config
 
+[![ESLint][eslint-shield]][eslint-url]
+[![TypeScript][typescript-shield]][typescript-url]
+
 Configurações ESLint compartilhadas do monorepo `platform`. Fornece três configurações prontas para uso com ESLint v9 (flat config).
+
+## Índice
+
+- [Construído com](#construído-com)
+- [Configurações disponíveis](#configurações-disponíveis)
+- [Uso](#uso)
+- [Plugins incluídos](#plugins-incluídos)
+- [Contribuindo](#contribuindo)
+- [Licença](#licença)
+
+## Construído com
+
+[![ESLint][eslint-shield]][eslint-url]
+[![TypeScript][typescript-shield]][typescript-url]
+[![Prettier][prettier-shield]][prettier-url]
 
 ## Configurações disponíveis
 
@@ -48,3 +66,20 @@ export default baseConfig;
 - `eslint-plugin-turbo` — regras para variáveis de ambiente do Turborepo
 - `eslint-config-prettier` — desativa regras que conflitam com Prettier
 - `eslint-plugin-only-warn` — converte erros em warnings (útil em desenvolvimento)
+
+## Contribuindo
+
+Consulte o [README raiz do monorepo](../../README.md) para instruções de configuração e fluxo de contribuição.
+
+## Licença
+
+Uso interno — repositório privado.
+
+---
+
+[eslint-shield]: https://img.shields.io/badge/ESLint-4B32C3?style=for-the-badge&logo=eslint&logoColor=white
+[eslint-url]: https://eslint.org
+[typescript-shield]: https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white
+[typescript-url]: https://www.typescriptlang.org
+[prettier-shield]: https://img.shields.io/badge/Prettier-F7B93E?style=for-the-badge&logo=prettier&logoColor=black
+[prettier-url]: https://prettier.io

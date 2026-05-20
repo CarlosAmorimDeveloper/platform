@@ -1,6 +1,30 @@
 # @ds/web
 
+[![Storybook][storybook-shield]][storybook-url]
+[![Chromatic][chromatic-shield]][chromatic-url]
+[![React][react-shield]][react-url]
+[![TypeScript][typescript-shield]][typescript-url]
+
 Pacote de componentes React do Design System. Parte do monorepo `platform`, em `packages/design-system/web`.
+
+## Índice
+
+- [Construído com](#construído-com)
+- [Componentes](#componentes)
+- [Storybook](#storybook)
+- [Chromatic](#chromatic)
+- [Scripts](#scripts)
+- [Adicionando componentes](#adicionando-componentes)
+- [Contribuindo](#contribuindo)
+- [Licença](#licença)
+
+## Construído com
+
+[![React][react-shield]][react-url]
+[![Tailwind CSS][tailwind-shield]][tailwind-url]
+[![TypeScript][typescript-shield]][typescript-url]
+[![Storybook][storybook-shield]][storybook-url]
+[![Chromatic][chromatic-shield]][chromatic-url]
 
 ## Componentes
 
@@ -123,3 +147,28 @@ yarn generate:component
 ```
 
 O generator cria a estrutura padrão (`Component.tsx`, `Component.module.scss`, `index.ts`, `Component.stories.tsx`) em `components/<Nome>/`.
+
+## Contribuindo
+
+Consulte o [README raiz do monorepo](../../README.md) para instruções de configuração e fluxo de contribuição. Ao adicionar ou alterar componentes, lembre-se de criar um changeset:
+
+```sh
+yarn changeset
+```
+
+## Licença
+
+Uso interno — repositório privado.
+
+---
+
+[storybook-shield]: https://img.shields.io/badge/Storybook-FF4785?style=for-the-badge&logo=storybook&logoColor=white
+[storybook-url]: https://69ec244d49e023068a441802-efkfuzwurv.chromatic.com/?path=/docs/components-button--docs
+[chromatic-shield]: https://img.shields.io/badge/Chromatic-FC521F?style=for-the-badge&logo=chromatic&logoColor=white
+[chromatic-url]: https://www.chromatic.com/setup?appId=69ec244d49e023068a441802
+[react-shield]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
+[react-url]: https://react.dev
+[typescript-shield]: https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white
+[typescript-url]: https://www.typescriptlang.org
+[tailwind-shield]: https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white
+[tailwind-url]: https://tailwindcss.com
