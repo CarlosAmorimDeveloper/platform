@@ -1,4 +1,4 @@
-import React from 'react';
+import type { ReactNode } from 'react';
 import { Pressable, Text, type PressableProps } from 'react-native';
 import { getContainerClasses, getTextClasses } from './button-classes';
 
@@ -8,7 +8,7 @@ type Size = 'md' | 'sm';
 export interface ButtonProps {
   variant?: Variant;
   size?: Size;
-  children?: React.ReactNode;
+  children?: ReactNode;
   disabled?: boolean;
   onPress?: PressableProps['onPress'];
   className?: string;
