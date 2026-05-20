@@ -97,11 +97,47 @@ export default MCIcons;`;
 function makeViteIconPlugin(stub: string): Plugin {
   return {
     name: 'react-native-vector-icons-web',
+    enforce: 'pre',
     resolveId(id) {
-      if (ICON_MODULE_IDS.includes(id)) return '\0rnvi-mci';
+      if (ICON_MODULE_IDS.includes(id) || id === 'virtual:rnvi-mci') return '\0rnvi-mci';
     },
     load(id) {
       if (id === '\0rnvi-mci') return stub;
+    },
+    // In the production Rollup build, MaterialCommunityIcon.js from react-native-paper
+    // is an ESM file that contains require() calls inside loadIconModule(). Because the
+    // file is ESM, @rollup/plugin-commonjs skips those require() calls — they become
+    // runtime require() that fail in the browser → FallbackIcon (□).
+    // We rewrite loadIconModule() to return our MCIcons stub instead.
+    transform(code, id) {
+      if (
+        !id.includes('react-native-paper') ||
+        !id.includes('MaterialCommunityIcon') ||
+        id.endsWith('.map')
+      ) {
+        return;
+      }
+      const fnMarker = 'const loadIconModule = () => {';
+      const fnStart = code.indexOf(fnMarker);
+      if (fnStart === -1) return;
+      let depth = 0;
+      let i = fnStart;
+      while (i < code.length) {
+        if (code[i] === '{') depth++;
+        else if (code[i] === '}') {
+          depth--;
+          if (depth === 0) {
+            const fnEnd = code[i + 1] === ';' ? i + 2 : i + 1;
+            const transformed =
+              `import _MCIcons from 'virtual:rnvi-mci';\n` +
+              code.slice(0, fnStart) +
+              `const loadIconModule = () => _MCIcons;` +
+              code.slice(fnEnd);
+            return { code: transformed, map: null };
+          }
+        }
+        i++;
+      }
     },
   };
 }
