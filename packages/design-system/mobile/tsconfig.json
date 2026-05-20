@@ -4,7 +4,7 @@
   "compilerOptions": {
     "outDir": "dist",
     "rootDir": "src",
-    "lib": ["ES2022"],
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "types": ["react-native", "nativewind/types"]
   },
   "include": ["src"],
