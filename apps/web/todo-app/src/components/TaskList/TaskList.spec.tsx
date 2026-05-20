@@ -1,7 +1,8 @@
 import { render, screen } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
-import { taskReducer, Task } from "@/redux/taskSlice";
+import { taskReducer } from "@/redux/taskSlice";
+import type { Task } from "@/redux/taskSlice";
 import { TaskList } from "./TaskList";
 
 function makeStore(tasks: Task[] = []) {

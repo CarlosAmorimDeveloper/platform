@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { addTask, editTask, Task } from "@/redux/taskSlice";
-import { AppDispatch } from "@/redux/store";
+import { addTask, editTask } from "@/redux/taskSlice";
+import type { Task } from "@/redux/taskSlice";
+import type { AppDispatch } from "@/redux/store";
 import Stack from "@mui/material/Stack";
 import { Button } from "@ds/web/components/Button";
 import { Input } from "@ds/web/components/Input";

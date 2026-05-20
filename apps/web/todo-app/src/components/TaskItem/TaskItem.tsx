@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { toggleTask, editTask, removeTask, Task } from "@/redux/taskSlice";
-import { AppDispatch } from "@/redux/store";
+import { toggleTask, editTask, removeTask } from "@/redux/taskSlice";
+import type { Task } from "@/redux/taskSlice";
+import type { AppDispatch } from "@/redux/store";
 import ListItem from "@mui/material/ListItem";
 import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
