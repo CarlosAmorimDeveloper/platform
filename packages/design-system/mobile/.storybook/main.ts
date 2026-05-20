@@ -4,17 +4,16 @@ import type { StorybookConfig } from '@storybook/react-vite';
 import type { Plugin } from 'vite';
 
 // ---------------------------------------------------------------------------
-// Embed MaterialCommunityIcons font as base64 for reliable @font-face injection.
-// Reading at config-load time avoids any dev-server / staticDirs path issues.
+// Locate the react-native-vector-icons Fonts directory so Storybook can serve
+// MaterialCommunityIcons.ttf as a static file at /fonts/. Using staticDirs
+// instead of a base64 data URL avoids embedding ~1.5 MB of inline content in
+// iframe.html, which can cause Chromatic to time out loading the preview iframe.
 // ---------------------------------------------------------------------------
-let mciFontBase64 = '';
+let fontStaticDir: { from: string; to: string } | null = null;
 for (const root of [process.cwd(), path.resolve(process.cwd(), '../../..')]) {
-  const candidate = path.join(
-    root,
-    'node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf',
-  );
+  const candidate = path.join(root, 'node_modules/react-native-vector-icons/Fonts');
   if (fs.existsSync(candidate)) {
-    mciFontBase64 = fs.readFileSync(candidate).toString('base64');
+    fontStaticDir = { from: candidate, to: '/fonts' };
     break;
   }
 }
@@ -114,13 +113,11 @@ const config: StorybookConfig = {
   stories: ['../src/**/*.stories.@(ts|tsx)'],
   addons: ['@storybook/addon-essentials'],
   framework: { name: '@storybook/react-vite', options: {} },
-  // Inject MaterialCommunityIcons @font-face as a base64 data URL so it works
-  // in both the dev server and the Chromatic production build without any static
-  // file serving configuration.
-  previewHead: (head) =>
-    mciFontBase64
-      ? `${head}<style>@font-face{font-family:"MaterialCommunityIcons";src:url("data:font/ttf;base64,${mciFontBase64}") format("truetype");font-display:block;}</style>`
-      : head,
+  // Serve the Fonts directory as /fonts/ so preview-head.html can reference
+  // MaterialCommunityIcons.ttf via a normal URL instead of a base64 data URI.
+  // A data URI embeds ~1.5 MB inline in iframe.html, which can cause Chromatic
+  // to time out while the preview iframe loads.
+  staticDirs: fontStaticDir ? [fontStaticDir] : [],
   // react-docgen-typescript avoids invoking Babel, which would pick up
   // babel.config.js referencing metro-react-native-babel-preset.
   typescript: { reactDocgen: 'react-docgen-typescript' },
