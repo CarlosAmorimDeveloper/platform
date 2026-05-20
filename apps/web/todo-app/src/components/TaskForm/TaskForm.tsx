@@ -19,7 +19,7 @@ export function TaskForm({ task, onDone }: TaskFormProps) {
   const [value, setValue] = useState(task?.title ?? "");
   const isEditing = !!task;
 
-  function handleSubmit(e: React.FormEvent) {
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const trimmed = value.trim();
     if (!trimmed) return;
