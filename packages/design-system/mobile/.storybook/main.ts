@@ -1,12 +1,13 @@
 import type { StorybookConfig } from '@storybook/react-vite';
 import type { Plugin } from 'vite';
 
-// Virtual module that stubs react-native codegen APIs absent from react-native-web.
-// Libraries like react-native-safe-area-context import these paths; in a browser
-// context the native-component registration is a no-op.
-// Vite's alias resolver runs before plugin resolveId hooks, so by the time
-// our plugin sees the import, 'react-native' is already 'react-native-web'.
-// Match both forms to be safe.
+// ---------------------------------------------------------------------------
+// Stub: react-native codegen APIs absent from react-native-web
+// ---------------------------------------------------------------------------
+// react-native-safe-area-context imports 'react-native/Libraries/Utilities/codegenNativeComponent'.
+// Vite's alias rewrites 'react-native' → 'react-native-web' before plugin resolveId runs,
+// so we match the aliased form too. The returned component must forward props.children
+// so SafeAreaProvider renders its subtree correctly.
 const codegenStubPlugin: Plugin = {
   name: 'react-native-codegen-stub',
   resolveId(id) {
@@ -16,50 +17,149 @@ const codegenStubPlugin: Plugin = {
   },
   load(id) {
     if (id === '\0react-native-codegen-stub') {
-      // Must return a component function, not null — callers do:
-      //   export default codegenNativeComponent('RNCSafeAreaProvider')
-      // and React renders the result. Returning null causes error #130.
-      // The component returned here IS rendered by callers such as SafeAreaProvider:
-      //   <NativeSafeAreaProvider>{children}</NativeSafeAreaProvider>
-      // Returning null discards those children. Pass props.children through instead.
-      return 'export default function codegenNativeComponent(name) { function NativeComponent(props) { return props.children ?? null; } NativeComponent.displayName = name; return NativeComponent; }';
+      return `export default function codegenNativeComponent(name) {
+  function NativeComponent(props) { return props.children ?? null; }
+  NativeComponent.displayName = name;
+  return NativeComponent;
+}`;
     }
   },
 };
 
+// ---------------------------------------------------------------------------
+// Stub: MaterialCommunityIcons for the web
+// ---------------------------------------------------------------------------
+// react-native-paper's MaterialCommunityIcon.js resolves icons via a dynamic
+// require() cascade at module-evaluation time:
+//   loadIconModule() → require('@react-native-vector-icons/...')
+//                     → require('@expo/vector-icons/...')
+//                     → require('react-native-vector-icons/MaterialCommunityIcons')
+//                     → null (FallbackIcon, renders □)
+//
+// The require() calls are processed by esbuild during dep pre-bundling, NOT by
+// the Vite plugin pipeline. We therefore need both:
+//   1. A Vite plugin  → intercepts the imports for Rollup (production build)
+//   2. An esbuild plugin → intercepts them during optimizeDeps pre-bundling (dev server)
+//
+// Both stubs render a <span> using the MaterialCommunityIcons web font (loaded
+// via preview-head.html @font-face) to show the correct glyph for each icon name.
+// The glyph map (icon name → unicode codepoint) is read from the installed
+// react-native-vector-icons package at config-load time and inlined.
+
+const ICON_MODULE_IDS = [
+  '@react-native-vector-icons/material-design-icons',
+  '@expo/vector-icons/MaterialCommunityIcons',
+  'react-native-vector-icons/MaterialCommunityIcons',
+];
+
+function buildIconStub(glyphMapStr: string): string {
+  return `import React from 'react';
+const glyphs = ${glyphMapStr};
+function MCIcons({ name, size, color, style, allowFontScaling, pointerEvents, selectable, testID }) {
+  const code = glyphs[name];
+  const char = code != null ? String.fromCodePoint(code) : '\\u25A1';
+  return React.createElement('span', {
+    'data-testid': testID,
+    style: Object.assign(
+      { fontFamily: 'MaterialCommunityIcons', fontSize: size || 24, color: color || 'black', lineHeight: 1, userSelect: 'none', pointerEvents: pointerEvents || 'none' },
+      style
+    )
+  }, char);
+}
+MCIcons.displayName = 'MCIcons';
+export default MCIcons;`;
+}
+
+function makeViteIconPlugin(stub: string): Plugin {
+  return {
+    name: 'react-native-vector-icons-web',
+    resolveId(id) {
+      if (ICON_MODULE_IDS.includes(id)) return '\0rnvi-mci';
+    },
+    load(id) {
+      if (id === '\0rnvi-mci') return stub;
+    },
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Storybook config
+// ---------------------------------------------------------------------------
 const config: StorybookConfig = {
   stories: ['../src/**/*.stories.@(ts|tsx)'],
   addons: ['@storybook/addon-essentials'],
-  framework: {
-    name: '@storybook/react-vite',
-    options: {},
-  },
-  // Use TypeScript-based prop extraction so react-docgen's Babel parser
-  // never loads babel.config.js (which references metro-react-native-babel-preset)
-  typescript: {
-    reactDocgen: 'react-docgen-typescript',
-  },
+  framework: { name: '@storybook/react-vite', options: {} },
+  // react-docgen-typescript avoids invoking Babel, which would pick up
+  // babel.config.js referencing metro-react-native-babel-preset.
+  typescript: { reactDocgen: 'react-docgen-typescript' },
+
   async viteFinal(config) {
     const { mergeConfig } = await import('vite');
+    const { default: fs } = await import('fs');
+    const { default: path } = await import('path');
+
+    // Read the glyph map from the installed react-native-vector-icons package.
+    // The package is hoisted to the workspace root node_modules, so we try the
+    // current directory first (in case CWD is already workspace root) then
+    // walk up to the monorepo root.
+    let glyphMapStr = '{}';
+    for (const root of [process.cwd(), path.resolve(process.cwd(), '../../..')]) {
+      const p = path.join(
+        root,
+        'node_modules/react-native-vector-icons/glyphmaps/MaterialCommunityIcons.json',
+      );
+      if (fs.existsSync(p)) {
+        glyphMapStr = fs.readFileSync(p, 'utf-8');
+        break;
+      }
+    }
+
+    const iconStub = buildIconStub(glyphMapStr);
+
+    // esbuild filter that matches all three icon library IDs
+    const iconFilter =
+      /@react-native-vector-icons\/|@expo\/vector-icons\/MaterialCommunityIcons|react-native-vector-icons\/MaterialCommunityIcons/;
+
     return mergeConfig(config, {
-      plugins: [codegenStubPlugin],
+      plugins: [makeViteIconPlugin(iconStub), codegenStubPlugin],
       resolve: {
         alias: {
-          // Renders RN components in the browser via react-native-web
+          // Render React Native components in the browser via react-native-web
           'react-native': 'react-native-web',
         },
       },
       optimizeDeps: {
         // Pre-bundle react-native-web so Rollup finds it from root node_modules
-        // (react-native-paper lives there and traverses up the tree).
+        // when react-native-paper (which lives there) imports it.
         include: ['react-native-web'],
-        // Keep safe-area-context out of esbuild pre-bundling.
-        // Its specs/ files import codegenNativeComponent via the react-native alias;
-        // esbuild doesn't run Vite plugins so the virtual-module stub never fires
-        // and the aliased path is treated as a literal file that doesn't exist.
-        // Excluding it forces resolution through Vite's plugin pipeline at request
-        // time, where codegenStubPlugin can intercept the import correctly.
-        exclude: ['react-native-safe-area-context'],
+        // react-native-safe-area-context: its specs/ import codegenNativeComponent;
+        //   esbuild doesn't run Vite plugins, so the stub never fires unless excluded.
+        // react-native-vector-icons: ships .js files with Flow type annotations
+        //   (e.g. `: ?Spec`) that esbuild cannot parse with any standard loader.
+        //   All imports are intercepted by rnVectorIconsPlugin / esbuild plugin below.
+        exclude: ['react-native-safe-area-context', 'react-native-vector-icons'],
+        esbuildOptions: {
+          // esbuild plugin that handles icon imports during dep pre-bundling.
+          // react-native-paper's MaterialCommunityIcon.js calls require() inside
+          // loadIconModule() at module-evaluation time. esbuild resolves these
+          // statically; without this plugin they become failing runtime require()
+          // calls in the browser and icons fall back to □.
+          plugins: [
+            {
+              name: 'vector-icons-esbuild-stub',
+              setup(build: import('esbuild').PluginBuild) {
+                build.onResolve({ filter: iconFilter }, () => ({
+                  path: 'rnvi-mci',
+                  namespace: 'rnvi',
+                }));
+                build.onLoad({ filter: /.*/, namespace: 'rnvi' }, () => ({
+                  contents: iconStub,
+                  loader: 'jsx',
+                }));
+              },
+            },
+          ],
+        },
       },
     });
   },
