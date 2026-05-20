@@ -8,7 +8,7 @@ export default defineConfig([
     ignores: ['*.config.js', 'tailwind-utils.js'],
   },
   {
-    files: ['__mocks__/**/*.js', '__tests__/**/*.js'],
+    files: ['__mocks__/**/*.js', '__tests__/**/*.js', 'jest.setup*.js'],
     languageOptions: {
       globals: {
         ...globals.node,
