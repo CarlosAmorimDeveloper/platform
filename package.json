@@ -49,6 +49,7 @@
     "packages": [
       "apps/*",
       "apps/web/*",
+      "apps/mobile/*",
       "packages/*",
       "packages/design-system/*"
     ],
