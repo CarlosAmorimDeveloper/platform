@@ -1,4 +1,5 @@
 import React from 'react';
+import { Text } from 'react-native';
 import { render, screen, fireEvent } from './test-utils';
 import { Card } from '../src/components/Card';
 
@@ -29,5 +30,19 @@ describe('Card', () => {
     render(<Card testID="card" title="Sem press" />);
     const card = screen.getByTestId('card');
     expect(card.props.onPress).toBeUndefined();
+  });
+
+  it('renderiza children dentro de PaperCard.Content', () => {
+    render(
+      <Card testID="card">
+        <Text testID="child-text">Conteúdo</Text>
+      </Card>,
+    );
+    expect(screen.getByTestId('child-text')).toBeTruthy();
+  });
+
+  it('não quebra quando coverUri é fornecido', () => {
+    render(<Card testID="card" coverUri="https://picsum.photos/400/200" title="Test" />);
+    expect(screen.getByTestId('card')).toBeTruthy();
   });
 });

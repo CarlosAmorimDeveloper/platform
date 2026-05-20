@@ -14,8 +14,10 @@ export function Card({ title, subtitle, children, onPress, coverUri, testID }: C
   return (
     <PaperCard onPress={onPress} testID={testID}>
       {coverUri && <PaperCard.Cover source={{ uri: coverUri }} />}
-      {(title || subtitle) && <PaperCard.Title title={title ?? ''} subtitle={subtitle} />}
-      {children && <PaperCard.Content>{children}</PaperCard.Content>}
+      {(title != null || subtitle != null) && (
+        <PaperCard.Title title={title ?? ''} subtitle={subtitle} />
+      )}
+      {children != null && <PaperCard.Content>{children}</PaperCard.Content>}
     </PaperCard>
   );
 }
