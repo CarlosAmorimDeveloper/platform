@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useSelector } from "react-redux";
-import { RootState } from "@/redux/store";
-import List from "@mui/material/List";
-import Typography from "@mui/material/Typography";
-import { TaskItem } from "../TaskItem/TaskItem";
+import { useSelector } from 'react-redux';
+import type { RootState } from '@/redux/store';
+import List from '@mui/material/List';
+import Typography from '@mui/material/Typography';
+import { TaskItem } from '../TaskItem/TaskItem';
 
 export function TaskList() {
   const tasks = useSelector((state: RootState) => state.tasks.tasks);
@@ -18,7 +18,7 @@ export function TaskList() {
   }
 
   return (
-    <List disablePadding sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+    <List disablePadding sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
       {tasks.map((task) => (
         <TaskItem key={task.id} task={task} />
       ))}

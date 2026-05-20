@@ -111,7 +111,11 @@ describe('Button — interação onPress', () => {
 
   it('não chama onPress quando disabled', () => {
     const onPress = jest.fn();
-    render(<Button onPress={onPress} disabled>Clique</Button>);
+    render(
+      <Button onPress={onPress} disabled>
+        Clique
+      </Button>,
+    );
     fireEvent.click(screen.getByRole('button'));
     expect(onPress).not.toHaveBeenCalled();
   });

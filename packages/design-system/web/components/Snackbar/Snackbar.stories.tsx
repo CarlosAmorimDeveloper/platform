@@ -1,17 +1,17 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import type React from "react";
-import { useState } from "react";
-import { Button } from "@mui/material";
-import { Snackbar } from "./Snackbar";
+import type { Meta, StoryObj } from '@storybook/react';
+import type React from 'react';
+import { useState } from 'react';
+import { Button } from '@mui/material';
+import { Snackbar } from './Snackbar';
 
 const meta: Meta<typeof Snackbar> = {
-  title: "Components/Snackbar",
+  title: 'Components/Snackbar',
   component: Snackbar,
-  tags: ["autodocs"],
+  tags: ['autodocs'],
   argTypes: {
     severity: {
-      control: "radio",
-      options: ["success", "error", "warning", "info"],
+      control: 'radio',
+      options: ['success', 'error', 'warning', 'info'],
     },
   },
 };
@@ -23,9 +23,11 @@ function SnackbarWithState(args: Partial<React.ComponentProps<typeof Snackbar>>)
   const [open, setOpen] = useState(false);
   return (
     <>
-      <Button variant="outlined" onClick={() => setOpen(true)}>Mostrar notificação</Button>
+      <Button variant="outlined" onClick={() => setOpen(true)}>
+        Mostrar notificação
+      </Button>
       <Snackbar
-        message={args.message ?? ""}
+        message={args.message ?? ''}
         open={open}
         onClose={() => setOpen(false)}
         severity={args.severity}
@@ -38,20 +40,20 @@ function SnackbarWithState(args: Partial<React.ComponentProps<typeof Snackbar>>)
 
 export const Success: Story = {
   render: (args) => <SnackbarWithState {...args} />,
-  args: { message: "Operação realizada com sucesso!", severity: "success" },
+  args: { message: 'Operação realizada com sucesso!', severity: 'success' },
 };
 
 export const Error: Story = {
   render: (args) => <SnackbarWithState {...args} />,
-  args: { message: "Ocorreu um erro. Tente novamente.", severity: "error" },
+  args: { message: 'Ocorreu um erro. Tente novamente.', severity: 'error' },
 };
 
 export const Warning: Story = {
   render: (args) => <SnackbarWithState {...args} />,
-  args: { message: "Atenção: esta ação afeta outros registros.", severity: "warning" },
+  args: { message: 'Atenção: esta ação afeta outros registros.', severity: 'warning' },
 };
 
 export const Info: Story = {
   render: (args) => <SnackbarWithState {...args} />,
-  args: { message: "Atualização disponível. Recarregue a página.", severity: "info" },
+  args: { message: 'Atualização disponível. Recarregue a página.', severity: 'info' },
 };

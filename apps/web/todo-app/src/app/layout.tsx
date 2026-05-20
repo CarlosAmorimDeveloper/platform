@@ -1,12 +1,12 @@
-import type { Metadata } from "next";
-import { AppRouterCacheProvider } from "@mui/material-nextjs/v15-appRouter";
-import ReduxProvider from "@/redux/ReduxProvider";
-import { ThemeRegistry } from "./ThemeRegistry";
-import "./globals.css";
+import type { Metadata } from 'next';
+import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
+import ReduxProvider from '@/redux/ReduxProvider';
+import { ThemeRegistry } from './ThemeRegistry';
+import './globals.css';
 
 export const metadata: Metadata = {
-  title: "Tarefas",
-  description: "Aplicativo de gerenciamento de tarefas",
+  title: 'Tarefas',
+  description: 'Aplicativo de gerenciamento de tarefas',
 };
 
 export default function RootLayout({

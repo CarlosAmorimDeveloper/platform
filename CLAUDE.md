@@ -83,11 +83,11 @@ Actions: `addTask`, `toggleTask`, `editTask`, `removeTask`, `hydrateState` (bulk
 
 ### CI workflows
 
-| Workflow | Trigger | What it does |
-|---|---|---|
-| `coverage.yml` | PR → main | Runs Jest only on changed source files; enforces ≥ 95% coverage on those files |
-| `deploy.yml` | Push/PR → main (todo-app paths) | Vercel deploy |
-| `storybook.yml` | Push/PR → main (`packages/design-system/web/**`) | Chromatic publish |
+| Workflow        | Trigger                                          | What it does                                                                   |
+| --------------- | ------------------------------------------------ | ------------------------------------------------------------------------------ |
+| `coverage.yml`  | PR → main                                        | Runs Jest only on changed source files; enforces ≥ 95% coverage on those files |
+| `deploy.yml`    | Push/PR → main (todo-app paths)                  | Vercel deploy                                                                  |
+| `storybook.yml` | Push/PR → main (`packages/design-system/web/**`) | Chromatic publish                                                              |
 
 ## Next.js version note
 
@@ -96,6 +96,7 @@ Actions: `addTask`, `toggleTask`, `editTask`, `removeTask`, `hydrateState` (bulk
 ## ESLint configs
 
 Three flat-config exports from `@repo/eslint-config`:
+
 - `base` — any TypeScript package
 - `react-internal` — React packages (e.g. `@ds/web`)
 - `next-js` — Next.js apps (e.g. `todo-app`)

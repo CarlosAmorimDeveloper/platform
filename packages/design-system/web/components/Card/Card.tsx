@@ -1,12 +1,6 @@
-import {
-  Card as MuiCard,
-  CardActions,
-  CardContent,
-  CardHeader,
-  CardMedia,
-} from "@mui/material";
-import type { SxProps, Theme } from "@mui/material/styles";
-import type { ReactNode } from "react";
+import { Card as MuiCard, CardActions, CardContent, CardHeader, CardMedia } from '@mui/material';
+import type { SxProps, Theme } from '@mui/material/styles';
+import type { ReactNode } from 'react';
 
 interface CardProps {
   title?: string;
@@ -22,12 +16,7 @@ export function Card({ title, subtitle, children, actions, media, sx }: CardProp
     <MuiCard sx={sx}>
       {(title || subtitle) && <CardHeader title={title} subheader={subtitle} />}
       {media && (
-        <CardMedia
-          component="img"
-          height={media.height ?? 194}
-          image={media.src}
-          alt={media.alt}
-        />
+        <CardMedia component="img" height={media.height ?? 194} image={media.src} alt={media.alt} />
       )}
       {children && <CardContent>{children}</CardContent>}
       {actions && <CardActions>{actions}</CardActions>}

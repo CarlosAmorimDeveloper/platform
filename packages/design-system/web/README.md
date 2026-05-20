@@ -7,11 +7,11 @@ Pacote de componentes React do Design System. Parte do monorepo `platform`, em `
 Os componentes ficam em `components/` e são exportados via:
 
 ```ts
-import { Button } from "@ds/web/components/Button";
-import { Input } from "@ds/web/components/Input";
+import { Button } from '@ds/web/components/Button';
+import { Input } from '@ds/web/components/Input';
 
 // ou todos de uma vez:
-import { Button, Input } from "@ds/web/components";
+import { Button, Input } from '@ds/web/components';
 ```
 
 ### `Button`
@@ -24,12 +24,12 @@ import { Button, Input } from "@ds/web/components";
 <Button type="submit" disabled={!value}>Salvar</Button>
 ```
 
-| Prop | Tipo | Padrão | Opções |
-|---|---|---|---|
-| `variant` | string | `"primary"` | `"primary"` `"secondary"` `"ghost"` `"danger"` |
-| `size` | string | `"md"` | `"md"` `"sm"` |
-| `type` | string | `"button"` | `"button"` `"submit"` `"reset"` |
-| `disabled` | boolean | `false` | — |
+| Prop       | Tipo    | Padrão      | Opções                                         |
+| ---------- | ------- | ----------- | ---------------------------------------------- |
+| `variant`  | string  | `"primary"` | `"primary"` `"secondary"` `"ghost"` `"danger"` |
+| `size`     | string  | `"md"`      | `"md"` `"sm"`                                  |
+| `type`     | string  | `"button"`  | `"button"` `"submit"` `"reset"`                |
+| `disabled` | boolean | `false`     | —                                              |
 
 ### `Input`
 
@@ -40,10 +40,10 @@ import { Button, Input } from "@ds/web/components";
 <Input disabled placeholder="Desativado" />
 ```
 
-| Prop | Tipo | Padrão | Opções |
-|---|---|---|---|
-| `variant` | string | `"default"` | `"default"` `"inline"` |
-| `type` | string | `"text"` | qualquer tipo nativo de `<input>` |
+| Prop      | Tipo   | Padrão      | Opções                            |
+| --------- | ------ | ----------- | --------------------------------- |
+| `variant` | string | `"default"` | `"default"` `"inline"`            |
+| `type`    | string | `"text"`    | qualquer tipo nativo de `<input>` |
 
 > Quando `type="checkbox"`, o `variant` é ignorado e o estilo de checkbox é aplicado automaticamente.
 
@@ -107,13 +107,13 @@ O Chromatic está integrado ao GitHub e reporta os resultados diretamente nos pu
 
 ## Scripts
 
-| Comando | Descrição |
-|---|---|
-| `yarn storybook` | Inicia o Storybook em modo desenvolvimento |
-| `yarn build-storybook` | Gera o build estático do Storybook |
-| `yarn chromatic` | Executa os testes visuais no Chromatic |
-| `yarn check-types` | Verificação de tipos TypeScript |
-| `yarn lint` | Lint do pacote |
+| Comando                   | Descrição                                   |
+| ------------------------- | ------------------------------------------- |
+| `yarn storybook`          | Inicia o Storybook em modo desenvolvimento  |
+| `yarn build-storybook`    | Gera o build estático do Storybook          |
+| `yarn chromatic`          | Executa os testes visuais no Chromatic      |
+| `yarn check-types`        | Verificação de tipos TypeScript             |
+| `yarn lint`               | Lint do pacote                              |
 | `yarn generate:component` | Gera um novo componente via Turbo generator |
 
 ## Adicionando componentes

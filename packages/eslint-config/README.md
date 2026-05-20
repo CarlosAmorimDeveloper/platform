@@ -4,10 +4,10 @@ Configurações ESLint compartilhadas do monorepo `platform`. Fornece três conf
 
 ## Configurações disponíveis
 
-| Export | Arquivo | Uso recomendado |
-|---|---|---|
-| `@repo/eslint-config/base` | `base.js` | Qualquer pacote TypeScript |
-| `@repo/eslint-config/next-js` | `next.js` | Aplicações Next.js |
+| Export                               | Arquivo             | Uso recomendado             |
+| ------------------------------------ | ------------------- | --------------------------- |
+| `@repo/eslint-config/base`           | `base.js`           | Qualquer pacote TypeScript  |
+| `@repo/eslint-config/next-js`        | `next.js`           | Aplicações Next.js          |
 | `@repo/eslint-config/react-internal` | `react-internal.js` | Pacotes React (sem Next.js) |
 
 ## Uso
@@ -16,7 +16,7 @@ Configurações ESLint compartilhadas do monorepo `platform`. Fornece três conf
 
 ```js
 // eslint.config.mjs
-import { nextConfig } from "@repo/eslint-config/next-js";
+import { nextConfig } from '@repo/eslint-config/next-js';
 
 export default nextConfig;
 ```
@@ -25,7 +25,7 @@ export default nextConfig;
 
 ```js
 // eslint.config.mjs
-import { reactInternalConfig } from "@repo/eslint-config/react-internal";
+import { reactInternalConfig } from '@repo/eslint-config/react-internal';
 
 export default reactInternalConfig;
 ```
@@ -34,7 +34,7 @@ export default reactInternalConfig;
 
 ```js
 // eslint.config.mjs
-import { baseConfig } from "@repo/eslint-config/base";
+import { baseConfig } from '@repo/eslint-config/base';
 
 export default baseConfig;
 ```

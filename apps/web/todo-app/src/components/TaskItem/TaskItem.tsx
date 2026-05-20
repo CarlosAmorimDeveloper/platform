@@ -1,15 +1,16 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
-import { toggleTask, editTask, removeTask, Task } from "@/redux/taskSlice";
-import { AppDispatch } from "@/redux/store";
-import ListItem from "@mui/material/ListItem";
-import Paper from "@mui/material/Paper";
-import Stack from "@mui/material/Stack";
-import Typography from "@mui/material/Typography";
-import { Button } from "@ds/web/components/Button";
-import { Input } from "@ds/web/components/Input";
+import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { toggleTask, editTask, removeTask } from '@/redux/taskSlice';
+import type { Task } from '@/redux/taskSlice';
+import type { AppDispatch } from '@/redux/store';
+import ListItem from '@mui/material/ListItem';
+import Paper from '@mui/material/Paper';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
+import { Button } from '@ds/web/components/Button';
+import { Input } from '@ds/web/components/Input';
 
 interface TaskItemProps {
   task: Task;
@@ -43,15 +44,15 @@ export function TaskItem({ task }: TaskItemProps) {
   }
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
-    if (e.key === "Enter") handleEditSubmit();
-    if (e.key === "Escape") {
+    if (e.key === 'Enter') handleEditSubmit();
+    if (e.key === 'Escape') {
       setEditValue(task.title);
       setIsEditing(false);
     }
   }
 
   function handleSpanKeyDown(e: React.KeyboardEvent<HTMLSpanElement>) {
-    if (e.key === "Enter" || e.key === " ") {
+    if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
       setIsEditing(true);
     }
@@ -62,12 +63,12 @@ export function TaskItem({ task }: TaskItemProps) {
       <Paper
         variant="outlined"
         sx={{
-          display: "flex",
-          alignItems: "center",
+          display: 'flex',
+          alignItems: 'center',
           gap: 1.5,
           py: 1.5,
           px: 2,
-          width: "100%",
+          width: '100%',
           borderRadius: 1,
         }}
       >
@@ -75,7 +76,7 @@ export function TaskItem({ task }: TaskItemProps) {
           type="checkbox"
           checked={task.completed}
           onChange={handleToggle}
-          aria-label={`Marcar "${task.title}" como ${task.completed ? "incompleta" : "completa"}`}
+          aria-label={`Marcar "${task.title}" como ${task.completed ? 'incompleta' : 'completa'}`}
         />
 
         {isEditing ? (
@@ -96,19 +97,15 @@ export function TaskItem({ task }: TaskItemProps) {
             variant="body2"
             sx={{
               flex: 1,
-              color: task.completed ? "text.disabled" : "text.primary",
-              textDecoration: task.completed ? "line-through" : "none",
-              cursor: task.completed ? "default" : "pointer",
+              color: task.completed ? 'text.disabled' : 'text.primary',
+              textDecoration: task.completed ? 'line-through' : 'none',
+              cursor: task.completed ? 'default' : 'pointer',
             }}
-            role={task.completed ? undefined : "button"}
+            role={task.completed ? undefined : 'button'}
             tabIndex={task.completed ? undefined : 0}
             onDoubleClick={() => !task.completed && setIsEditing(true)}
             onKeyDown={task.completed ? undefined : handleSpanKeyDown}
-            aria-label={
-              task.completed
-                ? task.title
-                : `${task.title} — pressione Enter para editar`
-            }
+            aria-label={task.completed ? task.title : `${task.title} — pressione Enter para editar`}
           >
             {task.title}
           </Typography>
@@ -125,12 +122,7 @@ export function TaskItem({ task }: TaskItemProps) {
               Editar
             </Button>
           )}
-          <Button
-            variant="danger"
-            size="sm"
-            onClick={handleRemove}
-            aria-label="Remover tarefa"
-          >
+          <Button variant="danger" size="sm" onClick={handleRemove} aria-label="Remover tarefa">
             Remover
           </Button>
         </Stack>

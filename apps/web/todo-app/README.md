@@ -22,13 +22,13 @@ A aplicação ficará disponível em `http://localhost:3000`.
 
 ## Scripts
 
-| Comando | Descrição |
-|---|---|
-| `yarn dev` | Servidor de desenvolvimento Next.js |
-| `yarn build` | Build de produção |
+| Comando      | Descrição                                    |
+| ------------ | -------------------------------------------- |
+| `yarn dev`   | Servidor de desenvolvimento Next.js          |
+| `yarn build` | Build de produção                            |
 | `yarn start` | Inicia o servidor de produção (requer build) |
-| `yarn test` | Executa os testes com Jest |
-| `yarn lint` | Lint do projeto |
+| `yarn test`  | Executa os testes com Jest                   |
+| `yarn lint`  | Lint do projeto                              |
 
 ## Estrutura
 
@@ -56,10 +56,10 @@ O estado é gerenciado com **Redux Toolkit** e persiste automaticamente no `loca
 
 ```ts
 interface Task {
-  id: string;         // crypto.randomUUID()
+  id: string; // crypto.randomUUID()
   title: string;
   completed: boolean;
-  createdAt: string;  // ISO 8601
+  createdAt: string; // ISO 8601
 }
 ```
 
@@ -76,10 +76,10 @@ Os testes usam **Jest** + **Testing Library**. Cada componente tem seu arquivo `
 
 ## Dependências principais
 
-| Pacote | Versão |
-|---|---|
-| Next.js | 16 |
-| React | 19 |
-| Redux Toolkit | ^2 |
-| `@ds/web` | workspace |
-| Tailwind CSS | v4 |
+| Pacote        | Versão    |
+| ------------- | --------- |
+| Next.js       | 16        |
+| React         | 19        |
+| Redux Toolkit | ^2        |
+| `@ds/web`     | workspace |
+| Tailwind CSS  | v4        |

@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { ThemeProvider } from "@mui/material/styles";
-import CssBaseline from "@mui/material/CssBaseline";
-import { theme } from "@ds/web/theme";
+import { ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import { theme } from '@ds/web/theme';
 
 export function ThemeRegistry({ children }: { children: React.ReactNode }) {
   return (

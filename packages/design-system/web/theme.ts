@@ -1,5 +1,5 @@
-import { createTheme } from "@mui/material/styles";
-import { colors, radii } from "@ds/tokens";
+import { createTheme } from '@mui/material/styles';
+import { colors, radii } from '@ds/tokens';
 
 export const theme = createTheme({
   palette: {
@@ -29,7 +29,7 @@ export const theme = createTheme({
     },
   },
   typography: {
-    fontFamily: "inherit",
+    fontFamily: 'inherit',
     fontSize: 14,
   },
   shape: {
@@ -43,7 +43,7 @@ export const theme = createTheme({
       },
       styleOverrides: {
         root: {
-          textTransform: "none",
+          textTransform: 'none',
           fontWeight: 500,
         },
       },
