@@ -45,4 +45,18 @@ describe('Menu', () => {
     fireEvent.press(screen.getByText('Editar'));
     expect(onPressEditar).toHaveBeenCalledTimes(1);
   });
+
+  it('não chama onPress de item desabilitado', () => {
+    const onPressDisabled = jest.fn();
+    render(
+      <Menu
+        visible={true}
+        onDismiss={() => {}}
+        anchor={<Button>Anchor</Button>}
+        items={[{ label: 'Bloqueado', onPress: onPressDisabled, disabled: true }]}
+      />,
+    );
+    fireEvent.press(screen.getByText('Bloqueado'));
+    expect(onPressDisabled).not.toHaveBeenCalled();
+  });
 });

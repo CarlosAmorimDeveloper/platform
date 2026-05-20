@@ -18,9 +18,9 @@ export interface MenuProps {
 export function Menu({ visible, onDismiss, anchor, items, testID }: MenuProps) {
   return (
     <PaperMenu visible={visible} onDismiss={onDismiss} anchor={anchor} testID={testID}>
-      {items.map((item, index) => (
+      {items.map((item) => (
         <PaperMenu.Item
-          key={index}
+          key={item.label}
           title={item.label}
           onPress={item.disabled ? undefined : item.onPress}
           disabled={item.disabled}
