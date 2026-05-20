@@ -18,8 +18,6 @@ export function Snackbar({
   action,
   testID,
 }: SnackbarProps) {
-  if (!visible) return null;
-
   return (
     <PaperSnackbar
       visible={visible}

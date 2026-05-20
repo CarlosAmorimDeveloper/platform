@@ -1,7 +1,7 @@
 import React from 'react';
 import { Appbar } from 'react-native-paper';
 
-interface AppBarAction {
+export interface AppBarAction {
   icon: string;
   onPress: () => void;
   accessibilityLabel?: string;
@@ -21,9 +21,9 @@ export function AppBar({ title, onBackPress, actions, testID }: AppBarProps) {
         <Appbar.BackAction onPress={onBackPress} testID={testID ? `${testID}-back` : undefined} />
       )}
       <Appbar.Content title={title} />
-      {actions?.map((action, index) => (
+      {actions?.map((action) => (
         <Appbar.Action
-          key={index}
+          key={action.icon}
           icon={action.icon}
           onPress={action.onPress}
           accessibilityLabel={action.accessibilityLabel}

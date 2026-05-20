@@ -15,8 +15,7 @@
     "build-storybook": "storybook build"
   },
   "dependencies": {
-    "@ds/tokens": "*",
-    "react-native-paper": "^5"
+    "@ds/tokens": "*"
   },
   "devDependencies": {
     "@repo/eslint-config": "*",

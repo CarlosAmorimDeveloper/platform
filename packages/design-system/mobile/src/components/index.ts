@@ -1,5 +1,5 @@
 export { AppBar } from './AppBar';
-export type { AppBarProps } from './AppBar';
+export type { AppBarProps, AppBarAction } from './AppBar';
 
 export { Button } from './Button';
 export type { ButtonProps } from './Button';
