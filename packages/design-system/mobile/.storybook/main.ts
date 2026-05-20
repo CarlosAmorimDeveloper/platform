@@ -16,7 +16,10 @@ const codegenStubPlugin: Plugin = {
   },
   load(id) {
     if (id === '\0react-native-codegen-stub') {
-      return 'export default function codegenNativeComponent() { return null; }';
+      // Must return a component function, not null — callers do:
+      //   export default codegenNativeComponent('RNCSafeAreaProvider')
+      // and React renders the result. Returning null causes error #130.
+      return 'export default function codegenNativeComponent() { return function NativeComponent() { return null; }; }';
     }
   },
 };
