@@ -36,7 +36,7 @@ export function Select({
         onDismiss={() => setMenuVisible(false)}
         anchor={
           <TouchableRipple
-            onPress={disabled ? undefined : () => setMenuVisible(true)}
+            onPress={() => setMenuVisible(true)}
             disabled={disabled}
             testID={testID ? `${testID}-trigger` : undefined}
           >
