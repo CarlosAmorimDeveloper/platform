@@ -68,7 +68,7 @@ export function TaskItem({ task }: TaskItemProps) {
           py: 1.5,
           px: 2,
           width: "100%",
-          borderRadius: 2,
+          borderRadius: 1,
         }}
       >
         <Input

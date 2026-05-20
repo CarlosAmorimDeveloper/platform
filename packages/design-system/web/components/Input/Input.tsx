@@ -36,7 +36,7 @@ export function Input({
         disabled={disabled}
         inputProps={{ "aria-label": ariaLabel }}
         size="small"
-        sx={{ padding: 0, color: "black", "&.Mui-checked": { color: "black" } }}
+        sx={{ padding: 0 }}
       />
     );
   }
