@@ -24,16 +24,14 @@ function LogoutButton() {
         visible={visible}
         onDismiss={() => setVisible(false)}
         title="Sair da conta"
-        actions={
-          <>
-            <Button variant="ghost" onPress={() => setVisible(false)}>
-              Cancelar
-            </Button>
-            <Button variant="danger" onPress={logout}>
-              Sair
-            </Button>
-          </>
-        }
+        actions={[
+          <Button key="cancel" variant="ghost" onPress={() => setVisible(false)}>
+            Cancelar
+          </Button>,
+          <Button key="confirm" variant="danger" onPress={logout}>
+            Sair
+          </Button>,
+        ]}
       >
         <Text>Tem certeza que deseja sair?</Text>
       </Dialog>
