@@ -28,6 +28,7 @@ export function Register({ navigation }: Props) {
       await setDoc(doc(db, 'users', user.uid), { email, role: 'standard', name: name.trim() });
       setUser({ uid: user.uid, email, name: name.trim(), role: 'standard' });
     } catch (err: unknown) {
+      console.error('[Register] error:', err);
       const message =
         err instanceof FirebaseError && err.code === 'auth/email-already-in-use'
           ? 'Não foi possível criar a conta.'
@@ -53,7 +54,10 @@ export function Register({ navigation }: Props) {
         onChangeText={setPassword}
       />
       <LoadingIndicator visible={loading} />
-      <Button onPress={handleRegister} disabled={!name.trim() || loading}>
+      <Button
+        onPress={handleRegister}
+        disabled={!name.trim() || !email.trim() || !password.trim() || loading}
+      >
         Sign Up
       </Button>
       <Button variant="secondary" onPress={() => navigation.navigate('Login')}>
