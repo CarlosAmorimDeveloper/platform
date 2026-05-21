@@ -64,17 +64,39 @@ export function TicketDetails({ route, navigation }: Props) {
   const [sendingComment, setSendingComment] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [deleteVisible, setDeleteVisible] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [draftStatus, setDraftStatus] = useState<TicketStatus>('open');
+  const [saveVisible, setSaveVisible] = useState(false);
 
   useEffect(() => {
     if (user?.role !== 'admin') return;
     navigation.setOptions({
       headerRight: () => (
-        <Pressable onPress={() => setDeleteVisible(true)} style={styles.headerIcon}>
-          <MaterialIcons name="delete-outline" size={24} color={`${colors.error[600]}`} />
-        </Pressable>
+        <View style={styles.headerIcons}>
+          <Pressable
+            onPress={() => {
+              if (editing) {
+                setSaveVisible(true);
+              } else {
+                setDraftStatus(ticket?.status ?? 'open');
+                setEditing(true);
+              }
+            }}
+            style={styles.headerIcon}
+          >
+            <MaterialIcons
+              name={editing ? 'check' : 'edit'}
+              size={24}
+              color={editing ? `${colors.success[600]}` : `${colors.neutral[600]}`}
+            />
+          </Pressable>
+          <Pressable onPress={() => setDeleteVisible(true)} style={styles.headerIcon}>
+            <MaterialIcons name="delete-outline" size={24} color={`${colors.error[600]}`} />
+          </Pressable>
+        </View>
       ),
     });
-  }, [navigation, user?.role]);
+  }, [navigation, user?.role, editing, ticket?.status]);
 
   useEffect(() => {
     const unsubscribe = onSnapshot(doc(db, 'tickets', ticketId), (snap) => {
@@ -126,12 +148,20 @@ export function TicketDetails({ route, navigation }: Props) {
     }
   }
 
-  async function handleStatusChange(newStatus: TicketStatus) {
+  async function handleConfirmSave() {
     try {
-      await updateDoc(doc(db, 'tickets', ticketId), { status: newStatus });
+      await updateDoc(doc(db, 'tickets', ticketId), { status: draftStatus });
+      setSaveVisible(false);
+      setEditing(false);
     } catch (err: unknown) {
+      setSaveVisible(false);
       setErrorMessage(err instanceof Error ? err.message : 'Failed to update status');
     }
+  }
+
+  function handleCancelSave() {
+    setSaveVisible(false);
+    setEditing(false);
   }
 
   async function handleAddComment() {
@@ -190,21 +220,19 @@ export function TicketDetails({ route, navigation }: Props) {
 
       <Text style={styles.sectionLabel}>Status</Text>
 
-      {user?.role === 'admin' ? (
-        <>
-          <View style={styles.statusRow}>
-            {ALL_STATUSES.map((s) => (
-              <Button
-                key={s}
-                variant={ticket.status === s ? 'primary' : 'secondary'}
-                size="sm"
-                onPress={() => handleStatusChange(s)}
-              >
-                {STATUS_LABELS[s]}
-              </Button>
-            ))}
-          </View>
-        </>
+      {editing ? (
+        <View style={styles.statusRow}>
+          {ALL_STATUSES.map((s) => (
+            <Button
+              key={s}
+              variant={draftStatus === s ? 'primary' : 'secondary'}
+              size="sm"
+              onPress={() => setDraftStatus(s)}
+            >
+              {STATUS_LABELS[s]}
+            </Button>
+          ))}
+        </View>
       ) : (
         <View
           style={[styles.statusBadge, { backgroundColor: STATUS_COLORS[ticket.status] + '20' }]}
@@ -247,6 +275,25 @@ export function TicketDetails({ route, navigation }: Props) {
       </Button>
 
       <Dialog
+        visible={saveVisible}
+        onDismiss={handleCancelSave}
+        title="Salvar alterações"
+        actions={[
+          <Button key="cancel" variant="ghost" onPress={handleCancelSave}>
+            Cancelar
+          </Button>,
+          <Button key="confirm" variant="primary" onPress={handleConfirmSave}>
+            Salvar
+          </Button>,
+        ]}
+      >
+        <Text>
+          Alterar status para{' '}
+          <Text style={{ fontWeight: 'bold' }}>{STATUS_LABELS[draftStatus]}</Text>?
+        </Text>
+      </Dialog>
+
+      <Dialog
         visible={deleteVisible}
         onDismiss={() => setDeleteVisible(false)}
         title="Apagar ticket"
@@ -273,6 +320,7 @@ export function TicketDetails({ route, navigation }: Props) {
 
 const styles = StyleSheet.create({
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  headerIcons: { flexDirection: 'row' },
   headerIcon: { paddingHorizontal: spacing[2] },
   container: { padding: spacing[6], gap: spacing[3] },
   title: { fontSize: 22, fontWeight: 'bold', color: `${colors.neutral[900]}` },
