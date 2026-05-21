@@ -4,7 +4,12 @@ import { doc, onSnapshot, updateDoc, deleteDoc } from 'firebase/firestore';
 import { LoadingIndicator, Button, Snackbar, Dialog } from '@ds/mobile';
 import { db } from '../services/firebase';
 import { useAuthStore } from '../store/useAuthStore';
-import type { TicketStatus } from '../components/TicketCard';
+import {
+  ALL_STATUSES,
+  STATUS_LABELS,
+  STATUS_COLORS,
+  type TicketStatus,
+} from '../constants/ticketStatus';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { AppStackParamList } from '../navigation/types';
 
@@ -15,20 +20,6 @@ interface TicketData {
   description: string;
   status: TicketStatus;
 }
-
-const ALL_STATUSES: TicketStatus[] = ['open', 'in_progress', 'done'];
-
-const STATUS_LABELS: Record<TicketStatus, string> = {
-  open: 'Open',
-  in_progress: 'In Progress',
-  done: 'Done',
-};
-
-const STATUS_COLORS: Record<TicketStatus, string> = {
-  open: '#ef4444',
-  in_progress: '#f59e0b',
-  done: '#22c55e',
-};
 
 export function TicketDetails({ route, navigation }: Props) {
   const { ticketId } = route.params;

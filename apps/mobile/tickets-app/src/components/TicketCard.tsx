@@ -1,25 +1,14 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { Card } from '@ds/mobile';
+import { STATUS_COLORS, STATUS_LABELS, type TicketStatus } from '../constants/ticketStatus';
 
-export type TicketStatus = 'open' | 'in_progress' | 'done';
+export type { TicketStatus } from '../constants/ticketStatus';
 
 interface Props {
   title: string;
   status: TicketStatus;
   onPress: () => void;
 }
-
-const STATUS_COLORS: Record<TicketStatus, string> = {
-  open: '#ef4444',
-  in_progress: '#f59e0b',
-  done: '#22c55e',
-};
-
-const STATUS_LABELS: Record<TicketStatus, string> = {
-  open: 'Open',
-  in_progress: 'In Progress',
-  done: 'Done',
-};
 
 export function TicketCard({ title, status, onPress }: Props) {
   return (
