@@ -27,6 +27,21 @@ describe('Input', () => {
     expect(screen.queryByText('Campo obrigatório')).toBeNull();
   });
 
+  it('renderiza em modo multiline', () => {
+    render(
+      <Input
+        value=""
+        onChangeText={() => {}}
+        label="Descrição"
+        multiline
+        numberOfLines={4}
+        testID="input"
+      />,
+    );
+    const input = screen.getByTestId('input');
+    expect(input.props.multiline).toBe(true);
+  });
+
   it('renderiza como desabilitado', () => {
     render(<Input value="" onChangeText={() => {}} label="Campo" disabled testID="input" />);
     // PaperTextInput forwards `disabled` as `editable={false}` on the inner

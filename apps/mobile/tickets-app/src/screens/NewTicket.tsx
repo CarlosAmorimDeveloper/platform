@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, ScrollView } from 'react-native';
+import { StyleSheet, ScrollView } from 'react-native';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { Input, Button, LoadingIndicator, Snackbar } from '@ds/mobile';
 import { db } from '../services/firebase';
@@ -38,15 +38,13 @@ export function NewTicket({ navigation }: Props) {
   return (
     <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
       <Input label="Title" placeholder="Ticket title" value={title} onChangeText={setTitle} />
-      <Text style={styles.label}>Description</Text>
-      <TextInput
-        style={[styles.textarea]}
+      <Input
+        label="Description"
         placeholder="Describe the issue..."
         value={description}
         onChangeText={setDescription}
         multiline
         numberOfLines={4}
-        textAlignVertical="top"
       />
       <LoadingIndicator visible={loading} />
       <Button onPress={handleSave} disabled={!title.trim() || loading}>
@@ -63,15 +61,4 @@ export function NewTicket({ navigation }: Props) {
 
 const styles = StyleSheet.create({
   container: { padding: 24, gap: 8 },
-  label: { fontSize: 14, fontWeight: '600', color: '#374151' },
-  textarea: {
-    borderWidth: 1,
-    borderColor: '#d1d5db',
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
-    backgroundColor: '#fff',
-    marginBottom: 8,
-    minHeight: 100,
-  },
 });

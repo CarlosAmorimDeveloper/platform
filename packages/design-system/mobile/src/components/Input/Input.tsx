@@ -9,6 +9,8 @@ export interface InputProps {
   error?: string;
   disabled?: boolean;
   secureTextEntry?: boolean;
+  multiline?: boolean;
+  numberOfLines?: number;
   testID?: string;
   accessibilityLabel?: string;
 }
@@ -21,6 +23,8 @@ export function Input({
   error,
   disabled = false,
   secureTextEntry = false,
+  multiline = false,
+  numberOfLines,
   testID,
   accessibilityLabel,
 }: InputProps) {
@@ -35,6 +39,8 @@ export function Input({
         error={Boolean(error)}
         disabled={disabled}
         secureTextEntry={secureTextEntry}
+        multiline={multiline}
+        numberOfLines={multiline ? numberOfLines : undefined}
         testID={testID}
         accessibilityLabel={accessibilityLabel}
       />
