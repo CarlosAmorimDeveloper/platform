@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { FirebaseError } from 'firebase/app';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 import { Input, Button, LoadingIndicator, Snackbar } from '@ds/mobile';
@@ -27,7 +28,13 @@ export function Register({ navigation }: Props) {
       await setDoc(doc(db, 'users', user.uid), { email, role: 'standard', name: name.trim() });
       setUser({ uid: user.uid, email, name: name.trim(), role: 'standard' });
     } catch (err: unknown) {
-      setErrorMessage(err instanceof Error ? err.message : 'Registration failed');
+      const message =
+        err instanceof FirebaseError && err.code === 'auth/email-already-in-use'
+          ? 'Não foi possível criar a conta.'
+          : err instanceof Error
+            ? err.message
+            : 'Registration failed';
+      setErrorMessage(message);
     } finally {
       setLoading(false);
     }
@@ -64,8 +71,6 @@ export function Register({ navigation }: Props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
     gap: spacing[3],
     padding: spacing[6],
   },
