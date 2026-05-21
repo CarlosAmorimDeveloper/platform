@@ -3,6 +3,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 import { Input, Button, LoadingIndicator, Snackbar } from '@ds/mobile';
+import { fontSizes, spacing } from '@ds/tokens';
 import { auth, db } from '../services/firebase';
 import { useAuthStore } from '../store/useAuthStore';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -59,6 +60,12 @@ export function Register({ navigation }: Props) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 12, padding: 24 },
-  title: { fontSize: 24, fontWeight: 'bold', marginBottom: 8 },
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing[3],
+    padding: spacing[6],
+  },
+  title: { fontSize: fontSizes['2xl'], fontWeight: 'bold', marginBottom: spacing[2] },
 });

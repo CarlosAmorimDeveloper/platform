@@ -14,6 +14,7 @@ import { useAuthStore } from '../store/useAuthStore';
 import { TicketCard, type TicketStatus } from '../components/TicketCard';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { AppStackParamList } from '../navigation/types';
+import { colors, fontSizes, spacing } from '@ds/tokens';
 
 type Props = NativeStackScreenProps<AppStackParamList, 'Dashboard'>;
 
@@ -91,14 +92,14 @@ export function Dashboard({ navigation }: Props) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f5f5f5' },
+  container: { flex: 1, backgroundColor: `${colors.neutral[100]}` },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   fillHeight: { flex: 1 },
-  list: { paddingVertical: 8 },
-  emptyText: { color: '#888', fontSize: 16 },
+  list: { paddingVertical: spacing[2] },
+  emptyText: { color: `${colors.neutral[500]}`, fontSize: fontSizes.base },
   fab: {
     position: 'absolute',
-    right: 24,
-    bottom: 32,
+    right: spacing[6],
+    bottom: spacing[8],
   },
 });

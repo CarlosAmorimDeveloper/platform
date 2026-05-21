@@ -1,5 +1,6 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { Card } from '@ds/mobile';
+import { fontSizes, spacing, radii } from '@ds/tokens';
 import { STATUS_COLORS, STATUS_LABELS, type TicketStatus } from '../constants/ticketStatus';
 
 export type { TicketStatus } from '../constants/ticketStatus';
@@ -23,6 +24,11 @@ export function TicketCard({ title, status, onPress }: Props) {
 }
 
 const styles = StyleSheet.create({
-  badge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12, alignSelf: 'flex-start' },
-  badgeText: { fontSize: 12, fontWeight: '600' },
+  badge: {
+    paddingHorizontal: 10,
+    paddingVertical: spacing[1],
+    borderRadius: radii.xl,
+    alignSelf: 'flex-start',
+  },
+  badgeText: { fontSize: fontSizes.xs, fontWeight: '600' },
 });

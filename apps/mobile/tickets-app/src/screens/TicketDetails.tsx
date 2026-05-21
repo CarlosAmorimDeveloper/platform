@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { doc, onSnapshot, updateDoc, deleteDoc } from 'firebase/firestore';
 import { LoadingIndicator, Button, Snackbar, Dialog } from '@ds/mobile';
+import { colors, fontSizes, spacing, radii } from '@ds/tokens';
 import { db } from '../services/firebase';
 import { useAuthStore } from '../store/useAuthStore';
 import {
@@ -140,16 +141,21 @@ export function TicketDetails({ route, navigation }: Props) {
 
 const styles = StyleSheet.create({
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  container: { padding: 24, gap: 12 },
-  title: { fontSize: 22, fontWeight: 'bold', color: '#111827' },
-  description: { fontSize: 16, color: '#6b7280', lineHeight: 24 },
-  sectionLabel: { fontSize: 14, fontWeight: '600', color: '#374151', marginTop: 8 },
-  statusRow: { flexDirection: 'row', gap: 8 },
+  container: { padding: spacing[6], gap: spacing[3] },
+  title: { fontSize: 22, fontWeight: 'bold', color: `${colors.neutral[900]}` },
+  description: { fontSize: fontSizes.base, color: `${colors.neutral[500]}`, lineHeight: 24 },
+  sectionLabel: {
+    fontSize: fontSizes.sm,
+    fontWeight: '600',
+    color: `${colors.neutral[700]}`,
+    marginTop: spacing[2],
+  },
+  statusRow: { flexDirection: 'row', gap: spacing[2] },
   statusBadge: {
     alignSelf: 'flex-start',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 16,
+    paddingHorizontal: spacing[4],
+    paddingVertical: spacing[2],
+    borderRadius: radii['2xl'],
   },
-  statusBadgeText: { fontSize: 14, fontWeight: '600' },
+  statusBadgeText: { fontSize: fontSizes.sm, fontWeight: '600' },
 });

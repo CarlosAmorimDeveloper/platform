@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { StyleSheet, ScrollView } from 'react-native';
+import { spacing } from '@ds/tokens';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { Input, Button, LoadingIndicator, Snackbar } from '@ds/mobile';
 import { db } from '../services/firebase';
@@ -60,5 +61,5 @@ export function NewTicket({ navigation }: Props) {
 }
 
 const styles = StyleSheet.create({
-  container: { padding: 24, gap: 8 },
+  container: { padding: spacing[6], gap: spacing[2] },
 });
