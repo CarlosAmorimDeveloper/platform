@@ -43,6 +43,7 @@ export function Login({ navigation }: Props) {
         label="Senha"
         placeholder="Password"
         secureTextEntry
+        showPasswordToggle
         value={password}
         onChangeText={setPassword}
       />
@@ -65,8 +66,6 @@ export function Login({ navigation }: Props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
     gap: spacing[3],
     padding: spacing[6],
   },

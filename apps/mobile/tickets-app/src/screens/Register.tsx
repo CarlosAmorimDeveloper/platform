@@ -20,8 +20,11 @@ export function Register({ navigation }: Props) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const setUser = useAuthStore((s) => s.setUser);
 
+  const passwordError =
+    password.length > 0 && password.length < 6 ? 'Mínimo de 6 caracteres' : undefined;
+
   async function handleRegister() {
-    if (!name.trim() || !email || !password) return;
+    if (!name.trim() || !email || !password || password.length < 6) return;
     setLoading(true);
     try {
       const { user } = await createUserWithEmailAndPassword(auth, email, password);
@@ -50,13 +53,15 @@ export function Register({ navigation }: Props) {
         label="Senha"
         placeholder="Password"
         secureTextEntry
+        showPasswordToggle
         value={password}
         onChangeText={setPassword}
+        error={passwordError}
       />
       <LoadingIndicator visible={loading} />
       <Button
         onPress={handleRegister}
-        disabled={!name.trim() || !email.trim() || !password.trim() || loading}
+        disabled={!name.trim() || !email.trim() || password.length < 6 || loading}
       >
         Sign Up
       </Button>

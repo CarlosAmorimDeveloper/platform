@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { TextInput as PaperTextInput, HelperText } from 'react-native-paper';
 
 export interface InputProps {
@@ -9,6 +9,7 @@ export interface InputProps {
   error?: string;
   disabled?: boolean;
   secureTextEntry?: boolean;
+  showPasswordToggle?: boolean;
   multiline?: boolean;
   numberOfLines?: number;
   testID?: string;
@@ -23,11 +24,15 @@ export function Input({
   error,
   disabled = false,
   secureTextEntry = false,
+  showPasswordToggle = false,
   multiline = false,
   numberOfLines,
   testID,
   accessibilityLabel,
 }: InputProps) {
+  const [hidden, setHidden] = useState(true);
+  const isSecure = secureTextEntry && hidden;
+
   return (
     <>
       <PaperTextInput
@@ -38,11 +43,19 @@ export function Input({
         placeholder={placeholder}
         error={Boolean(error)}
         disabled={disabled}
-        secureTextEntry={secureTextEntry}
+        secureTextEntry={isSecure}
         multiline={multiline}
         numberOfLines={multiline ? numberOfLines : undefined}
         testID={testID}
         accessibilityLabel={accessibilityLabel}
+        right={
+          secureTextEntry && showPasswordToggle ? (
+            <PaperTextInput.Icon
+              icon={hidden ? 'eye' : 'eye-off'}
+              onPress={() => setHidden((h) => !h)}
+            />
+          ) : undefined
+        }
       />
       {error && (
         <HelperText type="error" visible={true}>
