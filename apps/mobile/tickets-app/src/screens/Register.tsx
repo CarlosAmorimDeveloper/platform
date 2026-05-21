@@ -12,6 +12,7 @@ import type { AuthStackParamList } from '../navigation/types';
 type Props = NativeStackScreenProps<AuthStackParamList, 'Register'>;
 
 export function Register({ navigation }: Props) {
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -19,12 +20,12 @@ export function Register({ navigation }: Props) {
   const setUser = useAuthStore((s) => s.setUser);
 
   async function handleRegister() {
-    if (!email || !password) return;
+    if (!name.trim() || !email || !password) return;
     setLoading(true);
     try {
       const { user } = await createUserWithEmailAndPassword(auth, email, password);
-      await setDoc(doc(db, 'users', user.uid), { email, role: 'standard' });
-      setUser({ uid: user.uid, email, role: 'standard' });
+      await setDoc(doc(db, 'users', user.uid), { email, role: 'standard', name: name.trim() });
+      setUser({ uid: user.uid, email, name: name.trim(), role: 'standard' });
     } catch (err: unknown) {
       setErrorMessage(err instanceof Error ? err.message : 'Registration failed');
     } finally {
@@ -35,6 +36,7 @@ export function Register({ navigation }: Props) {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Register</Text>
+      <Input label="Nome" placeholder="Seu nome" value={name} onChangeText={setName} />
       <Input label="Email" placeholder="Email" value={email} onChangeText={setEmail} />
       <Input
         label="Senha"
@@ -44,7 +46,7 @@ export function Register({ navigation }: Props) {
         onChangeText={setPassword}
       />
       <LoadingIndicator visible={loading} />
-      <Button onPress={handleRegister} disabled={loading}>
+      <Button onPress={handleRegister} disabled={!name.trim() || loading}>
         Sign Up
       </Button>
       <Button variant="secondary" onPress={() => navigation.navigate('Login')}>

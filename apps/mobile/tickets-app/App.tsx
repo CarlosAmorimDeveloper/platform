@@ -17,8 +17,10 @@ export default function App() {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
         const snap = await getDoc(doc(db, 'users', firebaseUser.uid));
-        const role = (snap.data()?.role ?? 'standard') as UserRole;
-        setUser({ uid: firebaseUser.uid, email: firebaseUser.email ?? '', role });
+        const data = snap.data();
+        const role = (data?.role ?? 'standard') as UserRole;
+        const name = (data?.name ?? firebaseUser.email ?? '') as string;
+        setUser({ uid: firebaseUser.uid, email: firebaseUser.email ?? '', name, role });
       } else {
         setUser(null);
       }

@@ -7,6 +7,7 @@ export type UserRole = 'admin' | 'standard';
 export interface AuthUser {
   uid: string;
   email: string;
+  name: string;
   role: UserRole;
 }
 

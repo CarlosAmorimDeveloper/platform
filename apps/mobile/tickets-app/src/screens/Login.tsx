@@ -24,8 +24,10 @@ export function Login({ navigation }: Props) {
     try {
       const { user } = await signInWithEmailAndPassword(auth, email, password);
       const snap = await getDoc(doc(db, 'users', user.uid));
-      const role = (snap.data()?.role ?? 'standard') as UserRole;
-      setUser({ uid: user.uid, email: user.email ?? email, role });
+      const data = snap.data();
+      const role = (data?.role ?? 'standard') as UserRole;
+      const name = (data?.name ?? user.email ?? email) as string;
+      setUser({ uid: user.uid, email: user.email ?? email, name, role });
     } catch (err: unknown) {
       setErrorMessage(err instanceof Error ? err.message : 'Login failed');
     } finally {

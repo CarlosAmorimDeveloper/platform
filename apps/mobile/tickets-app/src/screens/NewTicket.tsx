@@ -25,6 +25,7 @@ export function NewTicket({ navigation }: Props) {
         title: title.trim(),
         description: description.trim(),
         creator_id: user.uid,
+        creator_name: user.name,
         status: 'open',
         createdAt: serverTimestamp(),
       });
@@ -49,7 +50,7 @@ export function NewTicket({ navigation }: Props) {
       />
       <LoadingIndicator visible={loading} />
       <Button onPress={handleSave} disabled={!title.trim() || loading}>
-        Save Ticket
+        Salvar Ticket
       </Button>
       <Snackbar
         visible={errorMessage !== null}
