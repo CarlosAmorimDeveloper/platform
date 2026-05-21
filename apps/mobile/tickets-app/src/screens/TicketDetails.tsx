@@ -22,6 +22,7 @@ import {
   STATUS_COLORS,
   type TicketStatus,
 } from '../constants/ticketStatus';
+import { PRIORITY_COLORS, PRIORITY_LABELS, type TicketPriority } from '../constants/ticketPriority';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { AppStackParamList } from '../navigation/types';
 
@@ -31,6 +32,7 @@ interface TicketData {
   title: string;
   description: string;
   status: TicketStatus;
+  priority: TicketPriority;
   creator_name: string;
   createdAt: Timestamp | null;
 }
@@ -87,11 +89,11 @@ export function TicketDetails({ route, navigation }: Props) {
             <MaterialIcons
               name={editing ? 'check' : 'edit'}
               size={24}
-              color={editing ? `${colors.success[600]}` : `${colors.neutral[600]}`}
+              color={editing ? `${colors.success[500]}` : `${colors.neutral[600]}`}
             />
           </Pressable>
           <Pressable onPress={() => setDeleteVisible(true)} style={styles.headerIcon}>
-            <MaterialIcons name="delete-outline" size={24} color={`${colors.error[600]}`} />
+            <MaterialIcons name="delete-outline" size={24} color={`${colors.error[500]}`} />
           </Pressable>
         </View>
       ),
@@ -106,6 +108,7 @@ export function TicketDetails({ route, navigation }: Props) {
           title: data.title as string,
           description: data.description as string,
           status: (data.status ?? 'open') as TicketStatus,
+          priority: (data.priority ?? 'medium') as TicketPriority,
           creator_name: (data.creator_name ?? data.creator_id ?? '') as string,
           createdAt: (data.createdAt as Timestamp) ?? null,
         });
@@ -242,6 +245,15 @@ export function TicketDetails({ route, navigation }: Props) {
           </Text>
         </View>
       )}
+
+      <Text style={styles.sectionLabel}>Prioridade</Text>
+      <View
+        style={[styles.statusBadge, { backgroundColor: PRIORITY_COLORS[ticket.priority] + '20' }]}
+      >
+        <Text style={[styles.statusBadgeText, { color: PRIORITY_COLORS[ticket.priority] }]}>
+          {PRIORITY_LABELS[ticket.priority]}
+        </Text>
+      </View>
 
       <Text style={styles.sectionLabel}>Comentários</Text>
 

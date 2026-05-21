@@ -13,6 +13,7 @@ import { colors, fontSizes, spacing } from '@ds/tokens';
 import { db } from '../services/firebase';
 import { useAuthStore } from '../store/useAuthStore';
 import { TicketCard, type TicketStatus } from '../components/TicketCard';
+import type { TicketPriority } from '../constants/ticketPriority';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { AppStackParamList } from '../navigation/types';
 
@@ -22,6 +23,7 @@ interface Ticket {
   id: string;
   title: string;
   status: TicketStatus;
+  priority: TicketPriority;
 }
 
 function toTicket(doc: QueryDocumentSnapshot): Ticket {
@@ -30,6 +32,7 @@ function toTicket(doc: QueryDocumentSnapshot): Ticket {
     id: doc.id,
     title: data.title as string,
     status: (data.status ?? 'open') as TicketStatus,
+    priority: (data.priority ?? 'medium') as TicketPriority,
   };
 }
 
@@ -70,11 +73,14 @@ export function TicketList({ route, navigation }: Props) {
         data={tickets}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <TicketCard
-            title={item.title}
-            status={item.status}
-            onPress={() => navigation.navigate('TicketDetails', { ticketId: item.id })}
-          />
+          <View style={{ marginBottom: spacing[4], marginHorizontal: spacing[1] }}>
+            <TicketCard
+              title={item.title}
+              status={item.status}
+              priority={item.priority}
+              onPress={() => navigation.navigate('TicketDetails', { ticketId: item.id })}
+            />
+          </View>
         )}
         ListEmptyComponent={
           <View style={styles.center}>
@@ -88,7 +94,12 @@ export function TicketList({ route, navigation }: Props) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: `${colors.neutral[100]}` },
+  container: {
+    flex: 1,
+    backgroundColor: `${colors.neutral[100]}`,
+    padding: spacing[4],
+    gap: spacing[3],
+  },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   fillHeight: { flex: 1 },
   list: { paddingVertical: spacing[2] },

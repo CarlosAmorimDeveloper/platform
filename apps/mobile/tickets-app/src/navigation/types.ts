@@ -10,4 +10,5 @@ export type AppStackParamList = {
   NewTicket: undefined;
   TicketDetails: { ticketId: string };
   TicketList: { status?: TicketStatus };
+  CreateUser: undefined;
 };

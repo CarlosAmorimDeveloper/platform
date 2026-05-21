@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Pressable } from 'react-native';
 import {
   collection,
   query,
@@ -7,6 +7,7 @@ import {
   orderBy,
   onSnapshot,
   type QueryDocumentSnapshot,
+  type Timestamp,
 } from 'firebase/firestore';
 import { LoadingIndicator, FAB, Card, PieChart } from '@ds/mobile';
 import { db } from '../services/firebase';
@@ -22,6 +23,9 @@ type Props = NativeStackScreenProps<AppStackParamList, 'Dashboard'>;
 interface Ticket {
   id: string;
   status: TicketStatus;
+  title: string;
+  creator_name: string;
+  createdAt: Timestamp | null;
 }
 
 function toTicket(doc: QueryDocumentSnapshot): Ticket {
@@ -29,7 +33,23 @@ function toTicket(doc: QueryDocumentSnapshot): Ticket {
   return {
     id: doc.id,
     status: (data.status ?? 'open') as TicketStatus,
+    title: data.title as string,
+    creator_name: (data.creator_name ?? '') as string,
+    createdAt: (data.createdAt as Timestamp) ?? null,
   };
+}
+
+function formatDate(ts: Timestamp | null): string {
+  if (!ts) return '';
+  return ts
+    .toDate()
+    .toLocaleString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
 }
 
 function StatusStatCard({
@@ -51,6 +71,33 @@ function StatusStatCard({
           </Text>
         </View>
       </View>
+    </Card>
+  );
+}
+
+function RecentTicketsCard({
+  tickets,
+  onPressTicket,
+}: {
+  tickets: Ticket[];
+  onPressTicket: (id: string) => void;
+}) {
+  const recent = tickets.slice(0, 3);
+  if (recent.length === 0) return null;
+  return (
+    <Card title="Chamados Recentes">
+      {recent.map((t, i) => (
+        <Pressable
+          key={t.id}
+          onPress={() => onPressTicket(t.id)}
+          style={[styles.recentItem, i === recent.length - 1 && { borderBottomWidth: 0 }]}
+        >
+          <Text style={styles.recentTitle}>{t.title}</Text>
+          <Text style={styles.recentMeta}>
+            {t.creator_name} · {formatDate(t.createdAt)}
+          </Text>
+        </Pressable>
+      ))}
     </Card>
   );
 }
@@ -97,6 +144,10 @@ export function Dashboard({ navigation }: Props) {
           onPress={() => navigation.navigate('TicketList', {})}
         />
       )}
+      <RecentTicketsCard
+        tickets={tickets}
+        onPressTicket={(id) => navigation.navigate('TicketDetails', { ticketId: id })}
+      />
       <View style={styles.statsRow}>
         {ALL_STATUSES.map((s) => (
           <StatusStatCard
@@ -131,4 +182,11 @@ const styles = StyleSheet.create({
   statCount: { fontSize: fontSizes['2xl'], fontWeight: 'bold', color: `${colors.neutral[900]}` },
   statBadge: { paddingHorizontal: spacing[2], paddingVertical: spacing[1], borderRadius: radii.xl },
   statLabel: { fontSize: fontSizes.xs, fontWeight: '600' },
+  recentItem: {
+    paddingVertical: spacing[2],
+    borderBottomWidth: 1,
+    borderBottomColor: `${colors.neutral[200]}`,
+  },
+  recentTitle: { fontSize: fontSizes.sm, fontWeight: '600', color: `${colors.neutral[900]}` },
+  recentMeta: { fontSize: fontSizes.xs, color: `${colors.neutral[500]}` },
 });

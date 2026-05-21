@@ -2,9 +2,10 @@ import { useState } from 'react';
 import { StyleSheet, ScrollView } from 'react-native';
 import { spacing } from '@ds/tokens';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { Input, Button, LoadingIndicator, Snackbar } from '@ds/mobile';
+import { Input, Button, LoadingIndicator, Snackbar, Select } from '@ds/mobile';
 import { db } from '../services/firebase';
 import { useAuthStore } from '../store/useAuthStore';
+import { ALL_PRIORITIES, PRIORITY_LABELS, type TicketPriority } from '../constants/ticketPriority';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { AppStackParamList } from '../navigation/types';
 
@@ -13,6 +14,7 @@ type Props = NativeStackScreenProps<AppStackParamList, 'NewTicket'>;
 export function NewTicket({ navigation }: Props) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  const [priority, setPriority] = useState<TicketPriority>('medium');
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const user = useAuthStore((s) => s.user);
@@ -24,6 +26,7 @@ export function NewTicket({ navigation }: Props) {
       await addDoc(collection(db, 'tickets'), {
         title: title.trim(),
         description: description.trim(),
+        priority,
         creator_id: user.uid,
         creator_name: user.name,
         status: 'open',
@@ -47,6 +50,12 @@ export function NewTicket({ navigation }: Props) {
         onChangeText={setDescription}
         multiline
         numberOfLines={4}
+      />
+      <Select
+        label="Prioridade"
+        value={priority}
+        onChange={(v) => setPriority(v as TicketPriority)}
+        options={ALL_PRIORITIES.map((p) => ({ label: PRIORITY_LABELS[p], value: p }))}
       />
       <LoadingIndicator visible={loading} />
       <Button onPress={handleSave} disabled={!title.trim() || loading}>

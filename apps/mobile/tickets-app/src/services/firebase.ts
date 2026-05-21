@@ -3,7 +3,7 @@ import { initializeAuth, getReactNativePersistence } from '@firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
 
-const firebaseConfig = {
+export const firebaseConfig = {
   apiKey: 'AIzaSyAKfnmjA2fD0trHsy0j7DLp_rwu4AEINtc',
   authDomain: 'tickets-app-e3c8f.firebaseapp.com',
   projectId: 'tickets-app-e3c8f',
