@@ -58,7 +58,9 @@ export function AppStack() {
       <Stack.Screen
         name="TicketList"
         component={TicketList}
-        options={({ route }) => ({ title: STATUS_LABELS[route.params.status] })}
+        options={({ route }) => ({
+          title: route.params.status ? STATUS_LABELS[route.params.status] : 'Todos os chamados',
+        })}
       />
     </Stack.Navigator>
   );

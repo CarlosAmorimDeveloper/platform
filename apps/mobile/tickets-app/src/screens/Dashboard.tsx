@@ -94,6 +94,7 @@ export function Dashboard({ navigation }: Props) {
             value: tickets.filter((t) => t.status === s).length,
             color: STATUS_COLORS[s],
           }))}
+          onPress={() => navigation.navigate('TicketList', {})}
         />
       )}
       <View style={styles.statsRow}>

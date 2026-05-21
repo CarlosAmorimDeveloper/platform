@@ -12,10 +12,11 @@ export interface PieChartSlice {
 
 export interface PieChartProps {
   slices: PieChartSlice[];
+  onPress?: () => void;
   testID?: string;
 }
 
-export function PieChart({ slices, testID }: PieChartProps) {
+export function PieChart({ slices, onPress, testID }: PieChartProps) {
   const { width } = useWindowDimensions();
   const chartWidth = width - spacing[6] * 2;
 
@@ -28,7 +29,7 @@ export function PieChart({ slices, testID }: PieChartProps) {
   }));
 
   return (
-    <Card testID={testID}>
+    <Card onPress={onPress} testID={testID}>
       <Card.Content>
         <RNPieChart
           data={data}
@@ -36,7 +37,7 @@ export function PieChart({ slices, testID }: PieChartProps) {
           height={200}
           accessor="count"
           backgroundColor="transparent"
-          paddingLeft="15"
+          paddingLeft="0"
           hasLegend
           absolute={false}
           chartConfig={{

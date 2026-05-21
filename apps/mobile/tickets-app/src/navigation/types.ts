@@ -9,5 +9,5 @@ export type AppStackParamList = {
   Dashboard: undefined;
   NewTicket: undefined;
   TicketDetails: { ticketId: string };
-  TicketList: { status: TicketStatus };
+  TicketList: { status?: TicketStatus };
 };

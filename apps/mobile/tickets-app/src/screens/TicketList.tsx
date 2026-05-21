@@ -49,7 +49,7 @@ export function TicketList({ route, navigation }: Props) {
         : query(col, where('creator_id', '==', user.uid), orderBy('createdAt', 'desc'));
 
     const unsubscribe = onSnapshot(q, (snap) => {
-      setTickets(snap.docs.map(toTicket).filter((t) => t.status === status));
+      setTickets(snap.docs.map(toTicket).filter((t) => !status || t.status === status));
       setLoading(false);
     });
 
