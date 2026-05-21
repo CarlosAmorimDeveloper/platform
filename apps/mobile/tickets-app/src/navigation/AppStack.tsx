@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Dialog, Button } from '@ds/mobile';
 import { Dashboard } from '../screens/Dashboard';
@@ -7,6 +6,7 @@ import { NewTicket } from '../screens/NewTicket';
 import { TicketDetails } from '../screens/TicketDetails';
 import { useAuthStore } from '../store/useAuthStore';
 import type { AppStackParamList } from './types';
+import { Text } from 'react-native';
 
 const Stack = createNativeStackNavigator<AppStackParamList>();
 
@@ -16,9 +16,9 @@ function LogoutButton() {
 
   return (
     <>
-      <TouchableOpacity onPress={() => setVisible(true)} style={styles.button}>
-        <Text style={styles.label}>Sair</Text>
-      </TouchableOpacity>
+      <Button variant="ghost" size="sm" onPress={() => setVisible(true)}>
+        Sair
+      </Button>
 
       <Dialog
         visible={visible}
@@ -38,11 +38,6 @@ function LogoutButton() {
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  button: { paddingHorizontal: 12, paddingVertical: 4 },
-  label: { color: '#6366f1', fontSize: 15, fontWeight: '600' },
-});
 
 export function AppStack() {
   return (

@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
+import { Input, Button, LoadingIndicator, Snackbar } from '@ds/mobile';
 import { auth, db } from '../services/firebase';
 import { useAuthStore, type UserRole } from '../store/useAuthStore';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -13,6 +14,7 @@ export function Login({ navigation }: Props) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const setUser = useAuthStore((s) => s.setUser);
 
   async function handleLogin() {
@@ -24,7 +26,7 @@ export function Login({ navigation }: Props) {
       const role = (snap.data()?.role ?? 'standard') as UserRole;
       setUser({ uid: user.uid, email: user.email ?? email, role });
     } catch (err: unknown) {
-      Alert.alert('Error', err instanceof Error ? err.message : 'Login failed');
+      setErrorMessage(err instanceof Error ? err.message : 'Login failed');
     } finally {
       setLoading(false);
     }
@@ -33,23 +35,26 @@ export function Login({ navigation }: Props) {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Login</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        autoCapitalize="none"
-        keyboardType="email-address"
-        value={email}
-        onChangeText={setEmail}
-      />
-      <TextInput
-        style={styles.input}
+      <Input label="Email" placeholder="Email" value={email} onChangeText={setEmail} />
+      <Input
+        label="Senha"
         placeholder="Password"
         secureTextEntry
         value={password}
         onChangeText={setPassword}
       />
-      {loading ? <ActivityIndicator /> : <Button title="Sign In" onPress={handleLogin} />}
-      <Button title="Create Account" onPress={() => navigation.navigate('Register')} />
+      <LoadingIndicator visible={loading} />
+      <Button onPress={handleLogin} disabled={loading}>
+        Sign In
+      </Button>
+      <Button variant="secondary" onPress={() => navigation.navigate('Register')}>
+        Create Account
+      </Button>
+      <Snackbar
+        visible={errorMessage !== null}
+        onDismiss={() => setErrorMessage(null)}
+        message={errorMessage ?? ''}
+      />
     </View>
   );
 }
@@ -57,12 +62,4 @@ export function Login({ navigation }: Props) {
 const styles = StyleSheet.create({
   container: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 12, padding: 24 },
   title: { fontSize: 24, fontWeight: 'bold', marginBottom: 8 },
-  input: {
-    width: '100%',
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
-  },
 });

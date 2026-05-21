@@ -1,12 +1,5 @@
 import { useEffect, useState } from 'react';
-import {
-  View,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  StyleSheet,
-  ActivityIndicator,
-} from 'react-native';
+import { View, Text, FlatList, StyleSheet } from 'react-native';
 import {
   collection,
   query,
@@ -15,6 +8,7 @@ import {
   onSnapshot,
   type QueryDocumentSnapshot,
 } from 'firebase/firestore';
+import { LoadingIndicator, FAB } from '@ds/mobile';
 import { db } from '../services/firebase';
 import { useAuthStore } from '../store/useAuthStore';
 import { TicketCard, type TicketStatus } from '../components/TicketCard';
@@ -63,7 +57,7 @@ export function Dashboard({ navigation }: Props) {
   if (loading) {
     return (
       <View style={styles.center}>
-        <ActivityIndicator size="large" />
+        <LoadingIndicator />
       </View>
     );
   }
@@ -87,9 +81,11 @@ export function Dashboard({ navigation }: Props) {
         }
         contentContainerStyle={tickets.length === 0 ? styles.fillHeight : styles.list}
       />
-      <TouchableOpacity style={styles.fab} onPress={() => navigation.navigate('NewTicket')}>
-        <Text style={styles.fabIcon}>+</Text>
-      </TouchableOpacity>
+      <FAB
+        onPress={() => navigation.navigate('NewTicket')}
+        style={styles.fab}
+        accessibilityLabel="New ticket"
+      />
     </View>
   );
 }
@@ -104,17 +100,5 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 24,
     bottom: 32,
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: '#6366f1',
-    alignItems: 'center',
-    justifyContent: 'center',
-    elevation: 6,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
   },
-  fabIcon: { color: '#fff', fontSize: 28, lineHeight: 30 },
 });

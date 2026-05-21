@@ -1,15 +1,7 @@
 import { useState } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  Button,
-  StyleSheet,
-  Alert,
-  ActivityIndicator,
-  ScrollView,
-} from 'react-native';
+import { View, Text, TextInput, StyleSheet, ScrollView } from 'react-native';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { Input, Button, LoadingIndicator, Snackbar } from '@ds/mobile';
 import { db } from '../services/firebase';
 import { useAuthStore } from '../store/useAuthStore';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -21,6 +13,7 @@ export function NewTicket({ navigation }: Props) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const user = useAuthStore((s) => s.user);
 
   async function handleSave() {
@@ -36,7 +29,7 @@ export function NewTicket({ navigation }: Props) {
       });
       navigation.goBack();
     } catch (err: unknown) {
-      Alert.alert('Error', err instanceof Error ? err.message : 'Failed to create ticket');
+      setErrorMessage(err instanceof Error ? err.message : 'Failed to create ticket');
     } finally {
       setLoading(false);
     }
@@ -44,16 +37,10 @@ export function NewTicket({ navigation }: Props) {
 
   return (
     <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-      <Text style={styles.label}>Title</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Ticket title"
-        value={title}
-        onChangeText={setTitle}
-      />
+      <Input label="Title" placeholder="Ticket title" value={title} onChangeText={setTitle} />
       <Text style={styles.label}>Description</Text>
       <TextInput
-        style={[styles.input, styles.textarea]}
+        style={[styles.textarea]}
         placeholder="Describe the issue..."
         value={description}
         onChangeText={setDescription}
@@ -61,11 +48,15 @@ export function NewTicket({ navigation }: Props) {
         numberOfLines={4}
         textAlignVertical="top"
       />
-      {loading ? (
-        <ActivityIndicator style={{ marginTop: 16 }} />
-      ) : (
-        <Button title="Save Ticket" onPress={handleSave} disabled={!title.trim()} />
-      )}
+      <LoadingIndicator visible={loading} />
+      <Button onPress={handleSave} disabled={!title.trim() || loading}>
+        Save Ticket
+      </Button>
+      <Snackbar
+        visible={errorMessage !== null}
+        onDismiss={() => setErrorMessage(null)}
+        message={errorMessage ?? ''}
+      />
     </ScrollView>
   );
 }
@@ -73,7 +64,7 @@ export function NewTicket({ navigation }: Props) {
 const styles = StyleSheet.create({
   container: { padding: 24, gap: 8 },
   label: { fontSize: 14, fontWeight: '600', color: '#374151' },
-  input: {
+  textarea: {
     borderWidth: 1,
     borderColor: '#d1d5db',
     borderRadius: 8,
@@ -81,6 +72,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     backgroundColor: '#fff',
     marginBottom: 8,
+    minHeight: 100,
   },
-  textarea: { minHeight: 100 },
 });

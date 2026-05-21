@@ -27,3 +27,9 @@ export type { SelectProps, SelectOption } from './Select';
 
 export { Snackbar } from './Snackbar';
 export type { SnackbarProps } from './Snackbar';
+
+export { LoadingIndicator } from './LoadingIndicator';
+export type { LoadingIndicatorProps } from './LoadingIndicator';
+
+export { FAB } from './FAB';
+export type { FABProps } from './FAB';

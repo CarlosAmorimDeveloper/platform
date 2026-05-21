@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
+import { Input, Button, LoadingIndicator, Snackbar } from '@ds/mobile';
 import { auth, db } from '../services/firebase';
 import { useAuthStore } from '../store/useAuthStore';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -13,6 +14,7 @@ export function Register({ navigation }: Props) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const setUser = useAuthStore((s) => s.setUser);
 
   async function handleRegister() {
@@ -23,7 +25,7 @@ export function Register({ navigation }: Props) {
       await setDoc(doc(db, 'users', user.uid), { email, role: 'standard' });
       setUser({ uid: user.uid, email, role: 'standard' });
     } catch (err: unknown) {
-      Alert.alert('Error', err instanceof Error ? err.message : 'Registration failed');
+      setErrorMessage(err instanceof Error ? err.message : 'Registration failed');
     } finally {
       setLoading(false);
     }
@@ -32,23 +34,26 @@ export function Register({ navigation }: Props) {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Register</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        autoCapitalize="none"
-        keyboardType="email-address"
-        value={email}
-        onChangeText={setEmail}
-      />
-      <TextInput
-        style={styles.input}
+      <Input label="Email" placeholder="Email" value={email} onChangeText={setEmail} />
+      <Input
+        label="Senha"
         placeholder="Password"
         secureTextEntry
         value={password}
         onChangeText={setPassword}
       />
-      {loading ? <ActivityIndicator /> : <Button title="Sign Up" onPress={handleRegister} />}
-      <Button title="Back to Login" onPress={() => navigation.navigate('Login')} />
+      <LoadingIndicator visible={loading} />
+      <Button onPress={handleRegister} disabled={loading}>
+        Sign Up
+      </Button>
+      <Button variant="secondary" onPress={() => navigation.navigate('Login')}>
+        Back to Login
+      </Button>
+      <Snackbar
+        visible={errorMessage !== null}
+        onDismiss={() => setErrorMessage(null)}
+        message={errorMessage ?? ''}
+      />
     </View>
   );
 }
@@ -56,12 +61,4 @@ export function Register({ navigation }: Props) {
 const styles = StyleSheet.create({
   container: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 12, padding: 24 },
   title: { fontSize: 24, fontWeight: 'bold', marginBottom: 8 },
-  input: {
-    width: '100%',
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
-  },
 });

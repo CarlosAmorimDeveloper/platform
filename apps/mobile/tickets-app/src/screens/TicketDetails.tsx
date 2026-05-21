@@ -1,14 +1,7 @@
 import { useEffect, useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ActivityIndicator,
-  Alert,
-  TouchableOpacity,
-  ScrollView,
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { doc, onSnapshot, updateDoc } from 'firebase/firestore';
+import { LoadingIndicator, Button, Snackbar } from '@ds/mobile';
 import { db } from '../services/firebase';
 import { useAuthStore } from '../store/useAuthStore';
 import type { TicketStatus } from '../components/TicketCard';
@@ -42,6 +35,7 @@ export function TicketDetails({ route }: Props) {
   const user = useAuthStore((s) => s.user);
   const [ticket, setTicket] = useState<TicketData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
     const unsubscribe = onSnapshot(doc(db, 'tickets', ticketId), (snap) => {
@@ -63,14 +57,14 @@ export function TicketDetails({ route }: Props) {
     try {
       await updateDoc(doc(db, 'tickets', ticketId), { status: newStatus });
     } catch (err: unknown) {
-      Alert.alert('Error', err instanceof Error ? err.message : 'Failed to update status');
+      setErrorMessage(err instanceof Error ? err.message : 'Failed to update status');
     }
   }
 
   if (loading) {
     return (
       <View style={styles.center}>
-        <ActivityIndicator size="large" />
+        <LoadingIndicator />
       </View>
     );
   }
@@ -93,21 +87,14 @@ export function TicketDetails({ route }: Props) {
       {user?.role === 'admin' ? (
         <View style={styles.statusRow}>
           {ALL_STATUSES.map((s) => (
-            <TouchableOpacity
+            <Button
               key={s}
-              style={[
-                styles.statusButton,
-                ticket.status === s && {
-                  backgroundColor: STATUS_COLORS[s],
-                  borderColor: STATUS_COLORS[s],
-                },
-              ]}
+              variant={ticket.status === s ? 'primary' : 'secondary'}
+              size="sm"
               onPress={() => handleStatusChange(s)}
             >
-              <Text style={[styles.statusButtonText, ticket.status === s && { color: '#fff' }]}>
-                {STATUS_LABELS[s]}
-              </Text>
-            </TouchableOpacity>
+              {STATUS_LABELS[s]}
+            </Button>
           ))}
         </View>
       ) : (
@@ -119,6 +106,12 @@ export function TicketDetails({ route }: Props) {
           </Text>
         </View>
       )}
+
+      <Snackbar
+        visible={errorMessage !== null}
+        onDismiss={() => setErrorMessage(null)}
+        message={errorMessage ?? ''}
+      />
     </ScrollView>
   );
 }
@@ -130,15 +123,6 @@ const styles = StyleSheet.create({
   description: { fontSize: 16, color: '#6b7280', lineHeight: 24 },
   sectionLabel: { fontSize: 14, fontWeight: '600', color: '#374151', marginTop: 8 },
   statusRow: { flexDirection: 'row', gap: 8 },
-  statusButton: {
-    flex: 1,
-    paddingVertical: 10,
-    borderRadius: 8,
-    borderWidth: 1.5,
-    borderColor: '#d1d5db',
-    alignItems: 'center',
-  },
-  statusButtonText: { fontSize: 13, fontWeight: '600', color: '#374151' },
   statusBadge: {
     alignSelf: 'flex-start',
     paddingHorizontal: 16,
