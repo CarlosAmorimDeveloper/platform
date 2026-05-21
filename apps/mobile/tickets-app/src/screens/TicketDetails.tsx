@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
-import { doc, onSnapshot, updateDoc } from 'firebase/firestore';
-import { LoadingIndicator, Button, Snackbar } from '@ds/mobile';
+import { doc, onSnapshot, updateDoc, deleteDoc } from 'firebase/firestore';
+import { LoadingIndicator, Button, Snackbar, Dialog } from '@ds/mobile';
 import { db } from '../services/firebase';
 import { useAuthStore } from '../store/useAuthStore';
 import type { TicketStatus } from '../components/TicketCard';
@@ -30,12 +30,13 @@ const STATUS_COLORS: Record<TicketStatus, string> = {
   done: '#22c55e',
 };
 
-export function TicketDetails({ route }: Props) {
+export function TicketDetails({ route, navigation }: Props) {
   const { ticketId } = route.params;
   const user = useAuthStore((s) => s.user);
   const [ticket, setTicket] = useState<TicketData | null>(null);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [deleteVisible, setDeleteVisible] = useState(false);
 
   useEffect(() => {
     const unsubscribe = onSnapshot(doc(db, 'tickets', ticketId), (snap) => {
@@ -52,6 +53,16 @@ export function TicketDetails({ route }: Props) {
 
     return unsubscribe;
   }, [ticketId]);
+
+  async function handleDelete() {
+    try {
+      await deleteDoc(doc(db, 'tickets', ticketId));
+      navigation.goBack();
+    } catch (err: unknown) {
+      setDeleteVisible(false);
+      setErrorMessage(err instanceof Error ? err.message : 'Failed to delete ticket');
+    }
+  }
 
   async function handleStatusChange(newStatus: TicketStatus) {
     try {
@@ -85,18 +96,23 @@ export function TicketDetails({ route }: Props) {
       <Text style={styles.sectionLabel}>Status</Text>
 
       {user?.role === 'admin' ? (
-        <View style={styles.statusRow}>
-          {ALL_STATUSES.map((s) => (
-            <Button
-              key={s}
-              variant={ticket.status === s ? 'primary' : 'secondary'}
-              size="sm"
-              onPress={() => handleStatusChange(s)}
-            >
-              {STATUS_LABELS[s]}
-            </Button>
-          ))}
-        </View>
+        <>
+          <View style={styles.statusRow}>
+            {ALL_STATUSES.map((s) => (
+              <Button
+                key={s}
+                variant={ticket.status === s ? 'primary' : 'secondary'}
+                size="sm"
+                onPress={() => handleStatusChange(s)}
+              >
+                {STATUS_LABELS[s]}
+              </Button>
+            ))}
+          </View>
+          <Button variant="danger" onPress={() => setDeleteVisible(true)}>
+            Apagar ticket
+          </Button>
+        </>
       ) : (
         <View
           style={[styles.statusBadge, { backgroundColor: STATUS_COLORS[ticket.status] + '20' }]}
@@ -107,6 +123,21 @@ export function TicketDetails({ route }: Props) {
         </View>
       )}
 
+      <Dialog
+        visible={deleteVisible}
+        onDismiss={() => setDeleteVisible(false)}
+        title="Apagar ticket"
+        actions={[
+          <Button key="cancel" variant="ghost" onPress={() => setDeleteVisible(false)}>
+            Cancelar
+          </Button>,
+          <Button key="confirm" variant="danger" onPress={handleDelete}>
+            Apagar
+          </Button>,
+        ]}
+      >
+        <Text>Esta ação não pode ser desfeita.</Text>
+      </Dialog>
       <Snackbar
         visible={errorMessage !== null}
         onDismiss={() => setErrorMessage(null)}
