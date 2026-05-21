@@ -34,5 +34,8 @@ export type { LoadingIndicatorProps } from './LoadingIndicator';
 export { FAB } from './FAB';
 export type { FABProps } from './FAB';
 
+export { Alert } from './Alert';
+export type { AlertProps, AlertVariant } from './Alert';
+
 export { PieChart } from './PieChart';
 export type { PieChartProps, PieChartSlice } from './PieChart';
