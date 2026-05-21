@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import {
   collection,
   query,
@@ -11,7 +11,7 @@ import {
 import { LoadingIndicator, FAB, Card } from '@ds/mobile';
 import { db } from '../services/firebase';
 import { useAuthStore } from '../store/useAuthStore';
-import { TicketCard, type TicketStatus } from '../components/TicketCard';
+import type { TicketStatus } from '../components/TicketCard';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { AppStackParamList } from '../navigation/types';
 import { colors, fontSizes, spacing, radii } from '@ds/tokens';
@@ -21,7 +21,6 @@ type Props = NativeStackScreenProps<AppStackParamList, 'Dashboard'>;
 
 interface Ticket {
   id: string;
-  title: string;
   status: TicketStatus;
 }
 
@@ -29,7 +28,6 @@ function toTicket(doc: QueryDocumentSnapshot): Ticket {
   const data = doc.data();
   return {
     id: doc.id,
-    title: data.title as string,
     status: (data.status ?? 'open') as TicketStatus,
   };
 }
@@ -89,35 +87,16 @@ export function Dashboard({ navigation }: Props) {
 
   return (
     <View style={styles.container}>
-      <FlatList
-        data={tickets}
-        keyExtractor={(item) => item.id}
-        ListHeaderComponent={
-          <View style={styles.statsRow}>
-            {ALL_STATUSES.map((s) => (
-              <StatusStatCard
-                key={s}
-                status={s}
-                count={tickets.filter((t) => t.status === s).length}
-                onPress={() => navigation.navigate('TicketList', { status: s })}
-              />
-            ))}
-          </View>
-        }
-        renderItem={({ item }) => (
-          <TicketCard
-            title={item.title}
-            status={item.status}
-            onPress={() => navigation.navigate('TicketDetails', { ticketId: item.id })}
+      <View style={styles.statsRow}>
+        {ALL_STATUSES.map((s) => (
+          <StatusStatCard
+            key={s}
+            status={s}
+            count={tickets.filter((t) => t.status === s).length}
+            onPress={() => navigation.navigate('TicketList', { status: s })}
           />
-        )}
-        ListEmptyComponent={
-          <View style={styles.center}>
-            <Text style={styles.emptyText}>No tickets yet.</Text>
-          </View>
-        }
-        contentContainerStyle={tickets.length === 0 ? styles.fillHeight : styles.list}
-      />
+        ))}
+      </View>
       <FAB
         onPress={() => navigation.navigate('NewTicket')}
         style={styles.fab}
@@ -130,9 +109,6 @@ export function Dashboard({ navigation }: Props) {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: `${colors.neutral[100]}` },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  fillHeight: { flex: 1 },
-  list: { paddingVertical: spacing[2] },
-  emptyText: { color: `${colors.neutral[500]}`, fontSize: fontSizes.base },
   fab: { position: 'absolute', right: spacing[6], bottom: spacing[8] },
   statsRow: { flexDirection: 'row', gap: spacing[2], padding: spacing[3] },
   statContent: { alignItems: 'center', gap: spacing[1], paddingVertical: spacing[2] },
