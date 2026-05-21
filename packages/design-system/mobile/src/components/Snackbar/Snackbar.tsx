@@ -16,6 +16,7 @@ export interface SnackbarProps {
   onDismiss: () => void;
   message: string;
   variant?: AlertVariant;
+  position?: 'top' | 'bottom';
   duration?: number;
   action?: { label: string; onPress: () => void };
   testID?: string;
@@ -26,6 +27,7 @@ export function Snackbar({
   onDismiss,
   message,
   variant,
+  position = 'bottom',
   duration = 1500,
   action,
   testID,
@@ -39,6 +41,9 @@ export function Snackbar({
       duration={duration}
       action={action}
       style={themed ? { backgroundColor: themed.bg } : undefined}
+      wrapperStyle={
+        position === 'top' ? { top: 0, bottom: 'auto', alignItems: 'center' } : undefined
+      }
       testID={testID}
     >
       {themed ? <Text style={{ color: themed.text }}>{message}</Text> : message}
