@@ -61,7 +61,11 @@
       "@app/tickets/react-native",
       "@app/tickets/react-native/**",
       "@app/tickets/react-dom",
-      "@app/tickets/react-dom/**"
+      "@app/tickets/react-dom/**",
+      "@app/tickets/react-native-svg",
+      "@app/tickets/react-native-svg/**",
+      "@app/tickets/react-native-chart-kit",
+      "@app/tickets/react-native-chart-kit/**"
     ]
   },
   "dependencies": {

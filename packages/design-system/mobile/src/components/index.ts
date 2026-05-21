@@ -33,3 +33,6 @@ export type { LoadingIndicatorProps } from './LoadingIndicator';
 
 export { FAB } from './FAB';
 export type { FABProps } from './FAB';
+
+export { PieChart } from './PieChart';
+export type { PieChartProps, PieChartSlice } from './PieChart';

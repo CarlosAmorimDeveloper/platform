@@ -8,7 +8,7 @@ import {
   onSnapshot,
   type QueryDocumentSnapshot,
 } from 'firebase/firestore';
-import { LoadingIndicator, FAB, Card } from '@ds/mobile';
+import { LoadingIndicator, FAB, Card, PieChart } from '@ds/mobile';
 import { db } from '../services/firebase';
 import { useAuthStore } from '../store/useAuthStore';
 import type { TicketStatus } from '../components/TicketCard';
@@ -87,6 +87,15 @@ export function Dashboard({ navigation }: Props) {
 
   return (
     <View style={styles.container}>
+      {tickets.length > 0 && (
+        <PieChart
+          slices={ALL_STATUSES.map((s) => ({
+            label: STATUS_LABELS[s],
+            value: tickets.filter((t) => t.status === s).length,
+            color: STATUS_COLORS[s],
+          }))}
+        />
+      )}
       <View style={styles.statsRow}>
         {ALL_STATUSES.map((s) => (
           <StatusStatCard
