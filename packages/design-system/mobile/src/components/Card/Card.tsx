@@ -1,5 +1,6 @@
 import React from 'react';
 import type { ReactNode } from 'react';
+import type { StyleProp, ViewStyle } from 'react-native';
 import { Card as PaperCard } from 'react-native-paper';
 
 export interface CardProps {
@@ -8,12 +9,13 @@ export interface CardProps {
   children?: ReactNode;
   onPress?: () => void;
   coverUri?: string;
+  style?: StyleProp<ViewStyle>;
   testID?: string;
 }
 
-export function Card({ title, subtitle, children, onPress, coverUri, testID }: CardProps) {
+export function Card({ title, subtitle, children, onPress, coverUri, style, testID }: CardProps) {
   return (
-    <PaperCard onPress={onPress} testID={testID}>
+    <PaperCard onPress={onPress} style={style as any} testID={testID}>
       {coverUri && <PaperCard.Cover source={{ uri: coverUri }} />}
       {(title != null || subtitle != null) && (
         <PaperCard.Title title={title ?? ''} subtitle={subtitle} />

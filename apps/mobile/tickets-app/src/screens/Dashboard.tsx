@@ -42,7 +42,7 @@ function StatusStatCard({
   onPress: () => void;
 }) {
   return (
-    <Card onPress={onPress}>
+    <Card onPress={onPress} style={styles.statCard}>
       <View style={styles.statContent}>
         <Text style={styles.statCount}>{count}</Text>
         <View style={[styles.statBadge, { backgroundColor: STATUS_COLORS[status] + '20' }]}>
@@ -116,10 +116,16 @@ export function Dashboard({ navigation }: Props) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: `${colors.neutral[100]}` },
+  container: {
+    flex: 1,
+    backgroundColor: `${colors.neutral[100]}`,
+    padding: spacing[4],
+    gap: spacing[3],
+  },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   fab: { position: 'absolute', right: spacing[6], bottom: spacing[8] },
-  statsRow: { flexDirection: 'row', gap: spacing[2], padding: spacing[3] },
+  statsRow: { flexDirection: 'row', gap: spacing[2] },
+  statCard: { flex: 1 },
   statContent: { alignItems: 'center', gap: spacing[1], paddingVertical: spacing[2] },
   statCount: { fontSize: fontSizes['2xl'], fontWeight: 'bold', color: `${colors.neutral[900]}` },
   statBadge: { paddingHorizontal: spacing[2], paddingVertical: spacing[1], borderRadius: radii.xl },
