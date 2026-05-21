@@ -59,6 +59,12 @@ config.resolver.resolveRequest = (context, moduleName, platform) => {
       filePath: require.resolve(moduleName, { paths: [appLocalNodeModules] }),
     };
   }
+  if (moduleName === 'react-native-paper' || moduleName.startsWith('react-native-paper/')) {
+    return {
+      type: 'sourceFile',
+      filePath: require.resolve(moduleName, { paths: [appLocalNodeModules] }),
+    };
+  }
   if (_originalResolveRequest) {
     return _originalResolveRequest(context, moduleName, platform);
   }
