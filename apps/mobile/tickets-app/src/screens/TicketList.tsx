@@ -8,16 +8,15 @@ import {
   onSnapshot,
   type QueryDocumentSnapshot,
 } from 'firebase/firestore';
-import { LoadingIndicator, FAB, Card } from '@ds/mobile';
+import { LoadingIndicator } from '@ds/mobile';
+import { colors, fontSizes, spacing } from '@ds/tokens';
 import { db } from '../services/firebase';
 import { useAuthStore } from '../store/useAuthStore';
 import { TicketCard, type TicketStatus } from '../components/TicketCard';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { AppStackParamList } from '../navigation/types';
-import { colors, fontSizes, spacing, radii } from '@ds/tokens';
-import { ALL_STATUSES, STATUS_LABELS, STATUS_COLORS } from '../constants/ticketStatus';
 
-type Props = NativeStackScreenProps<AppStackParamList, 'Dashboard'>;
+type Props = NativeStackScreenProps<AppStackParamList, 'TicketList'>;
 
 interface Ticket {
   id: string;
@@ -34,30 +33,8 @@ function toTicket(doc: QueryDocumentSnapshot): Ticket {
   };
 }
 
-function StatusStatCard({
-  status,
-  count,
-  onPress,
-}: {
-  status: TicketStatus;
-  count: number;
-  onPress: () => void;
-}) {
-  return (
-    <Card onPress={onPress}>
-      <View style={styles.statContent}>
-        <Text style={styles.statCount}>{count}</Text>
-        <View style={[styles.statBadge, { backgroundColor: STATUS_COLORS[status] + '20' }]}>
-          <Text style={[styles.statLabel, { color: STATUS_COLORS[status] }]}>
-            {STATUS_LABELS[status]}
-          </Text>
-        </View>
-      </View>
-    </Card>
-  );
-}
-
-export function Dashboard({ navigation }: Props) {
+export function TicketList({ route, navigation }: Props) {
+  const { status } = route.params;
   const user = useAuthStore((s) => s.user);
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [loading, setLoading] = useState(true);
@@ -72,12 +49,12 @@ export function Dashboard({ navigation }: Props) {
         : query(col, where('creator_id', '==', user.uid), orderBy('createdAt', 'desc'));
 
     const unsubscribe = onSnapshot(q, (snap) => {
-      setTickets(snap.docs.map(toTicket));
+      setTickets(snap.docs.map(toTicket).filter((t) => t.status === status));
       setLoading(false);
     });
 
     return unsubscribe;
-  }, [user]);
+  }, [user, status]);
 
   if (loading) {
     return (
@@ -92,18 +69,6 @@ export function Dashboard({ navigation }: Props) {
       <FlatList
         data={tickets}
         keyExtractor={(item) => item.id}
-        ListHeaderComponent={
-          <View style={styles.statsRow}>
-            {ALL_STATUSES.map((s) => (
-              <StatusStatCard
-                key={s}
-                status={s}
-                count={tickets.filter((t) => t.status === s).length}
-                onPress={() => navigation.navigate('TicketList', { status: s })}
-              />
-            ))}
-          </View>
-        }
         renderItem={({ item }) => (
           <TicketCard
             title={item.title}
@@ -113,15 +78,10 @@ export function Dashboard({ navigation }: Props) {
         )}
         ListEmptyComponent={
           <View style={styles.center}>
-            <Text style={styles.emptyText}>No tickets yet.</Text>
+            <Text style={styles.emptyText}>Nenhum ticket encontrado.</Text>
           </View>
         }
         contentContainerStyle={tickets.length === 0 ? styles.fillHeight : styles.list}
-      />
-      <FAB
-        onPress={() => navigation.navigate('NewTicket')}
-        style={styles.fab}
-        accessibilityLabel="New ticket"
       />
     </View>
   );
@@ -133,10 +93,4 @@ const styles = StyleSheet.create({
   fillHeight: { flex: 1 },
   list: { paddingVertical: spacing[2] },
   emptyText: { color: `${colors.neutral[500]}`, fontSize: fontSizes.base },
-  fab: { position: 'absolute', right: spacing[6], bottom: spacing[8] },
-  statsRow: { flexDirection: 'row', gap: spacing[2], padding: spacing[3] },
-  statContent: { alignItems: 'center', gap: spacing[1], paddingVertical: spacing[2] },
-  statCount: { fontSize: fontSizes['2xl'], fontWeight: 'bold', color: `${colors.neutral[900]}` },
-  statBadge: { paddingHorizontal: spacing[2], paddingVertical: spacing[1], borderRadius: radii.xl },
-  statLabel: { fontSize: fontSizes.xs, fontWeight: '600' },
 });

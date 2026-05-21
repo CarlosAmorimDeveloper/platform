@@ -4,7 +4,9 @@ import { Dialog, Button } from '@ds/mobile';
 import { Dashboard } from '../screens/Dashboard';
 import { NewTicket } from '../screens/NewTicket';
 import { TicketDetails } from '../screens/TicketDetails';
+import { TicketList } from '../screens/TicketList';
 import { useAuthStore } from '../store/useAuthStore';
+import { STATUS_LABELS } from '../constants/ticketStatus';
 import type { AppStackParamList } from './types';
 import { Text } from 'react-native';
 
@@ -52,6 +54,11 @@ export function AppStack() {
         name="TicketDetails"
         component={TicketDetails}
         options={{ title: 'Ticket Details' }}
+      />
+      <Stack.Screen
+        name="TicketList"
+        component={TicketList}
+        options={({ route }) => ({ title: STATUS_LABELS[route.params.status] })}
       />
     </Stack.Navigator>
   );
