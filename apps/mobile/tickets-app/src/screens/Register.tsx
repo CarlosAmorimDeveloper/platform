@@ -3,7 +3,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import { FirebaseError } from 'firebase/app';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
-import { Input, Button, LoadingIndicator, Alert } from '@ds/mobile';
+import { Input, Button, LoadingIndicator, Snackbar } from '@ds/mobile';
 import { fontSizes, spacing } from '@ds/tokens';
 import { auth, db } from '../services/firebase';
 import { useAuthStore } from '../store/useAuthStore';
@@ -59,7 +59,12 @@ export function Register({ navigation }: Props) {
       <Button variant="secondary" onPress={() => navigation.navigate('Login')}>
         Back to Login
       </Button>
-      {errorMessage && <Alert message={errorMessage} variant="error" />}
+      <Snackbar
+        visible={errorMessage !== null}
+        onDismiss={() => setErrorMessage(null)}
+        message={errorMessage ?? ''}
+        variant="error"
+      />
     </View>
   );
 }
