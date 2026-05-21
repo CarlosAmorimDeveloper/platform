@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
 import {
   doc,
   collection,
@@ -63,6 +64,17 @@ export function TicketDetails({ route, navigation }: Props) {
   const [sendingComment, setSendingComment] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [deleteVisible, setDeleteVisible] = useState(false);
+
+  useEffect(() => {
+    if (user?.role !== 'admin') return;
+    navigation.setOptions({
+      headerRight: () => (
+        <Pressable onPress={() => setDeleteVisible(true)} style={styles.headerIcon}>
+          <MaterialIcons name="delete-outline" size={24} color={`${colors.error[600]}`} />
+        </Pressable>
+      ),
+    });
+  }, [navigation, user?.role]);
 
   useEffect(() => {
     const unsubscribe = onSnapshot(doc(db, 'tickets', ticketId), (snap) => {
@@ -192,9 +204,6 @@ export function TicketDetails({ route, navigation }: Props) {
               </Button>
             ))}
           </View>
-          <Button variant="danger" onPress={() => setDeleteVisible(true)}>
-            Apagar ticket
-          </Button>
         </>
       ) : (
         <View
@@ -264,6 +273,7 @@ export function TicketDetails({ route, navigation }: Props) {
 
 const styles = StyleSheet.create({
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  headerIcon: { paddingHorizontal: spacing[2] },
   container: { padding: spacing[6], gap: spacing[3] },
   title: { fontSize: 22, fontWeight: 'bold', color: `${colors.neutral[900]}` },
   description: { fontSize: fontSizes.base, color: `${colors.neutral[500]}`, lineHeight: 24 },
