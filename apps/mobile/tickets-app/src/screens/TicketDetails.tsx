@@ -4,7 +4,6 @@ import {
   doc,
   collection,
   query,
-  orderBy,
   onSnapshot,
   updateDoc,
   deleteDoc,
@@ -83,20 +82,24 @@ export function TicketDetails({ route, navigation }: Props) {
   }, [ticketId]);
 
   useEffect(() => {
-    const q = query(collection(db, 'tickets', ticketId, 'comments'), orderBy('createdAt', 'asc'));
+    const q = query(collection(db, 'tickets', ticketId, 'comments'));
     const unsubscribe = onSnapshot(q, (snap) => {
-      setComments(
-        snap.docs.map((d) => {
-          const data = d.data();
-          return {
-            id: d.id,
-            text: data.text as string,
-            author_id: data.author_id as string,
-            author_name: data.author_name as string,
-            createdAt: (data.createdAt as Timestamp) ?? null,
-          };
-        }),
-      );
+      const mapped = snap.docs.map((d) => {
+        const data = d.data();
+        return {
+          id: d.id,
+          text: data.text as string,
+          author_id: data.author_id as string,
+          author_name: data.author_name as string,
+          createdAt: (data.createdAt as Timestamp) ?? null,
+        };
+      });
+      mapped.sort((a, b) => {
+        if (!a.createdAt) return 1;
+        if (!b.createdAt) return -1;
+        return a.createdAt.toMillis() - b.createdAt.toMillis();
+      });
+      setComments(mapped);
     });
     return unsubscribe;
   }, [ticketId]);
