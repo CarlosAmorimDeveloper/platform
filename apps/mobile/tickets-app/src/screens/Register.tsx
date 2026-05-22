@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { FirebaseError } from 'firebase/app';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Input, Button, LoadingIndicator, Snackbar } from '@ds/mobile';
 import { fontSizes, spacing } from '@ds/tokens';
 import { auth, db } from '../services/firebase';
-import { useAuthStore } from '../store/useAuthStore';
+import { useAuthStore, type UserRole } from '../store/useAuthStore';
+import { mapFirebaseAuthError } from '../utils/firebaseErrors';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { AuthStackParamList } from '../navigation/types';
 
@@ -27,18 +28,16 @@ export function Register({ navigation }: Props) {
     if (!name.trim() || !email || !password || password.length < 6) return;
     setLoading(true);
     try {
+      const isFirst = await AsyncStorage.getItem('first_user_registered').catch(() => 'error');
+      const role: UserRole = isFirst === null ? 'admin' : 'standard';
+
       const { user } = await createUserWithEmailAndPassword(auth, email, password);
-      await setDoc(doc(db, 'users', user.uid), { email, role: 'standard', name: name.trim() });
-      setUser({ uid: user.uid, email, name: name.trim(), role: 'standard' });
+      await setDoc(doc(db, 'users', user.uid), { email, role, name: name.trim() });
+      setUser({ uid: user.uid, email, name: name.trim(), role });
+
+      await AsyncStorage.setItem('first_user_registered', 'true');
     } catch (err: unknown) {
-      console.error('[Register] error:', err);
-      const message =
-        err instanceof FirebaseError && err.code === 'auth/email-already-in-use'
-          ? 'Não foi possível criar a conta.'
-          : err instanceof Error
-            ? err.message
-            : 'Registration failed';
-      setErrorMessage(message);
+      setErrorMessage(mapFirebaseAuthError(err));
     } finally {
       setLoading(false);
     }
@@ -46,12 +45,12 @@ export function Register({ navigation }: Props) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Register</Text>
+      <Text style={styles.title}>Cadastro</Text>
       <Input label="Nome" placeholder="Seu nome" value={name} onChangeText={setName} />
       <Input label="Email" placeholder="Email" value={email} onChangeText={setEmail} />
       <Input
         label="Senha"
-        placeholder="Password"
+        placeholder="Senha"
         secureTextEntry
         showPasswordToggle
         value={password}
@@ -63,10 +62,10 @@ export function Register({ navigation }: Props) {
         onPress={handleRegister}
         disabled={!name.trim() || !email.trim() || password.length < 6 || loading}
       >
-        Sign Up
+        Cadastrar
       </Button>
       <Button variant="secondary" onPress={() => navigation.navigate('Login')}>
-        Back to Login
+        Voltar para o login
       </Button>
       <Snackbar
         visible={errorMessage !== null}

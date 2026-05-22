@@ -42,7 +42,7 @@ export function Snackbar({
       action={action}
       style={themed ? { backgroundColor: themed.bg } : undefined}
       wrapperStyle={
-        position === 'top' ? { top: 0, bottom: 'auto', alignItems: 'center' } : undefined
+        position === 'top' ? { top: 0, bottom: 'auto', alignSelf: 'center' } : undefined
       }
       testID={testID}
     >

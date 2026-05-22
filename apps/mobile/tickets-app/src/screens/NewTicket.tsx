@@ -34,7 +34,7 @@ export function NewTicket({ navigation }: Props) {
       });
       navigation.goBack();
     } catch (err: unknown) {
-      setErrorMessage(err instanceof Error ? err.message : 'Failed to create ticket');
+      setErrorMessage(err instanceof Error ? err.message : 'Falha ao criar o chamado.');
     } finally {
       setLoading(false);
     }
@@ -42,10 +42,10 @@ export function NewTicket({ navigation }: Props) {
 
   return (
     <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-      <Input label="Title" placeholder="Ticket title" value={title} onChangeText={setTitle} />
+      <Input label="Título" placeholder="Título do chamado" value={title} onChangeText={setTitle} />
       <Input
-        label="Description"
-        placeholder="Describe the issue..."
+        label="Descrição"
+        placeholder="Descreva o problema..."
         value={description}
         onChangeText={setDescription}
         multiline

@@ -6,6 +6,7 @@ import { Input, Button, LoadingIndicator, Snackbar } from '@ds/mobile';
 import { fontSizes, spacing } from '@ds/tokens';
 import { auth, db } from '../services/firebase';
 import { useAuthStore, type UserRole } from '../store/useAuthStore';
+import { mapFirebaseAuthError } from '../utils/firebaseErrors';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { AuthStackParamList } from '../navigation/types';
 
@@ -29,7 +30,7 @@ export function Login({ navigation }: Props) {
       const name = (data?.name ?? user.email ?? email) as string;
       setUser({ uid: user.uid, email: user.email ?? email, name, role });
     } catch (err: unknown) {
-      setErrorMessage(err instanceof Error ? err.message : 'Login failed');
+      setErrorMessage(mapFirebaseAuthError(err));
     } finally {
       setLoading(false);
     }
@@ -41,7 +42,7 @@ export function Login({ navigation }: Props) {
       <Input label="Email" placeholder="Email" value={email} onChangeText={setEmail} />
       <Input
         label="Senha"
-        placeholder="Password"
+        placeholder="Senha"
         secureTextEntry
         showPasswordToggle
         value={password}
@@ -49,10 +50,10 @@ export function Login({ navigation }: Props) {
       />
       <LoadingIndicator visible={loading} />
       <Button onPress={handleLogin} disabled={loading}>
-        Sign In
+        Entrar
       </Button>
       <Button variant="secondary" onPress={() => navigation.navigate('Register')}>
-        Create Account
+        Criar conta
       </Button>
       <Snackbar
         visible={errorMessage !== null}

@@ -9,7 +9,7 @@ import {
   type QueryDocumentSnapshot,
   type Timestamp,
 } from 'firebase/firestore';
-import { LoadingIndicator, FAB, Card, PieChart } from '@ds/mobile';
+import { LoadingIndicator, FAB, Card, PieChart, Snackbar } from '@ds/mobile';
 import { db } from '../services/firebase';
 import { useAuthStore } from '../store/useAuthStore';
 import type { TicketStatus } from '../components/TicketCard';
@@ -33,7 +33,7 @@ function toTicket(doc: QueryDocumentSnapshot): Ticket {
   return {
     id: doc.id,
     status: (data.status ?? 'open') as TicketStatus,
-    title: data.title as string,
+    title: (data.title ?? '') as string,
     creator_name: (data.creator_name ?? '') as string,
     createdAt: (data.createdAt as Timestamp) ?? null,
   };
@@ -41,15 +41,13 @@ function toTicket(doc: QueryDocumentSnapshot): Ticket {
 
 function formatDate(ts: Timestamp | null): string {
   if (!ts) return '';
-  return ts
-    .toDate()
-    .toLocaleString('pt-BR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
+  return ts.toDate().toLocaleString('pt-BR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
 }
 
 function StatusStatCard({
@@ -106,6 +104,7 @@ export function Dashboard({ navigation }: Props) {
   const user = useAuthStore((s) => s.user);
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [loading, setLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
     if (!user) return;
@@ -116,10 +115,17 @@ export function Dashboard({ navigation }: Props) {
         ? query(col, orderBy('createdAt', 'desc'))
         : query(col, where('creator_id', '==', user.uid), orderBy('createdAt', 'desc'));
 
-    const unsubscribe = onSnapshot(q, (snap) => {
-      setTickets(snap.docs.map(toTicket));
-      setLoading(false);
-    });
+    const unsubscribe = onSnapshot(
+      q,
+      (snap) => {
+        setTickets(snap.docs.map(toTicket));
+        setLoading(false);
+      },
+      () => {
+        setLoading(false);
+        setErrorMessage('Erro ao carregar os chamados.');
+      },
+    );
 
     return unsubscribe;
   }, [user]);
@@ -162,6 +168,12 @@ export function Dashboard({ navigation }: Props) {
         onPress={() => navigation.navigate('NewTicket')}
         style={styles.fab}
         accessibilityLabel="New ticket"
+      />
+      <Snackbar
+        visible={errorMessage !== null}
+        onDismiss={() => setErrorMessage(null)}
+        message={errorMessage ?? ''}
+        variant="error"
       />
     </View>
   );

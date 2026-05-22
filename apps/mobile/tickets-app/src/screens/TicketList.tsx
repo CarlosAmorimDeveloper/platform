@@ -7,8 +7,9 @@ import {
   orderBy,
   onSnapshot,
   type QueryDocumentSnapshot,
+  type Timestamp,
 } from 'firebase/firestore';
-import { LoadingIndicator } from '@ds/mobile';
+import { LoadingIndicator, Snackbar } from '@ds/mobile';
 import { colors, fontSizes, spacing } from '@ds/tokens';
 import { db } from '../services/firebase';
 import { useAuthStore } from '../store/useAuthStore';
@@ -24,15 +25,19 @@ interface Ticket {
   title: string;
   status: TicketStatus;
   priority: TicketPriority;
+  creatorName: string;
+  createdAt: Timestamp | null;
 }
 
 function toTicket(doc: QueryDocumentSnapshot): Ticket {
   const data = doc.data();
   return {
     id: doc.id,
-    title: data.title as string,
+    title: (data.title ?? '') as string,
     status: (data.status ?? 'open') as TicketStatus,
     priority: (data.priority ?? 'medium') as TicketPriority,
+    creatorName: (data.creator_name ?? '') as string,
+    createdAt: (data.createdAt as Timestamp) ?? null,
   };
 }
 
@@ -41,6 +46,7 @@ export function TicketList({ route, navigation }: Props) {
   const user = useAuthStore((s) => s.user);
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [loading, setLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
     if (!user) return;
@@ -51,10 +57,17 @@ export function TicketList({ route, navigation }: Props) {
         ? query(col, orderBy('createdAt', 'desc'))
         : query(col, where('creator_id', '==', user.uid), orderBy('createdAt', 'desc'));
 
-    const unsubscribe = onSnapshot(q, (snap) => {
-      setTickets(snap.docs.map(toTicket).filter((t) => !status || t.status === status));
-      setLoading(false);
-    });
+    const unsubscribe = onSnapshot(
+      q,
+      (snap) => {
+        setTickets(snap.docs.map(toTicket).filter((t) => !status || t.status === status));
+        setLoading(false);
+      },
+      () => {
+        setLoading(false);
+        setErrorMessage('Erro ao carregar os chamados.');
+      },
+    );
 
     return unsubscribe;
   }, [user, status]);
@@ -78,6 +91,8 @@ export function TicketList({ route, navigation }: Props) {
               title={item.title}
               status={item.status}
               priority={item.priority}
+              creatorName={item.creatorName}
+              createdAt={item.createdAt}
               onPress={() => navigation.navigate('TicketDetails', { ticketId: item.id })}
             />
           </View>
@@ -88,6 +103,12 @@ export function TicketList({ route, navigation }: Props) {
           </View>
         }
         contentContainerStyle={tickets.length === 0 ? styles.fillHeight : styles.list}
+      />
+      <Snackbar
+        visible={errorMessage !== null}
+        onDismiss={() => setErrorMessage(null)}
+        message={errorMessage ?? ''}
+        variant="error"
       />
     </View>
   );

@@ -73,11 +73,11 @@ export function AppStack() {
         component={Dashboard}
         options={{ headerRight: () => <DashboardHeaderRight /> }}
       />
-      <Stack.Screen name="NewTicket" component={NewTicket} options={{ title: 'New Ticket' }} />
+      <Stack.Screen name="NewTicket" component={NewTicket} options={{ title: 'Novo Chamado' }} />
       <Stack.Screen
         name="TicketDetails"
         component={TicketDetails}
-        options={{ title: 'Ticket Details' }}
+        options={{ title: 'Detalhes do Chamado' }}
       />
       <Stack.Screen
         name="TicketList"

@@ -22,7 +22,12 @@ import {
   STATUS_COLORS,
   type TicketStatus,
 } from '../constants/ticketStatus';
-import { PRIORITY_COLORS, PRIORITY_LABELS, type TicketPriority } from '../constants/ticketPriority';
+import {
+  ALL_PRIORITIES,
+  PRIORITY_COLORS,
+  PRIORITY_LABELS,
+  type TicketPriority,
+} from '../constants/ticketPriority';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { AppStackParamList } from '../navigation/types';
 
@@ -68,6 +73,7 @@ export function TicketDetails({ route, navigation }: Props) {
   const [deleteVisible, setDeleteVisible] = useState(false);
   const [editing, setEditing] = useState(false);
   const [draftStatus, setDraftStatus] = useState<TicketStatus>('open');
+  const [draftPriority, setDraftPriority] = useState<TicketPriority>('medium');
   const [saveVisible, setSaveVisible] = useState(false);
 
   useEffect(() => {
@@ -81,6 +87,7 @@ export function TicketDetails({ route, navigation }: Props) {
                 setSaveVisible(true);
               } else {
                 setDraftStatus(ticket?.status ?? 'open');
+                setDraftPriority(ticket?.priority ?? 'medium');
                 setEditing(true);
               }
             }}
@@ -98,46 +105,57 @@ export function TicketDetails({ route, navigation }: Props) {
         </View>
       ),
     });
-  }, [navigation, user?.role, editing, ticket?.status]);
+  }, [navigation, user?.role, editing, ticket?.status, ticket?.priority]);
 
   useEffect(() => {
-    const unsubscribe = onSnapshot(doc(db, 'tickets', ticketId), (snap) => {
-      if (snap.exists()) {
-        const data = snap.data();
-        setTicket({
-          title: data.title as string,
-          description: data.description as string,
-          status: (data.status ?? 'open') as TicketStatus,
-          priority: (data.priority ?? 'medium') as TicketPriority,
-          creator_name: (data.creator_name ?? data.creator_id ?? '') as string,
-          createdAt: (data.createdAt as Timestamp) ?? null,
-        });
-      }
-      setLoading(false);
-    });
+    const unsubscribe = onSnapshot(
+      doc(db, 'tickets', ticketId),
+      (snap) => {
+        if (snap.exists()) {
+          const data = snap.data();
+          setTicket({
+            title: (data.title ?? '') as string,
+            description: (data.description ?? '') as string,
+            status: (data.status ?? 'open') as TicketStatus,
+            priority: (data.priority ?? 'medium') as TicketPriority,
+            creator_name: (data.creator_name ?? '') as string,
+            createdAt: (data.createdAt as Timestamp) ?? null,
+          });
+        }
+        setLoading(false);
+      },
+      () => {
+        setLoading(false);
+        setErrorMessage('Erro ao carregar o ticket.');
+      },
+    );
     return unsubscribe;
   }, [ticketId]);
 
   useEffect(() => {
     const q = query(collection(db, 'tickets', ticketId, 'comments'));
-    const unsubscribe = onSnapshot(q, (snap) => {
-      const mapped = snap.docs.map((d) => {
-        const data = d.data();
-        return {
-          id: d.id,
-          text: data.text as string,
-          author_id: data.author_id as string,
-          author_name: data.author_name as string,
-          createdAt: (data.createdAt as Timestamp) ?? null,
-        };
-      });
-      mapped.sort((a, b) => {
-        if (!a.createdAt) return 1;
-        if (!b.createdAt) return -1;
-        return a.createdAt.toMillis() - b.createdAt.toMillis();
-      });
-      setComments(mapped);
-    });
+    const unsubscribe = onSnapshot(
+      q,
+      (snap) => {
+        const mapped = snap.docs.map((d) => {
+          const data = d.data();
+          return {
+            id: d.id,
+            text: data.text as string,
+            author_id: data.author_id as string,
+            author_name: data.author_name as string,
+            createdAt: (data.createdAt as Timestamp) ?? null,
+          };
+        });
+        mapped.sort((a, b) => {
+          if (!a.createdAt) return 1;
+          if (!b.createdAt) return -1;
+          return a.createdAt.toMillis() - b.createdAt.toMillis();
+        });
+        setComments(mapped);
+      },
+      () => setErrorMessage('Erro ao carregar comentários.'),
+    );
     return unsubscribe;
   }, [ticketId]);
 
@@ -153,7 +171,10 @@ export function TicketDetails({ route, navigation }: Props) {
 
   async function handleConfirmSave() {
     try {
-      await updateDoc(doc(db, 'tickets', ticketId), { status: draftStatus });
+      await updateDoc(doc(db, 'tickets', ticketId), {
+        status: draftStatus,
+        priority: draftPriority,
+      });
       setSaveVisible(false);
       setEditing(false);
     } catch (err: unknown) {
@@ -204,7 +225,7 @@ export function TicketDetails({ route, navigation }: Props) {
   if (!ticket) {
     return (
       <View style={styles.center}>
-        <Text>Ticket not found.</Text>
+        <Text>Chamado não encontrado.</Text>
       </View>
     );
   }
@@ -247,13 +268,29 @@ export function TicketDetails({ route, navigation }: Props) {
       )}
 
       <Text style={styles.sectionLabel}>Prioridade</Text>
-      <View
-        style={[styles.statusBadge, { backgroundColor: PRIORITY_COLORS[ticket.priority] + '20' }]}
-      >
-        <Text style={[styles.statusBadgeText, { color: PRIORITY_COLORS[ticket.priority] }]}>
-          {PRIORITY_LABELS[ticket.priority]}
-        </Text>
-      </View>
+
+      {editing ? (
+        <View style={styles.statusRow}>
+          {ALL_PRIORITIES.map((p) => (
+            <Button
+              key={p}
+              variant={draftPriority === p ? 'primary' : 'secondary'}
+              size="sm"
+              onPress={() => setDraftPriority(p)}
+            >
+              {PRIORITY_LABELS[p]}
+            </Button>
+          ))}
+        </View>
+      ) : (
+        <View
+          style={[styles.statusBadge, { backgroundColor: PRIORITY_COLORS[ticket.priority] + '20' }]}
+        >
+          <Text style={[styles.statusBadgeText, { color: PRIORITY_COLORS[ticket.priority] }]}>
+            {PRIORITY_LABELS[ticket.priority]}
+          </Text>
+        </View>
+      )}
 
       <Text style={styles.sectionLabel}>Comentários</Text>
 
@@ -300,8 +337,9 @@ export function TicketDetails({ route, navigation }: Props) {
         ]}
       >
         <Text>
-          Alterar status para{' '}
-          <Text style={{ fontWeight: 'bold' }}>{STATUS_LABELS[draftStatus]}</Text>?
+          Status: <Text style={{ fontWeight: 'bold' }}>{STATUS_LABELS[draftStatus]}</Text>
+          {'\n'}
+          Prioridade: <Text style={{ fontWeight: 'bold' }}>{PRIORITY_LABELS[draftPriority]}</Text>
         </Text>
       </Dialog>
 
@@ -325,6 +363,7 @@ export function TicketDetails({ route, navigation }: Props) {
         visible={errorMessage !== null}
         onDismiss={() => setErrorMessage(null)}
         message={errorMessage ?? ''}
+        variant="error"
       />
     </ScrollView>
   );
