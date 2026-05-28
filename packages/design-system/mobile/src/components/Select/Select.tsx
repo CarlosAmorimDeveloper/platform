@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { View } from 'react-native';
-import { Menu as PaperMenu, TouchableRipple, Text } from 'react-native-paper';
+import { View, StyleSheet } from 'react-native';
+import { Menu as PaperMenu, TouchableRipple, Text, Icon } from 'react-native-paper';
+import { colors, spacing } from '@ds/tokens';
 
 export interface SelectOption {
   label: string;
@@ -40,9 +41,12 @@ export function Select({
             disabled={disabled}
             testID={testID ? `${testID}-trigger` : undefined}
           >
-            <View>
-              {label && <Text variant="labelSmall">{label}</Text>}
-              <Text>{selectedLabel}</Text>
+            <View style={styles.trigger}>
+              <View>
+                {label && <Text variant="labelSmall">{label}</Text>}
+                <Text>{selectedLabel}</Text>
+              </View>
+              <Icon source="chevron-down" size={20} color={`${colors.neutral[500]}`} />
             </View>
           </TouchableRipple>
         }
@@ -61,3 +65,12 @@ export function Select({
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  trigger: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: spacing[2],
+    gap: spacing[4],
+  },
+});
