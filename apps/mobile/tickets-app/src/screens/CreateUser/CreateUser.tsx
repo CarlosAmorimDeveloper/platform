@@ -1,14 +1,12 @@
 import { useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { FirebaseError, initializeApp, deleteApp } from 'firebase/app';
-import { getAuth, createUserWithEmailAndPassword, signOut } from 'firebase/auth';
-import { doc, setDoc } from 'firebase/firestore';
+import { View } from 'react-native';
 import { Input, Button, LoadingIndicator, Snackbar, Select } from '@ds/mobile';
-import { fontSizes, spacing } from '@ds/tokens';
-import { firebaseConfig, db } from '../services/firebase';
-import { useAuthStore, type UserRole } from '../store/useAuthStore';
+import { createUser } from '../../services/authService';
+import { useAuthStore } from '../../store/useAuthStore';
+import type { UserRole } from '../../domain/user';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import type { AppStackParamList } from '../navigation/types';
+import type { AppStackParamList } from '../../navigation/types';
+import { styles } from './CreateUser.styles';
 
 type Props = NativeStackScreenProps<AppStackParamList, 'CreateUser'>;
 
@@ -40,42 +38,19 @@ export function CreateUser({ navigation }: Props) {
   async function handleCreate() {
     if (!isValid) return;
     setLoading(true);
-    const secondaryApp = initializeApp(firebaseConfig, `secondary-${Date.now()}`);
-    const secondaryAuth = getAuth(secondaryApp);
     try {
-      const { user } = await createUserWithEmailAndPassword(secondaryAuth, email.trim(), password);
-      await setDoc(doc(db, 'users', user.uid), {
-        email: email.trim(),
-        name: name.trim(),
-        role,
-      });
-      await signOut(secondaryAuth);
+      await createUser(name, email, password, role);
       setSuccessVisible(true);
-      setTimeout(() => {
-        navigation.goBack();
-      }, 1500);
+      setTimeout(() => navigation.goBack(), 1500);
     } catch (err: unknown) {
-      const message =
-        err instanceof FirebaseError
-          ? 'Não foi possível criar o usuário.'
-          : err instanceof Error
-            ? err.message
-            : 'Falha ao criar usuário';
-      setErrorMessage(message);
+      setErrorMessage(err instanceof Error ? err.message : 'Falha ao criar usuário');
     } finally {
-      await deleteApp(secondaryApp).catch(() => undefined);
       setLoading(false);
     }
   }
 
   return (
     <View style={styles.container}>
-      <Select
-        label="Perfil"
-        value={role}
-        onChange={(v) => setRole(v as UserRole)}
-        options={ROLE_OPTIONS}
-      />
       <Input label="Nome" placeholder="Nome completo" value={name} onChangeText={setName} />
       <Input label="Email" placeholder="email@exemplo.com" value={email} onChangeText={setEmail} />
       <Input
@@ -87,10 +62,18 @@ export function CreateUser({ navigation }: Props) {
         onChangeText={setPassword}
         error={passwordError}
       />
-
+      <Select
+        label="Perfil"
+        value={role}
+        onChange={(v) => setRole(v as UserRole)}
+        options={ROLE_OPTIONS}
+      />
       <LoadingIndicator visible={loading} />
       <Button onPress={handleCreate} disabled={!isValid || loading}>
         Criar Usuário
+      </Button>
+      <Button variant="secondary" onPress={() => navigation.goBack()}>
+        Cancelar
       </Button>
       <Snackbar
         visible={successVisible}
@@ -109,7 +92,3 @@ export function CreateUser({ navigation }: Props) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, gap: spacing[5], padding: spacing[6] },
-});

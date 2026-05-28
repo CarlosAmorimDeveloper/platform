@@ -1,13 +1,16 @@
 import { useState } from 'react';
-import { StyleSheet, ScrollView } from 'react-native';
-import { spacing } from '@ds/tokens';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { ScrollView } from 'react-native';
 import { Input, Button, LoadingIndicator, Snackbar, Select } from '@ds/mobile';
-import { db } from '../services/firebase';
-import { useAuthStore } from '../store/useAuthStore';
-import { ALL_PRIORITIES, PRIORITY_LABELS, type TicketPriority } from '../constants/ticketPriority';
+import { createTicket } from '../../services/ticketService';
+import { useAuthStore } from '../../store/useAuthStore';
+import {
+  ALL_PRIORITIES,
+  PRIORITY_LABELS,
+  type TicketPriority,
+} from '../../constants/ticketPriority';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import type { AppStackParamList } from '../navigation/types';
+import type { AppStackParamList } from '../../navigation/types';
+import { styles } from './NewTicket.styles';
 
 type Props = NativeStackScreenProps<AppStackParamList, 'NewTicket'>;
 
@@ -23,15 +26,7 @@ export function NewTicket({ navigation }: Props) {
     if (!title.trim() || !user) return;
     setLoading(true);
     try {
-      await addDoc(collection(db, 'tickets'), {
-        title: title.trim(),
-        description: description.trim(),
-        priority,
-        creator_id: user.uid,
-        creator_name: user.name,
-        status: 'open',
-        createdAt: serverTimestamp(),
-      });
+      await createTicket({ title: title.trim(), description: description.trim(), priority }, user);
       navigation.goBack();
     } catch (err: unknown) {
       setErrorMessage(err instanceof Error ? err.message : 'Falha ao criar o chamado.');
@@ -57,7 +52,6 @@ export function NewTicket({ navigation }: Props) {
         multiline
         numberOfLines={4}
       />
-
       <LoadingIndicator visible={loading} />
       <Button onPress={handleSave} disabled={!title.trim() || loading}>
         Salvar Ticket
@@ -72,7 +66,3 @@ export function NewTicket({ navigation }: Props) {
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { padding: spacing[6], gap: spacing[4] },
-});

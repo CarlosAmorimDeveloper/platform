@@ -1,80 +1,44 @@
 import { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
+import { View, Text, ScrollView, Pressable } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import {
-  doc,
-  collection,
-  query,
-  onSnapshot,
-  updateDoc,
-  deleteDoc,
-  addDoc,
-  serverTimestamp,
-  type Timestamp,
-} from 'firebase/firestore';
 import { LoadingIndicator, Button, Snackbar, Dialog, Input } from '@ds/mobile';
-import { colors, fontSizes, spacing, radii } from '@ds/tokens';
-import { db } from '../services/firebase';
-import { useAuthStore } from '../store/useAuthStore';
+import { colors } from '@ds/tokens';
+import { useTicketDetails } from '../../hooks/useTicketDetails';
+import { formatDate } from '../../domain/ticket';
+import { updateTicket, deleteTicket } from '../../services/ticketService';
+import { useAuthStore } from '../../store/useAuthStore';
 import {
   ALL_STATUSES,
   STATUS_LABELS,
   STATUS_COLORS,
   type TicketStatus,
-} from '../constants/ticketStatus';
+} from '../../constants/ticketStatus';
 import {
   ALL_PRIORITIES,
   PRIORITY_COLORS,
   PRIORITY_LABELS,
   type TicketPriority,
-} from '../constants/ticketPriority';
+} from '../../constants/ticketPriority';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import type { AppStackParamList } from '../navigation/types';
+import type { AppStackParamList } from '../../navigation/types';
+import { styles } from './TicketDetails.styles';
+import { spacing } from '@ds/tokens';
 
 type Props = NativeStackScreenProps<AppStackParamList, 'TicketDetails'>;
-
-interface TicketData {
-  title: string;
-  description: string;
-  status: TicketStatus;
-  priority: TicketPriority;
-  creator_name: string;
-  createdAt: Timestamp | null;
-}
-
-interface Comment {
-  id: string;
-  text: string;
-  author_id: string;
-  author_name: string;
-  createdAt: Timestamp | null;
-}
-
-function formatDate(ts: Timestamp | null): string {
-  if (!ts) return '';
-  return ts.toDate().toLocaleString('pt-BR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-}
 
 export function TicketDetails({ route, navigation }: Props) {
   const { ticketId } = route.params;
   const user = useAuthStore((s) => s.user);
-  const [ticket, setTicket] = useState<TicketData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [comments, setComments] = useState<Comment[]>([]);
+  const { ticket, comments, loading, error, clearError, addComment, deleteComment } =
+    useTicketDetails(ticketId);
   const [commentText, setCommentText] = useState('');
   const [sendingComment, setSendingComment] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [deleteVisible, setDeleteVisible] = useState(false);
   const [editing, setEditing] = useState(false);
   const [draftStatus, setDraftStatus] = useState<TicketStatus>('open');
   const [draftPriority, setDraftPriority] = useState<TicketPriority>('medium');
   const [saveVisible, setSaveVisible] = useState(false);
+  const [mutationError, setMutationError] = useState<string | null>(null);
 
   useEffect(() => {
     if (user?.role !== 'admin') return;
@@ -107,79 +71,24 @@ export function TicketDetails({ route, navigation }: Props) {
     });
   }, [navigation, user?.role, editing, ticket?.status, ticket?.priority]);
 
-  useEffect(() => {
-    const unsubscribe = onSnapshot(
-      doc(db, 'tickets', ticketId),
-      (snap) => {
-        if (snap.exists()) {
-          const data = snap.data();
-          setTicket({
-            title: (data.title ?? '') as string,
-            description: (data.description ?? '') as string,
-            status: (data.status ?? 'open') as TicketStatus,
-            priority: (data.priority ?? 'medium') as TicketPriority,
-            creator_name: (data.creator_name ?? '') as string,
-            createdAt: (data.createdAt as Timestamp) ?? null,
-          });
-        }
-        setLoading(false);
-      },
-      () => {
-        setLoading(false);
-        setErrorMessage('Erro ao carregar o ticket.');
-      },
-    );
-    return unsubscribe;
-  }, [ticketId]);
-
-  useEffect(() => {
-    const q = query(collection(db, 'tickets', ticketId, 'comments'));
-    const unsubscribe = onSnapshot(
-      q,
-      (snap) => {
-        const mapped = snap.docs.map((d) => {
-          const data = d.data();
-          return {
-            id: d.id,
-            text: data.text as string,
-            author_id: data.author_id as string,
-            author_name: data.author_name as string,
-            createdAt: (data.createdAt as Timestamp) ?? null,
-          };
-        });
-        mapped.sort((a, b) => {
-          if (!a.createdAt) return 1;
-          if (!b.createdAt) return -1;
-          return a.createdAt.toMillis() - b.createdAt.toMillis();
-        });
-        setComments(mapped);
-      },
-      () => setErrorMessage('Erro ao carregar comentários.'),
-    );
-    return unsubscribe;
-  }, [ticketId]);
-
   async function handleDelete() {
     try {
-      await deleteDoc(doc(db, 'tickets', ticketId));
+      await deleteTicket(ticketId);
       navigation.goBack();
     } catch (err: unknown) {
       setDeleteVisible(false);
-      setErrorMessage(err instanceof Error ? err.message : 'Failed to delete ticket');
+      setMutationError(err instanceof Error ? err.message : 'Falha ao apagar o chamado.');
     }
   }
 
   async function handleConfirmSave() {
     try {
-      await updateDoc(doc(db, 'tickets', ticketId), {
-        status: draftStatus,
-        priority: draftPriority,
-      });
+      await updateTicket(ticketId, { status: draftStatus, priority: draftPriority });
       setSaveVisible(false);
       setEditing(false);
     } catch (err: unknown) {
       setSaveVisible(false);
-      setErrorMessage(err instanceof Error ? err.message : 'Failed to update status');
+      setMutationError(err instanceof Error ? err.message : 'Falha ao atualizar o chamado.');
     }
   }
 
@@ -189,29 +98,17 @@ export function TicketDetails({ route, navigation }: Props) {
   }
 
   async function handleAddComment() {
-    if (!commentText.trim() || !user) return;
+    if (!commentText.trim()) return;
     setSendingComment(true);
-    try {
-      await addDoc(collection(db, 'tickets', ticketId, 'comments'), {
-        text: commentText.trim(),
-        author_id: user.uid,
-        author_name: user.name,
-        createdAt: serverTimestamp(),
-      });
-      setCommentText('');
-    } catch (err: unknown) {
-      setErrorMessage(err instanceof Error ? err.message : 'Failed to add comment');
-    } finally {
-      setSendingComment(false);
-    }
+    await addComment(commentText.trim());
+    setSendingComment(false);
+    setCommentText('');
   }
 
-  async function handleDeleteComment(commentId: string) {
-    try {
-      await deleteDoc(doc(db, 'tickets', ticketId, 'comments', commentId));
-    } catch (err: unknown) {
-      setErrorMessage(err instanceof Error ? err.message : 'Failed to delete comment');
-    }
+  const displayError = error ?? mutationError;
+  function handleDismissError() {
+    clearError();
+    setMutationError(null);
   }
 
   if (loading) {
@@ -236,7 +133,7 @@ export function TicketDetails({ route, navigation }: Props) {
       <Text style={styles.description}>{ticket.description}</Text>
 
       <View style={styles.metaRow}>
-        <Text style={styles.metaText}>Criado por: {ticket.creator_name}</Text>
+        <Text style={styles.metaText}>Criado por: {ticket.creatorName}</Text>
         {ticket.createdAt && (
           <Text style={styles.metaText}>Em: {formatDate(ticket.createdAt)}</Text>
         )}
@@ -305,12 +202,12 @@ export function TicketDetails({ route, navigation }: Props) {
       {comments.map((c) => (
         <View key={c.id} style={styles.commentCard}>
           <View style={styles.commentHeader}>
-            <Text style={styles.commentAuthor}>{c.author_name}</Text>
+            <Text style={styles.commentAuthor}>{c.authorName}</Text>
             <Text style={styles.commentDate}>{formatDate(c.createdAt)}</Text>
           </View>
           <Text style={styles.commentText}>{c.text}</Text>
-          {(user?.uid === c.author_id || user?.role === 'admin') && (
-            <Button variant="ghost" size="sm" onPress={() => handleDeleteComment(c.id)}>
+          {(user?.uid === c.authorId || user?.role === 'admin') && (
+            <Button variant="ghost" size="sm" onPress={() => deleteComment(c.id)}>
               Apagar
             </Button>
           )}
@@ -366,48 +263,12 @@ export function TicketDetails({ route, navigation }: Props) {
       </Dialog>
 
       <Snackbar
-        visible={errorMessage !== null}
-        onDismiss={() => setErrorMessage(null)}
-        message={errorMessage ?? ''}
+        visible={displayError !== null}
+        onDismiss={handleDismissError}
+        message={displayError ?? ''}
         variant="error"
         position="top"
       />
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  headerIcons: { flexDirection: 'row' },
-  headerIcon: { paddingHorizontal: spacing[2] },
-  container: { padding: spacing[6], gap: spacing[3] },
-  title: { fontSize: fontSizes['2xl'], fontWeight: 'bold', color: `${colors.neutral[900]}` },
-  description: { fontSize: fontSizes.base, color: `${colors.neutral[500]}`, lineHeight: 24 },
-  metaRow: { gap: spacing[1] },
-  metaText: { fontSize: fontSizes.sm, color: `${colors.neutral[500]}` },
-  sectionLabel: {
-    fontSize: fontSizes.sm,
-    fontWeight: '600',
-    color: `${colors.neutral[700]}`,
-    marginTop: spacing[2],
-  },
-  statusRow: { flexDirection: 'row', gap: spacing[2] },
-  statusBadge: {
-    alignSelf: 'flex-start',
-    paddingHorizontal: spacing[4],
-    paddingVertical: spacing[2],
-    borderRadius: radii['2xl'],
-  },
-  statusBadgeText: { fontSize: fontSizes.sm, fontWeight: '600' },
-  emptyComments: { fontSize: fontSizes.sm, color: `${colors.neutral[400]}` },
-  commentCard: {
-    backgroundColor: `${colors.neutral[200]}`,
-    borderRadius: radii.lg,
-    padding: spacing[3],
-    gap: spacing[1],
-  },
-  commentHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  commentAuthor: { fontSize: fontSizes.sm, fontWeight: '600', color: `${colors.neutral[800]}` },
-  commentDate: { fontSize: fontSizes.xs, color: `${colors.neutral[500]}` },
-  commentText: { fontSize: fontSizes.base, color: `${colors.neutral[700]}` },
-});

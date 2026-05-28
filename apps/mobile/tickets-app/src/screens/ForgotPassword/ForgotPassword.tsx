@@ -1,12 +1,10 @@
 import { useState } from 'react';
-import { View, Text, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
-import { sendPasswordResetEmail } from 'firebase/auth';
+import { View, Text, KeyboardAvoidingView, Platform } from 'react-native';
 import { Input, Button, LoadingIndicator, Snackbar } from '@ds/mobile';
-import { colors, fontSizes, spacing } from '@ds/tokens';
-import { auth } from '../services/firebase';
-import { mapFirebaseAuthError } from '../utils/firebaseErrors';
+import { sendPasswordReset, mapFirebaseAuthError } from '../../services/authService';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import type { AuthStackParamList } from '../navigation/types';
+import type { AuthStackParamList } from '../../navigation/types';
+import { styles } from './ForgotPassword.styles';
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'ForgotPassword'>;
 
@@ -20,7 +18,7 @@ export function ForgotPassword({ navigation }: Props) {
     if (!email) return;
     setLoading(true);
     try {
-      await sendPasswordResetEmail(auth, email);
+      await sendPasswordReset(email);
       setSuccessMessage('Se este e-mail estiver cadastrado, você receberá um link em instantes.');
     } catch (err: unknown) {
       setErrorMessage(mapFirebaseAuthError(err));
@@ -76,25 +74,3 @@ export function ForgotPassword({ navigation }: Props) {
     </KeyboardAvoidingView>
   );
 }
-
-const styles = StyleSheet.create({
-  keyboardView: {
-    flex: 1,
-  },
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    padding: spacing[6],
-    gap: spacing[6],
-    backgroundColor: `${colors.neutral[0]}`,
-  },
-  description: {
-    fontSize: fontSizes.base,
-    color: `${colors.neutral[500]}`,
-    textAlign: 'center',
-    lineHeight: 24,
-  },
-  form: {
-    gap: spacing[3],
-  },
-});
