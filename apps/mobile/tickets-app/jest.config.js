@@ -19,7 +19,7 @@ module.exports = {
   },
   // Transform RN, navigation, and expo packages (they ship JSX/Flow/TS source)
   transformIgnorePatterns: [
-    'node_modules/(?!(react-native|@react-native|react-native-paper|react-native-safe-area-context|react-native-screens|react-native-svg|@react-navigation|expo|expo-status-bar|@expo)/)',
+    'node_modules/(?!(react-native|@react-native|react-native-paper|react-native-safe-area-context|react-native-screens|react-native-svg|react-native-chart-kit|@react-navigation|expo|expo-status-bar|@expo)/)',
   ],
   moduleNameMapper: {
     '^react$': sharedReact,

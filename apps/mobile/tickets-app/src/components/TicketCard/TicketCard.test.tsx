@@ -1,10 +1,49 @@
 import React from 'react';
+import type { Timestamp } from 'firebase/firestore';
+import { fireEvent, render, screen } from '../../test-utils';
 import { TicketCard } from './TicketCard';
 
+function makeTimestamp(date: Date): Timestamp {
+  return { toDate: () => date } as unknown as Timestamp;
+}
+
+const onPress = jest.fn();
+
+const baseProps = {
+  title: 'Fix login bug',
+  status: 'open' as const,
+  priority: 'high' as const,
+  creatorName: 'Alice',
+  createdAt: makeTimestamp(new Date(2024, 0, 15, 14, 30)),
+  onPress,
+};
+
 describe('TicketCard', () => {
-  it.todo('renders the ticket title');
-  it.todo('renders the priority badge with correct label and color');
-  it.todo('renders creator name and formatted date');
-  it.todo('calls onPress when pressed');
-  it.todo('handles null createdAt gracefully');
+  beforeEach(() => jest.clearAllMocks());
+
+  it('renders the ticket title', () => {
+    render(<TicketCard {...baseProps} />);
+    expect(screen.getByText('Fix login bug')).toBeTruthy();
+  });
+
+  it('renders the priority label', () => {
+    render(<TicketCard {...baseProps} />);
+    expect(screen.getByText('Alto')).toBeTruthy();
+  });
+
+  it('renders the creator name in meta text', () => {
+    render(<TicketCard {...baseProps} />);
+    expect(screen.getByText(/Alice/)).toBeTruthy();
+  });
+
+  it('calls onPress when the card is pressed', () => {
+    render(<TicketCard {...baseProps} />);
+    fireEvent.press(screen.getByText('Fix login bug'));
+    expect(onPress).toHaveBeenCalledTimes(1);
+  });
+
+  it('renders without error when createdAt is null', () => {
+    render(<TicketCard {...baseProps} createdAt={null} />);
+    expect(screen.getByText(/Alice/)).toBeTruthy();
+  });
 });
