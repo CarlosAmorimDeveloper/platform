@@ -1,20 +1,15 @@
 import { create } from 'zustand';
 import { signOut } from 'firebase/auth';
-import { auth } from '../services/firebase';
+import { auth } from '../../services/firebase';
+import type { User } from '../../domain/user';
 
-export type UserRole = 'admin' | 'standard';
-
-export interface AuthUser {
-  uid: string;
-  email: string;
-  name: string;
-  role: UserRole;
-}
+export type { UserRole } from '../../domain/user';
+export type { User as AuthUser } from '../../domain/user';
 
 interface AuthState {
-  user: AuthUser | null;
+  user: User | null;
   isAuthenticated: boolean;
-  setUser: (user: AuthUser | null) => void;
+  setUser: (user: User | null) => void;
   logout: () => Promise<void>;
 }
 
