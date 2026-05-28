@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import type { StorybookConfig } from '@storybook/react-vite';
 import type { Plugin } from 'vite';
+import type { PluginBuild } from 'esbuild';
 
 // ---------------------------------------------------------------------------
 // Locate the react-native-vector-icons Fonts directory so Storybook can serve
@@ -210,7 +211,7 @@ const config: StorybookConfig = {
           plugins: [
             {
               name: 'vector-icons-esbuild-stub',
-              setup(build: import('esbuild').PluginBuild) {
+              setup(build: PluginBuild) {
                 build.onResolve({ filter: iconFilter }, () => ({
                   path: 'rnvi-mci',
                   namespace: 'rnvi',

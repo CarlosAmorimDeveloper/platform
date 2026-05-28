@@ -14,8 +14,11 @@ export interface CardProps {
 }
 
 export function Card({ title, subtitle, children, onPress, coverUri, style, testID }: CardProps) {
+  // react-native-paper's Animated style type is incompatible with StyleProp<ViewStyle>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const paperStyle = style as any;
   return (
-    <PaperCard onPress={onPress} style={style as any} testID={testID}>
+    <PaperCard onPress={onPress} style={paperStyle} testID={testID}>
       {coverUri && <PaperCard.Cover source={{ uri: coverUri }} />}
       {(title != null || subtitle != null) && (
         <PaperCard.Title title={title ?? ''} subtitle={subtitle} />
