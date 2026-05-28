@@ -1,7 +1,7 @@
 import React from 'react';
-import { render, screen, fireEvent } from './test-utils';
-import { Dialog } from '../src/components/Dialog';
-import { Button } from '../src/components/Button';
+import { render, screen, fireEvent } from '../../test-utils';
+import { Dialog } from './Dialog';
+import { Button } from '../Button';
 
 describe('Dialog', () => {
   it('renderiza o conteúdo quando visible=true', () => {

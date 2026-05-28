@@ -1,6 +1,6 @@
 import React from 'react';
-import { render, screen, fireEvent } from './test-utils';
-import { Select } from '../src/components/Select';
+import { render, screen, fireEvent } from '../../test-utils';
+import { Select } from './Select';
 
 const options = [
   { label: 'React Native', value: 'rn' },

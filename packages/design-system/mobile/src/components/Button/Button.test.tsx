@@ -1,6 +1,6 @@
 import React from 'react';
-import { render, screen, fireEvent } from './test-utils';
-import { Button } from '../src/components/Button';
+import { render, screen, fireEvent } from '../../test-utils';
+import { Button } from './Button';
 
 describe('Button', () => {
   it('renderiza o texto do children', () => {

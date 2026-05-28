@@ -1,6 +1,6 @@
 import React from 'react';
-import { render, screen, fireEvent } from './test-utils';
-import { Input } from '../src/components/Input';
+import { render, screen, fireEvent } from '../../test-utils';
+import { Input } from './Input';
 
 describe('Input', () => {
   it('renderiza o label', () => {

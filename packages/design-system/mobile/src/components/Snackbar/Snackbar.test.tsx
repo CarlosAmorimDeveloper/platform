@@ -1,6 +1,6 @@
 import React from 'react';
-import { render, screen, fireEvent } from './test-utils';
-import { Snackbar } from '../src/components/Snackbar';
+import { render, screen, fireEvent } from '../../test-utils';
+import { Snackbar } from './Snackbar';
 
 describe('Snackbar', () => {
   it('renderiza a mensagem quando visible=true', () => {

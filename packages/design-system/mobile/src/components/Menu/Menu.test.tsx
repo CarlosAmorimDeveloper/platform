@@ -1,7 +1,7 @@
 import React from 'react';
-import { render, screen, fireEvent } from './test-utils';
-import { Menu } from '../src/components/Menu';
-import { Button } from '../src/components/Button';
+import { render, screen, fireEvent } from '../../test-utils';
+import { Menu } from './Menu';
+import { Button } from '../Button';
 
 describe('Menu', () => {
   it('renderiza o anchor', () => {

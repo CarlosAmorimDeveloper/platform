@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text } from 'react-native';
-import { render, screen, fireEvent } from './test-utils';
-import { Card } from '../src/components/Card';
+import { render, screen, fireEvent } from '../../test-utils';
+import { Card } from './Card';
 
 describe('Card', () => {
   it('renderiza sem erros com testID', () => {

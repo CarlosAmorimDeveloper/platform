@@ -1,6 +1,6 @@
 import React from 'react';
-import { render, screen } from './test-utils';
-import { LoadingIndicator } from '../src/components/LoadingIndicator';
+import { render, screen } from '../../test-utils';
+import { LoadingIndicator } from './LoadingIndicator';
 
 describe('LoadingIndicator', () => {
   it('renderiza quando visible=true', () => {

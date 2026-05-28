@@ -4,7 +4,7 @@ import { render } from '@testing-library/react-native';
 import type { RenderOptions } from '@testing-library/react-native';
 import { PaperProvider } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { theme } from '../src/theme';
+import { theme } from './theme';
 
 function AllProviders({ children }: { children: ReactElement }) {
   return (

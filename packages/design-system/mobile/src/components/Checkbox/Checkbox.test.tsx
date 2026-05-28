@@ -1,6 +1,6 @@
 import React from 'react';
-import { render, screen, fireEvent } from './test-utils';
-import { Checkbox } from '../src/components/Checkbox';
+import { render, screen, fireEvent } from '../../test-utils';
+import { Checkbox } from './Checkbox';
 
 describe('Checkbox', () => {
   it('renderiza o label', () => {

@@ -1,6 +1,6 @@
 import React from 'react';
-import { render, screen, fireEvent } from './test-utils';
-import { FAB } from '../src/components/FAB';
+import { render, screen, fireEvent } from '../../test-utils';
+import { FAB } from './FAB';
 
 describe('FAB', () => {
   it('renderiza com testID', () => {

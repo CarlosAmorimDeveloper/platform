@@ -1,6 +1,6 @@
 import React from 'react';
-import { render, screen, fireEvent } from './test-utils';
-import { Radio } from '../src/components/Radio';
+import { render, screen, fireEvent } from '../../test-utils';
+import { Radio } from './Radio';
 
 describe('Radio', () => {
   it('renderiza o label', () => {

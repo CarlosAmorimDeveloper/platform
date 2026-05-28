@@ -1,6 +1,6 @@
 import React from 'react';
-import { render, screen, fireEvent } from './test-utils';
-import { AppBar } from '../src/components/AppBar';
+import { render, screen, fireEvent } from '../../test-utils';
+import { AppBar } from './AppBar';
 
 describe('AppBar', () => {
   it('renderiza o título', () => {
