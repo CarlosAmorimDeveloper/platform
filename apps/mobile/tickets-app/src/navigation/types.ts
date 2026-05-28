@@ -3,6 +3,7 @@ import type { TicketStatus } from '../constants/ticketStatus';
 export type AuthStackParamList = {
   Login: undefined;
   Register: undefined;
+  ForgotPassword: undefined;
 };
 
 export type AppStackParamList = {

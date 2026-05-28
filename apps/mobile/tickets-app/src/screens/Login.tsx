@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import { Input, Button, LoadingIndicator, Snackbar } from '@ds/mobile';
-import { fontSizes, spacing } from '@ds/tokens';
+import { colors, fontSizes, spacing } from '@ds/tokens';
 import { auth, db } from '../services/firebase';
 import { useAuthStore, type UserRole } from '../store/useAuthStore';
 import { mapFirebaseAuthError } from '../utils/firebaseErrors';
@@ -37,38 +37,78 @@ export function Login({ navigation }: Props) {
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Login</Text>
-      <Input label="Email" placeholder="Email" value={email} onChangeText={setEmail} />
-      <Input
-        label="Senha"
-        placeholder="Senha"
-        secureTextEntry
-        showPasswordToggle
-        value={password}
-        onChangeText={setPassword}
-      />
-      <LoadingIndicator visible={loading} />
-      <Button onPress={handleLogin} disabled={loading}>
-        Entrar
-      </Button>
-      <Button variant="secondary" onPress={() => navigation.navigate('Register')}>
-        Criar conta
-      </Button>
-      <Snackbar
-        visible={errorMessage !== null}
-        onDismiss={() => setErrorMessage(null)}
-        message={errorMessage ?? ''}
-      />
-    </View>
+    <KeyboardAvoidingView
+      style={styles.keyboardView}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <Text style={styles.appTitle}>Tickets App</Text>
+          <Text style={styles.appSubtitle}>Gerencie seus chamados</Text>
+        </View>
+        <View style={styles.form}>
+          <Input
+            label="E-mail"
+            placeholder="email@exemplo.com"
+            value={email}
+            onChangeText={setEmail}
+          />
+          <Input
+            label="Senha"
+            placeholder="Sua senha"
+            secureTextEntry
+            showPasswordToggle
+            value={password}
+            onChangeText={setPassword}
+          />
+          <LoadingIndicator visible={loading} />
+          <Button onPress={handleLogin} disabled={loading}>
+            Entrar
+          </Button>
+          <Button variant="ghost" onPress={() => navigation.navigate('ForgotPassword')}>
+            Esqueceu a senha?
+          </Button>
+          <Button variant="secondary" onPress={() => navigation.navigate('Register')}>
+            Criar conta
+          </Button>
+        </View>
+        <Snackbar
+          visible={errorMessage !== null}
+          onDismiss={() => setErrorMessage(null)}
+          message={errorMessage ?? ''}
+          position="top"
+          variant="error"
+        />
+      </View>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
+  keyboardView: {
+    flex: 1,
+  },
   container: {
     flex: 1,
-    gap: spacing[3],
+    justifyContent: 'center',
     padding: spacing[6],
+    gap: spacing[8],
+    backgroundColor: `${colors.neutral[0]}`,
   },
-  title: { fontSize: fontSizes['2xl'], fontWeight: 'bold', marginBottom: spacing[2] },
+  header: {
+    alignItems: 'center',
+    gap: spacing[2],
+  },
+  appTitle: {
+    fontSize: fontSizes['3xl'],
+    fontWeight: 'bold',
+    color: `${colors.primary[600]}`,
+  },
+  appSubtitle: {
+    fontSize: fontSizes.base,
+    color: `${colors.neutral[500]}`,
+  },
+  form: {
+    gap: spacing[3],
+  },
 });
