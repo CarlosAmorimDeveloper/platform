@@ -15,7 +15,7 @@ jest.mock('../../store/useAuthStore');
 jest.mock('../../services/ticketService');
 jest.mock('../../services/firebase', () => ({ auth: {}, db: {} }));
 
-const mockUseAuthStore = useAuthStore as jest.Mock;
+const mockUseAuthStore = useAuthStore as unknown as jest.Mock;
 const mockSubscribeToTicket = subscribeToTicket as jest.Mock;
 const mockSubscribeToComments = subscribeToComments as jest.Mock;
 const mockUpdateTicket = updateTicket as jest.Mock;

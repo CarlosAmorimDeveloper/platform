@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import type { KeyboardTypeOptions } from 'react-native';
 import { TextInput as PaperTextInput, HelperText } from 'react-native-paper';
 
 export interface InputProps {
@@ -12,6 +13,8 @@ export interface InputProps {
   showPasswordToggle?: boolean;
   multiline?: boolean;
   numberOfLines?: number;
+  keyboardType?: KeyboardTypeOptions;
+  autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
   testID?: string;
   accessibilityLabel?: string;
 }
@@ -27,6 +30,8 @@ export function Input({
   showPasswordToggle = false,
   multiline = false,
   numberOfLines,
+  keyboardType,
+  autoCapitalize,
   testID,
   accessibilityLabel,
 }: InputProps) {
@@ -46,6 +51,8 @@ export function Input({
         secureTextEntry={isSecure}
         multiline={multiline}
         numberOfLines={multiline ? numberOfLines : undefined}
+        keyboardType={keyboardType}
+        autoCapitalize={autoCapitalize}
         testID={testID}
         accessibilityLabel={accessibilityLabel}
         right={

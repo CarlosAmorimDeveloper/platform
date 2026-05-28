@@ -1,4 +1,5 @@
 import React from 'react';
+import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import type { Timestamp } from 'firebase/firestore';
 import { fireEvent, render, screen } from '../../test-utils';
 import { TicketCard } from './TicketCard';
@@ -19,7 +20,7 @@ const baseProps = {
 };
 
 describe('TicketCard', () => {
-  beforeEach(() => jest.clearAllMocks());
+  beforeEach(async () => jest.clearAllMocks());
 
   it('renders the ticket title', () => {
     render(<TicketCard {...baseProps} />);

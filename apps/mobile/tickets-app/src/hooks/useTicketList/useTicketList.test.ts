@@ -8,7 +8,7 @@ jest.mock('../../store/useAuthStore');
 jest.mock('../../services/ticketService');
 jest.mock('../../services/firebase', () => ({ auth: {}, db: {} }));
 
-const mockUseAuthStore = useAuthStore as jest.Mock;
+const mockUseAuthStore = useAuthStore as unknown as jest.Mock;
 const mockSubscribeToTickets = subscribeToTickets as jest.Mock;
 
 const mockUser = { uid: 'u1', email: 'alice@test.com', name: 'Alice', role: 'admin' as const };

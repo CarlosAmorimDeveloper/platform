@@ -1,4 +1,5 @@
 import type { Timestamp } from 'firebase/firestore';
+import { describe, it, expect, beforeEach, jest } from '@jest/globals';
 import { formatDate, toTicket } from './ticket';
 import type { Ticket } from './ticket';
 
@@ -11,7 +12,7 @@ function makeTimestamp(date: Date) {
 }
 
 describe('toTicket', () => {
-  beforeEach(() => jest.clearAllMocks());
+  beforeEach(async () => jest.clearAllMocks());
 
   it('maps all fields from Firestore document', () => {
     const ts = makeTimestamp(new Date());
@@ -57,7 +58,7 @@ describe('toTicket', () => {
 });
 
 describe('formatDate', () => {
-  beforeEach(() => jest.clearAllMocks());
+  beforeEach(async () => jest.clearAllMocks());
 
   it('formats a Timestamp to pt-BR locale string', () => {
     const date = new Date(2024, 0, 15, 14, 30);
