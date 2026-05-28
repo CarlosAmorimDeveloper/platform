@@ -12,6 +12,6 @@ export const STATUS_LABELS: Record<TicketStatus, string> = {
 
 export const STATUS_COLORS: Record<TicketStatus, string> = {
   open: `${colors.primary[500]}`,
-  in_progress: `${colors.warning[300]}`,
+  in_progress: `${colors.warning[500]}`,
   done: `${colors.success[500]}`,
 };

@@ -61,13 +61,13 @@ function StatusStatCard({
 }) {
   return (
     <Card onPress={onPress} style={styles.statCard}>
-      <View style={styles.statContent}>
-        <Text style={styles.statCount}>{count}</Text>
+      <View style={[styles.statContent]}>
         <View style={[styles.statBadge, { backgroundColor: STATUS_COLORS[status] + '20' }]}>
           <Text style={[styles.statLabel, { color: STATUS_COLORS[status] }]}>
             {STATUS_LABELS[status]}
           </Text>
         </View>
+        <Text style={styles.statCount}>{count}</Text>
       </View>
     </Card>
   );
@@ -92,7 +92,7 @@ function RecentTicketsCard({
         >
           <Text style={styles.recentTitle}>{t.title}</Text>
           <Text style={styles.recentMeta}>
-            {t.creator_name} · {formatDate(t.createdAt)}
+            Criado por: {t.creator_name} · {formatDate(t.createdAt)}
           </Text>
         </Pressable>
       ))}
@@ -174,6 +174,7 @@ export function Dashboard({ navigation }: Props) {
         onDismiss={() => setErrorMessage(null)}
         message={errorMessage ?? ''}
         variant="error"
+        position="top"
       />
     </View>
   );
@@ -188,9 +189,9 @@ const styles = StyleSheet.create({
   },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   fab: { position: 'absolute', right: spacing[6], bottom: spacing[8] },
-  statsRow: { flexDirection: 'row', gap: spacing[2] },
-  statCard: { flex: 1 },
-  statContent: { alignItems: 'center', gap: spacing[1], paddingVertical: spacing[2] },
+  statsRow: { flexDirection: 'row', gap: spacing[2], justifyContent: 'space-between' },
+  statCard: { minWidth: 100 },
+  statContent: { alignItems: 'flex-start', marginTop: spacing[2], gap: spacing[1] },
   statCount: { fontSize: fontSizes['2xl'], fontWeight: 'bold', color: `${colors.neutral[900]}` },
   statBadge: { paddingHorizontal: spacing[2], paddingVertical: spacing[1], borderRadius: radii.xl },
   statLabel: { fontSize: fontSizes.xs, fontWeight: '600' },

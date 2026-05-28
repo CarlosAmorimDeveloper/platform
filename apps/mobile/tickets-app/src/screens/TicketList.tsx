@@ -109,6 +109,7 @@ export function TicketList({ route, navigation }: Props) {
         onDismiss={() => setErrorMessage(null)}
         message={errorMessage ?? ''}
         variant="error"
+        position="top"
       />
     </View>
   );

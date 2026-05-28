@@ -70,7 +70,12 @@ export function CreateUser({ navigation }: Props) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Criar Usuário</Text>
+      <Select
+        label="Perfil"
+        value={role}
+        onChange={(v) => setRole(v as UserRole)}
+        options={ROLE_OPTIONS}
+      />
       <Input label="Nome" placeholder="Nome completo" value={name} onChangeText={setName} />
       <Input label="Email" placeholder="email@exemplo.com" value={email} onChangeText={setEmail} />
       <Input
@@ -82,24 +87,17 @@ export function CreateUser({ navigation }: Props) {
         onChangeText={setPassword}
         error={passwordError}
       />
-      <Select
-        label="Perfil"
-        value={role}
-        onChange={(v) => setRole(v as UserRole)}
-        options={ROLE_OPTIONS}
-      />
+
       <LoadingIndicator visible={loading} />
       <Button onPress={handleCreate} disabled={!isValid || loading}>
         Criar Usuário
-      </Button>
-      <Button variant="secondary" onPress={() => navigation.goBack()}>
-        Cancelar
       </Button>
       <Snackbar
         visible={successVisible}
         onDismiss={() => setSuccessVisible(false)}
         message="Usuário criado com sucesso!"
         variant="success"
+        position="top"
       />
       <Snackbar
         visible={errorMessage !== null}
@@ -113,6 +111,5 @@ export function CreateUser({ navigation }: Props) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, gap: spacing[3], padding: spacing[6] },
-  title: { fontSize: fontSizes['2xl'], fontWeight: 'bold', marginBottom: spacing[2] },
+  container: { flex: 1, gap: spacing[5], padding: spacing[6] },
 });

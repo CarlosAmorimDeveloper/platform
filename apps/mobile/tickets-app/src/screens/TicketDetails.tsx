@@ -270,18 +270,24 @@ export function TicketDetails({ route, navigation }: Props) {
       <Text style={styles.sectionLabel}>Prioridade</Text>
 
       {editing ? (
-        <View style={styles.statusRow}>
-          {ALL_PRIORITIES.map((p) => (
-            <Button
-              key={p}
-              variant={draftPriority === p ? 'primary' : 'secondary'}
-              size="sm"
-              onPress={() => setDraftPriority(p)}
-            >
-              {PRIORITY_LABELS[p]}
-            </Button>
-          ))}
-        </View>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: spacing[2] }}
+        >
+          <View style={styles.statusRow}>
+            {ALL_PRIORITIES.map((p) => (
+              <Button
+                key={p}
+                variant={draftPriority === p ? 'primary' : 'secondary'}
+                size="sm"
+                onPress={() => setDraftPriority(p)}
+              >
+                {PRIORITY_LABELS[p]}
+              </Button>
+            ))}
+          </View>
+        </ScrollView>
       ) : (
         <View
           style={[styles.statusBadge, { backgroundColor: PRIORITY_COLORS[ticket.priority] + '20' }]}
@@ -364,6 +370,7 @@ export function TicketDetails({ route, navigation }: Props) {
         onDismiss={() => setErrorMessage(null)}
         message={errorMessage ?? ''}
         variant="error"
+        position="top"
       />
     </ScrollView>
   );
@@ -374,7 +381,7 @@ const styles = StyleSheet.create({
   headerIcons: { flexDirection: 'row' },
   headerIcon: { paddingHorizontal: spacing[2] },
   container: { padding: spacing[6], gap: spacing[3] },
-  title: { fontSize: 22, fontWeight: 'bold', color: `${colors.neutral[900]}` },
+  title: { fontSize: fontSizes['2xl'], fontWeight: 'bold', color: `${colors.neutral[900]}` },
   description: { fontSize: fontSizes.base, color: `${colors.neutral[500]}`, lineHeight: 24 },
   metaRow: { gap: spacing[1] },
   metaText: { fontSize: fontSizes.sm, color: `${colors.neutral[500]}` },

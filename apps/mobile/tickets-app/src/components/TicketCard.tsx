@@ -30,20 +30,13 @@ interface Props {
 export function TicketCard({ title, status, priority, creatorName, createdAt, onPress }: Props) {
   return (
     <Card title={title} onPress={onPress}>
-      <View style={styles.badgeRow}>
-        <View style={[styles.badge, { backgroundColor: STATUS_COLORS[status] + '20' }]}>
-          <Text style={[styles.badgeText, { color: STATUS_COLORS[status] }]}>
-            {STATUS_LABELS[status]}
-          </Text>
-        </View>
-        <View style={[styles.badge, { backgroundColor: PRIORITY_COLORS[priority] + '20' }]}>
-          <Text style={[styles.badgeText, { color: PRIORITY_COLORS[priority] }]}>
-            {PRIORITY_LABELS[priority]}
-          </Text>
-        </View>
+      <View style={[styles.badge, { backgroundColor: PRIORITY_COLORS[priority] + '20' }]}>
+        <Text style={[styles.badgeText, { color: PRIORITY_COLORS[priority] }]}>
+          {PRIORITY_LABELS[priority]}
+        </Text>
       </View>
       <Text style={styles.meta}>
-        {creatorName}
+        Criado por: {creatorName}
         {createdAt ? ` · ${formatDate(createdAt)}` : ''}
       </Text>
     </Card>

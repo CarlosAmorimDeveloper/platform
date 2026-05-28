@@ -42,6 +42,12 @@ export function NewTicket({ navigation }: Props) {
 
   return (
     <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+      <Select
+        label="Prioridade"
+        value={priority}
+        onChange={(v) => setPriority(v as TicketPriority)}
+        options={ALL_PRIORITIES.map((p) => ({ label: PRIORITY_LABELS[p], value: p }))}
+      />
       <Input label="Título" placeholder="Título do chamado" value={title} onChangeText={setTitle} />
       <Input
         label="Descrição"
@@ -51,12 +57,7 @@ export function NewTicket({ navigation }: Props) {
         multiline
         numberOfLines={4}
       />
-      <Select
-        label="Prioridade"
-        value={priority}
-        onChange={(v) => setPriority(v as TicketPriority)}
-        options={ALL_PRIORITIES.map((p) => ({ label: PRIORITY_LABELS[p], value: p }))}
-      />
+
       <LoadingIndicator visible={loading} />
       <Button onPress={handleSave} disabled={!title.trim() || loading}>
         Salvar Ticket
@@ -65,11 +66,13 @@ export function NewTicket({ navigation }: Props) {
         visible={errorMessage !== null}
         onDismiss={() => setErrorMessage(null)}
         message={errorMessage ?? ''}
+        variant="error"
+        position="top"
       />
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { padding: spacing[6], gap: spacing[2] },
+  container: { padding: spacing[6], gap: spacing[4] },
 });

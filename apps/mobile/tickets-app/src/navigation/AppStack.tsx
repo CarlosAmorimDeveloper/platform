@@ -67,11 +67,17 @@ function DashboardHeaderRight() {
 
 export function AppStack() {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator
+      screenOptions={{
+        headerStyle: { backgroundColor: `${colors.neutral[0]}` },
+        headerTitleStyle: { color: `${colors.neutral[900]}`, fontWeight: '600' },
+        headerTintColor: `${colors.primary[600]}`,
+      }}
+    >
       <Stack.Screen
         name="Dashboard"
         component={Dashboard}
-        options={{ headerRight: () => <DashboardHeaderRight /> }}
+        options={{ title: 'Painel', headerRight: () => <DashboardHeaderRight /> }}
       />
       <Stack.Screen name="NewTicket" component={NewTicket} options={{ title: 'Novo Chamado' }} />
       <Stack.Screen
