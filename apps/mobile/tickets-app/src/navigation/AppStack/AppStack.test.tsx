@@ -1,6 +1,3 @@
-import React from 'react';
-import { AppStack } from './AppStack';
-
 describe('AppStack', () => {
   it.todo('renders Dashboard as initial route');
   it.todo('logout button triggers signOut');

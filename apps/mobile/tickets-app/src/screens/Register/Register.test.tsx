@@ -1,7 +1,3 @@
-import React from 'react';
-import { render } from '@testing-library/react-native';
-import { Register } from './Register';
-
 describe('Register', () => {
   it.todo('renders name, email and password fields');
   it.todo('shows password validation error for short password');

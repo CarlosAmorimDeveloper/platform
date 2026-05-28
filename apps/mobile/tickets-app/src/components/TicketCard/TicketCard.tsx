@@ -2,7 +2,7 @@ import { View, Text } from 'react-native';
 import type { Timestamp } from 'firebase/firestore';
 import { Card } from '@ds/mobile';
 import { formatDate } from '../../domain/ticket';
-import { STATUS_COLORS, STATUS_LABELS, type TicketStatus } from '../../constants/ticketStatus';
+import type { TicketStatus } from '../../constants/ticketStatus';
 import {
   PRIORITY_COLORS,
   PRIORITY_LABELS,
@@ -19,7 +19,14 @@ interface Props {
   onPress: () => void;
 }
 
-export function TicketCard({ title, status, priority, creatorName, createdAt, onPress }: Props) {
+export function TicketCard({
+  title,
+  status: _status,
+  priority,
+  creatorName,
+  createdAt,
+  onPress,
+}: Props) {
   return (
     <Card title={title} onPress={onPress}>
       <View style={[styles.badge, { backgroundColor: PRIORITY_COLORS[priority] + '20' }]}>

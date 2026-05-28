@@ -1,7 +1,3 @@
-import React from 'react';
-import { render } from '@testing-library/react-native';
-import { Dashboard } from './Dashboard';
-
 describe('Dashboard', () => {
   it.todo('shows loading indicator while fetching tickets');
   it.todo('renders pie chart when tickets exist');

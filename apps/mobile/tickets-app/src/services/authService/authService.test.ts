@@ -1,5 +1,3 @@
-import { login } from './authService';
-
 describe('authService', () => {
   it.todo('login calls firebase signInWithEmailAndPassword');
   it.todo('login maps firebase errors correctly');

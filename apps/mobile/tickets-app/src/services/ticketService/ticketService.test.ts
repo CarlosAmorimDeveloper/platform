@@ -1,5 +1,3 @@
-import { subscribeToTickets } from './ticketService';
-
 describe('ticketService', () => {
   it.todo('subscribeToTickets returns all tickets for admin users');
   it.todo('subscribeToTickets filters tickets by creator_id for standard users');

@@ -1,3 +1,4 @@
+import type { Timestamp } from 'firebase/firestore';
 import { formatDate, toTicket } from './ticket';
 import type { Ticket } from './ticket';
 
@@ -6,7 +7,7 @@ function makeDoc(id: string, data: Record<string, unknown>) {
 }
 
 function makeTimestamp(date: Date) {
-  return { toDate: () => date } as unknown as import('firebase/firestore').Timestamp;
+  return { toDate: () => date } as unknown as Timestamp;
 }
 
 describe('toTicket', () => {

@@ -1,7 +1,3 @@
-import React from 'react';
-import { render } from '@testing-library/react-native';
-import { CreateUser } from './CreateUser';
-
 describe('CreateUser', () => {
   it.todo('redirects non-admin users back immediately');
   it.todo('renders name, email, password and role fields for admin');

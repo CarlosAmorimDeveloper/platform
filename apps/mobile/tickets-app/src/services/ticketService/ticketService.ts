@@ -16,7 +16,6 @@ import {
 import { db } from '../firebase';
 import { toTicket, type Ticket, type Comment } from '../../domain/ticket';
 import type { TicketStatus } from '../../constants/ticketStatus';
-import type { TicketPriority } from '../../constants/ticketPriority';
 import type { User } from '../../domain/user';
 
 export function subscribeToTickets(

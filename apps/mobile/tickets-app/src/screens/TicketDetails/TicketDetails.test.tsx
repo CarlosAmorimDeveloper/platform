@@ -1,7 +1,3 @@
-import React from 'react';
-import { render } from '@testing-library/react-native';
-import { TicketDetails } from './TicketDetails';
-
 describe('TicketDetails', () => {
   it.todo('shows loading indicator while fetching ticket');
   it.todo('shows not found message when ticket is null');
