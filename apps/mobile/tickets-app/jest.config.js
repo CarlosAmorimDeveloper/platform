@@ -1,11 +1,8 @@
 const path = require('path');
 
-// Route all react imports to the single React bundled inside react-test-renderer
+// Route all react imports to the single React installed in this app's node_modules
 // to avoid "invalid hook call" errors from multiple React instances.
-const sharedReact = path.resolve(
-  __dirname,
-  '../../../node_modules/react-test-renderer/node_modules/react',
-);
+const sharedReact = path.resolve(__dirname, 'node_modules/react');
 
 /** @type {import('jest').Config} */
 module.exports = {
