@@ -8,6 +8,7 @@
     "format": "prettier --write \"**/*.{ts,tsx,js,mjs,cjs,json,md,css}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,mjs,cjs,json,md,css}\"",
     "check-types": "turbo run check-types",
+    "test": "turbo run test",
     "prepare": "husky",
     "changeset": "changeset",
     "version-packages": "changeset version"
