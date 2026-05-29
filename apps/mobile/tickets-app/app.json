@@ -22,7 +22,7 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.seuapp.tickets"
+      "package": "com.vt.ticketsapp"
     },
     "web": {
       "favicon": "./assets/favicon.png"
