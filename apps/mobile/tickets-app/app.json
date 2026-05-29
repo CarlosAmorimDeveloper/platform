@@ -22,10 +22,15 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.anonymous.ticketsapp"
+      "package": "com.seuapp.tickets"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "9dcb127e-1644-4d3a-97cc-07d855a6758e"
+      }
     }
   }
 }

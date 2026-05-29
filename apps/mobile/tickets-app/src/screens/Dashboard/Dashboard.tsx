@@ -1,5 +1,7 @@
-import { View, Text, Pressable } from 'react-native';
+import { View, Text, Pressable, FlatList, TouchableOpacity } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
 import { LoadingIndicator, FAB, Card, PieChart, Snackbar } from '@ds/mobile';
+import { colors } from '@ds/tokens';
 import { useTicketList } from '../../hooks/useTicketList';
 import { formatDate } from '../../domain/ticket';
 import type { Ticket } from '../../domain/ticket';
@@ -21,16 +23,16 @@ function StatusStatCard({
   onPress: () => void;
 }) {
   return (
-    <Card onPress={onPress} style={styles.statCard}>
-      <View style={styles.statContent}>
-        <View style={[styles.statBadge, { backgroundColor: STATUS_COLORS[status] + '20' }]}>
-          <Text style={[styles.statLabel, { color: STATUS_COLORS[status] }]}>
-            {STATUS_LABELS[status]}
-          </Text>
-        </View>
-        <Text style={styles.statCount}>{count}</Text>
-      </View>
-    </Card>
+    <View style={styles.statCardWrapper}>
+      <TouchableOpacity
+        onPress={onPress}
+        style={[styles.statBadge, { backgroundColor: STATUS_COLORS[status] }]}
+      >
+        <Text style={[styles.statLabel, { color: 'white' }]}>
+          {STATUS_LABELS[status]} {count}
+        </Text>
+      </TouchableOpacity>
+    </View>
   );
 }
 
@@ -72,31 +74,68 @@ export function Dashboard({ navigation }: Props) {
     );
   }
 
+  if (tickets.length === 0) {
+    return (
+      <View style={styles.container}>
+        <View style={styles.emptyState}>
+          <MaterialIcons name="inbox" size={64} color={`${colors.neutral[300]}`} />
+          <Text style={styles.emptyTitle}>Nenhum chamado ainda</Text>
+          <Text style={styles.emptySubtitle}>Crie o primeiro chamado usando o botão abaixo</Text>
+        </View>
+        <FAB
+          onPress={() => navigation.navigate('NewTicket')}
+          style={styles.fab}
+          accessibilityLabel="New ticket"
+        />
+        <Snackbar
+          visible={error !== null}
+          onDismiss={clearError}
+          message={error ?? ''}
+          variant="error"
+          position="top"
+        />
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       {tickets.length > 0 && (
-        <PieChart
-          slices={ALL_STATUSES.map((s) => ({
-            label: STATUS_LABELS[s],
-            value: tickets.filter((t) => t.status === s).length,
-            color: STATUS_COLORS[s],
-          }))}
-          onPress={() => navigation.navigate('TicketList', {})}
-        />
-      )}
-      <RecentTicketsCard
-        tickets={tickets}
-        onPressTicket={(id) => navigation.navigate('TicketDetails', { ticketId: id })}
-      />
-      <View style={styles.statsRow}>
-        {ALL_STATUSES.map((s) => (
-          <StatusStatCard
-            key={s}
-            status={s}
-            count={tickets.filter((t) => t.status === s).length}
-            onPress={() => navigation.navigate('TicketList', { status: s })}
+        <View>
+          <FlatList
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            data={ALL_STATUSES}
+            renderItem={({ item: s }) => (
+              <StatusStatCard
+                key={s}
+                status={s}
+                count={tickets.filter((t) => t.status === s).length}
+                onPress={() => navigation.navigate('TicketList', { status: s })}
+              />
+            )}
+            ListHeaderComponent={<View style={styles.listHeaderSpacer} />}
+            ListFooterComponent={<View style={styles.listFooterSpacer} />}
           />
-        ))}
+        </View>
+      )}
+      {tickets.length > 0 && (
+        <View style={styles.sectionPad}>
+          <PieChart
+            slices={ALL_STATUSES.map((s) => ({
+              label: STATUS_LABELS[s],
+              value: tickets.filter((t) => t.status === s).length,
+              color: STATUS_COLORS[s],
+            }))}
+            onPress={() => navigation.navigate('TicketList', {})}
+          />
+        </View>
+      )}
+      <View style={styles.sectionPad}>
+        <RecentTicketsCard
+          tickets={tickets}
+          onPressTicket={(id) => navigation.navigate('TicketDetails', { ticketId: id })}
+        />
       </View>
       <FAB
         onPress={() => navigation.navigate('NewTicket')}

@@ -35,4 +35,6 @@ export const styles = StyleSheet.create({
   commentAuthor: { fontSize: fontSizes.sm, fontWeight: '600', color: `${colors.neutral[800]}` },
   commentDate: { fontSize: fontSizes.xs, color: `${colors.neutral[500]}` },
   commentText: { fontSize: fontSizes.base, color: `${colors.neutral[700]}` },
+  bold: { fontWeight: 'bold' as const },
+  priorityScrollContent: { paddingBottom: spacing[2] },
 });

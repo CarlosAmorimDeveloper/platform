@@ -13,7 +13,8 @@ import { STATUS_LABELS } from '../../constants/ticketStatus';
 import type { AppStackParamList } from '../types';
 import { Text, Pressable, View } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import { colors, spacing } from '@ds/tokens';
+import { colors } from '@ds/tokens';
+import { styles } from './AppStack.styles';
 
 const Stack = createNativeStackNavigator<AppStackParamList>();
 
@@ -51,12 +52,9 @@ function DashboardHeaderRight() {
   const navigation = useNavigation<NativeStackNavigationProp<AppStackParamList>>();
 
   return (
-    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+    <View style={styles.headerRight}>
       {user?.role === 'admin' && (
-        <Pressable
-          style={{ paddingHorizontal: spacing[2] }}
-          onPress={() => navigation.navigate('CreateUser')}
-        >
+        <Pressable style={styles.headerIcon} onPress={() => navigation.navigate('CreateUser')}>
           <MaterialIcons name="person-add" size={24} color={`${colors.neutral[600]}`} />
         </Pressable>
       )}

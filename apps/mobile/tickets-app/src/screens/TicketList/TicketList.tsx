@@ -1,6 +1,5 @@
 import { View, Text, FlatList } from 'react-native';
 import { LoadingIndicator, Snackbar } from '@ds/mobile';
-import { spacing } from '@ds/tokens';
 import { useTicketList } from '../../hooks/useTicketList';
 import { TicketCard } from '../../components/TicketCard';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -27,14 +26,14 @@ export function TicketList({ route, navigation }: Props) {
         data={tickets}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <View style={{ marginBottom: spacing[4], marginHorizontal: spacing[1] }}>
+          <View style={styles.ticketItem}>
             <TicketCard
               title={item.title}
               status={item.status}
               priority={item.priority}
               creatorName={item.creatorName}
               createdAt={item.createdAt}
-              onPress={() => navigation.navigate('TicketDetails', { ticketId: item.id })}
+              onPress={() => navigation.replace('TicketDetails', { ticketId: item.id })}
             />
           </View>
         )}

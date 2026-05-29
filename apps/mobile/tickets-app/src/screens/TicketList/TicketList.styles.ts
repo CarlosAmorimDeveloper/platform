@@ -12,4 +12,5 @@ export const styles = StyleSheet.create({
   fillHeight: { flex: 1 },
   list: { paddingVertical: spacing[2] },
   emptyText: { color: `${colors.neutral[500]}`, fontSize: fontSizes.base },
+  ticketItem: { marginBottom: spacing[4], marginHorizontal: spacing[1] },
 });

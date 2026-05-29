@@ -22,7 +22,6 @@ import {
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { AppStackParamList } from '../../navigation/types';
 import { styles } from './TicketDetails.styles';
-import { spacing } from '@ds/tokens';
 
 type Props = NativeStackScreenProps<AppStackParamList, 'TicketDetails'>;
 
@@ -34,6 +33,8 @@ export function TicketDetails({ route, navigation }: Props) {
   const [commentText, setCommentText] = useState('');
   const [sendingComment, setSendingComment] = useState(false);
   const [deleteVisible, setDeleteVisible] = useState(false);
+  const [deleteCommentVisible, setDeleteCommentVisible] = useState(false);
+  const [pendingCommentId, setPendingCommentId] = useState<string | null>(null);
   const [editing, setEditing] = useState(false);
   const [draftStatus, setDraftStatus] = useState<TicketStatus>('open');
   const [draftPriority, setDraftPriority] = useState<TicketPriority>('medium');
@@ -95,6 +96,18 @@ export function TicketDetails({ route, navigation }: Props) {
   function handleCancelSave() {
     setSaveVisible(false);
     setEditing(false);
+  }
+
+  async function handleDeleteComment() {
+    if (!pendingCommentId) return;
+    try {
+      await deleteComment(pendingCommentId);
+    } catch {
+      // erro capturado pelo hook via error state
+    } finally {
+      setDeleteCommentVisible(false);
+      setPendingCommentId(null);
+    }
   }
 
   async function handleAddComment() {
@@ -170,7 +183,7 @@ export function TicketDetails({ route, navigation }: Props) {
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: spacing[2] }}
+          contentContainerStyle={styles.priorityScrollContent}
         >
           <View style={styles.statusRow}>
             {ALL_PRIORITIES.map((p) => (
@@ -207,7 +220,14 @@ export function TicketDetails({ route, navigation }: Props) {
           </View>
           <Text style={styles.commentText}>{c.text}</Text>
           {(user?.uid === c.authorId || user?.role === 'admin') && (
-            <Button variant="ghost" size="sm" onPress={() => deleteComment(c.id)}>
+            <Button
+              variant="ghost"
+              size="sm"
+              onPress={() => {
+                setPendingCommentId(c.id);
+                setDeleteCommentVisible(true);
+              }}
+            >
               Apagar
             </Button>
           )}
@@ -240,9 +260,9 @@ export function TicketDetails({ route, navigation }: Props) {
         ]}
       >
         <Text>
-          Status: <Text style={{ fontWeight: 'bold' }}>{STATUS_LABELS[draftStatus]}</Text>
+          Status: <Text style={styles.bold}>{STATUS_LABELS[draftStatus]}</Text>
           {'\n'}
-          Prioridade: <Text style={{ fontWeight: 'bold' }}>{PRIORITY_LABELS[draftPriority]}</Text>
+          Prioridade: <Text style={styles.bold}>{PRIORITY_LABELS[draftPriority]}</Text>
         </Text>
       </Dialog>
 
@@ -255,6 +275,32 @@ export function TicketDetails({ route, navigation }: Props) {
             Cancelar
           </Button>,
           <Button key="confirm" variant="danger" onPress={handleDelete}>
+            Apagar
+          </Button>,
+        ]}
+      >
+        <Text>Esta ação não pode ser desfeita.</Text>
+      </Dialog>
+
+      <Dialog
+        visible={deleteCommentVisible}
+        onDismiss={() => {
+          setDeleteCommentVisible(false);
+          setPendingCommentId(null);
+        }}
+        title="Apagar comentário"
+        actions={[
+          <Button
+            key="cancel"
+            variant="ghost"
+            onPress={() => {
+              setDeleteCommentVisible(false);
+              setPendingCommentId(null);
+            }}
+          >
+            Cancelar
+          </Button>,
+          <Button key="confirm" variant="danger" onPress={handleDeleteComment}>
             Apagar
           </Button>,
         ]}
