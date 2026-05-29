@@ -1,5 +1,5 @@
 import React from 'react';
-import type { ReactNode } from 'react';
+import type { ReactElement, ReactNode } from 'react';
 import { Dialog as PaperDialog, Portal } from 'react-native-paper';
 
 export interface DialogProps {
@@ -7,7 +7,7 @@ export interface DialogProps {
   onDismiss: () => void;
   title?: string;
   children?: ReactNode;
-  actions?: ReactNode;
+  actions?: ReactElement | ReactElement[];
   testID?: string;
 }
 

@@ -5,7 +5,7 @@ import globals from 'globals';
 export default defineConfig([
   ...config,
   {
-    ignores: ['*.config.js', 'tailwind-utils.js'],
+    ignores: ['*.config.js', 'tailwind-utils.js', 'storybook-static/**', '.storybook/stubs/**'],
   },
   {
     files: ['__mocks__/**/*.js', '__tests__/**/*.js', 'jest.setup*.js'],

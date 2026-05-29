@@ -1,0 +1,88 @@
+import { useEffect, useState } from 'react';
+import {
+  subscribeToTicket,
+  subscribeToComments,
+  updateTicket,
+  deleteTicket,
+  addComment,
+  deleteComment,
+} from '../../services/ticketService';
+import { useAuthStore } from '../../store/useAuthStore';
+import type { Ticket, Comment } from '../../domain/ticket';
+import type { TicketStatus } from '../../constants/ticketStatus';
+import type { TicketPriority } from '../../constants/ticketPriority';
+
+export function useTicketDetails(ticketId: string) {
+  const user = useAuthStore((s) => s.user);
+  const [ticket, setTicket] = useState<Ticket | null>(null);
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const unsubscribe = subscribeToTicket(
+      ticketId,
+      (t) => {
+        setTicket(t);
+        setLoading(false);
+      },
+      () => {
+        setLoading(false);
+        setError('Erro ao carregar o chamado.');
+      },
+    );
+    return unsubscribe;
+  }, [ticketId]);
+
+  useEffect(() => {
+    const unsubscribe = subscribeToComments(ticketId, setComments, () =>
+      setError('Erro ao carregar comentários.'),
+    );
+    return unsubscribe;
+  }, [ticketId]);
+
+  async function handleUpdateTicket(status: TicketStatus, priority: TicketPriority) {
+    try {
+      await updateTicket(ticketId, { status, priority });
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Falha ao atualizar o chamado.');
+    }
+  }
+
+  async function handleDeleteTicket() {
+    try {
+      await deleteTicket(ticketId);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Falha ao apagar o chamado.');
+    }
+  }
+
+  async function handleAddComment(text: string) {
+    if (!user) return;
+    try {
+      await addComment(ticketId, text, user);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Falha ao enviar comentário.');
+    }
+  }
+
+  async function handleDeleteComment(commentId: string) {
+    try {
+      await deleteComment(ticketId, commentId);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Falha ao apagar comentário.');
+    }
+  }
+
+  return {
+    ticket,
+    comments,
+    loading,
+    error,
+    clearError: () => setError(null),
+    updateTicket: handleUpdateTicket,
+    deleteTicket: handleDeleteTicket,
+    addComment: handleAddComment,
+    deleteComment: handleDeleteComment,
+  };
+}

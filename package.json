@@ -8,6 +8,7 @@
     "format": "prettier --write \"**/*.{ts,tsx,js,mjs,cjs,json,md,css}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,mjs,cjs,json,md,css}\"",
     "check-types": "turbo run check-types",
+    "test": "turbo run test",
     "prepare": "husky",
     "changeset": "changeset",
     "version-packages": "changeset version"
@@ -49,12 +50,23 @@
     "packages": [
       "apps/*",
       "apps/web/*",
+      "apps/mobile/*",
       "packages/*",
       "packages/design-system/*"
     ],
     "nohoist": [
       "todo-app/scheduler",
-      "todo-app/scheduler/**"
+      "todo-app/scheduler/**",
+      "@app/tickets/react",
+      "@app/tickets/react/**",
+      "@app/tickets/react-native",
+      "@app/tickets/react-native/**",
+      "@app/tickets/react-dom",
+      "@app/tickets/react-dom/**",
+      "@app/tickets/react-native-svg",
+      "@app/tickets/react-native-svg/**",
+      "@app/tickets/react-native-chart-kit",
+      "@app/tickets/react-native-chart-kit/**"
     ]
   },
   "dependencies": {

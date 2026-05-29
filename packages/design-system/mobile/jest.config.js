@@ -1,16 +1,13 @@
 const path = require('path');
 
-// All react imports must resolve to a single instance (the one bundled with
-// react-test-renderer) to avoid "invalid hook call" errors in tests.
-const sharedReact = path.resolve(
-  __dirname,
-  '../../../node_modules/react-test-renderer/node_modules/react',
-);
+// All react imports must resolve to a single instance to avoid "invalid hook
+// call" errors in tests. Point directly to the workspace root react.
+const sharedReact = path.resolve(__dirname, '../../../node_modules/react');
 
 /** @type {import('jest').Config} */
 module.exports = {
   preset: '@react-native/jest-preset',
-  testMatch: ['**/__tests__/**/*.test.{js,ts,tsx}'],
+  testMatch: ['**/*.test.{ts,tsx}'],
   transform: {
     '^.+\\.(js|ts|tsx)$': [
       'babel-jest',

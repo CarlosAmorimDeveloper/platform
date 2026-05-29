@@ -27,16 +27,14 @@ function DialogInterativo() {
         visible={visible}
         onDismiss={() => setVisible(false)}
         title="Confirmar ação"
-        actions={
-          <>
-            <Button variant="ghost" size="sm" onPress={() => setVisible(false)}>
-              Cancelar
-            </Button>
-            <Button size="sm" onPress={() => setVisible(false)}>
-              Confirmar
-            </Button>
-          </>
-        }
+        actions={[
+          <Button key="cancel" variant="ghost" size="sm" onPress={() => setVisible(false)}>
+            Cancelar
+          </Button>,
+          <Button key="confirm" size="sm" onPress={() => setVisible(false)}>
+            Confirmar
+          </Button>,
+        ]}
       >
         <Text>Tem certeza que deseja continuar?</Text>
       </Dialog>

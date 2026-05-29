@@ -27,3 +27,15 @@ export type { SelectProps, SelectOption } from './Select';
 
 export { Snackbar } from './Snackbar';
 export type { SnackbarProps } from './Snackbar';
+
+export { LoadingIndicator } from './LoadingIndicator';
+export type { LoadingIndicatorProps } from './LoadingIndicator';
+
+export { FAB } from './FAB';
+export type { FABProps } from './FAB';
+
+export { Alert } from './Alert';
+export type { AlertProps, AlertVariant } from './Alert';
+
+export { PieChart } from './PieChart';
+export type { PieChartProps, PieChartSlice } from './PieChart';

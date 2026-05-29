@@ -12,6 +12,8 @@ const meta: Meta<typeof Input> = {
     error: { control: 'text' },
     disabled: { control: 'boolean' },
     secureTextEntry: { control: 'boolean' },
+    multiline: { control: 'boolean' },
+    numberOfLines: { control: 'number' },
   },
 };
 
@@ -43,4 +45,14 @@ export const Desabilitado: Story = {
 export const Senha: Story = {
   render: (args) => <InputControlado {...args} />,
   args: { label: 'Senha', secureTextEntry: true },
+};
+
+export const Multiline: Story = {
+  render: (args) => <InputControlado {...args} />,
+  args: {
+    label: 'Descrição',
+    placeholder: 'Descreva o problema...',
+    multiline: true,
+    numberOfLines: 4,
+  },
 };
