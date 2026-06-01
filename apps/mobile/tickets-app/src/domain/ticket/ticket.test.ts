@@ -24,6 +24,8 @@ describe('toTicket', () => {
       creator_id: 'user-1',
       creator_name: 'Alice',
       createdAt: ts,
+      assignee_id: 'user-2',
+      assignee_name: 'Bob',
     });
     const ticket: Ticket = toTicket(doc);
     expect(ticket.id).toBe('ticket-1');
@@ -34,6 +36,24 @@ describe('toTicket', () => {
     expect(ticket.creatorId).toBe('user-1');
     expect(ticket.creatorName).toBe('Alice');
     expect(ticket.createdAt).toBe(ts);
+    expect(ticket.assigneeId).toBe('user-2');
+    expect(ticket.assigneeName).toBe('Bob');
+  });
+
+  it('maps assigneeId and assigneeName from Firestore document', () => {
+    const doc = makeDoc('t-assign', {
+      assignee_id: 'user-99',
+      assignee_name: 'Carol',
+    });
+    const ticket = toTicket(doc);
+    expect(ticket.assigneeId).toBe('user-99');
+    expect(ticket.assigneeName).toBe('Carol');
+  });
+
+  it('defaults assigneeId and assigneeName to null when missing', () => {
+    const ticket = toTicket(makeDoc('t-no-assign', {}));
+    expect(ticket.assigneeId).toBeNull();
+    expect(ticket.assigneeName).toBeNull();
   });
 
   it('uses empty string defaults for missing string fields', () => {

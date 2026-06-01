@@ -33,6 +33,7 @@ export function TicketList({ route, navigation }: Props) {
               priority={item.priority}
               creatorName={item.creatorName}
               createdAt={item.createdAt}
+              assigneeName={item.assigneeName}
               onPress={() => navigation.replace('TicketDetails', { ticketId: item.id })}
             />
           </View>

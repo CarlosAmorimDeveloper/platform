@@ -3,6 +3,7 @@ import { ScrollView } from 'react-native';
 import { Input, Button, LoadingIndicator, Snackbar, Select } from '@ds/mobile';
 import { createTicket } from '../../services/ticketService';
 import { useAuthStore } from '../../store/useAuthStore';
+import { useUserList } from '../../hooks/useUserList';
 import {
   ALL_PRIORITIES,
   PRIORITY_LABELS,
@@ -18,15 +19,29 @@ export function NewTicket({ navigation }: Props) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [priority, setPriority] = useState<TicketPriority>('medium');
+  const [assigneeId, setAssigneeId] = useState('');
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const user = useAuthStore((s) => s.user);
+  const { users } = useUserList();
+
+  const isAdmin = user?.role === 'admin';
 
   async function handleSave() {
     if (!title.trim() || !user) return;
     setLoading(true);
     try {
-      await createTicket({ title: title.trim(), description: description.trim(), priority }, user);
+      const selectedUser = users.find((u) => u.uid === assigneeId);
+      await createTicket(
+        {
+          title: title.trim(),
+          description: description.trim(),
+          priority,
+          assigneeId: selectedUser?.uid ?? null,
+          assigneeName: selectedUser?.name ?? null,
+        },
+        user,
+      );
       navigation.goBack();
     } catch (err: unknown) {
       setErrorMessage(err instanceof Error ? err.message : 'Falha ao criar o chamado.');
@@ -43,6 +58,17 @@ export function NewTicket({ navigation }: Props) {
         onChange={(v) => setPriority(v as TicketPriority)}
         options={ALL_PRIORITIES.map((p) => ({ label: PRIORITY_LABELS[p], value: p }))}
       />
+      {isAdmin && (
+        <Select
+          label="Responsável"
+          value={assigneeId}
+          onChange={(v) => setAssigneeId(v)}
+          options={[
+            { label: 'Nenhum', value: '' },
+            ...users.map((u) => ({ label: u.name, value: u.uid })),
+          ]}
+        />
+      )}
       <Input label="Título" placeholder="Título do chamado" value={title} onChangeText={setTitle} />
       <Input
         label="Descrição"

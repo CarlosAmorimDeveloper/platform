@@ -11,6 +11,8 @@ export interface Ticket {
   creatorId: string;
   creatorName: string;
   createdAt: Timestamp | null;
+  assigneeId: string | null;
+  assigneeName: string | null;
 }
 
 export interface Comment {
@@ -32,6 +34,8 @@ export function toTicket(doc: QueryDocumentSnapshot): Ticket {
     creatorId: (data.creator_id ?? '') as string,
     creatorName: (data.creator_name ?? '') as string,
     createdAt: (data.createdAt as Timestamp) ?? null,
+    assigneeId: (data.assignee_id as string) ?? null,
+    assigneeName: (data.assignee_name as string) ?? null,
   };
 }
 

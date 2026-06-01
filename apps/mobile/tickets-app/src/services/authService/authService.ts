@@ -4,7 +4,7 @@ import {
   sendPasswordResetEmail,
   signOut,
 } from 'firebase/auth';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { collection, doc, getDoc, onSnapshot, setDoc, type Unsubscribe } from 'firebase/firestore';
 import { initializeApp, deleteApp, FirebaseError } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -62,6 +62,28 @@ export async function createUser(
 
 export async function sendPasswordReset(email: string): Promise<void> {
   await sendPasswordResetEmail(auth, email);
+}
+
+export function subscribeToUsers(
+  onData: (users: User[]) => void,
+  onError: () => void,
+): Unsubscribe {
+  return onSnapshot(
+    collection(db, 'users'),
+    (snap) => {
+      const users: User[] = snap.docs.map((d) => {
+        const data = d.data();
+        return {
+          uid: d.id,
+          email: (data.email ?? '') as string,
+          name: (data.name ?? '') as string,
+          role: (data.role ?? 'standard') as UserRole,
+        };
+      });
+      onData(users);
+    },
+    onError,
+  );
 }
 
 export { mapFirebaseAuthError };

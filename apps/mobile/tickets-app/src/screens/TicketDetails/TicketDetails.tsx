@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import { View, Text, ScrollView, Pressable } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import { LoadingIndicator, Button, Snackbar, Dialog, Input } from '@ds/mobile';
+import { LoadingIndicator, Button, Snackbar, Dialog, Input, Select } from '@ds/mobile';
 import { colors } from '@ds/tokens';
 import { useTicketDetails } from '../../hooks/useTicketDetails';
+import { useUserList } from '../../hooks/useUserList';
 import { formatDate } from '../../domain/ticket';
 import { updateTicket, deleteTicket } from '../../services/ticketService';
 import { useAuthStore } from '../../store/useAuthStore';
@@ -30,6 +31,7 @@ export function TicketDetails({ route, navigation }: Props) {
   const user = useAuthStore((s) => s.user);
   const { ticket, comments, loading, error, clearError, addComment, deleteComment } =
     useTicketDetails(ticketId);
+  const { users } = useUserList();
   const [commentText, setCommentText] = useState('');
   const [sendingComment, setSendingComment] = useState(false);
   const [deleteVisible, setDeleteVisible] = useState(false);
@@ -38,6 +40,7 @@ export function TicketDetails({ route, navigation }: Props) {
   const [editing, setEditing] = useState(false);
   const [draftStatus, setDraftStatus] = useState<TicketStatus>('open');
   const [draftPriority, setDraftPriority] = useState<TicketPriority>('medium');
+  const [draftAssigneeId, setDraftAssigneeId] = useState('');
   const [saveVisible, setSaveVisible] = useState(false);
   const [mutationError, setMutationError] = useState<string | null>(null);
 
@@ -53,6 +56,7 @@ export function TicketDetails({ route, navigation }: Props) {
               } else {
                 setDraftStatus(ticket?.status ?? 'open');
                 setDraftPriority(ticket?.priority ?? 'medium');
+                setDraftAssigneeId(ticket?.assigneeId ?? '');
                 setEditing(true);
               }
             }}
@@ -84,7 +88,13 @@ export function TicketDetails({ route, navigation }: Props) {
 
   async function handleConfirmSave() {
     try {
-      await updateTicket(ticketId, { status: draftStatus, priority: draftPriority });
+      const selectedUser = users.find((u) => u.uid === draftAssigneeId);
+      await updateTicket(ticketId, {
+        status: draftStatus,
+        priority: draftPriority,
+        assigneeId: selectedUser?.uid ?? null,
+        assigneeName: selectedUser?.name ?? null,
+      });
       setSaveVisible(false);
       setEditing(false);
     } catch (err: unknown) {
@@ -150,6 +160,9 @@ export function TicketDetails({ route, navigation }: Props) {
         {ticket.createdAt && (
           <Text style={styles.metaText}>Em: {formatDate(ticket.createdAt)}</Text>
         )}
+        {ticket.assigneeName && (
+          <Text style={styles.metaText}>Responsável: {ticket.assigneeName}</Text>
+        )}
       </View>
 
       <Text style={styles.sectionLabel}>Status</Text>
@@ -208,6 +221,18 @@ export function TicketDetails({ route, navigation }: Props) {
         </View>
       )}
 
+      {editing && (
+        <Select
+          label="Responsável"
+          value={draftAssigneeId}
+          onChange={(v) => setDraftAssigneeId(v)}
+          options={[
+            { label: 'Nenhum', value: '' },
+            ...users.map((u) => ({ label: u.name, value: u.uid })),
+          ]}
+        />
+      )}
+
       <Text style={styles.sectionLabel}>Comentários</Text>
 
       {comments.length === 0 && <Text style={styles.emptyComments}>Nenhum comentário ainda.</Text>}
@@ -263,6 +288,11 @@ export function TicketDetails({ route, navigation }: Props) {
           Status: <Text style={styles.bold}>{STATUS_LABELS[draftStatus]}</Text>
           {'\n'}
           Prioridade: <Text style={styles.bold}>{PRIORITY_LABELS[draftPriority]}</Text>
+          {'\n'}
+          Responsável:{' '}
+          <Text style={styles.bold}>
+            {users.find((u) => u.uid === draftAssigneeId)?.name ?? 'Nenhum'}
+          </Text>
         </Text>
       </Dialog>
 

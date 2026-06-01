@@ -47,4 +47,14 @@ describe('TicketCard', () => {
     render(<TicketCard {...baseProps} createdAt={null} />);
     expect(screen.getByText(/Alice/)).toBeTruthy();
   });
+
+  it('renders assignee name when provided', () => {
+    render(<TicketCard {...baseProps} assigneeName="Bob" />);
+    expect(screen.getByText('Responsável: Bob')).toBeTruthy();
+  });
+
+  it('does not render assignee row when assigneeName is null', () => {
+    render(<TicketCard {...baseProps} assigneeName={null} />);
+    expect(screen.queryByText(/Responsável/)).toBeNull();
+  });
 });
