@@ -34,6 +34,8 @@ const mockTicket: Ticket = {
   creatorId: 'u1',
   creatorName: 'Alice',
   createdAt: null,
+  assigneeId: null,
+  assigneeName: null,
 };
 
 const mockComment: Comment = {
@@ -86,8 +88,31 @@ describe('useTicketDetails', () => {
 
   it('updateTicket calls the service with correct args', async () => {
     const { result } = renderHook(() => useTicketDetails('t1'));
-    await act(() => result.current.updateTicket('done', 'low'));
-    expect(mockUpdateTicket).toHaveBeenCalledWith('t1', { status: 'done', priority: 'low' });
+    await act(() => result.current.updateTicket({ status: 'done', priority: 'low' }));
+    expect(mockUpdateTicket).toHaveBeenCalledWith('t1', {
+      status: 'done',
+      priority: 'low',
+      assigneeId: undefined,
+      assigneeName: undefined,
+    });
+  });
+
+  it('updateTicket passes assignee fields to the service', async () => {
+    const { result } = renderHook(() => useTicketDetails('t1'));
+    await act(() =>
+      result.current.updateTicket({
+        status: 'in_progress',
+        priority: 'high',
+        assigneeId: 'u2',
+        assigneeName: 'Bob',
+      }),
+    );
+    expect(mockUpdateTicket).toHaveBeenCalledWith('t1', {
+      status: 'in_progress',
+      priority: 'high',
+      assigneeId: 'u2',
+      assigneeName: 'Bob',
+    });
   });
 
   it('deleteTicket calls the service with the ticket id', async () => {
@@ -111,14 +136,14 @@ describe('useTicketDetails', () => {
   it('sets error when updateTicket rejects', async () => {
     mockUpdateTicket.mockRejectedValue(new Error('network error'));
     const { result } = renderHook(() => useTicketDetails('t1'));
-    await act(() => result.current.updateTicket('done', 'low'));
+    await act(() => result.current.updateTicket({ status: 'done', priority: 'low' }));
     expect(result.current.error).toBeTruthy();
   });
 
   it('clearError resets error to null after a failed mutation', async () => {
     mockUpdateTicket.mockRejectedValue(new Error('fail'));
     const { result } = renderHook(() => useTicketDetails('t1'));
-    await act(() => result.current.updateTicket('done', 'low'));
+    await act(() => result.current.updateTicket({ status: 'done', priority: 'low' }));
     act(() => result.current.clearError());
     expect(result.current.error).toBeNull();
   });

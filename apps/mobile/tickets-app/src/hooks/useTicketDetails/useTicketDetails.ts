@@ -12,6 +12,13 @@ import type { Ticket, Comment } from '../../domain/ticket';
 import type { TicketStatus } from '../../constants/ticketStatus';
 import type { TicketPriority } from '../../constants/ticketPriority';
 
+interface UpdateTicketParams {
+  status: TicketStatus;
+  priority: TicketPriority;
+  assigneeId?: string | null;
+  assigneeName?: string | null;
+}
+
 export function useTicketDetails(ticketId: string) {
   const user = useAuthStore((s) => s.user);
   const [ticket, setTicket] = useState<Ticket | null>(null);
@@ -41,9 +48,14 @@ export function useTicketDetails(ticketId: string) {
     return unsubscribe;
   }, [ticketId]);
 
-  async function handleUpdateTicket(status: TicketStatus, priority: TicketPriority) {
+  async function handleUpdateTicket({
+    status,
+    priority,
+    assigneeId,
+    assigneeName,
+  }: UpdateTicketParams) {
     try {
-      await updateTicket(ticketId, { status, priority });
+      await updateTicket(ticketId, { status, priority, assigneeId, assigneeName });
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Falha ao atualizar o chamado.');
     }

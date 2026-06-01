@@ -80,7 +80,10 @@ export function subscribeToComments(
 }
 
 export async function createTicket(
-  data: Pick<Ticket, 'title' | 'description' | 'priority'>,
+  data: Pick<Ticket, 'title' | 'description' | 'priority'> & {
+    assigneeId?: string | null;
+    assigneeName?: string | null;
+  },
   user: User,
 ): Promise<void> {
   await addDoc(collection(db, 'tickets'), {
@@ -91,14 +94,24 @@ export async function createTicket(
     creator_name: user.name,
     status: 'open' satisfies TicketStatus,
     createdAt: serverTimestamp(),
+    ...(data.assigneeId ? { assignee_id: data.assigneeId, assignee_name: data.assigneeName } : {}),
   });
 }
 
 export async function updateTicket(
   ticketId: string,
-  patch: Partial<Pick<Ticket, 'status' | 'priority'>>,
+  patch: Partial<Pick<Ticket, 'status' | 'priority'>> & {
+    assigneeId?: string | null;
+    assigneeName?: string | null;
+  },
 ): Promise<void> {
-  await updateDoc(doc(db, 'tickets', ticketId), patch);
+  const { assigneeId, assigneeName, ...rest } = patch;
+  const firestorePatch: Record<string, unknown> = { ...rest };
+  if ('assigneeId' in patch) {
+    firestorePatch.assignee_id = assigneeId ?? null;
+    firestorePatch.assignee_name = assigneeName ?? null;
+  }
+  await updateDoc(doc(db, 'tickets', ticketId), firestorePatch);
 }
 
 export async function deleteTicket(ticketId: string): Promise<void> {

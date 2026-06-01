@@ -23,6 +23,8 @@ const mockTickets: Ticket[] = [
     creatorId: 'u1',
     creatorName: 'Alice',
     createdAt: null,
+    assigneeId: null,
+    assigneeName: null,
   },
   {
     id: 't2',
@@ -33,6 +35,8 @@ const mockTickets: Ticket[] = [
     creatorId: 'u1',
     creatorName: 'Alice',
     createdAt: null,
+    assigneeId: null,
+    assigneeName: null,
   },
 ];
 

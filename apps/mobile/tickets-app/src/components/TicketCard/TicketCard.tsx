@@ -16,6 +16,7 @@ interface Props {
   priority: TicketPriority;
   creatorName: string;
   createdAt: Timestamp | null;
+  assigneeName?: string | null;
   onPress: () => void;
 }
 
@@ -25,6 +26,7 @@ export function TicketCard({
   priority,
   creatorName,
   createdAt,
+  assigneeName,
   onPress,
 }: Props) {
   return (
@@ -38,6 +40,7 @@ export function TicketCard({
         Criado por: {creatorName}
         {createdAt ? ` · ${formatDate(createdAt)}` : ''}
       </Text>
+      {assigneeName ? <Text style={styles.meta}>Responsável: {assigneeName}</Text> : null}
     </Card>
   );
 }
