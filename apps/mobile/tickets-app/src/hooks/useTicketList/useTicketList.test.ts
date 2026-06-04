@@ -1,5 +1,5 @@
 import { act, renderHook } from '@testing-library/react-native';
-import { subscribeToTickets } from '../../services/ticketService';
+import { subscribeToTicketList } from '../../services/ticketService';
 import { useAuthStore } from '../../store/useAuthStore';
 import type { Ticket } from '../../domain/ticket';
 import { useTicketList } from './useTicketList';
@@ -9,7 +9,7 @@ jest.mock('../../services/ticketService');
 jest.mock('../../services/firebase', () => ({ auth: {}, db: {} }));
 
 const mockUseAuthStore = useAuthStore as unknown as jest.Mock;
-const mockSubscribeToTickets = subscribeToTickets as jest.Mock;
+const mockSubscribeToTickets = subscribeToTicketList as jest.Mock;
 
 const mockUser = { uid: 'u1', email: 'alice@test.com', name: 'Alice', role: 'admin' as const };
 

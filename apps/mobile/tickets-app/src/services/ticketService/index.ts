@@ -1,6 +1,6 @@
 export {
-  subscribeToTickets,
-  subscribeToTicket,
+  subscribeToTicketList,
+  subscribeToTicketById,
   subscribeToComments,
   createTicket,
   updateTicket,

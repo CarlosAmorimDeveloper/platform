@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import {
-  subscribeToTicket,
+  subscribeToTicketById,
   subscribeToComments,
   updateTicket,
   deleteTicket,
@@ -27,7 +27,7 @@ export function useTicketDetails(ticketId: string) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const unsubscribe = subscribeToTicket(
+    const unsubscribe = subscribeToTicketById(
       ticketId,
       (t) => {
         setTicket(t);

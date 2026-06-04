@@ -18,7 +18,7 @@ import { toTicket, type Ticket, type Comment } from '../../domain/ticket';
 import type { TicketStatus } from '../../constants/ticketStatus';
 import type { User } from '../../domain/user';
 
-export function subscribeToTickets(
+export function subscribeToTicketList(
   user: User,
   onData: (tickets: Ticket[]) => void,
   onError: () => void,
@@ -32,7 +32,7 @@ export function subscribeToTickets(
   return onSnapshot(q, (snap) => onData(snap.docs.map(toTicket)), onError);
 }
 
-export function subscribeToTicket(
+export function subscribeToTicketById(
   ticketId: string,
   onData: (ticket: Ticket) => void,
   onError: () => void,

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { subscribeToTickets } from '../../services/ticketService';
+import { subscribeToTicketList } from '../../services/ticketService';
 import { useAuthStore } from '../../store/useAuthStore';
 import type { Ticket } from '../../domain/ticket';
 import type { TicketStatus } from '../../constants/ticketStatus';
@@ -13,7 +13,7 @@ export function useTicketList(statusFilter?: TicketStatus) {
   useEffect(() => {
     if (!user) return;
 
-    const unsubscribe = subscribeToTickets(
+    const unsubscribe = subscribeToTicketList(
       user,
       (all) => {
         setTickets(statusFilter ? all.filter((t) => t.status === statusFilter) : all);

@@ -4,7 +4,7 @@ import {
   deleteComment,
   deleteTicket,
   subscribeToComments,
-  subscribeToTicket,
+  subscribeToTicketById,
   updateTicket,
 } from '../../services/ticketService';
 import { useAuthStore } from '../../store/useAuthStore';
@@ -16,7 +16,7 @@ jest.mock('../../services/ticketService');
 jest.mock('../../services/firebase', () => ({ auth: {}, db: {} }));
 
 const mockUseAuthStore = useAuthStore as unknown as jest.Mock;
-const mockSubscribeToTicket = subscribeToTicket as jest.Mock;
+const mockSubscribeToTicket = subscribeToTicketById as jest.Mock;
 const mockSubscribeToComments = subscribeToComments as jest.Mock;
 const mockUpdateTicket = updateTicket as jest.Mock;
 const mockDeleteTicket = deleteTicket as jest.Mock;
@@ -66,7 +66,7 @@ describe('useTicketDetails', () => {
     expect(result.current.loading).toBe(true);
   });
 
-  it('populates ticket when subscribeToTicket fires', () => {
+  it('populates ticket when subscribeToTicketById fires', () => {
     mockSubscribeToTicket.mockImplementation((_id: string, onData: (t: Ticket) => void) => {
       onData(mockTicket);
       return jest.fn();
