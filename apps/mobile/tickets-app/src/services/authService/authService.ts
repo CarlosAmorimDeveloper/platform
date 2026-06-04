@@ -38,15 +38,19 @@ export async function register(name: string, email: string, password: string): P
   const { user } = await createUserWithEmailAndPassword(auth, email, password);
 
   const workspaceId = doc(collection(db, 'workspaces')).id;
-  await setDoc(doc(db, 'workspaces', workspaceId), {
-    createdAt: serverTimestamp(),
-    owner_id: user.uid,
-  });
+
+  // Cria o perfil do usuário PRIMEIRO — as regras do workspace dependem deste documento
   await setDoc(doc(db, 'users', user.uid), {
     email,
     role: 'admin',
     name: name.trim(),
     workspace_id: workspaceId,
+  });
+
+  // Cria o workspace DEPOIS — agora belongsToWorkspace() consegue verificar o perfil
+  await setDoc(doc(db, 'workspaces', workspaceId), {
+    createdAt: serverTimestamp(),
+    owner_id: user.uid,
   });
 
   return { uid: user.uid, email, name: name.trim(), role: 'admin', workspaceId };
