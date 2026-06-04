@@ -27,8 +27,10 @@ export function useTicketDetails(ticketId: string) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!user) return;
     const unsubscribe = subscribeToTicketById(
       ticketId,
+      user.workspaceId,
       (t) => {
         setTicket(t);
         setLoading(false);
@@ -39,14 +41,15 @@ export function useTicketDetails(ticketId: string) {
       },
     );
     return unsubscribe;
-  }, [ticketId]);
+  }, [ticketId, user]);
 
   useEffect(() => {
-    const unsubscribe = subscribeToComments(ticketId, setComments, () =>
+    if (!user) return;
+    const unsubscribe = subscribeToComments(ticketId, user.workspaceId, setComments, () =>
       setError('Erro ao carregar comentários.'),
     );
     return unsubscribe;
-  }, [ticketId]);
+  }, [ticketId, user]);
 
   async function handleUpdateTicket({
     status,
@@ -54,16 +57,22 @@ export function useTicketDetails(ticketId: string) {
     assigneeId,
     assigneeName,
   }: UpdateTicketParams) {
+    if (!user) return;
     try {
-      await updateTicket(ticketId, { status, priority, assigneeId, assigneeName });
+      await updateTicket(
+        ticketId,
+        { status, priority, assigneeId, assigneeName },
+        user.workspaceId,
+      );
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Falha ao atualizar o chamado.');
     }
   }
 
   async function handleDeleteTicket() {
+    if (!user) return;
     try {
-      await deleteTicket(ticketId);
+      await deleteTicket(ticketId, user.workspaceId);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Falha ao apagar o chamado.');
     }
@@ -79,8 +88,9 @@ export function useTicketDetails(ticketId: string) {
   }
 
   async function handleDeleteComment(commentId: string) {
+    if (!user) return;
     try {
-      await deleteComment(ticketId, commentId);
+      await deleteComment(ticketId, commentId, user.workspaceId);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Falha ao apagar comentário.');
     }

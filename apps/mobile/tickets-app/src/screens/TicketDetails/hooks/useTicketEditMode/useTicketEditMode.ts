@@ -7,6 +7,7 @@ import type { TicketPriority } from '../../../../constants/ticketPriority';
 
 interface UseTicketEditModeParams {
   ticketId: string;
+  workspaceId: string;
   users: User[];
   ticket: Ticket | null;
 }
@@ -30,6 +31,7 @@ interface UseTicketEditModeResult {
 
 export function useTicketEditMode({
   ticketId,
+  workspaceId,
   users,
   ticket,
 }: UseTicketEditModeParams): UseTicketEditModeResult {
@@ -54,12 +56,16 @@ export function useTicketEditMode({
   async function handleConfirmSave() {
     try {
       const selectedUser = users.find((u) => u.uid === draftAssigneeId);
-      await updateTicket(ticketId, {
-        status: draftStatus,
-        priority: draftPriority,
-        assigneeId: selectedUser?.uid ?? null,
-        assigneeName: selectedUser?.name ?? null,
-      });
+      await updateTicket(
+        ticketId,
+        {
+          status: draftStatus,
+          priority: draftPriority,
+          assigneeId: selectedUser?.uid ?? null,
+          assigneeName: selectedUser?.name ?? null,
+        },
+        workspaceId,
+      );
       setSaveVisible(false);
       setEditing(false);
     } catch (err: unknown) {

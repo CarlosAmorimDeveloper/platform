@@ -5,6 +5,7 @@ import type { AppStackParamList } from '../../../../navigation/types';
 
 interface UseTicketDeletionParams {
   ticketId: string;
+  workspaceId: string;
   navigation: NativeStackNavigationProp<AppStackParamList, 'TicketDetails'>;
   deleteComment: (id: string) => Promise<void>;
 }
@@ -24,6 +25,7 @@ interface UseTicketDeletionResult {
 
 export function useTicketDeletion({
   ticketId,
+  workspaceId,
   navigation,
   deleteComment,
 }: UseTicketDeletionParams): UseTicketDeletionResult {
@@ -39,7 +41,7 @@ export function useTicketDeletion({
 
   async function handleDelete() {
     try {
-      await deleteTicket(ticketId);
+      await deleteTicket(ticketId, workspaceId);
       navigation.goBack();
     } catch (err: unknown) {
       setDeleteVisible(false);

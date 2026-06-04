@@ -35,7 +35,12 @@ describe('useTicketEditMode', () => {
 
   it('initial state: editing=false, saveVisible=false, mutationError=null', () => {
     const { result } = renderHook(() =>
-      useTicketEditMode({ ticketId: 't1', users: mockUsers, ticket: mockTicket }),
+      useTicketEditMode({
+        ticketId: 't1',
+        workspaceId: 'ws-1',
+        users: mockUsers,
+        ticket: mockTicket,
+      }),
     );
     expect(result.current.editing).toBe(false);
     expect(result.current.saveVisible).toBe(false);
@@ -44,7 +49,12 @@ describe('useTicketEditMode', () => {
 
   it('onEditPress when not editing: sets editing=true and initializes drafts from ticket', () => {
     const { result } = renderHook(() =>
-      useTicketEditMode({ ticketId: 't1', users: mockUsers, ticket: mockTicket }),
+      useTicketEditMode({
+        ticketId: 't1',
+        workspaceId: 'ws-1',
+        users: mockUsers,
+        ticket: mockTicket,
+      }),
     );
     act(() => {
       result.current.onEditPress();
@@ -57,7 +67,12 @@ describe('useTicketEditMode', () => {
 
   it('onEditPress when editing: sets saveVisible=true', () => {
     const { result } = renderHook(() =>
-      useTicketEditMode({ ticketId: 't1', users: mockUsers, ticket: mockTicket }),
+      useTicketEditMode({
+        ticketId: 't1',
+        workspaceId: 'ws-1',
+        users: mockUsers,
+        ticket: mockTicket,
+      }),
     );
     act(() => {
       result.current.onEditPress(); // enter edit mode
@@ -71,7 +86,12 @@ describe('useTicketEditMode', () => {
 
   it('handleConfirmSave: calls updateTicket with correct fields', async () => {
     const { result } = renderHook(() =>
-      useTicketEditMode({ ticketId: 't1', users: mockUsers, ticket: mockTicket }),
+      useTicketEditMode({
+        ticketId: 't1',
+        workspaceId: 'ws-1',
+        users: mockUsers,
+        ticket: mockTicket,
+      }),
     );
     act(() => {
       result.current.onEditPress();
@@ -79,12 +99,16 @@ describe('useTicketEditMode', () => {
     await act(async () => {
       await result.current.handleConfirmSave();
     });
-    expect(mockUpdateTicket).toHaveBeenCalledWith('t1', {
-      status: 'in_progress',
-      priority: 'high',
-      assigneeId: 'u2',
-      assigneeName: 'Bob',
-    });
+    expect(mockUpdateTicket).toHaveBeenCalledWith(
+      't1',
+      {
+        status: 'in_progress',
+        priority: 'high',
+        assigneeId: 'u2',
+        assigneeName: 'Bob',
+      },
+      'ws-1',
+    );
     expect(result.current.editing).toBe(false);
     expect(result.current.saveVisible).toBe(false);
   });
@@ -92,7 +116,12 @@ describe('useTicketEditMode', () => {
   it('handleConfirmSave: sets mutationError on failure', async () => {
     mockUpdateTicket.mockRejectedValue(new Error('network failure'));
     const { result } = renderHook(() =>
-      useTicketEditMode({ ticketId: 't1', users: mockUsers, ticket: mockTicket }),
+      useTicketEditMode({
+        ticketId: 't1',
+        workspaceId: 'ws-1',
+        users: mockUsers,
+        ticket: mockTicket,
+      }),
     );
     act(() => {
       result.current.onEditPress();
@@ -106,7 +135,12 @@ describe('useTicketEditMode', () => {
 
   it('handleCancelSave: resets editing and saveVisible', () => {
     const { result } = renderHook(() =>
-      useTicketEditMode({ ticketId: 't1', users: mockUsers, ticket: mockTicket }),
+      useTicketEditMode({
+        ticketId: 't1',
+        workspaceId: 'ws-1',
+        users: mockUsers,
+        ticket: mockTicket,
+      }),
     );
     act(() => {
       result.current.onEditPress(); // enter edit mode
@@ -124,7 +158,12 @@ describe('useTicketEditMode', () => {
   it('clearMutationError: resets mutationError to null', async () => {
     mockUpdateTicket.mockRejectedValue(new Error('some error'));
     const { result } = renderHook(() =>
-      useTicketEditMode({ ticketId: 't1', users: mockUsers, ticket: mockTicket }),
+      useTicketEditMode({
+        ticketId: 't1',
+        workspaceId: 'ws-1',
+        users: mockUsers,
+        ticket: mockTicket,
+      }),
     );
     act(() => {
       result.current.onEditPress();

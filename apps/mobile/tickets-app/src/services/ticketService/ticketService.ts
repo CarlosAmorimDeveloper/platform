@@ -18,12 +18,22 @@ import { toTicket, type Ticket, type Comment } from '../../domain/ticket';
 import type { TicketStatus } from '../../constants/ticketStatus';
 import type { User } from '../../domain/user';
 
+function ticketsCol(workspaceId: string) {
+  return collection(db, 'workspaces', workspaceId, 'tickets');
+}
+function ticketDoc(workspaceId: string, ticketId: string) {
+  return doc(db, 'workspaces', workspaceId, 'tickets', ticketId);
+}
+function commentsCol(workspaceId: string, ticketId: string) {
+  return collection(db, 'workspaces', workspaceId, 'tickets', ticketId, 'comments');
+}
+
 export function subscribeToTicketList(
   user: User,
   onData: (tickets: Ticket[]) => void,
   onError: () => void,
 ): Unsubscribe {
-  const col = collection(db, 'tickets');
+  const col = ticketsCol(user.workspaceId);
   const q =
     user.role === 'admin'
       ? query(col, orderBy('createdAt', 'desc'))
@@ -34,11 +44,12 @@ export function subscribeToTicketList(
 
 export function subscribeToTicketById(
   ticketId: string,
+  workspaceId: string,
   onData: (ticket: Ticket) => void,
   onError: () => void,
 ): Unsubscribe {
   return onSnapshot(
-    doc(db, 'tickets', ticketId),
+    ticketDoc(workspaceId, ticketId),
     (snap) => {
       if (snap.exists()) {
         onData(toTicket(snap as unknown as QueryDocumentSnapshot));
@@ -50,10 +61,11 @@ export function subscribeToTicketById(
 
 export function subscribeToComments(
   ticketId: string,
+  workspaceId: string,
   onData: (comments: Comment[]) => void,
   onError: () => void,
 ): Unsubscribe {
-  const q = query(collection(db, 'tickets', ticketId, 'comments'));
+  const q = query(commentsCol(workspaceId, ticketId));
   return onSnapshot(
     q,
     (snap) => {
@@ -86,7 +98,7 @@ export async function createTicket(
   },
   user: User,
 ): Promise<void> {
-  await addDoc(collection(db, 'tickets'), {
+  await addDoc(ticketsCol(user.workspaceId), {
     title: data.title,
     description: data.description,
     priority: data.priority,
@@ -104,6 +116,7 @@ export async function updateTicket(
     assigneeId?: string | null;
     assigneeName?: string | null;
   },
+  workspaceId: string,
 ): Promise<void> {
   const { assigneeId, assigneeName, ...rest } = patch;
   const firestorePatch: Record<string, unknown> = { ...rest };
@@ -111,15 +124,15 @@ export async function updateTicket(
     firestorePatch.assignee_id = assigneeId ?? null;
     firestorePatch.assignee_name = assigneeName ?? null;
   }
-  await updateDoc(doc(db, 'tickets', ticketId), firestorePatch);
+  await updateDoc(ticketDoc(workspaceId, ticketId), firestorePatch);
 }
 
-export async function deleteTicket(ticketId: string): Promise<void> {
-  await deleteDoc(doc(db, 'tickets', ticketId));
+export async function deleteTicket(ticketId: string, workspaceId: string): Promise<void> {
+  await deleteDoc(ticketDoc(workspaceId, ticketId));
 }
 
 export async function addComment(ticketId: string, text: string, user: User): Promise<void> {
-  await addDoc(collection(db, 'tickets', ticketId, 'comments'), {
+  await addDoc(commentsCol(user.workspaceId, ticketId), {
     text,
     author_id: user.uid,
     author_name: user.name,
@@ -127,6 +140,10 @@ export async function addComment(ticketId: string, text: string, user: User): Pr
   });
 }
 
-export async function deleteComment(ticketId: string, commentId: string): Promise<void> {
-  await deleteDoc(doc(db, 'tickets', ticketId, 'comments', commentId));
+export async function deleteComment(
+  ticketId: string,
+  commentId: string,
+  workspaceId: string,
+): Promise<void> {
+  await deleteDoc(doc(commentsCol(workspaceId, ticketId), commentId));
 }
