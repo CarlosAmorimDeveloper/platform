@@ -23,8 +23,8 @@ const mockTicket: Ticket = {
 };
 
 const mockUsers: User[] = [
-  { uid: 'u1', email: 'alice@test.com', name: 'Alice', role: 'admin' },
-  { uid: 'u2', email: 'bob@test.com', name: 'Bob', role: 'standard' },
+  { uid: 'u1', email: 'alice@test.com', name: 'Alice', role: 'admin', workspaceId: 'ws-1' },
+  { uid: 'u2', email: 'bob@test.com', name: 'Bob', role: 'standard', workspaceId: 'ws-1' },
 ];
 
 describe('useTicketEditMode', () => {

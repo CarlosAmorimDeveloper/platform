@@ -9,7 +9,13 @@ const mockSignOut = signOut as jest.Mock;
 
 const initialState = { user: null as User | null, isAuthenticated: false };
 
-const mockUser: User = { uid: 'u1', email: 'alice@test.com', name: 'Alice', role: 'admin' };
+const mockUser: User = {
+  uid: 'u1',
+  email: 'alice@test.com',
+  name: 'Alice',
+  role: 'admin',
+  workspaceId: 'ws-1',
+};
 
 describe('useAuthStore', () => {
   beforeEach(() => {

@@ -22,7 +22,14 @@ export default function App() {
           const data = snap.data();
           const role = (data?.role ?? 'standard') as UserRole;
           const name = (data?.name ?? firebaseUser.email ?? '') as string;
-          setUser({ uid: firebaseUser.uid, email: firebaseUser.email ?? '', name, role });
+          const workspaceId = (data?.workspace_id ?? '') as string;
+          setUser({
+            uid: firebaseUser.uid,
+            email: firebaseUser.email ?? '',
+            name,
+            role,
+            workspaceId,
+          });
         } catch {
           Alert.alert(
             'Erro de conexão',
