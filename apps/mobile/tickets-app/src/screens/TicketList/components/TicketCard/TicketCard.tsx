@@ -1,13 +1,13 @@
 import { View, Text } from 'react-native';
 import type { Timestamp } from 'firebase/firestore';
 import { Card } from '@ds/mobile';
-import { formatDate } from '../../domain/ticket';
-import type { TicketStatus } from '../../constants/ticketStatus';
+import { formatDate } from '../../../../domain/ticket';
+import type { TicketStatus } from '../../../../constants/ticketStatus';
 import {
   PRIORITY_COLORS,
   PRIORITY_LABELS,
   type TicketPriority,
-} from '../../constants/ticketPriority';
+} from '../../../../constants/ticketPriority';
 import { styles } from './TicketCard.styles';
 
 interface Props {
