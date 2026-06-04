@@ -2,7 +2,13 @@ import type { User, UserRole } from './user';
 
 describe('User domain', () => {
   it('accepts a valid User object at runtime', () => {
-    const user: User = { uid: 'u1', email: 'a@b.com', name: 'Alice', role: 'admin' };
+    const user: User = {
+      uid: 'u1',
+      email: 'a@b.com',
+      name: 'Alice',
+      role: 'admin',
+      workspaceId: 'ws-1',
+    };
     expect(user.uid).toBe('u1');
     expect(user.email).toBe('a@b.com');
     expect(user.name).toBe('Alice');

@@ -19,7 +19,12 @@ describe('useTicketDeletion', () => {
 
   it('initial state: deleteVisible=false, deleteCommentVisible=false, pendingCommentId=null, mutationError=null', () => {
     const { result } = renderHook(() =>
-      useTicketDeletion({ ticketId: 't1', navigation: navigation as never, deleteComment }),
+      useTicketDeletion({
+        ticketId: 't1',
+        workspaceId: 'ws-1',
+        navigation: navigation as never,
+        deleteComment,
+      }),
     );
     expect(result.current.deleteVisible).toBe(false);
     expect(result.current.deleteCommentVisible).toBe(false);
@@ -29,7 +34,12 @@ describe('useTicketDeletion', () => {
 
   it('handleRequestDeleteComment: sets pendingCommentId and opens deleteCommentVisible', () => {
     const { result } = renderHook(() =>
-      useTicketDeletion({ ticketId: 't1', navigation: navigation as never, deleteComment }),
+      useTicketDeletion({
+        ticketId: 't1',
+        workspaceId: 'ws-1',
+        navigation: navigation as never,
+        deleteComment,
+      }),
     );
     act(() => {
       result.current.handleRequestDeleteComment('c1');
@@ -40,19 +50,29 @@ describe('useTicketDeletion', () => {
 
   it('handleDelete: calls deleteTicket and navigates back', async () => {
     const { result } = renderHook(() =>
-      useTicketDeletion({ ticketId: 't1', navigation: navigation as never, deleteComment }),
+      useTicketDeletion({
+        ticketId: 't1',
+        workspaceId: 'ws-1',
+        navigation: navigation as never,
+        deleteComment,
+      }),
     );
     await act(async () => {
       await result.current.handleDelete();
     });
-    expect(mockDeleteTicket).toHaveBeenCalledWith('t1');
+    expect(mockDeleteTicket).toHaveBeenCalledWith('t1', 'ws-1');
     expect(navigation.goBack).toHaveBeenCalled();
   });
 
   it('handleDelete: sets mutationError and closes dialog on failure', async () => {
     mockDeleteTicket.mockRejectedValue(new Error('network error'));
     const { result } = renderHook(() =>
-      useTicketDeletion({ ticketId: 't1', navigation: navigation as never, deleteComment }),
+      useTicketDeletion({
+        ticketId: 't1',
+        workspaceId: 'ws-1',
+        navigation: navigation as never,
+        deleteComment,
+      }),
     );
     act(() => {
       result.current.setDeleteVisible(true);
@@ -67,7 +87,12 @@ describe('useTicketDeletion', () => {
 
   it('handleDeleteComment: calls deleteComment with pendingCommentId, closes dialog', async () => {
     const { result } = renderHook(() =>
-      useTicketDeletion({ ticketId: 't1', navigation: navigation as never, deleteComment }),
+      useTicketDeletion({
+        ticketId: 't1',
+        workspaceId: 'ws-1',
+        navigation: navigation as never,
+        deleteComment,
+      }),
     );
     act(() => {
       result.current.handleRequestDeleteComment('c2');
@@ -82,7 +107,12 @@ describe('useTicketDeletion', () => {
 
   it('handleCancelDeleteComment: closes dialog and clears pendingCommentId', () => {
     const { result } = renderHook(() =>
-      useTicketDeletion({ ticketId: 't1', navigation: navigation as never, deleteComment }),
+      useTicketDeletion({
+        ticketId: 't1',
+        workspaceId: 'ws-1',
+        navigation: navigation as never,
+        deleteComment,
+      }),
     );
     act(() => {
       result.current.handleRequestDeleteComment('c3');
@@ -97,7 +127,12 @@ describe('useTicketDeletion', () => {
   it('clearMutationError: resets mutationError to null', async () => {
     mockDeleteTicket.mockRejectedValue(new Error('some error'));
     const { result } = renderHook(() =>
-      useTicketDeletion({ ticketId: 't1', navigation: navigation as never, deleteComment }),
+      useTicketDeletion({
+        ticketId: 't1',
+        workspaceId: 'ws-1',
+        navigation: navigation as never,
+        deleteComment,
+      }),
     );
     await act(async () => {
       await result.current.handleDelete();

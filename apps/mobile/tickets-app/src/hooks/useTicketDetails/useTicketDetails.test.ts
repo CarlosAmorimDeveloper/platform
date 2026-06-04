@@ -23,7 +23,13 @@ const mockDeleteTicket = deleteTicket as jest.Mock;
 const mockAddComment = addComment as jest.Mock;
 const mockDeleteComment = deleteComment as jest.Mock;
 
-const mockUser = { uid: 'u1', email: 'alice@test.com', name: 'Alice', role: 'admin' as const };
+const mockUser = {
+  uid: 'u1',
+  email: 'alice@test.com',
+  name: 'Alice',
+  role: 'admin' as const,
+  workspaceId: 'ws-1',
+};
 
 const mockTicket: Ticket = {
   id: 't1',
@@ -67,20 +73,24 @@ describe('useTicketDetails', () => {
   });
 
   it('populates ticket when subscribeToTicketById fires', () => {
-    mockSubscribeToTicket.mockImplementation((_id: string, onData: (t: Ticket) => void) => {
-      onData(mockTicket);
-      return jest.fn();
-    });
+    mockSubscribeToTicket.mockImplementation(
+      (_id: string, _wsId: string, onData: (t: Ticket) => void) => {
+        onData(mockTicket);
+        return jest.fn();
+      },
+    );
     const { result } = renderHook(() => useTicketDetails('t1'));
     expect(result.current.ticket).toEqual(mockTicket);
     expect(result.current.loading).toBe(false);
   });
 
   it('populates comments when subscribeToComments fires', () => {
-    mockSubscribeToComments.mockImplementation((_id: string, onData: (c: Comment[]) => void) => {
-      onData([mockComment]);
-      return jest.fn();
-    });
+    mockSubscribeToComments.mockImplementation(
+      (_id: string, _wsId: string, onData: (c: Comment[]) => void) => {
+        onData([mockComment]);
+        return jest.fn();
+      },
+    );
     const { result } = renderHook(() => useTicketDetails('t1'));
     expect(result.current.comments).toHaveLength(1);
     expect(result.current.comments[0]?.id).toBe('c1');
@@ -89,12 +99,16 @@ describe('useTicketDetails', () => {
   it('updateTicket calls the service with correct args', async () => {
     const { result } = renderHook(() => useTicketDetails('t1'));
     await act(() => result.current.updateTicket({ status: 'done', priority: 'low' }));
-    expect(mockUpdateTicket).toHaveBeenCalledWith('t1', {
-      status: 'done',
-      priority: 'low',
-      assigneeId: undefined,
-      assigneeName: undefined,
-    });
+    expect(mockUpdateTicket).toHaveBeenCalledWith(
+      't1',
+      {
+        status: 'done',
+        priority: 'low',
+        assigneeId: undefined,
+        assigneeName: undefined,
+      },
+      'ws-1',
+    );
   });
 
   it('updateTicket passes assignee fields to the service', async () => {
@@ -107,18 +121,22 @@ describe('useTicketDetails', () => {
         assigneeName: 'Bob',
       }),
     );
-    expect(mockUpdateTicket).toHaveBeenCalledWith('t1', {
-      status: 'in_progress',
-      priority: 'high',
-      assigneeId: 'u2',
-      assigneeName: 'Bob',
-    });
+    expect(mockUpdateTicket).toHaveBeenCalledWith(
+      't1',
+      {
+        status: 'in_progress',
+        priority: 'high',
+        assigneeId: 'u2',
+        assigneeName: 'Bob',
+      },
+      'ws-1',
+    );
   });
 
   it('deleteTicket calls the service with the ticket id', async () => {
     const { result } = renderHook(() => useTicketDetails('t1'));
     await act(() => result.current.deleteTicket());
-    expect(mockDeleteTicket).toHaveBeenCalledWith('t1');
+    expect(mockDeleteTicket).toHaveBeenCalledWith('t1', 'ws-1');
   });
 
   it('addComment calls the service with text and current user', async () => {
@@ -130,7 +148,7 @@ describe('useTicketDetails', () => {
   it('deleteComment calls the service with the comment id', async () => {
     const { result } = renderHook(() => useTicketDetails('t1'));
     await act(() => result.current.deleteComment('c1'));
-    expect(mockDeleteComment).toHaveBeenCalledWith('t1', 'c1');
+    expect(mockDeleteComment).toHaveBeenCalledWith('t1', 'c1', 'ws-1');
   });
 
   it('sets error when updateTicket rejects', async () => {

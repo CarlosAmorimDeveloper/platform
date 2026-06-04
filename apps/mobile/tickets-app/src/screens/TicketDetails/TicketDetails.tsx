@@ -29,9 +29,19 @@ export function TicketDetails({ route, navigation }: Props) {
     useTicketDetails(ticketId);
   const { users } = useUserList();
 
-  const editMode = useTicketEditMode({ ticketId, users, ticket });
+  const editMode = useTicketEditMode({
+    ticketId,
+    workspaceId: user?.workspaceId ?? '',
+    users,
+    ticket,
+  });
   const commentForm = useCommentForm({ addComment });
-  const deletion = useTicketDeletion({ ticketId, navigation, deleteComment });
+  const deletion = useTicketDeletion({
+    ticketId,
+    workspaceId: user?.workspaceId ?? '',
+    navigation,
+    deleteComment,
+  });
 
   useEffect(() => {
     if (user?.role !== 'admin') return;

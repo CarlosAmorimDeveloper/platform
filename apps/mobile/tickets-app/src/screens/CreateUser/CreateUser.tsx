@@ -39,7 +39,7 @@ export function CreateUser({ navigation }: Props) {
     if (!isValid) return;
     setLoading(true);
     try {
-      await createUser(name, email, password, role);
+      await createUser(name, email, password, role, currentUser!.workspaceId);
       setSuccessVisible(true);
       setTimeout(() => navigation.goBack(), 1500);
     } catch (err: unknown) {
