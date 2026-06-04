@@ -160,10 +160,22 @@ export function TicketDetails({ route, navigation }: Props) {
         {ticket.createdAt && (
           <Text style={styles.metaText}>Em: {formatDate(ticket.createdAt)}</Text>
         )}
-        {ticket.assigneeName && (
+        {!editing && ticket.assigneeName && (
           <Text style={styles.metaText}>Responsável: {ticket.assigneeName}</Text>
         )}
       </View>
+
+      {editing && (
+        <Select
+          label="Responsável"
+          value={draftAssigneeId}
+          onChange={(v) => setDraftAssigneeId(v)}
+          options={[
+            { label: 'Nenhum', value: '' },
+            ...users.map((u) => ({ label: u.name, value: u.uid })),
+          ]}
+        />
+      )}
 
       <Text style={styles.sectionLabel}>Status</Text>
 
@@ -219,18 +231,6 @@ export function TicketDetails({ route, navigation }: Props) {
             {PRIORITY_LABELS[ticket.priority]}
           </Text>
         </View>
-      )}
-
-      {editing && (
-        <Select
-          label="Responsável"
-          value={draftAssigneeId}
-          onChange={(v) => setDraftAssigneeId(v)}
-          options={[
-            { label: 'Nenhum', value: '' },
-            ...users.map((u) => ({ label: u.name, value: u.uid })),
-          ]}
-        />
       )}
 
       <Text style={styles.sectionLabel}>Comentários</Text>
