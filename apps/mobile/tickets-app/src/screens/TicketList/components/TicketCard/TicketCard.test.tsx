@@ -1,7 +1,7 @@
 import React from 'react';
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import type { Timestamp } from 'firebase/firestore';
-import { fireEvent, render, screen } from '../../test-utils';
+import { fireEvent, render, screen } from '../../../../test-utils';
 import { TicketCard } from './TicketCard';
 
 function makeTimestamp(date: Date): Timestamp {
