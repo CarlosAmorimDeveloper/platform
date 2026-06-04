@@ -1,0 +1,1 @@
+export { useTicketDeletion } from './useTicketDeletion';
