@@ -1,10 +1,10 @@
 import { View, Text, FlatList } from 'react-native';
 import { LoadingIndicator, Snackbar } from '@ds/mobile';
 import { useTicketList } from '../../hooks/useTicketList';
-import { TicketCard } from '../../components/TicketCard';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { AppStackParamList } from '../../navigation/types';
 import { styles } from './TicketList.styles';
+import { TicketCard } from './components/TicketCard';
 
 type Props = NativeStackScreenProps<AppStackParamList, 'TicketList'>;
 
