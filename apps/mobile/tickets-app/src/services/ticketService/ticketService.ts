@@ -18,13 +18,21 @@ import { toTicket, type Ticket, type Comment } from '../../domain/ticket';
 import type { TicketStatus } from '../../constants/ticketStatus';
 import type { User } from '../../domain/user';
 
+function assertWorkspaceId(workspaceId: string): void {
+  if (!workspaceId)
+    throw new Error('workspaceId ausente — usuário não está vinculado a um workspace.');
+}
+
 function ticketsCol(workspaceId: string) {
+  assertWorkspaceId(workspaceId);
   return collection(db, 'workspaces', workspaceId, 'tickets');
 }
 function ticketDoc(workspaceId: string, ticketId: string) {
+  assertWorkspaceId(workspaceId);
   return doc(db, 'workspaces', workspaceId, 'tickets', ticketId);
 }
 function commentsCol(workspaceId: string, ticketId: string) {
+  assertWorkspaceId(workspaceId);
   return collection(db, 'workspaces', workspaceId, 'tickets', ticketId, 'comments');
 }
 
