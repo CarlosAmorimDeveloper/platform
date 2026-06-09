@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { View, Text, ScrollView, Pressable } from 'react-native';
+import { View, Text, ScrollView, Pressable, Keyboard } from 'react-native';
 import type { ScrollView as ScrollViewType } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { LoadingIndicator, Button, Snackbar, Dialog, Select } from '@ds/mobile';
@@ -44,6 +44,13 @@ export function TicketDetails({ route, navigation }: Props) {
     navigation,
     deleteComment,
   });
+
+  useEffect(() => {
+    const sub = Keyboard.addListener('keyboardDidShow', () => {
+      scrollViewRef.current?.scrollToEnd({ animated: true });
+    });
+    return () => sub.remove();
+  }, []);
 
   useEffect(() => {
     if (user?.role !== 'admin') return;
