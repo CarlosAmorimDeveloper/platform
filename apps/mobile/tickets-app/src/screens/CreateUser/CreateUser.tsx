@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { View } from 'react-native';
 import { Input, Button, LoadingIndicator, Snackbar, Select } from '@ds/mobile';
 import { createUser } from '../../services/authService';
+import { passwordMinLengthError } from '../../utils/validation';
 import { useAuthStore } from '../../store/useAuthStore';
 import type { UserRole } from '../../domain/user';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -30,8 +31,7 @@ export function CreateUser({ navigation }: Props) {
     return null;
   }
 
-  const passwordError =
-    password.length > 0 && password.length < 6 ? 'Mínimo de 6 caracteres' : undefined;
+  const passwordError = passwordMinLengthError(password);
 
   const isValid = name.trim() !== '' && email.trim() !== '' && password.length >= 6;
 

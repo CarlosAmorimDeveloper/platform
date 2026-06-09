@@ -7,7 +7,6 @@ import {
   type TicketPriority,
 } from '../../../../constants/ticketPriority';
 import { styles } from './TicketPriorityField.styles';
-import { spacing } from '@ds/tokens';
 
 interface Props {
   priority: TicketPriority;
@@ -22,8 +21,8 @@ export function TicketPriorityField({ priority, editing, draftPriority, onChange
       <FlatList
         horizontal
         showsHorizontalScrollIndicator={false}
-        ListHeaderComponent={() => <View style={{ width: spacing[4] }} />}
-        ItemSeparatorComponent={() => <View style={{ width: spacing[2] }} />}
+        ListHeaderComponent={() => <View style={styles.listLeadingSpace} />}
+        ItemSeparatorComponent={() => <View style={styles.listSeparator} />}
         data={ALL_PRIORITIES}
         renderItem={({ item }) => (
           <Button

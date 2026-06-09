@@ -3,6 +3,7 @@ import { View, Text, KeyboardAvoidingView, Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Input, Button, LoadingIndicator, Snackbar } from '@ds/mobile';
 import { register, mapFirebaseAuthError } from '../../services/authService';
+import { passwordMinLengthError } from '../../utils/validation';
 import { useAuthStore } from '../../store/useAuthStore';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { AuthStackParamList } from '../../navigation/types';
@@ -25,8 +26,7 @@ export function Register({ navigation }: Props) {
     });
   }, []);
 
-  const passwordError =
-    password.length > 0 && password.length < 6 ? 'Mínimo de 6 caracteres' : undefined;
+  const passwordError = passwordMinLengthError(password);
 
   async function handleRegister() {
     if (!name.trim() || !email || !password || password.length < 6) return;

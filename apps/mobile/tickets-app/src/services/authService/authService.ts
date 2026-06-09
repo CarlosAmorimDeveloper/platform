@@ -65,10 +65,11 @@ export async function createUser(
 ): Promise<void> {
   const secondaryApp = initializeApp(firebaseConfig, `secondary-${Date.now()}`);
   const secondaryAuth = getAuth(secondaryApp);
+  const trimmedEmail = email.trim();
   try {
-    const { user } = await createUserWithEmailAndPassword(secondaryAuth, email.trim(), password);
+    const { user } = await createUserWithEmailAndPassword(secondaryAuth, trimmedEmail, password);
     await setDoc(doc(db, 'users', user.uid), {
-      email: email.trim(),
+      email: trimmedEmail,
       name: name.trim(),
       role,
       workspace_id: workspaceId,

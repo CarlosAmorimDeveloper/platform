@@ -1,9 +1,8 @@
-import { useEffect } from 'react';
-import { View, Text, Pressable } from 'react-native';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
+import { useEffect, useMemo } from 'react';
+import { View, Text, Pressable, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { LoadingIndicator, Button, Snackbar, Dialog, Select } from '@ds/mobile';
-import { colors, spacing } from '@ds/tokens';
+import { colors } from '@ds/tokens';
 import { useTicketDetails } from '../../hooks/useTicketDetails';
 import { useUserList } from '../../hooks/useUserList';
 import { useAuthStore } from '../../store/useAuthStore';
@@ -53,11 +52,11 @@ export function TicketDetails({ route, navigation }: Props) {
             <MaterialIcons
               name={editMode.editing ? 'check' : 'edit'}
               size={24}
-              color={editMode.editing ? `${colors.success[500]}` : `${colors.neutral[600]}`}
+              color={editMode.editing ? colors.success[500] : colors.neutral[600]}
             />
           </Pressable>
           <Pressable onPress={() => deletion.setDeleteVisible(true)} style={styles.headerIcon}>
-            <MaterialIcons name="delete-outline" size={24} color={`${colors.error[500]}`} />
+            <MaterialIcons name="delete-outline" size={24} color={colors.error[500]} />
           </Pressable>
         </View>
       ),
@@ -70,6 +69,11 @@ export function TicketDetails({ route, navigation }: Props) {
     editMode.clearMutationError();
     deletion.clearMutationError();
   }
+
+  const assigneeName = useMemo(
+    () => users.find((u) => u.uid === editMode.draftAssigneeId)?.name ?? 'Nenhum',
+    [users, editMode.draftAssigneeId],
+  );
 
   if (loading) {
     return (
@@ -88,138 +92,139 @@ export function TicketDetails({ route, navigation }: Props) {
   }
 
   return (
-    <KeyboardAwareScrollView
-      contentContainerStyle={styles.container}
-      keyboardShouldPersistTaps="handled"
-      bottomOffset={16}
+    <KeyboardAvoidingView
+      style={styles.keyboardView}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={80}
     >
-      <Text style={styles.title}>{ticket.title}</Text>
-      <Text style={styles.description}>{ticket.description}</Text>
+      <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+        <Text style={styles.title}>{ticket.title}</Text>
+        <Text style={styles.description}>{ticket.description}</Text>
 
-      <TicketMetaRow
-        creatorName={ticket.creatorName}
-        createdAt={ticket.createdAt}
-        assigneeName={ticket.assigneeName}
-        editing={editMode.editing}
-      />
-
-      {editMode.editing && (
-        <View style={{ paddingHorizontal: spacing[6] }}>
-          <Select
-            label="Responsável"
-            value={editMode.draftAssigneeId}
-            onChange={(v) => editMode.setDraftAssigneeId(v)}
-            options={[
-              { label: 'Nenhum', value: '' },
-              ...users.map((u) => ({ label: u.name, value: u.uid })),
-            ]}
-          />
-        </View>
-      )}
-
-      <Text style={styles.sectionLabel}>Status</Text>
-      <TicketStatusField
-        status={ticket.status}
-        editing={editMode.editing}
-        draftStatus={editMode.draftStatus}
-        onChangeDraft={editMode.setDraftStatus}
-      />
-
-      <Text style={styles.sectionLabel}>Prioridade</Text>
-      <TicketPriorityField
-        priority={ticket.priority}
-        editing={editMode.editing}
-        draftPriority={editMode.draftPriority}
-        onChangeDraft={editMode.setDraftPriority}
-      />
-
-      <Text style={styles.sectionLabel}>Comentários</Text>
-
-      {comments.length === 0 && <Text style={styles.emptyComments}>Nenhum comentário ainda.</Text>}
-
-      {comments.map((c) => (
-        <View style={{ paddingHorizontal: spacing[6] }} key={c.id}>
-          <CommentItem
-            comment={c}
-            canDelete={user?.uid === c.authorId || user?.role === 'admin'}
-            onDeletePress={() => deletion.handleRequestDeleteComment(c.id)}
-          />
-        </View>
-      ))}
-
-      <View style={{ paddingHorizontal: spacing[6] }}>
-        <CommentInput
-          value={commentForm.commentText}
-          onChangeText={commentForm.setCommentText}
-          onSubmit={commentForm.handleAddComment}
-          disabled={!commentForm.commentText.trim() || commentForm.sendingComment}
+        <TicketMetaRow
+          creatorName={ticket.creatorName}
+          createdAt={ticket.createdAt}
+          assigneeName={ticket.assigneeName}
+          editing={editMode.editing}
         />
-      </View>
 
-      <Dialog
-        visible={editMode.saveVisible}
-        onDismiss={editMode.handleCancelSave}
-        title="Salvar alterações"
-        actions={[
-          <Button key="cancel" variant="ghost" onPress={editMode.handleCancelSave}>
-            Cancelar
-          </Button>,
-          <Button key="confirm" variant="primary" onPress={editMode.handleConfirmSave}>
-            Salvar
-          </Button>,
-        ]}
-      >
-        <Text>
-          Status: <Text style={styles.bold}>{STATUS_LABELS[editMode.draftStatus]}</Text>
-          {'\n'}
-          Prioridade: <Text style={styles.bold}>{PRIORITY_LABELS[editMode.draftPriority]}</Text>
-          {'\n'}
-          Responsável:{' '}
-          <Text style={styles.bold}>
-            {users.find((u) => u.uid === editMode.draftAssigneeId)?.name ?? 'Nenhum'}
+        {editMode.editing && (
+          <View style={styles.paddedRow}>
+            <Select
+              label="Responsável"
+              value={editMode.draftAssigneeId}
+              onChange={(v) => editMode.setDraftAssigneeId(v)}
+              options={[
+                { label: 'Nenhum', value: '' },
+                ...users.map((u) => ({ label: u.name, value: u.uid })),
+              ]}
+            />
+          </View>
+        )}
+
+        <Text style={styles.sectionLabel}>Status</Text>
+        <TicketStatusField
+          status={ticket.status}
+          editing={editMode.editing}
+          draftStatus={editMode.draftStatus}
+          onChangeDraft={editMode.setDraftStatus}
+        />
+
+        <Text style={styles.sectionLabel}>Prioridade</Text>
+        <TicketPriorityField
+          priority={ticket.priority}
+          editing={editMode.editing}
+          draftPriority={editMode.draftPriority}
+          onChangeDraft={editMode.setDraftPriority}
+        />
+
+        <Text style={styles.sectionLabel}>Comentários</Text>
+
+        {comments.length === 0 && (
+          <Text style={styles.emptyComments}>Nenhum comentário ainda.</Text>
+        )}
+
+        {comments.map((c) => (
+          <View style={styles.paddedRow} key={c.id}>
+            <CommentItem
+              comment={c}
+              canDelete={user?.uid === c.authorId || user?.role === 'admin'}
+              onDeletePress={() => deletion.handleRequestDeleteComment(c.id)}
+            />
+          </View>
+        ))}
+
+        <View style={styles.paddedRow}>
+          <CommentInput
+            value={commentForm.commentText}
+            onChangeText={commentForm.setCommentText}
+            onSubmit={commentForm.handleAddComment}
+            disabled={!commentForm.commentText.trim() || commentForm.sendingComment}
+          />
+        </View>
+
+        <Dialog
+          visible={editMode.saveVisible}
+          onDismiss={editMode.handleCancelSave}
+          title="Salvar alterações"
+          actions={[
+            <Button key="cancel" variant="ghost" onPress={editMode.handleCancelSave}>
+              Cancelar
+            </Button>,
+            <Button key="confirm" variant="primary" onPress={editMode.handleConfirmSave}>
+              Salvar
+            </Button>,
+          ]}
+        >
+          <Text>
+            Status: <Text style={styles.bold}>{STATUS_LABELS[editMode.draftStatus]}</Text>
+            {'\n'}
+            Prioridade: <Text style={styles.bold}>{PRIORITY_LABELS[editMode.draftPriority]}</Text>
+            {'\n'}
+            Responsável: <Text style={styles.bold}>{assigneeName}</Text>
           </Text>
-        </Text>
-      </Dialog>
+        </Dialog>
 
-      <Dialog
-        visible={deletion.deleteVisible}
-        onDismiss={() => deletion.setDeleteVisible(false)}
-        title="Apagar ticket"
-        actions={[
-          <Button key="cancel" variant="ghost" onPress={() => deletion.setDeleteVisible(false)}>
-            Cancelar
-          </Button>,
-          <Button key="confirm" variant="danger" onPress={deletion.handleDelete}>
-            Apagar
-          </Button>,
-        ]}
-      >
-        <Text>Esta ação não pode ser desfeita.</Text>
-      </Dialog>
+        <Dialog
+          visible={deletion.deleteVisible}
+          onDismiss={() => deletion.setDeleteVisible(false)}
+          title="Apagar ticket"
+          actions={[
+            <Button key="cancel" variant="ghost" onPress={() => deletion.setDeleteVisible(false)}>
+              Cancelar
+            </Button>,
+            <Button key="confirm" variant="danger" onPress={deletion.handleDelete}>
+              Apagar
+            </Button>,
+          ]}
+        >
+          <Text>Esta ação não pode ser desfeita.</Text>
+        </Dialog>
 
-      <Dialog
-        visible={deletion.deleteCommentVisible}
-        onDismiss={deletion.handleCancelDeleteComment}
-        title="Apagar comentário"
-        actions={[
-          <Button key="cancel" variant="ghost" onPress={deletion.handleCancelDeleteComment}>
-            Cancelar
-          </Button>,
-          <Button key="confirm" variant="danger" onPress={deletion.handleDeleteComment}>
-            Apagar
-          </Button>,
-        ]}
-      >
-        <Text>Esta ação não pode ser desfeita.</Text>
-      </Dialog>
+        <Dialog
+          visible={deletion.deleteCommentVisible}
+          onDismiss={deletion.handleCancelDeleteComment}
+          title="Apagar comentário"
+          actions={[
+            <Button key="cancel" variant="ghost" onPress={deletion.handleCancelDeleteComment}>
+              Cancelar
+            </Button>,
+            <Button key="confirm" variant="danger" onPress={deletion.handleDeleteComment}>
+              Apagar
+            </Button>,
+          ]}
+        >
+          <Text>Esta ação não pode ser desfeita.</Text>
+        </Dialog>
 
-      <Snackbar
-        visible={displayError !== null}
-        onDismiss={handleDismissError}
-        message={displayError ?? ''}
-        variant="error"
-        position="top"
-      />
-    </KeyboardAwareScrollView>
+        <Snackbar
+          visible={displayError !== null}
+          onDismiss={handleDismissError}
+          message={displayError ?? ''}
+          variant="error"
+          position="top"
+        />
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }

@@ -10,5 +10,5 @@ export const styles = StyleSheet.create({
     alignSelf: 'flex-start',
   },
   badgeText: { fontSize: fontSizes.xs, fontWeight: '600' },
-  meta: { fontSize: fontSizes.xs, color: `${colors.neutral[500]}`, marginTop: spacing[1] },
+  meta: { fontSize: fontSizes.xs, color: colors.neutral[500], marginTop: spacing[1] },
 });

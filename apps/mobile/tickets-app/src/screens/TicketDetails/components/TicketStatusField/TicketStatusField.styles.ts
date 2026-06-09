@@ -1,14 +1,15 @@
 import { StyleSheet } from 'react-native';
-import { fontSizes, spacing, radii } from '@ds/tokens';
+import { spacing } from '@ds/tokens';
+import { sharedOptionFieldStyles } from '../sharedOptionField.styles';
 
-export const styles = StyleSheet.create({
+const localStyles = StyleSheet.create({
   statusRow: { flexDirection: 'row', gap: spacing[2] },
-  statusBadge: {
-    alignSelf: 'flex-start',
-    paddingHorizontal: spacing[4],
-    marginHorizontal: spacing[4],
-    paddingVertical: spacing[2],
-    borderRadius: radii['2xl'],
-  },
-  statusBadgeText: { fontSize: fontSizes.sm, fontWeight: '600' },
 });
+
+export const styles = {
+  statusRow: localStyles.statusRow,
+  statusBadge: sharedOptionFieldStyles.badge,
+  statusBadgeText: sharedOptionFieldStyles.badgeText,
+  listLeadingSpace: sharedOptionFieldStyles.listLeadingSpace,
+  listSeparator: sharedOptionFieldStyles.listSeparator,
+};

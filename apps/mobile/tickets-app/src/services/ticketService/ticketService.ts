@@ -61,6 +61,8 @@ export function subscribeToTicketById(
     (snap) => {
       if (snap.exists()) {
         onData(toTicket(snap as unknown as QueryDocumentSnapshot));
+      } else {
+        onError();
       }
     },
     onError,

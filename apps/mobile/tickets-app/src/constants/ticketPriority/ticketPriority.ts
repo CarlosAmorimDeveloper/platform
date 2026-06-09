@@ -13,9 +13,9 @@ export const PRIORITY_LABELS: Record<TicketPriority, string> = {
 };
 
 export const PRIORITY_COLORS: Record<TicketPriority, string> = {
-  very_low: `${colors.neutral[400]}`,
-  low: `${colors.success[500]}`,
-  medium: `${colors.primary[500]}`,
-  high: `${colors.warning[500]}`,
-  very_high: `${colors.error[500]}`,
+  very_low: colors.neutral[400],
+  low: colors.success[500],
+  medium: colors.primary[500],
+  high: colors.warning[500],
+  very_high: colors.error[500],
 };

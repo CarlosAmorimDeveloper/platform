@@ -1,6 +1,6 @@
 import { View } from 'react-native';
 import { Input, Button } from '@ds/mobile';
-import { spacing } from '@ds/tokens';
+import { styles } from './CommentInput.styles';
 
 interface Props {
   value: string;
@@ -12,7 +12,7 @@ interface Props {
 
 export function CommentInput({ value, onChangeText, onSubmit, disabled, onFocus }: Props) {
   return (
-    <View style={{ gap: spacing[3] }}>
+    <View style={styles.wrapper}>
       <Input
         label="Novo comentário"
         placeholder="Escreva um comentário..."

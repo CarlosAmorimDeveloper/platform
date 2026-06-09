@@ -8,11 +8,11 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: spacing[6],
     gap: spacing[6],
-    backgroundColor: `${colors.neutral[0]}`,
+    backgroundColor: colors.neutral[0],
   },
   description: {
     fontSize: fontSizes.base,
-    color: `${colors.neutral[500]}`,
+    color: colors.neutral[500],
     textAlign: 'center',
     lineHeight: 24,
   },

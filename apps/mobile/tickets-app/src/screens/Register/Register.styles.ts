@@ -8,18 +8,18 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: spacing[6],
     gap: spacing[6],
-    backgroundColor: `${colors.neutral[0]}`,
+    backgroundColor: colors.neutral[0],
   },
-  subtitle: { fontSize: fontSizes.base, color: `${colors.neutral[500]}`, textAlign: 'center' },
+  subtitle: { fontSize: fontSizes.base, color: colors.neutral[500], textAlign: 'center' },
   form: { gap: spacing[3] },
   adminNotice: {
-    backgroundColor: `${colors.primary[50]}`,
+    backgroundColor: colors.primary[50],
     borderRadius: radii.md,
     padding: spacing[3],
   },
   adminNoticeText: {
     fontSize: fontSizes.sm,
-    color: `${colors.primary[700]}`,
+    color: colors.primary[700],
     textAlign: 'center',
   },
 });

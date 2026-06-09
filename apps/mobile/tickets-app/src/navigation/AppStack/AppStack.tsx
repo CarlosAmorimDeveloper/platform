@@ -55,7 +55,7 @@ function DashboardHeaderRight() {
     <View style={styles.headerRight}>
       {user?.role === 'admin' && (
         <Pressable style={styles.headerIcon} onPress={() => navigation.navigate('CreateUser')}>
-          <MaterialIcons name="person-add" size={24} color={`${colors.neutral[600]}`} />
+          <MaterialIcons name="person-add" size={24} color={colors.neutral[600]} />
         </Pressable>
       )}
       <LogoutButton />
@@ -67,9 +67,9 @@ export function AppStack() {
   return (
     <Stack.Navigator
       screenOptions={{
-        headerStyle: { backgroundColor: `${colors.neutral[0]}` },
-        headerTitleStyle: { color: `${colors.neutral[900]}`, fontWeight: '600' },
-        headerTintColor: `${colors.primary[600]}`,
+        headerStyle: { backgroundColor: colors.neutral[0] },
+        headerTitleStyle: { color: colors.neutral[900], fontWeight: '600' },
+        headerTintColor: colors.primary[600],
       }}
     >
       <Stack.Screen

@@ -7,7 +7,6 @@ import {
   type TicketStatus,
 } from '../../../../constants/ticketStatus';
 import { styles } from './TicketStatusField.styles';
-import { spacing } from '@ds/tokens';
 
 interface Props {
   status: TicketStatus;
@@ -22,8 +21,8 @@ export function TicketStatusField({ status, editing, draftStatus, onChangeDraft 
       <FlatList
         horizontal
         showsHorizontalScrollIndicator={false}
-        ListHeaderComponent={() => <View style={{ width: spacing[4] }} />}
-        ItemSeparatorComponent={() => <View style={{ width: spacing[2] }} />}
+        ListHeaderComponent={() => <View style={styles.listLeadingSpace} />}
+        ItemSeparatorComponent={() => <View style={styles.listSeparator} />}
         data={ALL_STATUSES}
         renderItem={({ item }) => (
           <Button

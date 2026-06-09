@@ -26,6 +26,10 @@ export function useTicketDetails(ticketId: string) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  function setErrorFrom(err: unknown, fallback: string) {
+    setError(err instanceof Error ? err.message : fallback);
+  }
+
   useEffect(() => {
     if (!user) return;
     const unsubscribe = subscribeToTicketById(
@@ -65,7 +69,7 @@ export function useTicketDetails(ticketId: string) {
         user.workspaceId,
       );
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Falha ao atualizar o chamado.');
+      setErrorFrom(err, 'Falha ao atualizar o chamado.');
     }
   }
 
@@ -74,7 +78,7 @@ export function useTicketDetails(ticketId: string) {
     try {
       await deleteTicket(ticketId, user.workspaceId);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Falha ao apagar o chamado.');
+      setErrorFrom(err, 'Falha ao apagar o chamado.');
     }
   }
 
@@ -83,7 +87,7 @@ export function useTicketDetails(ticketId: string) {
     try {
       await addComment(ticketId, text, user);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Falha ao enviar comentário.');
+      setErrorFrom(err, 'Falha ao enviar comentário.');
     }
   }
 
@@ -92,7 +96,7 @@ export function useTicketDetails(ticketId: string) {
     try {
       await deleteComment(ticketId, commentId, user.workspaceId);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Falha ao apagar comentário.');
+      setErrorFrom(err, 'Falha ao apagar comentário.');
     }
   }
 

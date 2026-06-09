@@ -28,13 +28,14 @@ export function NewTicket({ navigation }: Props) {
   const isAdmin = user?.role === 'admin';
 
   async function handleSave() {
-    if (!title.trim() || !user) return;
+    const trimmedTitle = title.trim();
+    if (!trimmedTitle || !user) return;
     setLoading(true);
     try {
       const selectedUser = users.find((u) => u.uid === assigneeId);
       await createTicket(
         {
-          title: title.trim(),
+          title: trimmedTitle,
           description: description.trim(),
           priority,
           assigneeId: selectedUser?.uid ?? null,
