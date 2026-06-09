@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
-import { View, Text, ScrollView, Pressable } from 'react-native';
+import { View, Text, Pressable } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { MaterialIcons } from '@expo/vector-icons';
 import { LoadingIndicator, Button, Snackbar, Dialog, Select } from '@ds/mobile';
 import { colors, spacing } from '@ds/tokens';
@@ -87,7 +88,11 @@ export function TicketDetails({ route, navigation }: Props) {
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+    <KeyboardAwareScrollView
+      contentContainerStyle={styles.container}
+      keyboardShouldPersistTaps="handled"
+      bottomOffset={16}
+    >
       <Text style={styles.title}>{ticket.title}</Text>
       <Text style={styles.description}>{ticket.description}</Text>
 
@@ -215,6 +220,6 @@ export function TicketDetails({ route, navigation }: Props) {
         variant="error"
         position="top"
       />
-    </ScrollView>
+    </KeyboardAwareScrollView>
   );
 }
