@@ -5,7 +5,7 @@ export const styles = StyleSheet.create({
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   headerIcons: { flexDirection: 'row' },
   headerIcon: { paddingHorizontal: spacing[2] },
-  container: { paddingTop: spacing[6], gap: spacing[3], flex: 1 },
+  container: { paddingTop: spacing[6], gap: spacing[3], flex: 1, paddingBottom: spacing[10] },
   title: {
     fontSize: fontSizes['2xl'],
     fontWeight: 'bold',
