@@ -24,7 +24,7 @@
       "predictiveBackGestureEnabled": false,
       "package": "com.vt.ticketsapp",
       "versionCode": 2,
-      "softwareKeyboardLayoutMode": "pan"
+      "softwareKeyboardLayoutMode": "resize"
     },
     "web": {
       "favicon": "./assets/favicon.png"
