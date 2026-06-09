@@ -6,6 +6,7 @@ export const styles = StyleSheet.create({
   statusBadge: {
     alignSelf: 'flex-start',
     paddingHorizontal: spacing[4],
+    marginHorizontal: spacing[4],
     paddingVertical: spacing[2],
     borderRadius: radii['2xl'],
   },

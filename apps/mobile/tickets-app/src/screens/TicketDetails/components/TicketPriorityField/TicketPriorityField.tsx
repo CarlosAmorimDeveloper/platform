@@ -1,4 +1,4 @@
-import { View, Text, ScrollView } from 'react-native';
+import { View, Text, FlatList } from 'react-native';
 import { Button } from '@ds/mobile';
 import {
   ALL_PRIORITIES,
@@ -7,6 +7,7 @@ import {
   type TicketPriority,
 } from '../../../../constants/ticketPriority';
 import { styles } from './TicketPriorityField.styles';
+import { spacing } from '@ds/tokens';
 
 interface Props {
   priority: TicketPriority;
@@ -18,24 +19,24 @@ interface Props {
 export function TicketPriorityField({ priority, editing, draftPriority, onChangeDraft }: Props) {
   if (editing) {
     return (
-      <ScrollView
+      <FlatList
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.priorityScrollContent}
-      >
-        <View style={styles.statusRow}>
-          {ALL_PRIORITIES.map((p) => (
-            <Button
-              key={p}
-              variant={draftPriority === p ? 'primary' : 'secondary'}
-              size="sm"
-              onPress={() => onChangeDraft(p)}
-            >
-              {PRIORITY_LABELS[p]}
-            </Button>
-          ))}
-        </View>
-      </ScrollView>
+        ListHeaderComponent={() => <View style={{ width: spacing[4] }} />}
+        ItemSeparatorComponent={() => <View style={{ width: spacing[2] }} />}
+        data={ALL_PRIORITIES}
+        renderItem={({ item }) => (
+          <Button
+            key={item}
+            variant={draftPriority === item ? 'primary' : 'secondary'}
+            size="sm"
+            onPress={() => onChangeDraft(item)}
+          >
+            {PRIORITY_LABELS[item]}
+          </Button>
+        )}
+        keyExtractor={(item) => item}
+      />
     );
   }
 

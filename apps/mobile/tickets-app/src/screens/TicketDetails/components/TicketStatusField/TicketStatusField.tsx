@@ -1,4 +1,4 @@
-import { View, Text } from 'react-native';
+import { View, Text, FlatList } from 'react-native';
 import { Button } from '@ds/mobile';
 import {
   ALL_STATUSES,
@@ -7,6 +7,7 @@ import {
   type TicketStatus,
 } from '../../../../constants/ticketStatus';
 import { styles } from './TicketStatusField.styles';
+import { spacing } from '@ds/tokens';
 
 interface Props {
   status: TicketStatus;
@@ -18,18 +19,24 @@ interface Props {
 export function TicketStatusField({ status, editing, draftStatus, onChangeDraft }: Props) {
   if (editing) {
     return (
-      <View style={styles.statusRow}>
-        {ALL_STATUSES.map((s) => (
+      <FlatList
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        ListHeaderComponent={() => <View style={{ width: spacing[4] }} />}
+        ItemSeparatorComponent={() => <View style={{ width: spacing[2] }} />}
+        data={ALL_STATUSES}
+        renderItem={({ item }) => (
           <Button
-            key={s}
-            variant={draftStatus === s ? 'primary' : 'secondary'}
+            key={item}
+            variant={draftStatus === item ? 'primary' : 'secondary'}
             size="sm"
-            onPress={() => onChangeDraft(s)}
+            onPress={() => onChangeDraft(item)}
           >
-            {STATUS_LABELS[s]}
+            {STATUS_LABELS[item]}
           </Button>
-        ))}
-      </View>
+        )}
+        keyExtractor={(item) => item}
+      />
     );
   }
 
