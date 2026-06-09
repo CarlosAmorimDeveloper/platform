@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { PaperProvider } from 'react-native-paper';
-import { KeyboardProvider } from 'react-native-keyboard-controller';
 import { theme } from '@ds/mobile';
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
@@ -56,10 +55,8 @@ export default function App() {
   }
 
   return (
-    <KeyboardProvider>
-      <PaperProvider theme={theme}>
-        <NavigationContainer>{isAuthenticated ? <AppStack /> : <AuthStack />}</NavigationContainer>
-      </PaperProvider>
-    </KeyboardProvider>
+    <PaperProvider theme={theme}>
+      <NavigationContainer>{isAuthenticated ? <AppStack /> : <AuthStack />}</NavigationContainer>
+    </PaperProvider>
   );
 }
