@@ -1,6 +1,6 @@
-import { useEffect, useRef } from 'react';
-import { View, Text, ScrollView, Pressable, Keyboard } from 'react-native';
-import type { ScrollView as ScrollViewType } from 'react-native';
+import { useEffect } from 'react';
+import { View, Text, Pressable } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { MaterialIcons } from '@expo/vector-icons';
 import { LoadingIndicator, Button, Snackbar, Dialog, Select } from '@ds/mobile';
 import { colors, spacing } from '@ds/tokens';
@@ -25,7 +25,6 @@ type Props = NativeStackScreenProps<AppStackParamList, 'TicketDetails'>;
 
 export function TicketDetails({ route, navigation }: Props) {
   const { ticketId } = route.params;
-  const scrollViewRef = useRef<ScrollViewType>(null);
   const user = useAuthStore((s) => s.user);
   const { ticket, comments, loading, error, clearError, addComment, deleteComment } =
     useTicketDetails(ticketId);
@@ -44,13 +43,6 @@ export function TicketDetails({ route, navigation }: Props) {
     navigation,
     deleteComment,
   });
-
-  useEffect(() => {
-    const sub = Keyboard.addListener('keyboardDidShow', () => {
-      scrollViewRef.current?.scrollToEnd({ animated: true });
-    });
-    return () => sub.remove();
-  }, []);
 
   useEffect(() => {
     if (user?.role !== 'admin') return;
@@ -96,10 +88,10 @@ export function TicketDetails({ route, navigation }: Props) {
   }
 
   return (
-    <ScrollView
-      ref={scrollViewRef}
+    <KeyboardAwareScrollView
       contentContainerStyle={styles.container}
       keyboardShouldPersistTaps="handled"
+      bottomOffset={16}
     >
       <Text style={styles.title}>{ticket.title}</Text>
       <Text style={styles.description}>{ticket.description}</Text>
@@ -228,6 +220,6 @@ export function TicketDetails({ route, navigation }: Props) {
         variant="error"
         position="top"
       />
-    </ScrollView>
+    </KeyboardAwareScrollView>
   );
 }
