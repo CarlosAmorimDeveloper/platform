@@ -17,6 +17,7 @@ export interface InputProps {
   autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
   testID?: string;
   accessibilityLabel?: string;
+  onFocus?: () => void;
 }
 
 export function Input({
@@ -34,6 +35,7 @@ export function Input({
   autoCapitalize,
   testID,
   accessibilityLabel,
+  onFocus,
 }: InputProps) {
   const [hidden, setHidden] = useState(true);
   const isSecure = secureTextEntry && hidden;
@@ -55,6 +57,7 @@ export function Input({
         autoCapitalize={autoCapitalize}
         testID={testID}
         accessibilityLabel={accessibilityLabel}
+        onFocus={onFocus}
         right={
           secureTextEntry && showPasswordToggle ? (
             <PaperTextInput.Icon

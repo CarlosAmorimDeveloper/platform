@@ -1,8 +1,9 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { View, Text, ScrollView, Pressable } from 'react-native';
+import type { ScrollView as ScrollViewType } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { LoadingIndicator, Button, Snackbar, Dialog, Select } from '@ds/mobile';
-import { colors } from '@ds/tokens';
+import { colors, spacing } from '@ds/tokens';
 import { useTicketDetails } from '../../hooks/useTicketDetails';
 import { useUserList } from '../../hooks/useUserList';
 import { useAuthStore } from '../../store/useAuthStore';
@@ -24,6 +25,7 @@ type Props = NativeStackScreenProps<AppStackParamList, 'TicketDetails'>;
 
 export function TicketDetails({ route, navigation }: Props) {
   const { ticketId } = route.params;
+  const scrollViewRef = useRef<ScrollViewType>(null);
   const user = useAuthStore((s) => s.user);
   const { ticket, comments, loading, error, clearError, addComment, deleteComment } =
     useTicketDetails(ticketId);
@@ -87,7 +89,12 @@ export function TicketDetails({ route, navigation }: Props) {
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+    <ScrollView
+      ref={scrollViewRef}
+      contentContainerStyle={styles.container}
+      automaticallyAdjustKeyboardInsets={true}
+      keyboardShouldPersistTaps="handled"
+    >
       <Text style={styles.title}>{ticket.title}</Text>
       <Text style={styles.description}>{ticket.description}</Text>
 
@@ -99,15 +106,17 @@ export function TicketDetails({ route, navigation }: Props) {
       />
 
       {editMode.editing && (
-        <Select
-          label="Responsável"
-          value={editMode.draftAssigneeId}
-          onChange={(v) => editMode.setDraftAssigneeId(v)}
-          options={[
-            { label: 'Nenhum', value: '' },
-            ...users.map((u) => ({ label: u.name, value: u.uid })),
-          ]}
-        />
+        <View style={{ paddingHorizontal: spacing[6] }}>
+          <Select
+            label="Responsável"
+            value={editMode.draftAssigneeId}
+            onChange={(v) => editMode.setDraftAssigneeId(v)}
+            options={[
+              { label: 'Nenhum', value: '' },
+              ...users.map((u) => ({ label: u.name, value: u.uid })),
+            ]}
+          />
+        </View>
       )}
 
       <Text style={styles.sectionLabel}>Status</Text>
@@ -131,20 +140,26 @@ export function TicketDetails({ route, navigation }: Props) {
       {comments.length === 0 && <Text style={styles.emptyComments}>Nenhum comentário ainda.</Text>}
 
       {comments.map((c) => (
-        <CommentItem
-          key={c.id}
-          comment={c}
-          canDelete={user?.uid === c.authorId || user?.role === 'admin'}
-          onDeletePress={() => deletion.handleRequestDeleteComment(c.id)}
-        />
+        <View style={{ paddingHorizontal: spacing[6] }} key={c.id}>
+          <CommentItem
+            comment={c}
+            canDelete={user?.uid === c.authorId || user?.role === 'admin'}
+            onDeletePress={() => deletion.handleRequestDeleteComment(c.id)}
+          />
+        </View>
       ))}
 
-      <CommentInput
-        value={commentForm.commentText}
-        onChangeText={commentForm.setCommentText}
-        onSubmit={commentForm.handleAddComment}
-        disabled={!commentForm.commentText.trim() || commentForm.sendingComment}
-      />
+      <View style={{ paddingHorizontal: spacing[6] }}>
+        <CommentInput
+          value={commentForm.commentText}
+          onChangeText={commentForm.setCommentText}
+          onSubmit={commentForm.handleAddComment}
+          disabled={!commentForm.commentText.trim() || commentForm.sendingComment}
+          onFocus={() =>
+            setTimeout(() => scrollViewRef.current?.scrollToEnd({ animated: true }), 100)
+          }
+        />
+      </View>
 
       <Dialog
         visible={editMode.saveVisible}
