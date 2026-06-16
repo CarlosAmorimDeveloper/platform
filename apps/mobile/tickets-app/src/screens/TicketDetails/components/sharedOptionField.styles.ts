@@ -12,4 +12,5 @@ export const sharedOptionFieldStyles = StyleSheet.create({
   badgeText: { fontSize: fontSizes.sm, fontWeight: '600' },
   listLeadingSpace: { width: spacing[4] },
   listSeparator: { width: spacing[2] },
+  optionButton: { width: 120 },
 });

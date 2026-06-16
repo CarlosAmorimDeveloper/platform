@@ -6,16 +6,15 @@ import { colors } from '@ds/tokens';
 import { useTicketDetails } from '../../hooks/useTicketDetails';
 import { useUserList } from '../../hooks/useUserList';
 import { useAuthStore } from '../../store/useAuthStore';
-import { STATUS_LABELS } from '../../constants/ticketStatus';
-import { PRIORITY_LABELS } from '../../constants/ticketPriority';
+import { ALL_STATUSES, STATUS_LABELS, STATUS_COLORS } from '../../constants/ticketStatus';
+import { ALL_PRIORITIES, PRIORITY_LABELS, PRIORITY_COLORS } from '../../constants/ticketPriority';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { AppStackParamList } from '../../navigation/types';
 import { useTicketEditMode } from './hooks/useTicketEditMode';
 import { useCommentForm } from './hooks/useCommentForm';
 import { useTicketDeletion } from './hooks/useTicketDeletion';
 import { TicketMetaRow } from './components/TicketMetaRow';
-import { TicketStatusField } from './components/TicketStatusField';
-import { TicketPriorityField } from './components/TicketPriorityField';
+import { TicketOptionField } from './components/TicketOptionField';
 import { CommentItem } from './components/CommentItem';
 import { CommentInput } from './components/CommentInput';
 import { styles } from './TicketDetails.styles';
@@ -123,19 +122,25 @@ export function TicketDetails({ route, navigation }: Props) {
         )}
 
         <Text style={styles.sectionLabel}>Status</Text>
-        <TicketStatusField
-          status={ticket.status}
+        <TicketOptionField
+          value={ticket.status}
           editing={editMode.editing}
-          draftStatus={editMode.draftStatus}
+          draft={editMode.draftStatus}
           onChangeDraft={editMode.setDraftStatus}
+          options={ALL_STATUSES}
+          labels={STATUS_LABELS}
+          colors={STATUS_COLORS}
         />
 
         <Text style={styles.sectionLabel}>Prioridade</Text>
-        <TicketPriorityField
-          priority={ticket.priority}
+        <TicketOptionField
+          value={ticket.priority}
           editing={editMode.editing}
-          draftPriority={editMode.draftPriority}
+          draft={editMode.draftPriority}
           onChangeDraft={editMode.setDraftPriority}
+          options={ALL_PRIORITIES}
+          labels={PRIORITY_LABELS}
+          colors={PRIORITY_COLORS}
         />
 
         <Text style={styles.sectionLabel}>Comentários</Text>
