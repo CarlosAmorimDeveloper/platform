@@ -13,6 +13,7 @@ export interface ButtonProps {
   onPress?: () => void;
   testID?: string;
   accessibilityLabel?: string;
+  style?: React.ComponentProps<typeof PaperButton>['style'];
 }
 
 const modeMap: Record<Variant, 'contained' | 'outlined' | 'text'> = {
@@ -30,6 +31,7 @@ export function Button({
   onPress,
   testID,
   accessibilityLabel,
+  style,
 }: ButtonProps) {
   return (
     <PaperButton
@@ -41,6 +43,7 @@ export function Button({
       textColor={variant === 'danger' ? colors.neutral[0] : undefined}
       testID={testID}
       accessibilityLabel={accessibilityLabel}
+      style={style}
     >
       {children}
     </PaperButton>
