@@ -38,6 +38,7 @@ yarn-error.log*
 
 # Claude Code
 .claude/
+.superpowers/
 
 # Misc
 .DS_Store
