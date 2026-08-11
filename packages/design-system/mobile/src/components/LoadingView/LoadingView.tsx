@@ -14,7 +14,7 @@ export function LoadingView({ visible = true, message, testID }: LoadingViewProp
 
   return (
     <View style={styles.container} testID={testID}>
-      <LoadingIndicator visible={visible} />
+      <LoadingIndicator testID={testID && `${testID}-indicator`} />
       {message && <Text style={styles.message}>{message}</Text>}
     </View>
   );
@@ -22,6 +22,7 @@ export function LoadingView({ visible = true, message, testID }: LoadingViewProp
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: spacing[6],

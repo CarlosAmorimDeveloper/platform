@@ -74,7 +74,9 @@
       "@app/appointmate/react-native",
       "@app/appointmate/react-native/**",
       "@app/appointmate/react-native-svg",
-      "@app/appointmate/react-native-svg/**"
+      "@app/appointmate/react-native-svg/**",
+      "@app/appointmate/react-native-chart-kit",
+      "@app/appointmate/react-native-chart-kit/**"
     ]
   },
   "dependencies": {

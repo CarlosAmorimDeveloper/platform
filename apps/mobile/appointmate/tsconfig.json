@@ -4,6 +4,10 @@
     "strict": true,
     "types": ["jest", "node"],
     "paths": {
+      // Required for `getReactNativePersistence` type resolution (not exported
+      // from @firebase/auth's default RN types). Resolves from the monorepo
+      // root node_modules — will break if `firebase` is ever nohoisted
+      // per-app instead of hoisted/resolved from the root.
       "@firebase/auth": ["../../../node_modules/@firebase/auth/dist/index.rn.d.ts"]
     }
   }

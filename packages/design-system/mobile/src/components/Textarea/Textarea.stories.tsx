@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState, type ComponentProps } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Textarea } from './Textarea';
 
@@ -19,7 +19,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 function TextareaControlado(
-  props: Omit<React.ComponentProps<typeof Textarea>, 'value' | 'onChangeText'>,
+  props: Omit<ComponentProps<typeof Textarea>, 'value' | 'onChangeText'>,
 ) {
   const [value, setValue] = useState('');
   return <Textarea {...props} value={value} onChangeText={setValue} />;

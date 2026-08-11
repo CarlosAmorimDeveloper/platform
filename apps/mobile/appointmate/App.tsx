@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { PaperProvider } from 'react-native-paper';
 import { LoadingView, theme } from '@ds/mobile';
@@ -20,17 +19,13 @@ export default function App() {
     return unsubscribe;
   }, []);
 
-  if (loading) {
-    return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <LoadingView testID="app-loading" />
-      </View>
-    );
-  }
-
   return (
     <PaperProvider theme={theme}>
-      <NavigationContainer>{isAuthenticated ? <AppStack /> : <AuthStack />}</NavigationContainer>
+      {loading ? (
+        <LoadingView testID="app-loading" />
+      ) : (
+        <NavigationContainer>{isAuthenticated ? <AppStack /> : <AuthStack />}</NavigationContainer>
+      )}
     </PaperProvider>
   );
 }

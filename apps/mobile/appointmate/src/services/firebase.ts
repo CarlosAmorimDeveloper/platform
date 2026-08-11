@@ -13,6 +13,10 @@ export const firebaseConfig = {
   measurementId: process.env.EXPO_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
+if (__DEV__ && !firebaseConfig.apiKey) {
+  console.warn('Firebase config is missing — set EXPO_PUBLIC_FIREBASE_* env vars in .env');
+}
+
 const app = initializeApp(firebaseConfig);
 
 export const auth = initializeAuth(app, {

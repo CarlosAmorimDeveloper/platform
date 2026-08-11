@@ -1,4 +1,5 @@
 import React from 'react';
+import { StyleSheet } from 'react-native';
 import { render, screen, fireEvent } from '../../test-utils';
 import { Textarea } from './Textarea';
 
@@ -36,6 +37,37 @@ describe('Textarea', () => {
     );
     const input = screen.getByTestId('textarea');
     expect(input.props.numberOfLines).toBe(8);
+  });
+
+  it('aplica minHeight baseado em numberOfLines (necessário no iOS, onde numberOfLines é no-op)', () => {
+    render(
+      <Textarea
+        value=""
+        onChangeText={() => {}}
+        label="Descrição"
+        numberOfLines={8}
+        testID="textarea"
+      />,
+    );
+    const input = screen.getByTestId('textarea');
+    const flattenedStyle = StyleSheet.flatten(input.props.style);
+    expect(flattenedStyle.minHeight).toBe(8 * 24);
+  });
+
+  it('permite sobrescrever o contentStyle padrão via prop contentStyle', () => {
+    render(
+      <Textarea
+        value=""
+        onChangeText={() => {}}
+        label="Descrição"
+        contentStyle={{ backgroundColor: 'red' }}
+        testID="textarea"
+      />,
+    );
+    const input = screen.getByTestId('textarea');
+    const flattenedStyle = StyleSheet.flatten(input.props.style);
+    expect(flattenedStyle.backgroundColor).toBe('red');
+    expect(flattenedStyle.minHeight).toBe(4 * 24);
   });
 
   it('renderiza mensagem de erro quando error é fornecido', () => {

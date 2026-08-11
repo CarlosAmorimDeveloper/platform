@@ -6,7 +6,7 @@ import {
   assertFails,
 } from '@firebase/rules-unit-testing';
 import type { RulesTestEnvironment } from '@firebase/rules-unit-testing';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, deleteDoc, getDoc, setDoc } from 'firebase/firestore';
 
 // Regras de segurança para a coleção top-level `forms` (schema placeholder,
 // ver TODO em firestore.rules — será revisado quando APP-16 travar o schema real).
@@ -66,6 +66,15 @@ describe('Firestore security rules — forms', () => {
         setDoc(doc(ownerDb, 'forms', formId), { ...validFormData, updatedAt: Date.now() }),
       );
     });
+
+    it('allows the owner to delete their own form', async () => {
+      await testEnv.withSecurityRulesDisabled(async (context) => {
+        await context.firestore().doc(`forms/${formId}`).set(validFormData);
+      });
+
+      const ownerDb = testEnv.authenticatedContext(ownerUid).firestore();
+      await assertSucceeds(deleteDoc(doc(ownerDb, 'forms', formId)));
+    });
   });
 
   describe('cross-user access', () => {
@@ -92,6 +101,15 @@ describe('Firestore security rules — forms', () => {
       });
       await assertFails(getDoc(doc(unauthDb, 'forms', formId)));
     });
+
+    it('denies another user from deleting someone else’s form', async () => {
+      await testEnv.withSecurityRulesDisabled(async (context) => {
+        await context.firestore().doc(`forms/${formId}`).set(validFormData);
+      });
+
+      const otherDb = testEnv.authenticatedContext(otherUid).firestore();
+      await assertFails(deleteDoc(doc(otherDb, 'forms', formId)));
+    });
   });
 
   describe('required fields', () => {
@@ -103,6 +121,29 @@ describe('Firestore security rules — forms', () => {
     it('denies a create missing the required userId field', async () => {
       const ownerDb = testEnv.authenticatedContext(ownerUid).firestore();
       await assertFails(setDoc(doc(ownerDb, 'forms', formId), { createdAt: Date.now() }));
+    });
+
+    it('denies an update that drops the required createdAt field', async () => {
+      await testEnv.withSecurityRulesDisabled(async (context) => {
+        await context.firestore().doc(`forms/${formId}`).set(validFormData);
+      });
+
+      const ownerDb = testEnv.authenticatedContext(ownerUid).firestore();
+      await assertFails(setDoc(doc(ownerDb, 'forms', formId), { userId: ownerUid }));
+    });
+
+    it('denies an update that rewrites createdAt to a different value', async () => {
+      await testEnv.withSecurityRulesDisabled(async (context) => {
+        await context.firestore().doc(`forms/${formId}`).set(validFormData);
+      });
+
+      const ownerDb = testEnv.authenticatedContext(ownerUid).firestore();
+      await assertFails(
+        setDoc(doc(ownerDb, 'forms', formId), {
+          ...validFormData,
+          createdAt: validFormData.createdAt + 1,
+        }),
+      );
     });
   });
 

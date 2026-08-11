@@ -5,30 +5,30 @@ import { colors, fontSizes, spacing } from '@ds/tokens';
 import { Button } from '../Button';
 
 export interface ErrorViewProps {
-  message: string;
+  description: string;
   title?: string;
   icon?: string;
-  retryLabel?: string;
-  onRetry?: () => void;
+  actionLabel?: string;
+  onAction?: () => void;
   testID?: string;
 }
 
 export function ErrorView({
-  message,
+  description,
   title,
   icon = 'alert-circle-outline',
-  retryLabel = 'Tentar novamente',
-  onRetry,
+  actionLabel = 'Tentar novamente',
+  onAction,
   testID,
 }: ErrorViewProps) {
   return (
     <View style={styles.container} testID={testID}>
-      <Icon source={icon} size={48} color={`${colors.error[500]}`} />
+      {icon && <Icon source={icon} size={48} color={`${colors.error[500]}`} />}
       {title && <Text style={styles.title}>{title}</Text>}
-      <Text style={styles.message}>{message}</Text>
-      {onRetry && (
-        <Button onPress={onRetry} variant="secondary" style={styles.action}>
-          {retryLabel}
+      <Text style={styles.message}>{description}</Text>
+      {onAction && (
+        <Button onPress={onAction} variant="secondary" style={styles.action}>
+          {actionLabel}
         </Button>
       )}
     </View>

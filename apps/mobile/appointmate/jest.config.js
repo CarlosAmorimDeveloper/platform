@@ -8,6 +8,10 @@ const sharedReact = path.resolve(__dirname, 'node_modules/react');
 module.exports = {
   preset: '@react-native/jest-preset',
   testMatch: ['**/*.test.{ts,tsx}'],
+  // firestore.rules.test.ts needs the Firestore emulator running (see
+  // "test:rules" script) — excluded from the plain `test` run so `yarn test`
+  // doesn't fail with ECONNREFUSED when no emulator is up.
+  testPathIgnorePatterns: ['/node_modules/', 'firestore\\.rules\\.test'],
   transform: {
     '^.+\\.(js|ts|tsx)$': [
       'babel-jest',

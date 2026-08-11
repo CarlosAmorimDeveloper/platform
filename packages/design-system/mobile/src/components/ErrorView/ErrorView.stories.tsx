@@ -7,10 +7,10 @@ const meta: Meta<typeof ErrorView> = {
   tags: ['autodocs'],
   argTypes: {
     title: { control: 'text' },
-    message: { control: 'text' },
+    description: { control: 'text' },
     icon: { control: 'text' },
-    retryLabel: { control: 'text' },
-    onRetry: { action: 'onRetry' },
+    actionLabel: { control: 'text' },
+    onAction: { action: 'onAction' },
   },
 };
 
@@ -19,21 +19,30 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    message: 'Não foi possível carregar os dados. Tente novamente.',
+    description: 'Não foi possível carregar os dados. Tente novamente.',
   },
 };
 
 export const ComTitulo: Story = {
   args: {
     title: 'Algo deu errado',
-    message: 'Não foi possível se conectar ao servidor.',
+    description: 'Não foi possível se conectar ao servidor.',
   },
 };
 
-export const ComRetry: Story = {
+export const ComAcao: Story = {
   args: {
     title: 'Algo deu errado',
-    message: 'Não foi possível se conectar ao servidor.',
-    onRetry: () => {},
+    description: 'Não foi possível se conectar ao servidor.',
+    onAction: () => {},
+  },
+};
+
+export const SemIcone: Story = {
+  args: {
+    title: 'Algo deu errado',
+    description: 'Não foi possível se conectar ao servidor.',
+    icon: '',
+    onAction: () => {},
   },
 };

@@ -3,47 +3,59 @@ import { render, screen, fireEvent } from '../../test-utils';
 import { ErrorView } from './ErrorView';
 
 describe('ErrorView', () => {
-  it('renderiza a mensagem', () => {
-    render(<ErrorView message="Não foi possível carregar os dados" />);
+  it('renderiza a descrição', () => {
+    render(<ErrorView description="Não foi possível carregar os dados" />);
     expect(screen.getByText('Não foi possível carregar os dados')).toBeTruthy();
   });
 
   it('renderiza o título quando fornecido', () => {
-    render(<ErrorView title="Algo deu errado" message="Tente novamente mais tarde" />);
+    render(<ErrorView title="Algo deu errado" description="Tente novamente mais tarde" />);
     expect(screen.getByText('Algo deu errado')).toBeTruthy();
   });
 
   it('não renderiza título quando não é fornecido', () => {
-    render(<ErrorView message="Erro genérico" />);
+    render(<ErrorView description="Erro genérico" />);
     expect(screen.queryByText('Algo deu errado')).toBeNull();
   });
 
-  it('renderiza o botão de retry com o label padrão quando onRetry é fornecido', () => {
-    const onRetry = jest.fn();
-    render(<ErrorView message="Erro ao carregar" onRetry={onRetry} />);
+  it('renderiza com o ícone padrão quando icon não é fornecido', () => {
+    render(<ErrorView description="Erro genérico" testID="error-view" />);
+    expect(screen.getByTestId('error-view')).toBeTruthy();
+  });
+
+  it('não quebra ao renderizar com icon explicitamente vazio (opt-out)', () => {
+    render(<ErrorView description="Erro genérico" icon="" testID="error-view" />);
+    expect(screen.getByTestId('error-view')).toBeTruthy();
+  });
+
+  it('renderiza o botão de ação com o label padrão quando onAction é fornecido', () => {
+    const onAction = jest.fn();
+    render(<ErrorView description="Erro ao carregar" onAction={onAction} />);
     expect(screen.getByText('Tentar novamente')).toBeTruthy();
   });
 
-  it('chama onRetry ao pressionar o botão de retry', () => {
-    const onRetry = jest.fn();
-    render(<ErrorView message="Erro ao carregar" onRetry={onRetry} />);
+  it('chama onAction ao pressionar o botão de ação', () => {
+    const onAction = jest.fn();
+    render(<ErrorView description="Erro ao carregar" onAction={onAction} />);
     fireEvent.press(screen.getByText('Tentar novamente'));
-    expect(onRetry).toHaveBeenCalledTimes(1);
+    expect(onAction).toHaveBeenCalledTimes(1);
   });
 
-  it('aceita retryLabel customizado', () => {
-    const onRetry = jest.fn();
-    render(<ErrorView message="Erro ao carregar" onRetry={onRetry} retryLabel="Recarregar" />);
+  it('aceita actionLabel customizado', () => {
+    const onAction = jest.fn();
+    render(
+      <ErrorView description="Erro ao carregar" onAction={onAction} actionLabel="Recarregar" />,
+    );
     expect(screen.getByText('Recarregar')).toBeTruthy();
   });
 
-  it('não renderiza botão de retry quando onRetry não é fornecido', () => {
-    render(<ErrorView message="Erro ao carregar" />);
+  it('não renderiza botão de ação quando onAction não é fornecido', () => {
+    render(<ErrorView description="Erro ao carregar" />);
     expect(screen.queryByText('Tentar novamente')).toBeNull();
   });
 
   it('renderiza com testID', () => {
-    render(<ErrorView message="Erro" testID="error-view" />);
+    render(<ErrorView description="Erro" testID="error-view" />);
     expect(screen.getByTestId('error-view')).toBeTruthy();
   });
 });
