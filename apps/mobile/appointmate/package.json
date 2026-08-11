@@ -4,6 +4,7 @@
   "main": "index.ts",
   "scripts": {
     "lint": "eslint . --max-warnings 0",
+    "check-types": "tsc --noEmit",
     "test": "jest",
     "start": "npx expo start --clear",
     "android": "npx expo start --android",
@@ -13,11 +14,15 @@
   "dependencies": {
     "@ds/mobile": "*",
     "@react-native-async-storage/async-storage": "^2.0.0",
+    "@react-navigation/native": "^7.0.0",
+    "@react-navigation/native-stack": "^7.0.0",
     "expo": "~54.0.33",
     "firebase": "^11.0.0",
     "react": "19.1.0",
     "react-native": "0.81.5",
-    "react-native-paper": "^5"
+    "react-native-paper": "^5",
+    "react-native-safe-area-context": "~5.6.0",
+    "react-native-screens": "~4.16.0"
   },
   "devDependencies": {
     "@repo/eslint-config": "*",
