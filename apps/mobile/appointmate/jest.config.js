@@ -19,11 +19,12 @@ module.exports = {
   },
   // Transform RN, navigation, and expo packages (they ship JSX/Flow/TS source)
   transformIgnorePatterns: [
-    'node_modules/(?!(react-native|@react-native|react-native-paper|react-native-reanimated|react-native-worklets|react-native-safe-area-context|react-native-screens|react-native-svg|react-native-chart-kit|@react-navigation|expo|expo-status-bar|@expo)/)',
+    'node_modules/(?!(react-native|@react-native|react-native-paper|react-native-reanimated|react-native-worklets|react-native-safe-area-context|react-native-screens|react-native-svg|react-native-chart-kit|@react-navigation|expo|expo-status-bar|@expo|firebase)/)',
   ],
   moduleNameMapper: {
     '^react$': sharedReact,
     '^react/(.*)$': `${sharedReact}/$1`,
+    '^@react-native-async-storage/async-storage$': '<rootDir>/__mocks__/async-storage.js',
     '^react-native-safe-area-context$': '<rootDir>/__mocks__/react-native-safe-area-context.js',
     '^react-native/Libraries/Animated/Animated$': '<rootDir>/__mocks__/react-native-animated.js',
     '^react-native/Libraries/Animated/nodes/AnimatedProps$':
