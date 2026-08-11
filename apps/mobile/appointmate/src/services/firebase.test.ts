@@ -4,7 +4,7 @@ jest.mock('firebase/app', () => ({
 
 jest.mock('@firebase/auth', () => ({
   initializeAuth: jest.fn(() => ({ auth: true })),
-  getReactNativePersistence: jest.fn((storage) => ({ persistence: true })),
+  getReactNativePersistence: jest.fn((_storage) => ({ persistence: true })),
 }));
 
 jest.mock('firebase/firestore', () => ({
@@ -17,12 +17,14 @@ jest.mock('@react-native-async-storage/async-storage', () => ({
 
 describe('Firebase service', () => {
   it('should import auth and db without throwing an error', () => {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { auth, db } = require('./firebase');
     expect(auth).toBeDefined();
     expect(db).toBeDefined();
   });
 
   it('should export firebaseConfig with all required properties', () => {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { firebaseConfig } = require('./firebase');
     expect(firebaseConfig).toHaveProperty('apiKey');
     expect(firebaseConfig).toHaveProperty('authDomain');
