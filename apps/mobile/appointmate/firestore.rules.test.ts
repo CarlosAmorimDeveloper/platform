@@ -8,7 +8,8 @@ import {
 import type { RulesTestEnvironment } from '@firebase/rules-unit-testing';
 import { doc, deleteDoc, getDoc, setDoc } from 'firebase/firestore';
 
-// Regras de segurança para a coleção top-level `forms` (schema definido em APP-16).
+// Regras de segurança para a coleção top-level `forms` (schema do formulário
+// "Preparação para o retorno" definido em APP-103).
 describe('Firestore security rules — forms', () => {
   let testEnv: RulesTestEnvironment;
 
@@ -19,6 +20,7 @@ describe('Firestore security rules — forms', () => {
   const validFormData = {
     userId: ownerUid,
     createdAt: Date.now(),
+    status: 'draft',
   };
 
   beforeAll(async () => {
@@ -114,12 +116,34 @@ describe('Firestore security rules — forms', () => {
   describe('required fields', () => {
     it('denies a create missing the required createdAt field', async () => {
       const ownerDb = testEnv.authenticatedContext(ownerUid).firestore();
-      await assertFails(setDoc(doc(ownerDb, 'forms', formId), { userId: ownerUid }));
+      await assertFails(
+        setDoc(doc(ownerDb, 'forms', formId), { userId: ownerUid, status: 'draft' }),
+      );
     });
 
     it('denies a create missing the required userId field', async () => {
       const ownerDb = testEnv.authenticatedContext(ownerUid).firestore();
-      await assertFails(setDoc(doc(ownerDb, 'forms', formId), { createdAt: Date.now() }));
+      await assertFails(
+        setDoc(doc(ownerDb, 'forms', formId), { createdAt: Date.now(), status: 'draft' }),
+      );
+    });
+
+    it('denies a create missing the required status field', async () => {
+      const ownerDb = testEnv.authenticatedContext(ownerUid).firestore();
+      await assertFails(
+        setDoc(doc(ownerDb, 'forms', formId), { userId: ownerUid, createdAt: Date.now() }),
+      );
+    });
+
+    it('denies a create with a status outside draft/submitted', async () => {
+      const ownerDb = testEnv.authenticatedContext(ownerUid).firestore();
+      await assertFails(
+        setDoc(doc(ownerDb, 'forms', formId), {
+          userId: ownerUid,
+          createdAt: Date.now(),
+          status: 'archived',
+        }),
+      );
     });
 
     it('denies an update that drops the required createdAt field', async () => {
@@ -128,7 +152,9 @@ describe('Firestore security rules — forms', () => {
       });
 
       const ownerDb = testEnv.authenticatedContext(ownerUid).firestore();
-      await assertFails(setDoc(doc(ownerDb, 'forms', formId), { userId: ownerUid }));
+      await assertFails(
+        setDoc(doc(ownerDb, 'forms', formId), { userId: ownerUid, status: 'draft' }),
+      );
     });
 
     it('denies an update that rewrites createdAt to a different value', async () => {
