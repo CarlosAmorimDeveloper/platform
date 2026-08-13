@@ -8,6 +8,7 @@ jest.mock('./src/services/firebase', () => ({
 
 jest.mock('firebase/auth', () => ({
   onAuthStateChanged: jest.fn(),
+  signOut: jest.fn(),
 }));
 
 const mockedOnAuthStateChanged = onAuthStateChanged as jest.Mock;

@@ -1,6 +1,12 @@
 import { render, screen } from '../../test-utils';
 import { AppStack } from './AppStack';
 
+// Home (via useAuth) needs an AuthProvider in the tree — stub the hook
+// directly so this test stays focused on routing, not auth state.
+jest.mock('../../context/AuthContext', () => ({
+  useAuth: () => ({ user: null, loading: false, logout: jest.fn() }),
+}));
+
 describe('AppStack', () => {
   it('renders Home as the initial route', () => {
     render(<AppStack />);
