@@ -1,8 +1,14 @@
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { login } from './authService';
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  updateProfile,
+} from 'firebase/auth';
+import { login, register } from './authService';
 
 jest.mock('firebase/auth', () => ({
   signInWithEmailAndPassword: jest.fn(),
+  createUserWithEmailAndPassword: jest.fn(),
+  updateProfile: jest.fn(),
 }));
 
 jest.mock('../firebase', () => ({
@@ -10,40 +16,98 @@ jest.mock('../firebase', () => ({
 }));
 
 const mockedSignIn = signInWithEmailAndPassword as jest.Mock;
+const mockedCreateUser = createUserWithEmailAndPassword as jest.Mock;
+const mockedUpdateProfile = updateProfile as jest.Mock;
 
 describe('authService', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
 
-  it('calls signInWithEmailAndPassword with the given credentials', async () => {
-    mockedSignIn.mockResolvedValue({ user: { uid: 'abc123', email: 'user@example.com' } });
+  describe('login', () => {
+    it('calls signInWithEmailAndPassword with the given credentials', async () => {
+      mockedSignIn.mockResolvedValue({ user: { uid: 'abc123', email: 'user@example.com' } });
 
-    await login('user@example.com', 'secret123');
+      await login('user@example.com', 'secret123');
 
-    expect(mockedSignIn).toHaveBeenCalledWith(expect.anything(), 'user@example.com', 'secret123');
+      expect(mockedSignIn).toHaveBeenCalledWith(expect.anything(), 'user@example.com', 'secret123');
+    });
+
+    it('returns the authenticated user uid and email', async () => {
+      mockedSignIn.mockResolvedValue({ user: { uid: 'abc123', email: 'user@example.com' } });
+
+      const result = await login('user@example.com', 'secret123');
+
+      expect(result).toEqual({ uid: 'abc123', email: 'user@example.com' });
+    });
+
+    it('falls back to the provided email when the firebase user has no email', async () => {
+      mockedSignIn.mockResolvedValue({ user: { uid: 'abc123', email: null } });
+
+      const result = await login('user@example.com', 'secret123');
+
+      expect(result.email).toBe('user@example.com');
+    });
+
+    it('propagates errors thrown by signInWithEmailAndPassword', async () => {
+      const error = new Error('auth/wrong-password');
+      mockedSignIn.mockRejectedValue(error);
+
+      await expect(login('user@example.com', 'wrong')).rejects.toThrow(error);
+    });
   });
 
-  it('returns the authenticated user uid and email', async () => {
-    mockedSignIn.mockResolvedValue({ user: { uid: 'abc123', email: 'user@example.com' } });
+  describe('register', () => {
+    it('calls createUserWithEmailAndPassword with the given credentials', async () => {
+      const fakeUser = { uid: 'abc123', email: 'user@example.com' };
+      mockedCreateUser.mockResolvedValue({ user: fakeUser });
+      mockedUpdateProfile.mockResolvedValue(undefined);
 
-    const result = await login('user@example.com', 'secret123');
+      await register('Ada Lovelace', 'user@example.com', 'secret123');
 
-    expect(result).toEqual({ uid: 'abc123', email: 'user@example.com' });
-  });
+      expect(mockedCreateUser).toHaveBeenCalledWith(
+        expect.anything(),
+        'user@example.com',
+        'secret123',
+      );
+    });
 
-  it('falls back to the provided email when the firebase user has no email', async () => {
-    mockedSignIn.mockResolvedValue({ user: { uid: 'abc123', email: null } });
+    it('sets the display name on the created user, trimmed', async () => {
+      const fakeUser = { uid: 'abc123', email: 'user@example.com' };
+      mockedCreateUser.mockResolvedValue({ user: fakeUser });
+      mockedUpdateProfile.mockResolvedValue(undefined);
 
-    const result = await login('user@example.com', 'secret123');
+      await register('  Ada Lovelace  ', 'user@example.com', 'secret123');
 
-    expect(result.email).toBe('user@example.com');
-  });
+      expect(mockedUpdateProfile).toHaveBeenCalledWith(fakeUser, { displayName: 'Ada Lovelace' });
+    });
 
-  it('propagates errors thrown by signInWithEmailAndPassword', async () => {
-    const error = new Error('auth/wrong-password');
-    mockedSignIn.mockRejectedValue(error);
+    it('returns the authenticated user uid and email', async () => {
+      mockedCreateUser.mockResolvedValue({ user: { uid: 'abc123', email: 'user@example.com' } });
+      mockedUpdateProfile.mockResolvedValue(undefined);
 
-    await expect(login('user@example.com', 'wrong')).rejects.toThrow(error);
+      const result = await register('Ada Lovelace', 'user@example.com', 'secret123');
+
+      expect(result).toEqual({ uid: 'abc123', email: 'user@example.com' });
+    });
+
+    it('falls back to the provided email when the firebase user has no email', async () => {
+      mockedCreateUser.mockResolvedValue({ user: { uid: 'abc123', email: null } });
+      mockedUpdateProfile.mockResolvedValue(undefined);
+
+      const result = await register('Ada Lovelace', 'user@example.com', 'secret123');
+
+      expect(result.email).toBe('user@example.com');
+    });
+
+    it('propagates errors thrown by createUserWithEmailAndPassword', async () => {
+      const error = new Error('auth/email-already-in-use');
+      mockedCreateUser.mockRejectedValue(error);
+
+      await expect(register('Ada Lovelace', 'user@example.com', 'secret123')).rejects.toThrow(
+        error,
+      );
+      expect(mockedUpdateProfile).not.toHaveBeenCalled();
+    });
   });
 });
