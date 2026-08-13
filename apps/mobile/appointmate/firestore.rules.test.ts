@@ -8,8 +8,7 @@ import {
 import type { RulesTestEnvironment } from '@firebase/rules-unit-testing';
 import { doc, deleteDoc, getDoc, setDoc } from 'firebase/firestore';
 
-// Regras de segurança para a coleção top-level `forms` (schema placeholder,
-// ver TODO em firestore.rules — será revisado quando APP-16 travar o schema real).
+// Regras de segurança para a coleção top-level `forms` (schema definido em APP-16).
 describe('Firestore security rules — forms', () => {
   let testEnv: RulesTestEnvironment;
 

@@ -6,4 +6,5 @@ export type AuthStackParamList = {
 
 export type AppStackParamList = {
   Home: undefined;
+  FormEntry: { formId?: string } | undefined;
 };
