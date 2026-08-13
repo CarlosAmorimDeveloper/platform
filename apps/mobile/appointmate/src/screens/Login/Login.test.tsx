@@ -1,7 +1,18 @@
-import { fireEvent, render, screen } from '../../test-utils';
+import { fireEvent, render, screen, waitFor } from '../../test-utils';
+import { login } from '../../services/authService';
 import { Login } from './Login';
 
+jest.mock('../../services/authService', () => ({
+  login: jest.fn(),
+}));
+
+const mockedLogin = login as jest.Mock;
+
 describe('Login', () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   it('renders email and password fields and the submit button', () => {
     render(<Login />);
 
@@ -29,10 +40,40 @@ describe('Login', () => {
     expect(screen.queryByTestId('login-loading-indicator')).toBeNull();
   });
 
-  it('does not crash when submitting with empty fields', () => {
+  it('does not call login when submitting with empty fields', () => {
     render(<Login />);
 
-    expect(() => fireEvent.press(screen.getByText('Entrar'))).not.toThrow();
-    expect(screen.queryByTestId('login-loading-indicator')).toBeNull();
+    fireEvent.press(screen.getByText('Entrar'));
+
+    expect(mockedLogin).not.toHaveBeenCalled();
+  });
+
+  it('calls authService.login with the typed credentials on submit', async () => {
+    mockedLogin.mockResolvedValue({ uid: 'abc123', email: 'user@example.com' });
+    render(<Login />);
+
+    fireEvent.changeText(screen.getByTestId('login-email-input'), 'user@example.com');
+    fireEvent.changeText(screen.getByTestId('login-password-input'), 'secret123');
+    fireEvent.press(screen.getByText('Entrar'));
+
+    await waitFor(() => {
+      expect(mockedLogin).toHaveBeenCalledWith('user@example.com', 'secret123');
+    });
+  });
+
+  it('does not crash when login rejects', async () => {
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    mockedLogin.mockRejectedValue(new Error('auth/wrong-password'));
+    render(<Login />);
+
+    fireEvent.changeText(screen.getByTestId('login-email-input'), 'user@example.com');
+    fireEvent.changeText(screen.getByTestId('login-password-input'), 'wrong');
+    fireEvent.press(screen.getByText('Entrar'));
+
+    await waitFor(() => {
+      expect(mockedLogin).toHaveBeenCalled();
+    });
+
+    consoleErrorSpy.mockRestore();
   });
 });
