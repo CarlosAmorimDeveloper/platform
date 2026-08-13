@@ -1,14 +1,16 @@
 import {
   createUserWithEmailAndPassword,
+  sendPasswordResetEmail,
   signInWithEmailAndPassword,
   updateProfile,
 } from 'firebase/auth';
-import { login, register } from './authService';
+import { login, register, sendPasswordReset } from './authService';
 
 jest.mock('firebase/auth', () => ({
   signInWithEmailAndPassword: jest.fn(),
   createUserWithEmailAndPassword: jest.fn(),
   updateProfile: jest.fn(),
+  sendPasswordResetEmail: jest.fn(),
 }));
 
 jest.mock('../firebase', () => ({
@@ -18,6 +20,7 @@ jest.mock('../firebase', () => ({
 const mockedSignIn = signInWithEmailAndPassword as jest.Mock;
 const mockedCreateUser = createUserWithEmailAndPassword as jest.Mock;
 const mockedUpdateProfile = updateProfile as jest.Mock;
+const mockedSendPasswordResetEmail = sendPasswordResetEmail as jest.Mock;
 
 describe('authService', () => {
   afterEach(() => {
@@ -108,6 +111,26 @@ describe('authService', () => {
         error,
       );
       expect(mockedUpdateProfile).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('sendPasswordReset', () => {
+    it('calls sendPasswordResetEmail with the given email', async () => {
+      mockedSendPasswordResetEmail.mockResolvedValue(undefined);
+
+      await sendPasswordReset('user@example.com');
+
+      expect(mockedSendPasswordResetEmail).toHaveBeenCalledWith(
+        expect.anything(),
+        'user@example.com',
+      );
+    });
+
+    it('propagates errors thrown by sendPasswordResetEmail', async () => {
+      const error = new Error('auth/user-not-found');
+      mockedSendPasswordResetEmail.mockRejectedValue(error);
+
+      await expect(sendPasswordReset('user@example.com')).rejects.toThrow(error);
     });
   });
 });

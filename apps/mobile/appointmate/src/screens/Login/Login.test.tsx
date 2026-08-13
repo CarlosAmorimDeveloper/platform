@@ -84,6 +84,14 @@ describe('Login', () => {
     expect(mockNavigation.navigate).toHaveBeenCalledWith('Register');
   });
 
+  it('navigates to ForgotPassword when "Esqueceu a senha?" is pressed', () => {
+    render(<Login navigation={mockNavigation} route={mockRoute} />);
+
+    fireEvent.press(screen.getByText('Esqueceu a senha?'));
+
+    expect(mockNavigation.navigate).toHaveBeenCalledWith('ForgotPassword');
+  });
+
   it('shows a loading indicator while the login request is in flight', async () => {
     let resolveLogin: (value: { uid: string; email: string }) => void = () => {};
     mockedLogin.mockImplementation(

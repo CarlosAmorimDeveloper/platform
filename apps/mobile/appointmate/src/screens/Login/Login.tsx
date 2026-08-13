@@ -62,6 +62,13 @@ export function Login({ navigation }: Props) {
             Entrar
           </Button>
           <Button
+            variant="ghost"
+            onPress={() => navigation.navigate('ForgotPassword')}
+            testID="login-forgot-password-button"
+          >
+            Esqueceu a senha?
+          </Button>
+          <Button
             variant="secondary"
             onPress={() => navigation.navigate('Register')}
             testID="login-create-account-button"
