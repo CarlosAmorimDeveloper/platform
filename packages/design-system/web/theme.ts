@@ -9,6 +9,15 @@ export const theme = createTheme({
       dark: colors.primary[800],
       contrastText: colors.neutral[0],
     },
+    // MUI fills any palette color left unset with its own default (e.g.
+    // `secondary` defaults to `purple[500]`) — defined explicitly here so
+    // no component ever falls back to a library default instead of a token.
+    secondary: {
+      main: colors.primary[400],
+      light: colors.primary[300],
+      dark: colors.primary[600],
+      contrastText: colors.neutral[0],
+    },
     error: {
       main: colors.error[500],
     },
@@ -17,6 +26,9 @@ export const theme = createTheme({
     },
     warning: {
       main: colors.warning[500],
+    },
+    info: {
+      main: colors.info[500],
     },
     text: {
       primary: colors.neutral[900],
