@@ -1,16 +1,27 @@
 import { useState } from 'react';
 import { KeyboardAvoidingView, Platform, Text, View } from 'react-native';
-import { Button, Input, LoadingIndicator } from '@ds/mobile';
+import { Button, Input, LoadingIndicator, Snackbar } from '@ds/mobile';
+import { login } from '../../services/authService';
+import { mapFirebaseAuthError } from '../../utils/firebaseErrors';
 import { styles } from './Login.styles';
 
 export function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // TODO(APP-51): integrar com authService.login() (signInWithEmailAndPassword),
-  // incluindo o estado de loading abaixo (hoje fixo em false, sem chamada async ainda).
-  function handleLogin() {
+  async function handleLogin() {
     if (!email || !password) return;
+    setLoading(true);
+    try {
+      await login(email, password);
+      // Sucesso: o onAuthStateChanged global (App.tsx) detecta a sessão e troca de stack sozinho.
+    } catch (err: unknown) {
+      setErrorMessage(mapFirebaseAuthError(err));
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -42,11 +53,19 @@ export function Login() {
             onChangeText={setPassword}
             testID="login-password-input"
           />
-          <LoadingIndicator visible={false} testID="login-loading-indicator" />
-          <Button onPress={handleLogin} disabled={false} testID="login-submit-button">
+          <LoadingIndicator visible={loading} testID="login-loading-indicator" />
+          <Button onPress={handleLogin} disabled={loading} testID="login-submit-button">
             Entrar
           </Button>
         </View>
+        <Snackbar
+          visible={errorMessage !== null}
+          onDismiss={() => setErrorMessage(null)}
+          message={errorMessage ?? ''}
+          position="top"
+          variant="error"
+          testID="login-error-snackbar"
+        />
       </View>
     </KeyboardAvoidingView>
   );
