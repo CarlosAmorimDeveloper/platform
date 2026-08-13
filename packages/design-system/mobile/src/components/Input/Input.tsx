@@ -2,6 +2,13 @@ import React, { useState } from 'react';
 import type { KeyboardTypeOptions } from 'react-native';
 import { TextInput as PaperTextInput, HelperText } from 'react-native-paper';
 
+// Derived from PaperTextInput's own prop type (rather than importing
+// StyleProp<TextStyle> from 'react-native' directly) so it always matches
+// exactly what react-native-paper expects, even if this package's react-native
+// copy and react-native-paper's happen to resolve to different RN versions
+// in the monorepo's node_modules tree.
+type ContentStyle = React.ComponentProps<typeof PaperTextInput>['contentStyle'];
+
 export interface InputProps {
   value: string;
   onChangeText: (text: string) => void;
@@ -18,6 +25,12 @@ export interface InputProps {
   testID?: string;
   accessibilityLabel?: string;
   onFocus?: () => void;
+  /**
+   * Style forwarded to Paper's TextInput `contentStyle` — applies directly to
+   * the underlying native input (e.g. `minHeight`, `paddingLeft`), unlike the
+   * outer `style` prop which only affects wrapper-level layout.
+   */
+  contentStyle?: ContentStyle;
 }
 
 export function Input({
@@ -36,6 +49,7 @@ export function Input({
   testID,
   accessibilityLabel,
   onFocus,
+  contentStyle,
 }: InputProps) {
   const [hidden, setHidden] = useState(true);
   const isSecure = secureTextEntry && hidden;
@@ -58,6 +72,7 @@ export function Input({
         testID={testID}
         accessibilityLabel={accessibilityLabel}
         onFocus={onFocus}
+        contentStyle={contentStyle}
         right={
           secureTextEntry && showPasswordToggle ? (
             <PaperTextInput.Icon

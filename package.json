@@ -68,7 +68,15 @@
       "@app/tickets/react-native-chart-kit",
       "@app/tickets/react-native-chart-kit/**",
       "@app/tickets/react-native-keyboard-controller",
-      "@app/tickets/react-native-keyboard-controller/**"
+      "@app/tickets/react-native-keyboard-controller/**",
+      "@app/appointmate/react",
+      "@app/appointmate/react/**",
+      "@app/appointmate/react-native",
+      "@app/appointmate/react-native/**",
+      "@app/appointmate/react-native-svg",
+      "@app/appointmate/react-native-svg/**",
+      "@app/appointmate/react-native-chart-kit",
+      "@app/appointmate/react-native-chart-kit/**"
     ]
   },
   "dependencies": {

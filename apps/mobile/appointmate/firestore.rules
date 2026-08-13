@@ -1,0 +1,26 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // TODO: revisar quando o schema de forms for definido (APP-16)
+    //
+    // NOTA: a permissão `read` abaixo também governa `list` (queries de
+    // coleção), não só `get` de documento único. Qualquer código futuro que
+    // fizer uma query em `forms` (ex.: tela de dashboard/listagem) PRECISA
+    // filtrar por `where('userId', '==', uid)` — uma query sem esse filtro é
+    // negada por completo por estas regras, mesmo que o usuário só pudesse
+    // "ver" um subconjunto dos resultados.
+    match /forms/{formId} {
+      allow read, delete: if request.auth != null && resource.data.userId == request.auth.uid;
+      allow create: if request.auth != null
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.keys().hasAll(['userId', 'createdAt'])
+        && request.resource.data.keys().hasOnly(['userId', 'createdAt', 'updatedAt', 'data']);
+      allow update: if request.auth != null
+        && resource.data.userId == request.auth.uid
+        && request.resource.data.userId == resource.data.userId
+        && request.resource.data.keys().hasAll(['userId', 'createdAt'])
+        && request.resource.data.createdAt == resource.data.createdAt
+        && request.resource.data.keys().hasOnly(['userId', 'createdAt', 'updatedAt', 'data']);
+    }
+  }
+}

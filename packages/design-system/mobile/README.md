@@ -1,12 +1,12 @@
 # @ds/mobile
 
 [![React Native][reactnative-shield]][reactnative-url]
-[![NativeWind][nativewind-shield]][nativewind-url]
+[![React Native Paper][paper-shield]][paper-url]
 [![TypeScript][typescript-shield]][typescript-url]
 
 Pacote de design system para React Native. Parte do monorepo `platform`, em `packages/design-system/mobile`.
 
-Configura o [NativeWind v4](https://www.nativewind.dev) com o tema completo de `@ds/tokens` (cores, espaçamentos, tamanhos de fonte e raios de borda), gerando classes Tailwind CSS compatíveis com React Native StyleSheet.
+Baseado em [React Native Paper][paper-url] (Material Design 3), com um tema (`theme`) gerado a partir de `@ds/tokens` (cores, espaçamentos, raios de borda) e um catálogo de componentes prontos (`Button`, `Input`, `Textarea`, `Chip`, `Select`, `Radio`, `Checkbox`, `Alert`, `EmptyState`, `ErrorView`, `LoadingView`/`LoadingIndicator`, `Dialog`, `Snackbar`, `AppBar`, `FAB`, `Card`, `Menu`, `PieChart`) que encapsulam os componentes do Paper com a tipagem e as convenções do design system.
 
 ## Índice
 
@@ -24,10 +24,10 @@ Configura o [NativeWind v4](https://www.nativewind.dev) com o tema completo de `
 ## Construído com
 
 [![React Native][reactnative-shield]][reactnative-url]
-[![NativeWind][nativewind-shield]][nativewind-url]
-[![Tailwind CSS][tailwind-shield]][tailwind-url]
+[![React Native Paper][paper-shield]][paper-url]
 [![TypeScript][typescript-shield]][typescript-url]
 [![Jest][jest-shield]][jest-url]
+[![Storybook][storybook-shield]][storybook-url]
 
 ## Instalação
 
@@ -41,155 +41,116 @@ O pacote é consumido via Yarn Workspaces. No app React Native, adicione ao `pac
 }
 ```
 
-O NativeWind e o React Native devem ser instalados pelo app consumidor (peer dependencies):
+`react-native-paper`, `react-native-safe-area-context`, `react-native-svg`, `react-native-chart-kit` e `react-native` devem ser instalados pelo app consumidor (peer dependencies):
 
 ```sh
-yarn add nativewind react-native
+yarn add react-native-paper react-native-safe-area-context react-native-svg react-native-chart-kit react-native
 ```
 
 ## Uso
 
-### 1. Copiar as configurações de build
+### 1. Envolver o app com o `PaperProvider` usando o `theme` do pacote
 
-Referencie (ou copie) os arquivos de configuração do pacote no seu app:
+```tsx
+// App.tsx
+import { PaperProvider } from 'react-native-paper';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { theme } from '@ds/mobile/theme';
 
-**`babel.config.js`**
-
-```js
-module.exports = function (api) {
-  api.cache(true);
-  return {
-    presets: ['module:metro-react-native-babel-preset'],
-    plugins: ['nativewind/babel'],
-  };
-};
-```
-
-**`metro.config.js`**
-
-```js
-const { getDefaultConfig } = require('@react-native/metro-config');
-const { withNativeWind } = require('nativewind/metro');
-
-const config = getDefaultConfig(__dirname);
-
-module.exports = withNativeWind(config, {
-  input: './global.css',
-});
-```
-
-**`tailwind.config.js`** — importe a config base e estenda com os paths do seu app:
-
-```js
-const baseConfig = require('@ds/mobile/tailwind.config');
-
-module.exports = {
-  ...baseConfig,
-  content: [...baseConfig.content, './app/**/*.{ts,tsx}', './screens/**/*.{ts,tsx}'],
-};
-```
-
-**`global.css`** — importe no entry point do app:
-
-```css
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-```
-
-### 2. Importar o CSS global no entry point
-
-```ts
-// index.ts ou App.tsx
-import './global.css';
-```
-
-### 3. Usar as utilities do NativeWind
-
-```ts
-import { styled } from '@ds/mobile';
-import { View, Text } from 'react-native';
-
-const StyledView = styled(View);
-const StyledText = styled(Text);
-
-export function Card() {
+export default function App() {
   return (
-    <StyledView className="bg-primary-50 p-4 rounded-lg">
-      <StyledText className="text-primary-900 text-base font-semibold">
-        Olá, NativeWind!
-      </StyledText>
-    </StyledView>
+    <SafeAreaProvider>
+      <PaperProvider theme={theme}>{/* ...telas do app */}</PaperProvider>
+    </SafeAreaProvider>
   );
 }
 ```
 
+### 2. Usar os componentes do design system
+
+```tsx
+import { Button, Input, EmptyState } from '@ds/mobile';
+
+export function TicketForm() {
+  return (
+    <>
+      <Input value="" onChangeText={() => {}} label="Título" />
+      <Button onPress={() => {}}>Salvar</Button>
+      <EmptyState title="Nenhum ticket" description="Crie o primeiro ticket para começar." />
+    </>
+  );
+}
+```
+
+Todos os componentes são wrappers tipados sobre o [React Native Paper][paper-url]. Alguns (`Alert`, `EmptyState`, `ErrorView`) não têm equivalente direto no Paper e são compostos hand-styled com `View`/`Text` estilizados diretamente com os tokens de `@ds/tokens` via `StyleSheet.create` — não há classes utilitárias/CSS envolvidas em nenhum dos dois casos.
+
 ## Tema
 
-O `tailwind.config.js` estende o tema padrão do Tailwind com os tokens de `@ds/tokens`:
+`theme` (exportado de `@ds/mobile` e de `@ds/mobile/theme`) estende o `MD3LightTheme` do React Native Paper com os tokens de `@ds/tokens`:
 
-### Cores (`colors`)
+```ts
+import { theme } from '@ds/mobile/theme';
 
-Mapeadas diretamente como valores hex — sem conversão.
-
-```js
-className = 'bg-primary-500'; // #6366F1
-className = 'text-neutral-900'; // #111827
-className = 'border-error-300'; // #FDA4AF
+theme.colors.primary; // colors.primary[600]
+theme.colors.error; // colors.error[500]
+theme.roundness; // radii.md
 ```
 
-Grupos disponíveis: `primary`, `neutral`, `success`, `warning`, `error`, `info`.
+| Token do tema       | Origem em `@ds/tokens` |
+| ------------------- | ---------------------- |
+| `colors.primary`    | `colors.primary[600]`  |
+| `colors.background` | `colors.neutral[50]`   |
+| `colors.surface`    | `colors.neutral[0]`    |
+| `colors.error`      | `colors.error[500]`    |
+| `roundness`         | `radii.md`             |
 
-### Espaçamento (`spacing`)
-
-Valores convertidos de números unitless para strings `px`.
-
-```js
-className = 'p-4'; // padding: 16px
-className = 'm-8'; // margin: 32px
-className = 'gap-2'; // gap: 8px
-```
-
-### Tamanho de fonte (`fontSize`)
-
-```js
-className = 'text-xs'; // 12px
-className = 'text-base'; // 16px
-className = 'text-2xl'; // 24px
-```
-
-### Border radius (`borderRadius`)
-
-```js
-className = 'rounded-sm'; // 2px
-className = 'rounded-lg'; // 8px
-className = 'rounded-full'; // 9999px
-```
+Componentes hand-styled (não wrappers do Paper) usam `colors`, `spacing`, `fontSizes` e `radii` de `@ds/tokens` diretamente em `StyleSheet.create` (veja `Alert.tsx`, `EmptyState.tsx`, `ErrorView.tsx`).
 
 ## Exports
 
 ```ts
-import { styled, useColorScheme, vars } from '@ds/mobile';
-import type { StyledProps } from '@ds/mobile';
+import { theme } from '@ds/mobile';
+// ou, sem puxar o catálogo de componentes:
+import { theme } from '@ds/mobile/theme';
+
+import {
+  Button,
+  Input,
+  Textarea,
+  Chip,
+  Select,
+  Radio,
+  Checkbox,
+  Alert,
+  EmptyState,
+  ErrorView,
+  LoadingView,
+  LoadingIndicator,
+  Dialog,
+  Snackbar,
+  AppBar,
+  FAB,
+  Card,
+  Menu,
+  PieChart,
+} from '@ds/mobile';
+import type { AppTheme, ButtonProps, InputProps /* ...Props por componente */ } from '@ds/mobile';
 ```
 
-| Export           | Origem       | Descrição                                          |
-| ---------------- | ------------ | -------------------------------------------------- |
-| `styled`         | `nativewind` | Cria componentes RN com suporte a classes Tailwind |
-| `useColorScheme` | `nativewind` | Hook para detectar dark/light mode                 |
-| `vars`           | `nativewind` | Define CSS custom properties em componentes RN     |
-| `StyledProps`    | `nativewind` | Tipo para props de componentes estilizados         |
+| Export      | Origem             | Descrição                                                                        |
+| ----------- | ------------------ | -------------------------------------------------------------------------------- |
+| `theme`     | `src/theme.ts`     | Tema do React Native Paper (MD3) com cores/roundness derivados de `@ds/tokens`   |
+| `AppTheme`  | `src/theme.ts`     | Tipo do `theme`                                                                  |
+| componentes | `src/components/*` | Um export nomeado + tipo de props por componente (ver `src/components/index.ts`) |
 
 ## Arquivos
 
-| Arquivo              | Descrição                                               |
-| -------------------- | ------------------------------------------------------- |
-| `tailwind.config.js` | Config Tailwind com tema de `@ds/tokens` via `jiti`     |
-| `tailwind-utils.js`  | Utilitários `toPx` e `mapToPx` para conversão de tokens |
-| `babel.config.js`    | Plugin `nativewind/babel` para transformação de classes |
-| `metro.config.js`    | Wrapper `withNativeWind` para o bundler Metro           |
-| `global.css`         | Diretivas `@tailwind` requeridas pelo NativeWind v4     |
-| `src/index.ts`       | Ponto de entrada do pacote                              |
+| Arquivo              | Descrição                                                                                                |
+| -------------------- | -------------------------------------------------------------------------------------------------------- |
+| `src/theme.ts`       | Tema do React Native Paper derivado de `@ds/tokens`                                                      |
+| `src/test-utils.tsx` | `render` customizado com `PaperProvider`/`SafeAreaProvider` para testes                                  |
+| `src/components/*`   | Um diretório por componente (`Component.tsx`, `index.ts`, `Component.test.tsx`, `Component.stories.tsx`) |
+| `src/index.ts`       | Ponto de entrada do pacote (reexporta `theme` e todos os componentes)                                    |
 
 ## Testes
 
@@ -197,14 +158,18 @@ import type { StyledProps } from '@ds/mobile';
 yarn test
 ```
 
-Cobertura atual: **20 testes** — utilidades `toPx`/`mapToPx` e integração do `tailwind.config.js`.
+Testados com Jest (`@react-native/jest-preset`, ambiente Node) e `@testing-library/react-native`. Cada componente tem seu próprio `Component.test.tsx`, cobrindo renderização, interação e estados (erro, desabilitado, seleção, visibilidade etc.).
 
 ## Scripts
 
-| Comando            | Descrição                       |
-| ------------------ | ------------------------------- |
-| `yarn test`        | Executa os testes com Jest      |
-| `yarn check-types` | Verificação de tipos TypeScript |
+| Comando                | Descrição                           |
+| ---------------------- | ----------------------------------- |
+| `yarn test`            | Executa os testes com Jest          |
+| `yarn check-types`     | Verificação de tipos TypeScript     |
+| `yarn lint`            | ESLint                              |
+| `yarn storybook`       | Storybook em modo dev (porta 6007)  |
+| `yarn build-storybook` | Build estático do Storybook         |
+| `yarn chromatic`       | Publica testes visuais no Chromatic |
 
 ## Contribuindo
 
@@ -222,11 +187,11 @@ Uso interno — repositório privado.
 
 [reactnative-shield]: https://img.shields.io/badge/React_Native-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
 [reactnative-url]: https://reactnative.dev
-[nativewind-shield]: https://img.shields.io/badge/NativeWind-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white
-[nativewind-url]: https://www.nativewind.dev
-[tailwind-shield]: https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white
-[tailwind-url]: https://tailwindcss.com
+[paper-shield]: https://img.shields.io/badge/React_Native_Paper-6200EE?style=for-the-badge&logo=materialdesign&logoColor=white
+[paper-url]: https://callstack.github.io/react-native-paper/
 [typescript-shield]: https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white
 [typescript-url]: https://www.typescriptlang.org
 [jest-shield]: https://img.shields.io/badge/Jest-C21325?style=for-the-badge&logo=jest&logoColor=white
 [jest-url]: https://jestjs.io
+[storybook-shield]: https://img.shields.io/badge/Storybook-FF4785?style=for-the-badge&logo=storybook&logoColor=white
+[storybook-url]: https://storybook.js.org
