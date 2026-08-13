@@ -54,7 +54,8 @@ export function useTicketDeletion({
     try {
       await deleteComment(pendingCommentId);
     } catch {
-      // error captured by hook via error state
+      // Intentionally swallowed: deleteComment (from useTicketDetails) owns
+      // its own error state; this hook doesn't need to surface it too.
     } finally {
       setDeleteCommentVisible(false);
       setPendingCommentId(null);
