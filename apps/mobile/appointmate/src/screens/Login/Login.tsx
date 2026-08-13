@@ -1,16 +1,23 @@
 import { useState } from 'react';
 import { KeyboardAvoidingView, Platform, Text, View } from 'react-native';
 import { Button, Input, LoadingIndicator } from '@ds/mobile';
+import { login } from '../../services/authService';
 import { styles } from './Login.styles';
 
 export function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  // TODO(APP-51): integrar com authService.login() (signInWithEmailAndPassword),
-  // incluindo o estado de loading abaixo (hoje fixo em false, sem chamada async ainda).
-  function handleLogin() {
+  // TODO(APP-53): tratar loading e mensagem de erro amigável (mapFirebaseAuthError + Snackbar).
+  // Por ora, um erro de autenticação só é registrado no console, sem feedback visual.
+  async function handleLogin() {
     if (!email || !password) return;
+    try {
+      await login(email, password);
+      // Sucesso: o onAuthStateChanged global (App.tsx) detecta a sessão e troca de stack sozinho.
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   return (
