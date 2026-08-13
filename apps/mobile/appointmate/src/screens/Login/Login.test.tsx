@@ -1,6 +1,8 @@
 import { FirebaseError } from 'firebase/app';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { fireEvent, render, screen, waitFor } from '../../test-utils';
 import { login } from '../../services/authService';
+import type { AuthStackParamList } from '../../navigation/types';
 import { Login } from './Login';
 
 jest.mock('../../services/authService', () => ({
@@ -8,6 +10,11 @@ jest.mock('../../services/authService', () => ({
 }));
 
 const mockedLogin = login as jest.Mock;
+
+type LoginProps = NativeStackScreenProps<AuthStackParamList, 'Login'>;
+
+const mockNavigation = { navigate: jest.fn() } as unknown as LoginProps['navigation'];
+const mockRoute = { key: 'Login', name: 'Login' } as unknown as LoginProps['route'];
 
 // This environment's Jest/react-test-renderer combo is slow to flush
 // re-renders across the KeyboardAvoidingView/Paper/Navigation/SafeArea
@@ -22,7 +29,7 @@ describe('Login', () => {
   });
 
   it('renders email and password fields and the submit button', () => {
-    render(<Login />);
+    render(<Login navigation={mockNavigation} route={mockRoute} />);
 
     expect(screen.getByTestId('login-email-input')).toBeTruthy();
     expect(screen.getByTestId('login-password-input')).toBeTruthy();
@@ -30,7 +37,7 @@ describe('Login', () => {
   });
 
   it('updates email and password as the user types', () => {
-    render(<Login />);
+    render(<Login navigation={mockNavigation} route={mockRoute} />);
 
     const emailInput = screen.getByTestId('login-email-input');
     const passwordInput = screen.getByTestId('login-password-input');
@@ -43,13 +50,13 @@ describe('Login', () => {
   });
 
   it('does not show a loading indicator until a submission is made', () => {
-    render(<Login />);
+    render(<Login navigation={mockNavigation} route={mockRoute} />);
 
     expect(screen.queryByTestId('login-loading-indicator')).toBeNull();
   });
 
   it('does not call login when submitting with empty fields', () => {
-    render(<Login />);
+    render(<Login navigation={mockNavigation} route={mockRoute} />);
 
     fireEvent.press(screen.getByText('Entrar'));
 
@@ -58,7 +65,7 @@ describe('Login', () => {
 
   it('calls authService.login with the typed credentials on submit', async () => {
     mockedLogin.mockResolvedValue({ uid: 'abc123', email: 'user@example.com' });
-    render(<Login />);
+    render(<Login navigation={mockNavigation} route={mockRoute} />);
 
     fireEvent.changeText(screen.getByTestId('login-email-input'), 'user@example.com');
     fireEvent.changeText(screen.getByTestId('login-password-input'), 'secret123');
@@ -69,6 +76,14 @@ describe('Login', () => {
     });
   });
 
+  it('navigates to Register when "Criar conta" is pressed', () => {
+    render(<Login navigation={mockNavigation} route={mockRoute} />);
+
+    fireEvent.press(screen.getByText('Criar conta'));
+
+    expect(mockNavigation.navigate).toHaveBeenCalledWith('Register');
+  });
+
   it('shows a loading indicator while the login request is in flight', async () => {
     let resolveLogin: (value: { uid: string; email: string }) => void = () => {};
     mockedLogin.mockImplementation(
@@ -77,7 +92,7 @@ describe('Login', () => {
           resolveLogin = resolve;
         }),
     );
-    render(<Login />);
+    render(<Login navigation={mockNavigation} route={mockRoute} />);
 
     fireEvent.changeText(screen.getByTestId('login-email-input'), 'user@example.com');
     fireEvent.changeText(screen.getByTestId('login-password-input'), 'secret123');
@@ -96,7 +111,7 @@ describe('Login', () => {
 
   it('shows a friendly error message when login fails', async () => {
     mockedLogin.mockRejectedValue(new FirebaseError('auth/wrong-password', ''));
-    render(<Login />);
+    render(<Login navigation={mockNavigation} route={mockRoute} />);
 
     fireEvent.changeText(screen.getByTestId('login-email-input'), 'user@example.com');
     fireEvent.changeText(screen.getByTestId('login-password-input'), 'wrong');
@@ -109,7 +124,7 @@ describe('Login', () => {
 
   it('hides the loading indicator after a failed login', async () => {
     mockedLogin.mockRejectedValue(new FirebaseError('auth/wrong-password', ''));
-    render(<Login />);
+    render(<Login navigation={mockNavigation} route={mockRoute} />);
 
     fireEvent.changeText(screen.getByTestId('login-email-input'), 'user@example.com');
     fireEvent.changeText(screen.getByTestId('login-password-input'), 'wrong');
