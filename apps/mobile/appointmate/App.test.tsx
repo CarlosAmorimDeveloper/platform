@@ -4,6 +4,7 @@ import App from './App';
 
 jest.mock('./src/services/firebase', () => ({
   auth: {},
+  db: {},
 }));
 
 jest.mock('firebase/auth', () => ({
