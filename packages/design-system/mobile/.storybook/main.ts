@@ -143,9 +143,6 @@ function makeViteIconPlugin(stub: string): Plugin {
   };
 }
 
-// ---------------------------------------------------------------------------
-// Storybook config
-// ---------------------------------------------------------------------------
 const config: StorybookConfig = {
   stories: ['../src/**/*.stories.@(ts|tsx)'],
   addons: ['@storybook/addon-essentials'],
@@ -180,7 +177,6 @@ const config: StorybookConfig = {
 
     const iconStub = buildIconStub(glyphMapStr);
 
-    // esbuild filter that matches all three icon library IDs
     const iconFilter =
       /@react-native-vector-icons\/|@expo\/vector-icons\/MaterialCommunityIcons|react-native-vector-icons\/MaterialCommunityIcons/;
 
@@ -188,7 +184,6 @@ const config: StorybookConfig = {
       plugins: [makeViteIconPlugin(iconStub), codegenStubPlugin],
       resolve: {
         alias: {
-          // Render React Native components in the browser via react-native-web
           'react-native': 'react-native-web',
         },
       },

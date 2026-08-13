@@ -31,7 +31,6 @@ describe('StoreHydrator', () => {
 
     await renderProvider();
 
-    // Valid state: removeItem should NOT have been called
     expect(removeItemSpy).not.toHaveBeenCalled();
     removeItemSpy.mockRestore();
   });

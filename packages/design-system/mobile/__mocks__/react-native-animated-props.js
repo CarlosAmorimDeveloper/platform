@@ -8,7 +8,6 @@ const AnimatedProps = jest.requireActual('react-native/Libraries/Animated/nodes/
 
 const OriginalAnimatedProps = AnimatedProps.default ?? AnimatedProps;
 
-// Patch __makeNative on the prototype to be a no-op in tests
 if (OriginalAnimatedProps && OriginalAnimatedProps.prototype) {
   OriginalAnimatedProps.prototype.__makeNative = function () {
     // no-op: skip native driver setup to avoid loading the RN renderer

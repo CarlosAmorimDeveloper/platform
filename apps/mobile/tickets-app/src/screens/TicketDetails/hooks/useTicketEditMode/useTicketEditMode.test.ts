@@ -75,10 +75,10 @@ describe('useTicketEditMode', () => {
       }),
     );
     act(() => {
-      result.current.onEditPress(); // enter edit mode
+      result.current.onEditPress();
     });
     act(() => {
-      result.current.onEditPress(); // press again while editing
+      result.current.onEditPress();
     });
     expect(result.current.saveVisible).toBe(true);
     expect(result.current.editing).toBe(true);
@@ -143,10 +143,10 @@ describe('useTicketEditMode', () => {
       }),
     );
     act(() => {
-      result.current.onEditPress(); // enter edit mode
+      result.current.onEditPress();
     });
     act(() => {
-      result.current.onEditPress(); // trigger saveVisible
+      result.current.onEditPress();
     });
     act(() => {
       result.current.handleCancelSave();

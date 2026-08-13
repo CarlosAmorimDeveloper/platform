@@ -170,8 +170,6 @@ describe('Firestore security rules — forms', () => {
     });
   });
 
-  // Teste de fumaça adiado do Task 3: round-trip básico de leitura/escrita
-  // contra o emulador do Firestore, usando um contexto autenticado.
   describe('read/write smoke test (deferred from Task 3)', () => {
     it('writes a form with setDoc and reads it back with getDoc', async () => {
       const ownerDb = testEnv.authenticatedContext(ownerUid).firestore();

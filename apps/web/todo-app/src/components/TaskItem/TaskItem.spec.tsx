@@ -35,7 +35,6 @@ describe('TaskItem', () => {
   it('dispatches toggleTask on checkbox change', () => {
     renderItem();
     fireEvent.click(screen.getByRole('checkbox'));
-    // no error = dispatch was called
   });
 
   it('enters edit mode on edit button click', () => {
@@ -66,7 +65,6 @@ describe('TaskItem', () => {
   it('dispatches removeTask on remove button click', () => {
     renderItem();
     fireEvent.click(screen.getByRole('button', { name: /remover tarefa/i }));
-    // no error = dispatch was called
   });
 
   it('hides edit button when task is completed', () => {
