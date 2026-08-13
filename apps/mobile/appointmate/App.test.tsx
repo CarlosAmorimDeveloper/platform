@@ -33,7 +33,7 @@ describe('App', () => {
 
     render(<App />);
 
-    await waitFor(() => expect(screen.getByText('Login')).toBeTruthy());
+    await waitFor(() => expect(screen.getByTestId('login-email-input')).toBeTruthy());
     expect(screen.queryByText('Home')).toBeNull();
   });
 
@@ -46,6 +46,6 @@ describe('App', () => {
     render(<App />);
 
     await waitFor(() => expect(screen.getByText('Home')).toBeTruthy());
-    expect(screen.queryByText('Login')).toBeNull();
+    expect(screen.queryByTestId('login-email-input')).toBeNull();
   });
 });
