@@ -1,3 +1,4 @@
+import { FirebaseError } from 'firebase/app';
 import { fireEvent, render, screen, waitFor } from '../../test-utils';
 import { login } from '../../services/authService';
 import { Login } from './Login';
@@ -7,6 +8,13 @@ jest.mock('../../services/authService', () => ({
 }));
 
 const mockedLogin = login as jest.Mock;
+
+// This environment's Jest/react-test-renderer combo is slow to flush
+// re-renders across the KeyboardAvoidingView/Paper/Navigation/SafeArea
+// provider tree — the state-transition assertions below need more room
+// than the 5s Jest default to avoid flaking (paired with a longer
+// per-test timeout, passed as each affected it()'s third argument).
+const ASYNC_TIMEOUT = { timeout: 15000 };
 
 describe('Login', () => {
   afterEach(() => {
@@ -61,9 +69,33 @@ describe('Login', () => {
     });
   });
 
-  it('does not crash when login rejects', async () => {
-    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => undefined);
-    mockedLogin.mockRejectedValue(new Error('auth/wrong-password'));
+  it('shows a loading indicator while the login request is in flight', async () => {
+    let resolveLogin: (value: { uid: string; email: string }) => void = () => {};
+    mockedLogin.mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          resolveLogin = resolve;
+        }),
+    );
+    render(<Login />);
+
+    fireEvent.changeText(screen.getByTestId('login-email-input'), 'user@example.com');
+    fireEvent.changeText(screen.getByTestId('login-password-input'), 'secret123');
+    fireEvent.press(screen.getByText('Entrar'));
+
+    await waitFor(() => {
+      expect(screen.getByTestId('login-loading-indicator')).toBeTruthy();
+    });
+
+    resolveLogin({ uid: 'abc123', email: 'user@example.com' });
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('login-loading-indicator')).toBeNull();
+    }, ASYNC_TIMEOUT);
+  }, 20000);
+
+  it('shows a friendly error message when login fails', async () => {
+    mockedLogin.mockRejectedValue(new FirebaseError('auth/wrong-password', ''));
     render(<Login />);
 
     fireEvent.changeText(screen.getByTestId('login-email-input'), 'user@example.com');
@@ -71,9 +103,20 @@ describe('Login', () => {
     fireEvent.press(screen.getByText('Entrar'));
 
     await waitFor(() => {
-      expect(mockedLogin).toHaveBeenCalled();
-    });
+      expect(screen.getByText('E-mail ou senha incorretos.')).toBeTruthy();
+    }, ASYNC_TIMEOUT);
+  }, 20000);
 
-    consoleErrorSpy.mockRestore();
-  });
+  it('hides the loading indicator after a failed login', async () => {
+    mockedLogin.mockRejectedValue(new FirebaseError('auth/wrong-password', ''));
+    render(<Login />);
+
+    fireEvent.changeText(screen.getByTestId('login-email-input'), 'user@example.com');
+    fireEvent.changeText(screen.getByTestId('login-password-input'), 'wrong');
+    fireEvent.press(screen.getByText('Entrar'));
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('login-loading-indicator')).toBeNull();
+    }, ASYNC_TIMEOUT);
+  }, 20000);
 });
