@@ -11,19 +11,31 @@ service cloud.firestore {
       allow read, delete: if request.auth != null && resource.data.userId == request.auth.uid;
       allow create: if request.auth != null
         && request.resource.data.userId == request.auth.uid
-        && request.resource.data.keys().hasAll(['userId', 'createdAt'])
+        && request.resource.data.keys().hasAll(['userId', 'createdAt', 'status'])
+        && request.resource.data.status in ['draft', 'submitted']
         && request.resource.data.keys().hasOnly([
-          'userId', 'createdAt', 'updatedAt',
-          'appointmentDate', 'doctorName', 'mood', 'medications', 'questions',
+          'userId', 'createdAt', 'updatedAt', 'status',
+          'appointmentDate', 'lastAppointmentDate',
+          'overallMood', 'overallSummary',
+          'sleep', 'energy', 'appetite', 'concentration',
+          'medications', 'medicationAdherence', 'medicationEffects',
+          'whatWentWell', 'whatHasBeenHard',
+          'context', 'questions', 'todayFocus', 'consultationNotes',
         ]);
       allow update: if request.auth != null
         && resource.data.userId == request.auth.uid
         && request.resource.data.userId == resource.data.userId
-        && request.resource.data.keys().hasAll(['userId', 'createdAt'])
+        && request.resource.data.keys().hasAll(['userId', 'createdAt', 'status'])
         && request.resource.data.createdAt == resource.data.createdAt
+        && request.resource.data.status in ['draft', 'submitted']
         && request.resource.data.keys().hasOnly([
-          'userId', 'createdAt', 'updatedAt',
-          'appointmentDate', 'doctorName', 'mood', 'medications', 'questions',
+          'userId', 'createdAt', 'updatedAt', 'status',
+          'appointmentDate', 'lastAppointmentDate',
+          'overallMood', 'overallSummary',
+          'sleep', 'energy', 'appetite', 'concentration',
+          'medications', 'medicationAdherence', 'medicationEffects',
+          'whatWentWell', 'whatHasBeenHard',
+          'context', 'questions', 'todayFocus', 'consultationNotes',
         ]);
     }
   }

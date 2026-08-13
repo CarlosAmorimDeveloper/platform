@@ -1,39 +1,72 @@
-export type Mood = 'muito_mal' | 'mal' | 'neutro' | 'bem' | 'muito_bem';
+export type Mood = 'muito_dificil' | 'dificil' | 'oscilando' | 'estavel' | 'bem';
 
 export const MOOD_OPTIONS: { value: Mood; label: string }[] = [
-  { value: 'muito_mal', label: 'Muito mal' },
-  { value: 'mal', label: 'Mal' },
-  { value: 'neutro', label: 'Neutro' },
+  { value: 'muito_dificil', label: 'Muito difícil' },
+  { value: 'dificil', label: 'Difícil' },
+  { value: 'oscilando', label: 'Oscilando' },
+  { value: 'estavel', label: 'Estável' },
   { value: 'bem', label: 'Bem' },
-  { value: 'muito_bem', label: 'Muito bem' },
 ];
 
-export interface Medication {
-  name: string;
-  dosage: string;
-  frequency: string;
+export type FormStatus = 'draft' | 'submitted';
+
+export interface MedicationItem {
+  text: string;
 }
 
-export interface FormQuestion {
+export interface QuestionItem {
   text: string;
 }
 
 export interface FormValues {
+  // Cabeçalho
   appointmentDate: string;
-  doctorName: string;
-  mood: Mood | null;
-  medications: Medication[];
-  questions: FormQuestion[];
+  lastAppointmentDate: string;
+  // Panorama geral
+  overallMood: Mood | null;
+  overallSummary: string;
+  // No dia a dia
+  sleep: string;
+  energy: string;
+  appetite: string;
+  concentration: string;
+  // Medicação
+  medications: MedicationItem[];
+  medicationAdherence: string;
+  medicationEffects: string;
+  // O que foi bem ou melhorou
+  whatWentWell: string;
+  // O que tem sido difícil
+  whatHasBeenHard: string;
+  // Contexto
+  context: string;
+  // Minhas perguntas
+  questions: QuestionItem[];
+  // Foco do dia
+  todayFocus: string;
+  // Durante a consulta
+  consultationNotes: string;
 }
+
+export const EMPTY_MEDICATION: MedicationItem = { text: '' };
+export const EMPTY_QUESTION: QuestionItem = { text: '' };
 
 export const EMPTY_FORM_VALUES: FormValues = {
   appointmentDate: '',
-  doctorName: '',
-  mood: null,
-  medications: [],
-  questions: [],
+  lastAppointmentDate: '',
+  overallMood: null,
+  overallSummary: '',
+  sleep: '',
+  energy: '',
+  appetite: '',
+  concentration: '',
+  medications: [{ text: '' }, { text: '' }],
+  medicationAdherence: '',
+  medicationEffects: '',
+  whatWentWell: '',
+  whatHasBeenHard: '',
+  context: '',
+  questions: [{ text: '' }, { text: '' }, { text: '' }],
+  todayFocus: '',
+  consultationNotes: '',
 };
-
-export const EMPTY_MEDICATION: Medication = { name: '', dosage: '', frequency: '' };
-
-export const EMPTY_QUESTION: FormQuestion = { text: '' };
