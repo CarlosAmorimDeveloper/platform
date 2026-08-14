@@ -1,14 +1,28 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import * as Print from 'expo-print';
+import * as Sharing from 'expo-sharing';
 import { fireEvent, render, screen, waitFor } from '../../test-utils';
-import { getFormRecord } from '../../services/formsService';
+import { deleteForm, getFormRecord } from '../../services/formsService';
 import type { AppStackParamList } from '../../navigation/types';
 import { FormDetail } from './FormDetail';
 
 jest.mock('../../services/formsService', () => ({
   getFormRecord: jest.fn(),
+  deleteForm: jest.fn(),
+}));
+
+jest.mock('expo-print', () => ({
+  printToFileAsync: jest.fn(),
+}));
+
+jest.mock('expo-sharing', () => ({
+  shareAsync: jest.fn(),
 }));
 
 const mockedGetFormRecord = getFormRecord as jest.Mock;
+const mockedDeleteForm = deleteForm as jest.Mock;
+const mockedPrintToFileAsync = Print.printToFileAsync as jest.Mock;
+const mockedShareAsync = Sharing.shareAsync as jest.Mock;
 
 type Props = NativeStackScreenProps<AppStackParamList, 'FormDetail'>;
 
@@ -159,4 +173,127 @@ describe('FormDetail', () => {
 
     expect(mockNavigation.navigate).toHaveBeenCalledWith('FormEntry', { formId: 'form-1' });
   }, 20000);
+
+  describe('exporting to PDF', () => {
+    it('generates and shares the PDF when "Exportar PDF" is pressed', async () => {
+      mockedGetFormRecord.mockResolvedValue(filledRecord);
+      mockedPrintToFileAsync.mockResolvedValue({ uri: 'file://form.pdf' });
+      mockedShareAsync.mockResolvedValue(undefined);
+
+      render(<FormDetail navigation={mockNavigation} route={makeRoute('form-1')} />);
+
+      await waitFor(() => {
+        expect(screen.getByTestId('form-detail-export-pdf-button')).toBeTruthy();
+      }, ASYNC_TIMEOUT);
+
+      fireEvent.press(screen.getByTestId('form-detail-export-pdf-button'));
+
+      await waitFor(() => {
+        expect(mockedPrintToFileAsync).toHaveBeenCalledWith({
+          html: expect.stringContaining('20/04/2026'),
+        });
+      }, ASYNC_TIMEOUT);
+      await waitFor(() => {
+        expect(mockedShareAsync).toHaveBeenCalledWith('file://form.pdf', expect.any(Object));
+      }, ASYNC_TIMEOUT);
+    }, 20000);
+
+    it('shows an error message when PDF generation fails', async () => {
+      mockedGetFormRecord.mockResolvedValue(filledRecord);
+      mockedPrintToFileAsync.mockRejectedValue(new Error('print failed'));
+
+      render(<FormDetail navigation={mockNavigation} route={makeRoute('form-1')} />);
+
+      await waitFor(() => {
+        expect(screen.getByTestId('form-detail-export-pdf-button')).toBeTruthy();
+      }, ASYNC_TIMEOUT);
+
+      fireEvent.press(screen.getByTestId('form-detail-export-pdf-button'));
+
+      await waitFor(() => {
+        expect(screen.getByText('Não foi possível exportar o PDF. Tente novamente.')).toBeTruthy();
+      }, ASYNC_TIMEOUT);
+      expect(mockedShareAsync).not.toHaveBeenCalled();
+    }, 20000);
+  });
+
+  describe('deleting the form', () => {
+    it('does not delete anything until the confirmation dialog is accepted', async () => {
+      mockedGetFormRecord.mockResolvedValue(filledRecord);
+
+      render(<FormDetail navigation={mockNavigation} route={makeRoute('form-1')} />);
+
+      await waitFor(() => {
+        expect(screen.getByTestId('form-detail-delete-button')).toBeTruthy();
+      }, ASYNC_TIMEOUT);
+
+      fireEvent.press(screen.getByTestId('form-detail-delete-button'));
+
+      expect(screen.getByText('Excluir formulário')).toBeTruthy();
+      expect(screen.getByTestId('form-detail-delete-confirm-button')).toBeTruthy();
+      expect(mockedDeleteForm).not.toHaveBeenCalled();
+    }, 20000);
+
+    it('dismisses the dialog without deleting when "Cancelar" is pressed', async () => {
+      mockedGetFormRecord.mockResolvedValue(filledRecord);
+
+      render(<FormDetail navigation={mockNavigation} route={makeRoute('form-1')} />);
+
+      await waitFor(() => {
+        expect(screen.getByTestId('form-detail-delete-button')).toBeTruthy();
+      }, ASYNC_TIMEOUT);
+
+      fireEvent.press(screen.getByTestId('form-detail-delete-button'));
+      fireEvent.press(screen.getByTestId('form-detail-delete-cancel-button'));
+
+      // Paper's Modal plays a closing animation before unmounting the
+      // dialog's content, so it doesn't disappear synchronously.
+      await waitFor(() => {
+        expect(screen.queryByText('Excluir formulário')).toBeNull();
+      }, ASYNC_TIMEOUT);
+      expect(mockedDeleteForm).not.toHaveBeenCalled();
+    }, 20000);
+
+    it('deletes the form and navigates back when the confirmation is accepted', async () => {
+      mockedGetFormRecord.mockResolvedValue(filledRecord);
+      mockedDeleteForm.mockResolvedValue(undefined);
+
+      render(<FormDetail navigation={mockNavigation} route={makeRoute('form-1')} />);
+
+      await waitFor(() => {
+        expect(screen.getByTestId('form-detail-delete-button')).toBeTruthy();
+      }, ASYNC_TIMEOUT);
+
+      fireEvent.press(screen.getByTestId('form-detail-delete-button'));
+      fireEvent.press(screen.getByTestId('form-detail-delete-confirm-button'));
+
+      await waitFor(() => {
+        expect(mockedDeleteForm).toHaveBeenCalledWith('form-1');
+      }, ASYNC_TIMEOUT);
+      await waitFor(() => {
+        expect(mockNavigation.goBack).toHaveBeenCalled();
+      }, ASYNC_TIMEOUT);
+    }, 20000);
+
+    it('shows an error message when deleting fails', async () => {
+      mockedGetFormRecord.mockResolvedValue(filledRecord);
+      mockedDeleteForm.mockRejectedValue(new Error('delete failed'));
+
+      render(<FormDetail navigation={mockNavigation} route={makeRoute('form-1')} />);
+
+      await waitFor(() => {
+        expect(screen.getByTestId('form-detail-delete-button')).toBeTruthy();
+      }, ASYNC_TIMEOUT);
+
+      fireEvent.press(screen.getByTestId('form-detail-delete-button'));
+      fireEvent.press(screen.getByTestId('form-detail-delete-confirm-button'));
+
+      await waitFor(() => {
+        expect(
+          screen.getByText('Não foi possível excluir o formulário. Tente novamente.'),
+        ).toBeTruthy();
+      }, ASYNC_TIMEOUT);
+      expect(mockNavigation.goBack).not.toHaveBeenCalled();
+    }, 20000);
+  });
 });

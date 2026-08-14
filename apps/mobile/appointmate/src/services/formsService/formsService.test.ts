@@ -1,6 +1,7 @@
 import {
   addDoc,
   collection,
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
@@ -10,12 +11,20 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore';
-import { createForm, getForm, getFormRecord, listForms, updateForm } from './formsService';
+import {
+  createForm,
+  deleteForm,
+  getForm,
+  getFormRecord,
+  listForms,
+  updateForm,
+} from './formsService';
 import type { FormValues } from '../../domain/form';
 
 jest.mock('firebase/firestore', () => ({
   addDoc: jest.fn(),
   collection: jest.fn(),
+  deleteDoc: jest.fn(),
   doc: jest.fn(),
   getDoc: jest.fn(),
   getDocs: jest.fn(),
@@ -32,6 +41,7 @@ jest.mock('../firebase', () => ({
 
 const mockedAddDoc = addDoc as jest.Mock;
 const mockedCollection = collection as jest.Mock;
+const mockedDeleteDoc = deleteDoc as jest.Mock;
 const mockedDoc = doc as jest.Mock;
 const mockedGetDoc = getDoc as jest.Mock;
 const mockedGetDocs = getDocs as jest.Mock;
@@ -356,6 +366,17 @@ describe('formsService', () => {
       const result = await listForms('user-abc');
 
       expect(result).toEqual([]);
+    });
+  });
+
+  describe('deleteForm', () => {
+    it('deletes the document by id', async () => {
+      mockedDoc.mockReturnValue({ ref: 'form-doc' });
+      mockedDeleteDoc.mockResolvedValue(undefined);
+
+      await deleteForm('form-1');
+
+      expect(mockedDeleteDoc).toHaveBeenCalledWith({ ref: 'form-doc' });
     });
   });
 });
