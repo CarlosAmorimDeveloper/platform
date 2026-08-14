@@ -3,8 +3,12 @@ import {
   collection,
   doc,
   getDoc,
+  getDocs,
+  orderBy,
+  query,
   serverTimestamp,
   updateDoc,
+  where,
   type Timestamp,
 } from 'firebase/firestore';
 import { db } from '../firebase';
@@ -12,6 +16,15 @@ import type { FormStatus, FormValues } from '../../domain/form';
 
 export interface FormRecord {
   values: FormValues;
+  status: FormStatus;
+  createdAt: Date | null;
+  updatedAt: Date | null;
+}
+
+export interface FormSummary {
+  id: string;
+  appointmentDate: string;
+  overallSummary: string;
   status: FormStatus;
   createdAt: Date | null;
   updatedAt: Date | null;
@@ -113,4 +126,27 @@ export async function getFormRecord(formId: string): Promise<FormRecord | null> 
     createdAt: toDateOrNull(data.createdAt),
     updatedAt: toDateOrNull(data.updatedAt),
   };
+}
+
+export async function listForms(userId: string): Promise<FormSummary[]> {
+  // firestore.rules' `read` permission also governs `list` — this filter is
+  // required, not just an optimization: a query without it is denied outright.
+  const formsQuery = query(
+    collection(db, 'forms'),
+    where('userId', '==', userId),
+    orderBy('createdAt', 'desc'),
+  );
+  const snapshot = await getDocs(formsQuery);
+
+  return snapshot.docs.map((docSnapshot) => {
+    const data = docSnapshot.data();
+    return {
+      id: docSnapshot.id,
+      appointmentDate: (data.appointmentDate ?? '') as string,
+      overallSummary: (data.overallSummary ?? '') as string,
+      status: (data.status ?? 'draft') as FormStatus,
+      createdAt: toDateOrNull(data.createdAt),
+      updatedAt: toDateOrNull(data.updatedAt),
+    };
+  });
 }
