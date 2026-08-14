@@ -133,6 +133,7 @@ export function Home({ navigation }: Props) {
                 anchor={
                   <IconButton
                     icon="filter-variant"
+                    variant="primary"
                     accessibilityLabel="Filtrar por período"
                     onPress={() => setFilterMenuVisible(true)}
                     testID="home-filter-icon-button"

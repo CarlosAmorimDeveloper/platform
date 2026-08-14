@@ -1,4 +1,5 @@
 import React from 'react';
+import { colors } from '@ds/tokens';
 import { render, screen, fireEvent } from '../../test-utils';
 import { IconButton } from './IconButton';
 
@@ -25,5 +26,17 @@ describe('IconButton', () => {
   it('reflete accessibilityLabel', () => {
     render(<IconButton icon="filter-variant" accessibilityLabel="Filtrar" testID="icon-button" />);
     expect(screen.getByLabelText('Filtrar')).toBeTruthy();
+  });
+
+  it('usa a cor primária quando variant="primary"', () => {
+    render(<IconButton icon="filter-variant" variant="primary" testID="icon-button" />);
+    // Paper's IconButton forwards `iconColor` down to the inner Icon's
+    // `color` prop rather than keeping it on the testID'd host node.
+    expect(screen.UNSAFE_getByProps({ color: colors.primary[600] })).toBeTruthy();
+  });
+
+  it('usa a cor neutra por padrão', () => {
+    render(<IconButton icon="filter-variant" testID="icon-button" />);
+    expect(screen.UNSAFE_getByProps({ color: colors.neutral[700] })).toBeTruthy();
   });
 });
