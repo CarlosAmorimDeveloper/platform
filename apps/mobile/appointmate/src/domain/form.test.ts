@@ -4,6 +4,7 @@ import {
   EMPTY_QUESTION,
   MOOD_OPTIONS,
   formatDateInput,
+  isDateOnOrAfterToday,
 } from './form';
 
 describe('MOOD_OPTIONS', () => {
@@ -83,5 +84,26 @@ describe('formatDateInput', () => {
 
   it('returns an empty string for empty input', () => {
     expect(formatDateInput('')).toBe('');
+  });
+});
+
+describe('isDateOnOrAfterToday', () => {
+  const now = new Date(2026, 2, 20); // 20/03/2026
+
+  it('accepts today', () => {
+    expect(isDateOnOrAfterToday('20/03/2026', now)).toBe(true);
+  });
+
+  it('accepts a future date', () => {
+    expect(isDateOnOrAfterToday('21/03/2026', now)).toBe(true);
+  });
+
+  it('rejects a past date', () => {
+    expect(isDateOnOrAfterToday('19/03/2026', now)).toBe(false);
+  });
+
+  it('does not flag an empty or incomplete date — that is the "required" rule\'s job', () => {
+    expect(isDateOnOrAfterToday('', now)).toBe(true);
+    expect(isDateOnOrAfterToday('15/03', now)).toBe(true);
   });
 });

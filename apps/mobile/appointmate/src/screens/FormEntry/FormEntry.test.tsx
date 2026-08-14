@@ -40,8 +40,21 @@ function makeRoute(formId?: string): Props['route'] {
 // assertions that depend on flushing re-renders across the full provider tree.
 const ASYNC_TIMEOUT = { timeout: 15000 };
 
+// The consultation date can't be in the past, so fixtures compute it
+// relative to whenever the suite actually runs instead of hardcoding a
+// calendar date that would eventually — or already — be in the past.
+function dateOffsetFromToday(days: number): string {
+  const date = new Date();
+  date.setDate(date.getDate() + days);
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  return `${day}/${month}/${date.getFullYear()}`;
+}
+
+const FUTURE_APPOINTMENT_DATE = dateOffsetFromToday(30);
+
 const existingValues = {
-  appointmentDate: '20/04/2026',
+  appointmentDate: FUTURE_APPOINTMENT_DATE,
   lastAppointmentDate: '10/01/2026',
   overallMood: 'estavel' as const,
   overallSummary: 'Semana estável.',
@@ -61,7 +74,10 @@ const existingValues = {
 };
 
 function fillAllRequiredFields() {
-  fireEvent.changeText(screen.getByTestId('form-entry-appointment-date-input'), '15032026');
+  fireEvent.changeText(
+    screen.getByTestId('form-entry-appointment-date-input'),
+    FUTURE_APPOINTMENT_DATE,
+  );
   fireEvent.changeText(screen.getByTestId('form-entry-last-appointment-date-input'), '10012026');
   fireEvent.press(screen.getByTestId('form-entry-overall-mood-chip-bem'));
   fireEvent.changeText(screen.getByTestId('form-entry-overall-summary-input'), 'Resumo da semana.');
@@ -215,6 +231,42 @@ describe('FormEntry', () => {
       expect(mockedCreateForm).not.toHaveBeenCalled();
     }, 20000);
 
+    it('blocks submit and shows an error when the consultation date is in the past', async () => {
+      render(<FormEntry navigation={mockNavigation} route={makeRoute()} />);
+
+      fillAllRequiredFields();
+      fireEvent.changeText(
+        screen.getByTestId('form-entry-appointment-date-input'),
+        dateOffsetFromToday(-1),
+      );
+      fireEvent.press(screen.getByTestId('form-entry-submit-button'));
+
+      await waitFor(() => {
+        expect(screen.getByText('A data não pode ser anterior a hoje')).toBeTruthy();
+      }, ASYNC_TIMEOUT);
+      expect(mockedCreateForm).not.toHaveBeenCalled();
+    }, 20000);
+
+    it('accepts today as a valid consultation date', async () => {
+      mockedCreateForm.mockResolvedValue('new-form-id');
+      render(<FormEntry navigation={mockNavigation} route={makeRoute()} />);
+
+      fillAllRequiredFields();
+      fireEvent.changeText(
+        screen.getByTestId('form-entry-appointment-date-input'),
+        dateOffsetFromToday(0),
+      );
+      fireEvent.press(screen.getByTestId('form-entry-submit-button'));
+
+      await waitFor(() => {
+        expect(mockedCreateForm).toHaveBeenCalledWith(
+          'user-abc',
+          expect.objectContaining({ appointmentDate: dateOffsetFromToday(0) }),
+          'submitted',
+        );
+      }, ASYNC_TIMEOUT);
+    }, 20000);
+
     it('calls createForm with status "submitted" once every field is filled in', async () => {
       mockedCreateForm.mockResolvedValue('new-form-id');
       render(<FormEntry navigation={mockNavigation} route={makeRoute()} />);
@@ -226,7 +278,7 @@ describe('FormEntry', () => {
         expect(mockedCreateForm).toHaveBeenCalledWith(
           'user-abc',
           expect.objectContaining({
-            appointmentDate: '15/03/2026',
+            appointmentDate: FUTURE_APPOINTMENT_DATE,
             overallMood: 'bem',
           }),
           'submitted',
@@ -271,7 +323,7 @@ describe('FormEntry', () => {
 
       await waitFor(() => {
         expect(screen.getByTestId('form-entry-appointment-date-input').props.value).toBe(
-          '20/04/2026',
+          FUTURE_APPOINTMENT_DATE,
         );
       }, ASYNC_TIMEOUT);
       expect(screen.getByTestId('form-entry-last-appointment-date-input').props.value).toBe(
