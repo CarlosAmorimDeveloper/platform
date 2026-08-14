@@ -57,8 +57,37 @@ const existingValues = {
   context: 'Mudança de emprego.',
   questions: [{ text: 'Posso reduzir a dose?' }],
   todayFocus: 'Ajustar a medicação.',
-  consultationNotes: '',
+  consultationNotes: 'Nenhuma nota adicional.',
 };
+
+function fillAllRequiredFields() {
+  fireEvent.changeText(screen.getByTestId('form-entry-appointment-date-input'), '15032026');
+  fireEvent.changeText(screen.getByTestId('form-entry-last-appointment-date-input'), '10012026');
+  fireEvent.press(screen.getByTestId('form-entry-overall-mood-chip-bem'));
+  fireEvent.changeText(screen.getByTestId('form-entry-overall-summary-input'), 'Resumo da semana.');
+  fireEvent.changeText(screen.getByTestId('form-entry-sleep-input'), 'Dormindo bem.');
+  fireEvent.changeText(screen.getByTestId('form-entry-energy-input'), 'Energia normal.');
+  fireEvent.changeText(screen.getByTestId('form-entry-appetite-input'), 'Apetite bom.');
+  fireEvent.changeText(screen.getByTestId('form-entry-concentration-input'), 'Concentração ok.');
+  fireEvent.changeText(screen.getByTestId('form-entry-medication-0-input'), 'Sertralina 50mg');
+  fireEvent.changeText(screen.getByTestId('form-entry-medication-adherence-input'), 'Sim, sempre.');
+  fireEvent.changeText(screen.getByTestId('form-entry-medication-effects-input'), 'Nenhum efeito.');
+  fireEvent.changeText(
+    screen.getByTestId('form-entry-what-went-well-input'),
+    'Dormi melhor essa semana.',
+  );
+  fireEvent.changeText(
+    screen.getByTestId('form-entry-what-has-been-hard-input'),
+    'Ansiedade no trabalho.',
+  );
+  fireEvent.changeText(screen.getByTestId('form-entry-context-input'), 'Mudança de emprego.');
+  fireEvent.changeText(screen.getByTestId('form-entry-question-0-input'), 'Posso reduzir a dose?');
+  fireEvent.changeText(screen.getByTestId('form-entry-today-focus-input'), 'Ajustar a medicação.');
+  fireEvent.changeText(
+    screen.getByTestId('form-entry-consultation-notes-input'),
+    'Nenhuma nota adicional.',
+  );
+}
 
 describe('FormEntry', () => {
   beforeEach(() => {
@@ -92,17 +121,24 @@ describe('FormEntry', () => {
       expect(screen.getByTestId('form-entry-submit-button')).toBeTruthy();
     });
 
-    it('starts with 2 medication rows and 3 question rows', () => {
+    it('starts with exactly 1 medication row and 1 question row', () => {
       render(<FormEntry navigation={mockNavigation} route={makeRoute()} />);
 
       expect(screen.getByTestId('form-entry-medication-0-input')).toBeTruthy();
-      expect(screen.getByTestId('form-entry-medication-1-input')).toBeTruthy();
-      expect(screen.queryByTestId('form-entry-medication-2-input')).toBeNull();
+      expect(screen.queryByTestId('form-entry-medication-1-input')).toBeNull();
 
       expect(screen.getByTestId('form-entry-question-0-input')).toBeTruthy();
-      expect(screen.getByTestId('form-entry-question-1-input')).toBeTruthy();
-      expect(screen.getByTestId('form-entry-question-2-input')).toBeTruthy();
-      expect(screen.queryByTestId('form-entry-question-3-input')).toBeNull();
+      expect(screen.queryByTestId('form-entry-question-1-input')).toBeNull();
+    });
+
+    it('formats the date fields as dd/mm/aaaa as digits are typed', () => {
+      render(<FormEntry navigation={mockNavigation} route={makeRoute()} />);
+
+      fireEvent.changeText(screen.getByTestId('form-entry-appointment-date-input'), '15032026');
+
+      expect(screen.getByTestId('form-entry-appointment-date-input').props.value).toBe(
+        '15/03/2026',
+      );
     });
 
     it('selects a single mood chip at a time', () => {
@@ -123,32 +159,31 @@ describe('FormEntry', () => {
       render(<FormEntry navigation={mockNavigation} route={makeRoute()} />);
 
       fireEvent.press(screen.getByTestId('form-entry-add-medication-button'));
-      expect(screen.getByTestId('form-entry-medication-2-input')).toBeTruthy();
+      expect(screen.getByTestId('form-entry-medication-1-input')).toBeTruthy();
 
-      fireEvent.press(screen.getByTestId('form-entry-remove-medication-2-button'));
-      expect(screen.queryByTestId('form-entry-medication-2-input')).toBeNull();
+      fireEvent.press(screen.getByTestId('form-entry-remove-medication-1-button'));
+      expect(screen.queryByTestId('form-entry-medication-1-input')).toBeNull();
     });
 
     it('adds and removes a question row', () => {
       render(<FormEntry navigation={mockNavigation} route={makeRoute()} />);
 
       fireEvent.press(screen.getByTestId('form-entry-add-question-button'));
-      expect(screen.getByTestId('form-entry-question-3-input')).toBeTruthy();
+      expect(screen.getByTestId('form-entry-question-1-input')).toBeTruthy();
 
-      fireEvent.press(screen.getByTestId('form-entry-remove-question-3-button'));
-      expect(screen.queryByTestId('form-entry-question-3-input')).toBeNull();
+      fireEvent.press(screen.getByTestId('form-entry-remove-question-1-button'));
+      expect(screen.queryByTestId('form-entry-question-1-input')).toBeNull();
     });
 
-    it('removes every medication row down to zero', () => {
+    it('removes the only medication row, leaving zero', () => {
       render(<FormEntry navigation={mockNavigation} route={makeRoute()} />);
 
-      fireEvent.press(screen.getByTestId('form-entry-remove-medication-1-button'));
       fireEvent.press(screen.getByTestId('form-entry-remove-medication-0-button'));
 
       expect(screen.queryByTestId('form-entry-medication-0-input')).toBeNull();
     });
 
-    it('saves as draft with the form completely empty', async () => {
+    it('saves as draft with the form completely empty — drafts skip validation', async () => {
       mockedCreateForm.mockResolvedValue('new-form-id');
       render(<FormEntry navigation={mockNavigation} route={makeRoute()} />);
 
@@ -168,17 +203,23 @@ describe('FormEntry', () => {
       }, ASYNC_TIMEOUT);
     }, 20000);
 
-    it('calls createForm with status "submitted" and navigates to the new form detail when sending', async () => {
+    it('does not submit and shows validation errors when required fields are empty', async () => {
+      render(<FormEntry navigation={mockNavigation} route={makeRoute()} />);
+
+      fireEvent.press(screen.getByTestId('form-entry-submit-button'));
+
+      await waitFor(() => {
+        expect(screen.getByTestId('form-entry-overall-mood-error')).toBeTruthy();
+      }, ASYNC_TIMEOUT);
+      expect(screen.getAllByText('Campo obrigatório').length).toBeGreaterThan(1);
+      expect(mockedCreateForm).not.toHaveBeenCalled();
+    }, 20000);
+
+    it('calls createForm with status "submitted" once every field is filled in', async () => {
       mockedCreateForm.mockResolvedValue('new-form-id');
       render(<FormEntry navigation={mockNavigation} route={makeRoute()} />);
 
-      fireEvent.changeText(screen.getByTestId('form-entry-appointment-date-input'), '15/03/2026');
-      fireEvent.press(screen.getByTestId('form-entry-overall-mood-chip-bem'));
-      fireEvent.changeText(
-        screen.getByTestId('form-entry-what-went-well-input'),
-        'Dormi melhor essa semana.',
-      );
-
+      fillAllRequiredFields();
       fireEvent.press(screen.getByTestId('form-entry-submit-button'));
 
       await waitFor(() => {
@@ -187,7 +228,6 @@ describe('FormEntry', () => {
           expect.objectContaining({
             appointmentDate: '15/03/2026',
             overallMood: 'bem',
-            whatWentWell: 'Dormi melhor essa semana.',
           }),
           'submitted',
         );
@@ -203,6 +243,7 @@ describe('FormEntry', () => {
       mockedCreateForm.mockRejectedValue(new Error('network error'));
       render(<FormEntry navigation={mockNavigation} route={makeRoute()} />);
 
+      fillAllRequiredFields();
       fireEvent.press(screen.getByTestId('form-entry-submit-button'));
 
       await waitFor(() => {

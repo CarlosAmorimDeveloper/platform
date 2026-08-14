@@ -9,12 +9,15 @@ import { createForm, getForm, updateForm } from '../../services/formsService';
 import {
   EMPTY_FORM_VALUES,
   MOOD_OPTIONS,
+  formatDateInput,
   type FormStatus,
   type FormValues,
 } from '../../domain/form';
 import { styles } from './FormEntry.styles';
 
 type Props = NativeStackScreenProps<AppStackParamList, 'FormEntry'>;
+
+const REQUIRED_MESSAGE = 'Campo obrigatório';
 
 type TextareaFieldName =
   | 'overallSummary'
@@ -45,8 +48,15 @@ function TextareaField({
     <Controller
       control={control}
       name={name}
-      render={({ field }) => (
-        <Textarea label={label} value={field.value} onChangeText={field.onChange} testID={testID} />
+      rules={{ required: REQUIRED_MESSAGE }}
+      render={({ field, fieldState }) => (
+        <Textarea
+          label={label}
+          value={field.value}
+          onChangeText={field.onChange}
+          error={fieldState.error?.message}
+          testID={testID}
+        />
       )}
     />
   );
@@ -60,7 +70,7 @@ export function FormEntry({ navigation, route }: Props) {
   const [saving, setSaving] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const { control, handleSubmit, reset } = useForm<FormValues>({
+  const { control, handleSubmit, reset, getValues } = useForm<FormValues>({
     defaultValues: EMPTY_FORM_VALUES,
   });
   const medicationsArray = useFieldArray({ control, name: 'medications' });
@@ -107,6 +117,13 @@ export function FormEntry({ navigation, route }: Props) {
     }
   }
 
+  // Drafts intentionally skip validation — reads current values directly
+  // instead of going through `handleSubmit`, which would enforce the
+  // `required` rules meant only for "Enviar".
+  function onSaveDraft() {
+    onSave(getValues(), 'draft');
+  }
+
   if (loadingForm) {
     return <LoadingView testID="form-entry-loading" />;
   }
@@ -121,12 +138,14 @@ export function FormEntry({ navigation, route }: Props) {
         <Controller
           control={control}
           name="appointmentDate"
-          render={({ field }) => (
+          rules={{ required: REQUIRED_MESSAGE }}
+          render={({ field, fieldState }) => (
             <Input
               label="Data desta consulta"
               placeholder="dd/mm/aaaa"
               value={field.value}
-              onChangeText={field.onChange}
+              onChangeText={(text) => field.onChange(formatDateInput(text))}
+              error={fieldState.error?.message}
               testID="form-entry-appointment-date-input"
             />
           )}
@@ -134,36 +153,46 @@ export function FormEntry({ navigation, route }: Props) {
         <Controller
           control={control}
           name="lastAppointmentDate"
-          render={({ field }) => (
+          rules={{ required: REQUIRED_MESSAGE }}
+          render={({ field, fieldState }) => (
             <Input
               label="Última consulta foi em"
               placeholder="dd/mm/aaaa"
               value={field.value}
-              onChangeText={field.onChange}
+              onChangeText={(text) => field.onChange(formatDateInput(text))}
+              error={fieldState.error?.message}
               testID="form-entry-last-appointment-date-input"
             />
           )}
         />
 
         <Text style={styles.sectionTitle}>Panorama geral</Text>
-        <View style={styles.chipRow}>
-          {MOOD_OPTIONS.map((option) => (
-            <Controller
-              key={option.value}
-              control={control}
-              name="overallMood"
-              render={({ field }) => (
-                <Chip
-                  selected={field.value === option.value}
-                  onPress={() => field.onChange(option.value)}
-                  testID={`form-entry-overall-mood-chip-${option.value}`}
-                >
-                  {option.label}
-                </Chip>
+        <Controller
+          control={control}
+          name="overallMood"
+          rules={{ required: REQUIRED_MESSAGE }}
+          render={({ field, fieldState }) => (
+            <>
+              <View style={styles.chipRow}>
+                {MOOD_OPTIONS.map((option) => (
+                  <Chip
+                    key={option.value}
+                    selected={field.value === option.value}
+                    onPress={() => field.onChange(option.value)}
+                    testID={`form-entry-overall-mood-chip-${option.value}`}
+                  >
+                    {option.label}
+                  </Chip>
+                ))}
+              </View>
+              {fieldState.error && (
+                <Text style={styles.errorText} testID="form-entry-overall-mood-error">
+                  {fieldState.error.message}
+                </Text>
               )}
-            />
-          ))}
-        </View>
+            </>
+          )}
+        />
         <TextareaField
           control={control}
           name="overallSummary"
@@ -203,11 +232,13 @@ export function FormEntry({ navigation, route }: Props) {
             <Controller
               control={control}
               name={`medications.${index}.text`}
-              render={({ field: f }) => (
+              rules={{ required: REQUIRED_MESSAGE }}
+              render={({ field: f, fieldState }) => (
                 <Input
                   label="Medicamento e dose"
                   value={f.value}
                   onChangeText={f.onChange}
+                  error={fieldState.error?.message}
                   testID={`form-entry-medication-${index}-input`}
                 />
               )}
@@ -271,11 +302,13 @@ export function FormEntry({ navigation, route }: Props) {
             <Controller
               control={control}
               name={`questions.${index}.text`}
-              render={({ field: f }) => (
+              rules={{ required: REQUIRED_MESSAGE }}
+              render={({ field: f, fieldState }) => (
                 <Input
                   label="Pergunta"
                   value={f.value}
                   onChangeText={f.onChange}
+                  error={fieldState.error?.message}
                   testID={`form-entry-question-${index}-input`}
                 />
               )}
@@ -316,7 +349,7 @@ export function FormEntry({ navigation, route }: Props) {
         <LoadingIndicator visible={saving} testID="form-entry-saving-indicator" />
         <Button
           variant="secondary"
-          onPress={handleSubmit((values) => onSave(values, 'draft'))}
+          onPress={onSaveDraft}
           disabled={saving}
           testID="form-entry-save-draft-button"
         >

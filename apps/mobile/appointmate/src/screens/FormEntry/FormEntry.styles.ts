@@ -5,6 +5,7 @@ export const styles = StyleSheet.create({
   keyboardView: { flex: 1 },
   container: {
     padding: spacing[6],
+    paddingBottom: spacing[16],
     gap: spacing[4],
   },
   sectionTitle: {
@@ -17,6 +18,10 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: spacing[2],
+  },
+  errorText: {
+    fontSize: fontSizes.sm,
+    color: colors.error[500],
   },
   dynamicRow: {
     gap: spacing[2],
