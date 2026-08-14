@@ -22,6 +22,7 @@ type HomeProps = NativeStackScreenProps<AppStackParamList, 'Home'>;
 const mockNavigation = {
   navigate: jest.fn(),
   addListener: jest.fn(() => jest.fn()),
+  setOptions: jest.fn(),
 } as unknown as HomeProps['navigation'];
 const mockRoute = { key: 'Home', name: 'Home' } as unknown as HomeProps['route'];
 
@@ -125,20 +126,6 @@ describe('Home', () => {
     expect(mockNavigation.navigate).toHaveBeenCalledWith('FormEntry', undefined);
   }, 20000);
 
-  it('calls logout from AuthContext when "Sair" is pressed', async () => {
-    mockedListForms.mockResolvedValue([]);
-
-    render(<Home navigation={mockNavigation} route={mockRoute} />);
-
-    await waitFor(() => {
-      expect(screen.getByTestId('home-logout-button')).toBeTruthy();
-    }, ASYNC_TIMEOUT);
-
-    fireEvent.press(screen.getByTestId('home-logout-button'));
-
-    expect(logout).toHaveBeenCalled();
-  }, 20000);
-
   it('re-fetches the list on pull-to-refresh', async () => {
     mockedListForms.mockResolvedValue([formA]);
 
@@ -188,8 +175,58 @@ describe('Home', () => {
     }, ASYNC_TIMEOUT);
   }, 20000);
 
+  describe('header', () => {
+    it('sets the header title to "Meus formulários"', async () => {
+      mockedListForms.mockResolvedValue([]);
+
+      render(<Home navigation={mockNavigation} route={mockRoute} />);
+
+      await waitFor(() => {
+        expect(mockNavigation.setOptions).toHaveBeenCalledWith(
+          expect.objectContaining({ title: 'Meus formulários' }),
+        );
+      }, ASYNC_TIMEOUT);
+    }, 20000);
+
+    it('renders a "Sair" button in the header that calls logout when pressed', async () => {
+      mockedListForms.mockResolvedValue([]);
+
+      render(<Home navigation={mockNavigation} route={mockRoute} />);
+
+      await waitFor(() => {
+        expect(mockNavigation.setOptions).toHaveBeenCalled();
+      }, ASYNC_TIMEOUT);
+
+      const lastCall = (mockNavigation.setOptions as jest.Mock).mock.calls.at(-1);
+      const { headerRight } = lastCall[0];
+      const { getByTestId } = render(headerRight());
+
+      fireEvent.press(getByTestId('home-logout-button'));
+
+      expect(logout).toHaveBeenCalled();
+    }, 20000);
+  });
+
   describe('time filter', () => {
-    it('shows only forms created within the last 7 days when that preset is selected', async () => {
+    it('opens a menu with the period presets when the filter icon is pressed', async () => {
+      mockedListForms.mockResolvedValue([]);
+
+      render(<Home navigation={mockNavigation} route={mockRoute} />);
+
+      await waitFor(() => {
+        expect(screen.getByTestId('home-filter-icon-button')).toBeTruthy();
+      }, ASYNC_TIMEOUT);
+
+      fireEvent.press(screen.getByTestId('home-filter-icon-button'));
+
+      expect(screen.getByText('Todos')).toBeTruthy();
+      expect(screen.getByText('Últimos 7 dias')).toBeTruthy();
+      expect(screen.getByText('Últimos 30 dias')).toBeTruthy();
+      // "Personalizado" needs its own date-range UI that doesn't fit this menu.
+      expect(screen.queryByText('Personalizado')).toBeNull();
+    }, 20000);
+
+    it('filters the list and reloads it when a period is selected', async () => {
       const now = new Date();
       const recent = { ...formA, id: 'form-recent', createdAt: now };
       const old = {
@@ -205,28 +242,39 @@ describe('Home', () => {
         expect(screen.getByTestId('home-form-card-form-old')).toBeTruthy();
       }, ASYNC_TIMEOUT);
 
-      fireEvent.press(screen.getByTestId('home-filter-chip-ultimos_7_dias'));
+      fireEvent.press(screen.getByTestId('home-filter-icon-button'));
+      mockedListForms.mockClear();
+      fireEvent.press(screen.getByText('Últimos 7 dias'));
 
       await waitFor(() => {
         expect(screen.queryByTestId('home-form-card-form-old')).toBeNull();
       }, ASYNC_TIMEOUT);
       expect(screen.getByTestId('home-form-card-form-recent')).toBeTruthy();
+      await waitFor(() => {
+        expect(mockedListForms).toHaveBeenCalledWith('user-abc');
+      }, ASYNC_TIMEOUT);
     }, 20000);
 
-    it('shows the custom date inputs only when "Personalizado" is selected', async () => {
+    it('reloads the list when the filter menu is dismissed without selecting a period', async () => {
       mockedListForms.mockResolvedValue([formA]);
 
       render(<Home navigation={mockNavigation} route={mockRoute} />);
 
       await waitFor(() => {
-        expect(screen.getByTestId('home-filter-chip-personalizado')).toBeTruthy();
+        expect(screen.getByTestId('home-filter-icon-button')).toBeTruthy();
       }, ASYNC_TIMEOUT);
-      expect(screen.queryByTestId('home-filter-custom-start-input')).toBeNull();
 
-      fireEvent.press(screen.getByTestId('home-filter-chip-personalizado'));
+      fireEvent.press(screen.getByTestId('home-filter-icon-button'));
+      mockedListForms.mockClear();
+      // Paper's Menu dismisses via a tap on its backdrop overlay, not a
+      // plain testID'd node — same interaction a real user would perform.
+      // `getByLabelText` doesn't match this host node in this RNTL version,
+      // so match the prop directly instead.
+      fireEvent.press(screen.UNSAFE_getByProps({ accessibilityLabel: 'Close menu' }));
 
-      expect(screen.getByTestId('home-filter-custom-start-input')).toBeTruthy();
-      expect(screen.getByTestId('home-filter-custom-end-input')).toBeTruthy();
+      await waitFor(() => {
+        expect(mockedListForms).toHaveBeenCalledWith('user-abc');
+      }, ASYNC_TIMEOUT);
     }, 20000);
 
     it('shows the filtered-empty state when the period has no matching forms', async () => {
@@ -240,10 +288,11 @@ describe('Home', () => {
       render(<Home navigation={mockNavigation} route={mockRoute} />);
 
       await waitFor(() => {
-        expect(screen.getByTestId('home-filter-chip-ultimos_7_dias')).toBeTruthy();
+        expect(screen.getByTestId('home-filter-icon-button')).toBeTruthy();
       }, ASYNC_TIMEOUT);
 
-      fireEvent.press(screen.getByTestId('home-filter-chip-ultimos_7_dias'));
+      fireEvent.press(screen.getByTestId('home-filter-icon-button'));
+      fireEvent.press(screen.getByText('Últimos 7 dias'));
 
       await waitFor(() => {
         expect(screen.getByTestId('home-empty-filtered-state')).toBeTruthy();

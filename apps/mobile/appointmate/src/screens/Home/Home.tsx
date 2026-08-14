@@ -1,16 +1,24 @@
-import { useCallback, useEffect, useState } from 'react';
-import { FlatList, RefreshControl, Text, View } from 'react-native';
-import { Button, EmptyState, ErrorView, LoadingView, Snackbar } from '@ds/mobile';
+import { useCallback, useEffect, useLayoutEffect, useState } from 'react';
+import { FlatList, RefreshControl, View } from 'react-native';
+import { Button, EmptyState, ErrorView, IconButton, LoadingView, Menu, Snackbar } from '@ds/mobile';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { AppStackParamList } from '../../navigation/types';
 import { useAuth } from '../../context/AuthContext';
 import { listForms, type FormSummary } from '../../services/formsService';
-import { DEFAULT_TIME_FILTER, isWithinTimeFilter, type TimeFilter } from '../../domain/timeFilter';
+import {
+  DEFAULT_TIME_FILTER,
+  TIME_FILTER_PRESETS,
+  isWithinTimeFilter,
+  type TimeFilter,
+} from '../../domain/timeFilter';
 import { FormCard } from './FormCard';
-import { TimeFilterBar } from './TimeFilterBar';
 import { styles } from './Home.styles';
 
 type Props = NativeStackScreenProps<AppStackParamList, 'Home'>;
+
+// "Personalizado" needs its own date-range inputs, which don't fit this
+// compact menu — left out of the selectable presets for now.
+const SELECTABLE_PRESETS = TIME_FILTER_PRESETS.filter((preset) => preset.value !== 'personalizado');
 
 export function Home({ navigation }: Props) {
   const { user, logout } = useAuth();
@@ -20,6 +28,7 @@ export function Home({ navigation }: Props) {
   const [refreshing, setRefreshing] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [filter, setFilter] = useState<TimeFilter>(DEFAULT_TIME_FILTER);
+  const [filterMenuVisible, setFilterMenuVisible] = useState(false);
 
   const loadForms = useCallback(
     (options?: { silent?: boolean }) => {
@@ -56,8 +65,24 @@ export function Home({ navigation }: Props) {
     return unsubscribe;
   }, [navigation, loadForms]);
 
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      title: 'Meus formulários',
+      headerRight: () => (
+        <Button variant="ghost" size="sm" onPress={logout} testID="home-logout-button">
+          Sair
+        </Button>
+      ),
+    });
+  }, [navigation, logout]);
+
   function onRefresh() {
     setRefreshing(true);
+    loadForms({ silent: true });
+  }
+
+  function closeFilterMenu() {
+    setFilterMenuVisible(false);
     loadForms({ silent: true });
   }
 
@@ -95,19 +120,35 @@ export function Home({ navigation }: Props) {
         }
         ListHeaderComponent={
           <View style={styles.header}>
-            <View style={styles.headerTopRow}>
-              <Text style={styles.title}>Meus formulários</Text>
-              <Button variant="secondary" size="sm" onPress={logout} testID="home-logout-button">
-                Sair
+            <View style={styles.actionsRow}>
+              <Button
+                onPress={() => navigation.navigate('FormEntry', undefined)}
+                testID="home-new-form-button"
+              >
+                Novo formulário
               </Button>
+              <Menu
+                visible={filterMenuVisible}
+                onDismiss={closeFilterMenu}
+                anchor={
+                  <IconButton
+                    icon="filter-variant"
+                    variant="primary"
+                    accessibilityLabel="Filtrar por período"
+                    onPress={() => setFilterMenuVisible(true)}
+                    testID="home-filter-icon-button"
+                  />
+                }
+                items={SELECTABLE_PRESETS.map((preset) => ({
+                  label: preset.label,
+                  onPress: () => {
+                    setFilter({ preset: preset.value, customStart: '', customEnd: '' });
+                    closeFilterMenu();
+                  },
+                }))}
+                testID="home-filter-menu"
+              />
             </View>
-            <Button
-              onPress={() => navigation.navigate('FormEntry', undefined)}
-              testID="home-new-form-button"
-            >
-              Novo formulário
-            </Button>
-            <TimeFilterBar filter={filter} onChange={setFilter} />
           </View>
         }
         ListEmptyComponent={
@@ -115,8 +156,6 @@ export function Home({ navigation }: Props) {
             <EmptyState
               title="Nenhum formulário ainda"
               description="Crie seu primeiro formulário de preparação para o retorno."
-              actionLabel="Criar formulário"
-              onAction={() => navigation.navigate('FormEntry', undefined)}
               testID="home-empty-state"
             />
           ) : (
