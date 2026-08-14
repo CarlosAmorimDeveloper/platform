@@ -10,6 +10,7 @@ import {
   EMPTY_FORM_VALUES,
   MOOD_OPTIONS,
   formatDateInput,
+  isDateOnOrAfterToday,
   type FormStatus,
   type FormValues,
 } from '../../domain/form';
@@ -138,7 +139,11 @@ export function FormEntry({ navigation, route }: Props) {
         <Controller
           control={control}
           name="appointmentDate"
-          rules={{ required: REQUIRED_MESSAGE }}
+          rules={{
+            required: REQUIRED_MESSAGE,
+            validate: (value) =>
+              isDateOnOrAfterToday(value) || 'A data não pode ser anterior a hoje',
+          }}
           render={({ field, fieldState }) => (
             <Input
               label="Data desta consulta"

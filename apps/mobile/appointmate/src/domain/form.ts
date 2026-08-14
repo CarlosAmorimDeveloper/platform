@@ -1,3 +1,5 @@
+import { parseDateInput } from './timeFilter';
+
 export type Mood = 'muito_dificil' | 'dificil' | 'oscilando' | 'estavel' | 'bem';
 
 export const MOOD_OPTIONS: { value: Mood; label: string }[] = [
@@ -79,4 +81,15 @@ export function formatDateInput(text: string): string {
   if (digits.length <= 2) return digits;
   if (digits.length <= 4) return `${digits.slice(0, 2)}/${digits.slice(2)}`;
   return `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4)}`;
+}
+
+// Used to validate "Data desta consulta" isn't retroactive — an incomplete
+// or unparseable date passes here on purpose, since that's the `required`
+// rule's concern, not this one's.
+export function isDateOnOrAfterToday(text: string, now = new Date()): boolean {
+  const date = parseDateInput(text);
+  if (!date) return true;
+
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  return date.getTime() >= today.getTime();
 }
