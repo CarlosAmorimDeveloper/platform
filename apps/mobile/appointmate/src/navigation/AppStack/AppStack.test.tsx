@@ -12,6 +12,12 @@ jest.mock('../../context/AuthContext', () => ({
 // AppStack doesn't try to initialize a real Firebase app in tests.
 jest.mock('../../services/firebase', () => ({ db: {}, auth: {} }));
 
+// FormDetail imports expo-print/expo-sharing at module load — these are
+// native modules with no binding available under Jest, so importing
+// AppStack (which registers FormDetail as a screen) needs them mocked too.
+jest.mock('expo-print', () => ({ printToFileAsync: jest.fn() }));
+jest.mock('expo-sharing', () => ({ shareAsync: jest.fn() }));
+
 describe('AppStack', () => {
   it('renders Home as the initial route', () => {
     render(<AppStack />);

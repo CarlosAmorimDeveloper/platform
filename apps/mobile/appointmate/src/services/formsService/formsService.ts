@@ -1,6 +1,7 @@
 import {
   addDoc,
   collection,
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
@@ -149,4 +150,8 @@ export async function listForms(userId: string): Promise<FormSummary[]> {
       updatedAt: toDateOrNull(data.updatedAt),
     };
   });
+}
+
+export async function deleteForm(formId: string): Promise<void> {
+  await deleteDoc(doc(db, 'forms', formId));
 }

@@ -45,6 +45,17 @@ export function Home({ navigation }: Props) {
     loadForms();
   }, [loadForms]);
 
+  // Refetch whenever Home regains focus (e.g. returning here after deleting
+  // a form on FormDetail) — using the `navigation` prop's own `addListener`
+  // instead of the `useFocusEffect`/`useNavigation()` hook, since the latter
+  // needs a real Navigator context that this app's tests don't provide.
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      loadForms({ silent: true });
+    });
+    return unsubscribe;
+  }, [navigation, loadForms]);
+
   function onRefresh() {
     setRefreshing(true);
     loadForms({ silent: true });

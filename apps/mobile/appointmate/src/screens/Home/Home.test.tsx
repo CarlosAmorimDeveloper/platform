@@ -19,7 +19,10 @@ const mockedListForms = listForms as jest.Mock;
 
 type HomeProps = NativeStackScreenProps<AppStackParamList, 'Home'>;
 
-const mockNavigation = { navigate: jest.fn() } as unknown as HomeProps['navigation'];
+const mockNavigation = {
+  navigate: jest.fn(),
+  addListener: jest.fn(() => jest.fn()),
+} as unknown as HomeProps['navigation'];
 const mockRoute = { key: 'Home', name: 'Home' } as unknown as HomeProps['route'];
 
 const ASYNC_TIMEOUT = { timeout: 15000 };
@@ -156,6 +159,32 @@ describe('Home', () => {
     }, ASYNC_TIMEOUT);
     await waitFor(() => {
       expect(screen.getByTestId('home-form-card-form-b')).toBeTruthy();
+    }, ASYNC_TIMEOUT);
+  }, 20000);
+
+  it('re-fetches the list when the screen regains focus (e.g. after deleting a form elsewhere)', async () => {
+    mockedListForms.mockResolvedValue([formA]);
+
+    render(<Home navigation={mockNavigation} route={mockRoute} />);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('home-form-card-form-a')).toBeTruthy();
+    }, ASYNC_TIMEOUT);
+
+    expect(mockNavigation.addListener).toHaveBeenCalledWith('focus', expect.any(Function));
+    const focusHandler = (mockNavigation.addListener as jest.Mock).mock.calls.find(
+      ([eventName]) => eventName === 'focus',
+    )?.[1];
+
+    mockedListForms.mockClear();
+    mockedListForms.mockResolvedValue([]);
+    focusHandler();
+
+    await waitFor(() => {
+      expect(mockedListForms).toHaveBeenCalledWith('user-abc');
+    }, ASYNC_TIMEOUT);
+    await waitFor(() => {
+      expect(screen.queryByTestId('home-form-card-form-a')).toBeNull();
     }, ASYNC_TIMEOUT);
   }, 20000);
 

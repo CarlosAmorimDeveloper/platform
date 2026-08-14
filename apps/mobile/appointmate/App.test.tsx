@@ -18,6 +18,12 @@ jest.mock('./src/services/formsService', () => ({
   listForms: jest.fn().mockResolvedValue([]),
 }));
 
+// FormDetail imports expo-print/expo-sharing at module load — these are
+// native modules with no binding available under Jest, so importing
+// AppStack (which registers FormDetail as a screen) needs them mocked too.
+jest.mock('expo-print', () => ({ printToFileAsync: jest.fn() }));
+jest.mock('expo-sharing', () => ({ shareAsync: jest.fn() }));
+
 const mockedOnAuthStateChanged = onAuthStateChanged as jest.Mock;
 
 describe('App', () => {

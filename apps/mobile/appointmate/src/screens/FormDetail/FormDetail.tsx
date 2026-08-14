@@ -1,10 +1,21 @@
 import { useEffect, useState } from 'react';
 import { ScrollView, Text, View } from 'react-native';
-import { Button, EmptyState, ErrorView, LoadingView } from '@ds/mobile';
+import * as Print from 'expo-print';
+import * as Sharing from 'expo-sharing';
+import {
+  Button,
+  Dialog,
+  EmptyState,
+  ErrorView,
+  LoadingIndicator,
+  LoadingView,
+  Snackbar,
+} from '@ds/mobile';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { AppStackParamList } from '../../navigation/types';
-import { getFormRecord, type FormRecord } from '../../services/formsService';
+import { deleteForm, getFormRecord, type FormRecord } from '../../services/formsService';
 import { MOOD_OPTIONS } from '../../domain/form';
+import { buildFormHtml } from '../../domain/pdf';
 import { styles } from './FormDetail.styles';
 
 type Props = NativeStackScreenProps<AppStackParamList, 'FormDetail'>;
@@ -73,6 +84,10 @@ export function FormDetail({ navigation, route }: Props) {
   const [record, setRecord] = useState<FormRecord | null>(null);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [exporting, setExporting] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
+  const [actionError, setActionError] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -93,6 +108,38 @@ export function FormDetail({ navigation, route }: Props) {
       cancelled = true;
     };
   }, [formId]);
+
+  async function onExportPdf() {
+    if (!record) return;
+    setExporting(true);
+    try {
+      const html = buildFormHtml(record.values, {
+        status: record.status,
+        createdAt: record.createdAt,
+        updatedAt: record.updatedAt,
+      });
+      const { uri } = await Print.printToFileAsync({ html });
+      await Sharing.shareAsync(uri, { mimeType: 'application/pdf', UTI: 'com.adobe.pdf' });
+    } catch {
+      setActionError('Não foi possível exportar o PDF. Tente novamente.');
+    } finally {
+      setExporting(false);
+    }
+  }
+
+  async function onConfirmDelete() {
+    setDeleting(true);
+    try {
+      await deleteForm(formId);
+      setDeleteDialogVisible(false);
+      navigation.goBack();
+    } catch {
+      setActionError('Não foi possível excluir o formulário. Tente novamente.');
+      setDeleteDialogVisible(false);
+    } finally {
+      setDeleting(false);
+    }
+  }
 
   if (loading) {
     return <LoadingView testID="form-detail-loading" />;
@@ -188,6 +235,61 @@ export function FormDetail({ navigation, route }: Props) {
       >
         Editar
       </Button>
+      <Button
+        variant="secondary"
+        onPress={onExportPdf}
+        disabled={exporting}
+        testID="form-detail-export-pdf-button"
+      >
+        Exportar PDF
+      </Button>
+      <LoadingIndicator visible={exporting} testID="form-detail-exporting-indicator" />
+      <Button
+        variant="danger"
+        onPress={() => setDeleteDialogVisible(true)}
+        testID="form-detail-delete-button"
+      >
+        Excluir
+      </Button>
+
+      <Dialog
+        visible={deleteDialogVisible}
+        onDismiss={() => setDeleteDialogVisible(false)}
+        title="Excluir formulário"
+        testID="form-detail-delete-dialog"
+        actions={[
+          <Button
+            key="cancel"
+            variant="ghost"
+            onPress={() => setDeleteDialogVisible(false)}
+            testID="form-detail-delete-cancel-button"
+          >
+            Cancelar
+          </Button>,
+          <Button
+            key="confirm"
+            variant="danger"
+            onPress={onConfirmDelete}
+            disabled={deleting}
+            testID="form-detail-delete-confirm-button"
+          >
+            Excluir
+          </Button>,
+        ]}
+      >
+        <Text>
+          Tem certeza que deseja excluir este formulário? Essa ação não pode ser desfeita.
+        </Text>
+      </Dialog>
+
+      <Snackbar
+        visible={actionError !== null}
+        onDismiss={() => setActionError(null)}
+        message={actionError ?? ''}
+        position="top"
+        variant="error"
+        testID="form-detail-action-error-snackbar"
+      />
     </ScrollView>
   );
 }
