@@ -8,7 +8,6 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: spacing[6],
     gap: spacing[8],
-    backgroundColor: colors.neutral[0],
   },
   header: { alignItems: 'center', gap: spacing[2] },
   title: { fontSize: fontSizes['3xl'], fontWeight: 'bold', color: colors.primary[600] },

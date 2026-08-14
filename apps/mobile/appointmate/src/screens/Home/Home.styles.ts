@@ -7,7 +7,6 @@ export const styles = StyleSheet.create({
   },
   header: {
     padding: spacing[6],
-    backgroundColor: colors.neutral[0],
   },
   actionsRow: {
     flexDirection: 'row',

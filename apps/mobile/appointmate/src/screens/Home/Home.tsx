@@ -156,8 +156,6 @@ export function Home({ navigation }: Props) {
             <EmptyState
               title="Nenhum formulário ainda"
               description="Crie seu primeiro formulário de preparação para o retorno."
-              actionLabel="Criar formulário"
-              onAction={() => navigation.navigate('FormEntry', undefined)}
               testID="home-empty-state"
             />
           ) : (

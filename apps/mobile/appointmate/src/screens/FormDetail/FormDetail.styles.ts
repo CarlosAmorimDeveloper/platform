@@ -5,7 +5,6 @@ export const styles = StyleSheet.create({
   container: {
     padding: spacing[6],
     gap: spacing[4],
-    backgroundColor: colors.neutral[0],
   },
   updatedAt: {
     fontSize: fontSizes.sm,
