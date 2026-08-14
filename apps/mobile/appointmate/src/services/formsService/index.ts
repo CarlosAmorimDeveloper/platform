@@ -1,1 +1,2 @@
-export { createForm, updateForm, getForm } from './formsService';
+export { createForm, updateForm, getForm, getFormRecord } from './formsService';
+export type { FormRecord } from './formsService';

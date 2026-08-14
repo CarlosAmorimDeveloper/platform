@@ -1,5 +1,5 @@
 import { addDoc, collection, doc, getDoc, serverTimestamp, updateDoc } from 'firebase/firestore';
-import { createForm, getForm, updateForm } from './formsService';
+import { createForm, getForm, getFormRecord, updateForm } from './formsService';
 import type { FormValues } from '../../domain/form';
 
 jest.mock('firebase/firestore', () => ({
@@ -198,6 +198,55 @@ describe('formsService', () => {
         todayFocus: '',
         consultationNotes: '',
       });
+    });
+  });
+
+  describe('getFormRecord', () => {
+    it('returns null when the document does not exist', async () => {
+      mockedDoc.mockReturnValue({});
+      mockedGetDoc.mockResolvedValue({ exists: () => false });
+
+      const result = await getFormRecord('missing-form');
+
+      expect(result).toBeNull();
+    });
+
+    it('returns values, status and converted timestamps', async () => {
+      const createdAtDate = new Date('2026-03-01T10:00:00Z');
+      const updatedAtDate = new Date('2026-03-10T15:30:00Z');
+      mockedDoc.mockReturnValue({});
+      mockedGetDoc.mockResolvedValue({
+        exists: () => true,
+        data: () => ({
+          ...sampleFirestoreData,
+          status: 'submitted',
+          createdAt: { toDate: () => createdAtDate },
+          updatedAt: { toDate: () => updatedAtDate },
+        }),
+      });
+
+      const result = await getFormRecord('form-1');
+
+      expect(result).toEqual({
+        values: sampleValues,
+        status: 'submitted',
+        createdAt: createdAtDate,
+        updatedAt: updatedAtDate,
+      });
+    });
+
+    it('defaults status to draft and dates to null when missing', async () => {
+      mockedDoc.mockReturnValue({});
+      mockedGetDoc.mockResolvedValue({
+        exists: () => true,
+        data: () => ({}),
+      });
+
+      const result = await getFormRecord('form-1');
+
+      expect(result?.status).toBe('draft');
+      expect(result?.createdAt).toBeNull();
+      expect(result?.updatedAt).toBeNull();
     });
   });
 });

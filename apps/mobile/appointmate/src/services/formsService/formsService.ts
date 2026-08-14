@@ -1,6 +1,21 @@
-import { addDoc, collection, doc, getDoc, serverTimestamp, updateDoc } from 'firebase/firestore';
+import {
+  addDoc,
+  collection,
+  doc,
+  getDoc,
+  serverTimestamp,
+  updateDoc,
+  type Timestamp,
+} from 'firebase/firestore';
 import { db } from '../firebase';
 import type { FormStatus, FormValues } from '../../domain/form';
+
+export interface FormRecord {
+  values: FormValues;
+  status: FormStatus;
+  createdAt: Date | null;
+  updatedAt: Date | null;
+}
 
 function toStringList(items: { text: string }[]) {
   return items.map((item) => item.text.trim()).filter((text) => text.length > 0);
@@ -54,11 +69,7 @@ export async function updateForm(
   });
 }
 
-export async function getForm(formId: string): Promise<FormValues | null> {
-  const snapshot = await getDoc(doc(db, 'forms', formId));
-  if (!snapshot.exists()) return null;
-
-  const data = snapshot.data();
+function toFormValues(data: Record<string, unknown>): FormValues {
   return {
     appointmentDate: (data.appointmentDate ?? '') as string,
     lastAppointmentDate: (data.lastAppointmentDate ?? '') as string,
@@ -77,5 +88,29 @@ export async function getForm(formId: string): Promise<FormValues | null> {
     questions: ((data.questions ?? []) as string[]).map((text) => ({ text })),
     todayFocus: (data.todayFocus ?? '') as string,
     consultationNotes: (data.consultationNotes ?? '') as string,
+  };
+}
+
+function toDateOrNull(value: unknown): Date | null {
+  const timestamp = value as Timestamp | undefined;
+  return typeof timestamp?.toDate === 'function' ? timestamp.toDate() : null;
+}
+
+export async function getForm(formId: string): Promise<FormValues | null> {
+  const snapshot = await getDoc(doc(db, 'forms', formId));
+  if (!snapshot.exists()) return null;
+  return toFormValues(snapshot.data());
+}
+
+export async function getFormRecord(formId: string): Promise<FormRecord | null> {
+  const snapshot = await getDoc(doc(db, 'forms', formId));
+  if (!snapshot.exists()) return null;
+
+  const data = snapshot.data();
+  return {
+    values: toFormValues(data),
+    status: (data.status ?? 'draft') as FormStatus,
+    createdAt: toDateOrNull(data.createdAt),
+    updatedAt: toDateOrNull(data.updatedAt),
   };
 }
