@@ -6,7 +6,17 @@ import {
   assertFails,
 } from '@firebase/rules-unit-testing';
 import type { RulesTestEnvironment } from '@firebase/rules-unit-testing';
-import { doc, deleteDoc, getDoc, setDoc } from 'firebase/firestore';
+import {
+  collection,
+  doc,
+  deleteDoc,
+  getDoc,
+  getDocs,
+  orderBy,
+  query,
+  setDoc,
+  where,
+} from 'firebase/firestore';
 
 // Regras de segurança para a coleção top-level `forms` (schema do formulário
 // "Preparação para o retorno" definido em APP-103).
@@ -110,6 +120,38 @@ describe('Firestore security rules — forms', () => {
 
       const otherDb = testEnv.authenticatedContext(otherUid).firestore();
       await assertFails(deleteDoc(doc(otherDb, 'forms', formId)));
+    });
+  });
+
+  describe('list (Dashboard query — APP-77)', () => {
+    it('allows the owner to query their own forms filtered by userId', async () => {
+      await testEnv.withSecurityRulesDisabled(async (context) => {
+        await context.firestore().doc(`forms/${formId}`).set(validFormData);
+      });
+
+      const ownerDb = testEnv.authenticatedContext(ownerUid).firestore();
+      const ownForms = query(
+        collection(ownerDb, 'forms'),
+        where('userId', '==', ownerUid),
+        orderBy('createdAt', 'desc'),
+      );
+      await assertSucceeds(getDocs(ownForms));
+    });
+
+    it('denies a query without a userId filter — `read` governs `list` too', async () => {
+      const ownerDb = testEnv.authenticatedContext(ownerUid).firestore();
+      const unfiltered = query(collection(ownerDb, 'forms'), orderBy('createdAt', 'desc'));
+      await assertFails(getDocs(unfiltered));
+    });
+
+    it('denies a query filtered by another user’s id', async () => {
+      const ownerDb = testEnv.authenticatedContext(ownerUid).firestore();
+      const otherUsersForms = query(
+        collection(ownerDb, 'forms'),
+        where('userId', '==', otherUid),
+        orderBy('createdAt', 'desc'),
+      );
+      await assertFails(getDocs(otherUsersForms));
     });
   });
 

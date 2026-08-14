@@ -16,6 +16,9 @@ describe('AppStack', () => {
   it('renders Home as the initial route', () => {
     render(<AppStack />);
 
-    expect(screen.getByText('Home')).toBeTruthy();
+    // user is null (no AuthProvider in this routing-only test), so Home's
+    // form list never loads and it stays on its loading state — that's
+    // enough to prove the initial route rendered Home, not another screen.
+    expect(screen.getByTestId('home-loading')).toBeTruthy();
   });
 });

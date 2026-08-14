@@ -12,6 +12,12 @@ jest.mock('firebase/auth', () => ({
   signOut: jest.fn(),
 }));
 
+// Home fetches the user's forms on mount — stub it so the authenticated-user
+// test renders Home's empty state instead of hitting the real Firestore SDK.
+jest.mock('./src/services/formsService', () => ({
+  listForms: jest.fn().mockResolvedValue([]),
+}));
+
 const mockedOnAuthStateChanged = onAuthStateChanged as jest.Mock;
 
 describe('App', () => {
@@ -47,7 +53,7 @@ describe('App', () => {
 
     render(<App />);
 
-    await waitFor(() => expect(screen.getByText('Home')).toBeTruthy());
+    await waitFor(() => expect(screen.getByTestId('home-new-form-button')).toBeTruthy());
     expect(screen.queryByTestId('login-email-input')).toBeNull();
   });
 });

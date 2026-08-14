@@ -1,5 +1,16 @@
-import { addDoc, collection, doc, getDoc, serverTimestamp, updateDoc } from 'firebase/firestore';
-import { createForm, getForm, getFormRecord, updateForm } from './formsService';
+import {
+  addDoc,
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  orderBy,
+  query,
+  serverTimestamp,
+  updateDoc,
+  where,
+} from 'firebase/firestore';
+import { createForm, getForm, getFormRecord, listForms, updateForm } from './formsService';
 import type { FormValues } from '../../domain/form';
 
 jest.mock('firebase/firestore', () => ({
@@ -7,8 +18,12 @@ jest.mock('firebase/firestore', () => ({
   collection: jest.fn(),
   doc: jest.fn(),
   getDoc: jest.fn(),
+  getDocs: jest.fn(),
+  orderBy: jest.fn(),
+  query: jest.fn(),
   serverTimestamp: jest.fn(),
   updateDoc: jest.fn(),
+  where: jest.fn(),
 }));
 
 jest.mock('../firebase', () => ({
@@ -19,8 +34,12 @@ const mockedAddDoc = addDoc as jest.Mock;
 const mockedCollection = collection as jest.Mock;
 const mockedDoc = doc as jest.Mock;
 const mockedGetDoc = getDoc as jest.Mock;
+const mockedGetDocs = getDocs as jest.Mock;
+const mockedOrderBy = orderBy as jest.Mock;
+const mockedQuery = query as jest.Mock;
 const mockedServerTimestamp = serverTimestamp as jest.Mock;
 const mockedUpdateDoc = updateDoc as jest.Mock;
+const mockedWhere = where as jest.Mock;
 
 const sampleValues: FormValues = {
   appointmentDate: '15/03/2026',
@@ -247,6 +266,96 @@ describe('formsService', () => {
       expect(result?.status).toBe('draft');
       expect(result?.createdAt).toBeNull();
       expect(result?.updatedAt).toBeNull();
+    });
+  });
+
+  describe('listForms', () => {
+    it('queries forms filtered by userId and ordered by createdAt desc', async () => {
+      mockedCollection.mockReturnValue({ ref: 'forms-collection' });
+      mockedWhere.mockReturnValue('where-clause');
+      mockedOrderBy.mockReturnValue('order-by-clause');
+      mockedQuery.mockReturnValue('the-query');
+      mockedGetDocs.mockResolvedValue({ docs: [] });
+
+      await listForms('user-abc');
+
+      expect(mockedWhere).toHaveBeenCalledWith('userId', '==', 'user-abc');
+      expect(mockedOrderBy).toHaveBeenCalledWith('createdAt', 'desc');
+      expect(mockedQuery).toHaveBeenCalledWith(
+        { ref: 'forms-collection' },
+        'where-clause',
+        'order-by-clause',
+      );
+      expect(mockedGetDocs).toHaveBeenCalledWith('the-query');
+    });
+
+    it('maps each document into a FormSummary', async () => {
+      const createdAtDate = new Date('2026-03-01T10:00:00Z');
+      mockedCollection.mockReturnValue({});
+      mockedWhere.mockReturnValue('where-clause');
+      mockedOrderBy.mockReturnValue('order-by-clause');
+      mockedQuery.mockReturnValue('the-query');
+      mockedGetDocs.mockResolvedValue({
+        docs: [
+          {
+            id: 'form-1',
+            data: () => ({
+              appointmentDate: '15/03/2026',
+              overallSummary: 'Semana tranquila.',
+              status: 'submitted',
+              createdAt: { toDate: () => createdAtDate },
+            }),
+          },
+        ],
+      });
+
+      const result = await listForms('user-abc');
+
+      expect(result).toEqual([
+        {
+          id: 'form-1',
+          appointmentDate: '15/03/2026',
+          overallSummary: 'Semana tranquila.',
+          status: 'submitted',
+          createdAt: createdAtDate,
+          updatedAt: null,
+        },
+      ]);
+    });
+
+    it('fills in safe defaults for missing fields', async () => {
+      mockedCollection.mockReturnValue({});
+      mockedWhere.mockReturnValue('where-clause');
+      mockedOrderBy.mockReturnValue('order-by-clause');
+      mockedQuery.mockReturnValue('the-query');
+      mockedGetDocs.mockResolvedValue({
+        docs: [{ id: 'form-1', data: () => ({}) }],
+      });
+
+      const result = await listForms('user-abc');
+
+      expect(result).toEqual([
+        {
+          id: 'form-1',
+          appointmentDate: '',
+          overallSummary: '',
+          status: 'draft',
+          createdAt: null,
+          updatedAt: null,
+        },
+      ]);
+    });
+
+    it('returns an empty array when the user has no forms', async () => {
+      mockedCollection.mockReturnValue({});
+      mockedWhere.mockReturnValue('where-clause');
+      mockedOrderBy.mockReturnValue('order-by-clause');
+      mockedQuery.mockReturnValue('the-query');
+      mockedGetDocs.mockResolvedValue({ docs: [] });
+
+      const result = await listForms('user-abc');
+
+      expect(result).toEqual([]);
     });
   });
 });
