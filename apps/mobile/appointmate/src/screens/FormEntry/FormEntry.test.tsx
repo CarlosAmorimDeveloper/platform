@@ -25,6 +25,7 @@ type Props = NativeStackScreenProps<AppStackParamList, 'FormEntry'>;
 const mockNavigation = {
   navigate: jest.fn(),
   goBack: jest.fn(),
+  replace: jest.fn(),
 } as unknown as Props['navigation'];
 
 function makeRoute(formId?: string): Props['route'] {
@@ -161,11 +162,13 @@ describe('FormEntry', () => {
         );
       }, ASYNC_TIMEOUT);
       await waitFor(() => {
-        expect(mockNavigation.goBack).toHaveBeenCalled();
+        expect(mockNavigation.replace).toHaveBeenCalledWith('FormDetail', {
+          formId: 'new-form-id',
+        });
       }, ASYNC_TIMEOUT);
     }, 20000);
 
-    it('calls createForm with status "submitted" and navigates back when sending', async () => {
+    it('calls createForm with status "submitted" and navigates to the new form detail when sending', async () => {
       mockedCreateForm.mockResolvedValue('new-form-id');
       render(<FormEntry navigation={mockNavigation} route={makeRoute()} />);
 
@@ -190,7 +193,9 @@ describe('FormEntry', () => {
         );
       }, ASYNC_TIMEOUT);
       await waitFor(() => {
-        expect(mockNavigation.goBack).toHaveBeenCalled();
+        expect(mockNavigation.replace).toHaveBeenCalledWith('FormDetail', {
+          formId: 'new-form-id',
+        });
       }, ASYNC_TIMEOUT);
     }, 20000);
 
@@ -205,7 +210,7 @@ describe('FormEntry', () => {
           screen.getByText('Não foi possível salvar o formulário. Tente novamente.'),
         ).toBeTruthy();
       }, ASYNC_TIMEOUT);
-      expect(mockNavigation.goBack).not.toHaveBeenCalled();
+      expect(mockNavigation.replace).not.toHaveBeenCalled();
     }, 20000);
   });
 
@@ -263,6 +268,9 @@ describe('FormEntry', () => {
         expect(mockedUpdateForm).toHaveBeenCalledWith('form-1', existingValues, 'submitted');
       }, ASYNC_TIMEOUT);
       expect(mockedCreateForm).not.toHaveBeenCalled();
+      await waitFor(() => {
+        expect(mockNavigation.replace).toHaveBeenCalledWith('FormDetail', { formId: 'form-1' });
+      }, ASYNC_TIMEOUT);
     }, 20000);
 
     it('shows an error message when the form fails to load', async () => {

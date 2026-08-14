@@ -91,12 +91,15 @@ export function FormEntry({ navigation, route }: Props) {
     if (!user) return;
     setSaving(true);
     try {
+      let savedFormId = formId;
       if (formId) {
         await updateForm(formId, values, status);
       } else {
-        await createForm(user.uid, values, status);
+        savedFormId = await createForm(user.uid, values, status);
       }
-      navigation.goBack();
+      // Always `replace` (not `goBack`) so FormDetail remounts and shows the
+      // values just saved, instead of the stale data it fetched on its first mount.
+      navigation.replace('FormDetail', { formId: savedFormId! });
     } catch {
       setErrorMessage('Não foi possível salvar o formulário. Tente novamente.');
     } finally {
