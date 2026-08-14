@@ -7,29 +7,12 @@ export const styles = StyleSheet.create({
   },
   header: {
     padding: spacing[6],
-    gap: spacing[3],
     backgroundColor: colors.neutral[0],
   },
-  headerTopRow: {
+  actionsRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-  },
-  title: {
-    fontSize: fontSizes.xl,
-    fontWeight: 'bold',
-    color: colors.neutral[900],
-  },
-  filterContainer: {
-    gap: spacing[3],
-  },
-  chipRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: spacing[2],
-  },
-  customRangeRow: {
-    gap: spacing[2],
   },
   listContent: {
     padding: spacing[6],

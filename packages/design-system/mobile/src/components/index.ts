@@ -54,3 +54,6 @@ export type { ErrorViewProps } from './ErrorView';
 
 export { LoadingView } from './LoadingView';
 export type { LoadingViewProps } from './LoadingView';
+
+export { IconButton } from './IconButton';
+export type { IconButtonProps } from './IconButton';
