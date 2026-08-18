@@ -4,6 +4,7 @@
   "main": "index.ts",
   "scripts": {
     "lint": "eslint . --max-warnings 0",
+    "check-types": "tsc --noEmit",
     "test": "jest",
     "start": "npx expo start --clear",
     "android": "npx expo start --android",

@@ -1,0 +1,64 @@
+name: Mobile Apps — Lint, Types & Tests
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "apps/mobile/**"
+      - "packages/design-system/**"
+      - "packages/eslint-config/**"
+      - "packages/typescript-config/**"
+
+jobs:
+  tickets-app:
+    name: tickets-app — lint, check-types, test
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npx yarn install
+
+      - name: Lint
+        run: yarn workspace @app/tickets lint
+
+      - name: Check types
+        run: yarn workspace @app/tickets check-types
+
+      - name: Test
+        run: yarn workspace @app/tickets test --runInBand
+
+  appointmate:
+    name: appointmate — lint, check-types, test
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npx yarn install
+
+      - name: Lint
+        run: yarn workspace @app/appointmate lint
+
+      - name: Check types
+        run: yarn workspace @app/appointmate check-types
+
+      - name: Test
+        run: yarn workspace @app/appointmate test --runInBand
