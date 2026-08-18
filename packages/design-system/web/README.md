@@ -21,7 +21,7 @@ Pacote de componentes React do Design System. Parte do monorepo `platform`, em `
 ## Construído com
 
 [![React][react-shield]][react-url]
-[![Tailwind CSS][tailwind-shield]][tailwind-url]
+[![MUI][mui-shield]][mui-url]
 [![TypeScript][typescript-shield]][typescript-url]
 [![Storybook][storybook-shield]][storybook-url]
 [![Chromatic][chromatic-shield]][chromatic-url]
@@ -170,5 +170,5 @@ Uso interno — repositório privado.
 [react-url]: https://react.dev
 [typescript-shield]: https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white
 [typescript-url]: https://www.typescriptlang.org
-[tailwind-shield]: https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white
-[tailwind-url]: https://tailwindcss.com
+[mui-shield]: https://img.shields.io/badge/MUI-007FFF?style=for-the-badge&logo=mui&logoColor=white
+[mui-url]: https://mui.com
