@@ -2,6 +2,8 @@ import React from 'react';
 import { render, screen, fireEvent } from '../../test-utils';
 import { Input } from './Input';
 
+const getPasswordToggleIcon = () => screen.UNSAFE_getByProps({ icon: 'eye' });
+
 describe('Input', () => {
   it('renderiza o label', () => {
     render(<Input value="" onChangeText={() => {}} label="E-mail" />);
@@ -49,5 +51,16 @@ describe('Input', () => {
     // prop, so we check `editable === false` instead.
     const input = screen.getByTestId('input');
     expect(input.props.editable === false || input.props.disabled === true).toBe(true);
+  });
+
+  it('expõe accessibilityLabel no ícone de mostrar/ocultar senha', () => {
+    render(
+      <Input value="" onChangeText={() => {}} label="Senha" secureTextEntry showPasswordToggle />,
+    );
+    expect(getPasswordToggleIcon().props.accessibilityLabel).toBe('Mostrar senha');
+    fireEvent.press(getPasswordToggleIcon());
+    expect(screen.UNSAFE_getByProps({ icon: 'eye-off' }).props.accessibilityLabel).toBe(
+      'Ocultar senha',
+    );
   });
 });

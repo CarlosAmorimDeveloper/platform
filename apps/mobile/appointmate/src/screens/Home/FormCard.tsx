@@ -10,9 +10,16 @@ const STATUS_LABELS: Record<FormSummary['status'], string> = {
 
 export function FormCard({ form, onPress }: { form: FormSummary; onPress: () => void }) {
   const isSubmitted = form.status === 'submitted';
+  const dateLabel = form.appointmentDate || 'sem data';
+  const accessibilityLabel = `Formulário de consulta em ${dateLabel}, ${STATUS_LABELS[form.status].toLowerCase()}`;
 
   return (
-    <Card onPress={onPress} style={styles.card} testID={`home-form-card-${form.id}`}>
+    <Card
+      onPress={onPress}
+      style={styles.card}
+      testID={`home-form-card-${form.id}`}
+      accessibilityLabel={accessibilityLabel}
+    >
       <View style={styles.cardHeader}>
         <View>
           <Text>Data da consulta:</Text>
