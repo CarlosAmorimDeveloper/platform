@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { KeyboardAvoidingView, Platform, Text, View } from 'react-native';
+import { KeyboardAvoidingView, Text, View } from 'react-native';
 import { Button, Input, LoadingIndicator, Snackbar } from '@ds/mobile';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { AuthStackParamList } from '../../navigation/types';
@@ -29,10 +29,7 @@ export function Login({ navigation }: Props) {
   }
 
   return (
-    <KeyboardAvoidingView
-      style={styles.keyboardView}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    >
+    <KeyboardAvoidingView style={styles.keyboardView} behavior="padding">
       <View style={styles.container}>
         <View style={styles.header}>
           <Text style={styles.appTitle}>AppointMate</Text>

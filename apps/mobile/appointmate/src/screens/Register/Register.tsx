@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { KeyboardAvoidingView, Platform, Text, View } from 'react-native';
+import { KeyboardAvoidingView, Text, View } from 'react-native';
 import { AppBar, Button, Input, LoadingIndicator, Snackbar } from '@ds/mobile';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { AuthStackParamList } from '../../navigation/types';
@@ -41,10 +41,7 @@ export function Register({ navigation }: Props) {
         onBackPress={() => navigation.goBack()}
         testID="register-app-bar"
       />
-      <KeyboardAvoidingView
-        style={styles.keyboardView}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      >
+      <KeyboardAvoidingView style={styles.keyboardView} behavior="padding">
         <View style={styles.container}>
           <View style={styles.header}>
             <Text style={styles.title}>Criar conta</Text>

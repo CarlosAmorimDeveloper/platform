@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { KeyboardAvoidingView, Platform, ScrollView, Text, View } from 'react-native';
+import { KeyboardAvoidingView, ScrollView, Text, View } from 'react-native';
 import { Controller, useFieldArray, useForm, type Control } from 'react-hook-form';
 import {
   AppBar,
@@ -154,10 +154,7 @@ export function FormEntry({ navigation, route }: Props) {
   return (
     <View style={styles.screen}>
       {appBar}
-      <KeyboardAvoidingView
-        style={styles.keyboardView}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      >
+      <KeyboardAvoidingView style={styles.keyboardView} behavior="padding">
         <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
           <Text style={styles.sectionTitle}>Cabeçalho</Text>
           <Controller
