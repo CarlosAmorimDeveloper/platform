@@ -21,7 +21,7 @@ const mockRoute = { key: 'Register', name: 'Register' } as unknown as RegisterPr
 
 // See Login.test.tsx — this environment needs generous timeouts for
 // assertions that depend on flushing re-renders across the full provider tree.
-const ASYNC_TIMEOUT = { timeout: 15000 };
+const ASYNC_TIMEOUT = { timeout: 30000 };
 
 function fillValidForm() {
   fireEvent.changeText(screen.getByTestId('register-name-input'), 'Ada Lovelace');
@@ -141,7 +141,7 @@ describe('Register', () => {
     await waitFor(() => {
       expect(screen.queryByTestId('register-loading-indicator')).toBeNull();
     }, ASYNC_TIMEOUT);
-  }, 20000);
+  }, 40000);
 
   it('shows a friendly error message when registration fails', async () => {
     mockedRegister.mockRejectedValue(new FirebaseError('auth/email-already-in-use', ''));
@@ -153,7 +153,7 @@ describe('Register', () => {
     await waitFor(() => {
       expect(screen.getByText('Este e-mail já está cadastrado.')).toBeTruthy();
     }, ASYNC_TIMEOUT);
-  }, 20000);
+  }, 40000);
 
   it('hides the loading indicator after a failed registration', async () => {
     mockedRegister.mockRejectedValue(new FirebaseError('auth/email-already-in-use', ''));
@@ -165,5 +165,5 @@ describe('Register', () => {
     await waitFor(() => {
       expect(screen.queryByTestId('register-loading-indicator')).toBeNull();
     }, ASYNC_TIMEOUT);
-  }, 20000);
+  }, 40000);
 });

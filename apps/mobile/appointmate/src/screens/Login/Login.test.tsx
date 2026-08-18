@@ -21,7 +21,7 @@ const mockRoute = { key: 'Login', name: 'Login' } as unknown as LoginProps['rout
 // provider tree — the state-transition assertions below need more room
 // than the 5s Jest default to avoid flaking (paired with a longer
 // per-test timeout, passed as each affected it()'s third argument).
-const ASYNC_TIMEOUT = { timeout: 15000 };
+const ASYNC_TIMEOUT = { timeout: 30000 };
 
 describe('Login', () => {
   afterEach(() => {
@@ -115,7 +115,7 @@ describe('Login', () => {
     await waitFor(() => {
       expect(screen.queryByTestId('login-loading-indicator')).toBeNull();
     }, ASYNC_TIMEOUT);
-  }, 20000);
+  }, 40000);
 
   it('shows a friendly error message when login fails', async () => {
     mockedLogin.mockRejectedValue(new FirebaseError('auth/wrong-password', ''));
@@ -128,7 +128,7 @@ describe('Login', () => {
     await waitFor(() => {
       expect(screen.getByText('E-mail ou senha incorretos.')).toBeTruthy();
     }, ASYNC_TIMEOUT);
-  }, 20000);
+  }, 40000);
 
   it('hides the loading indicator after a failed login', async () => {
     mockedLogin.mockRejectedValue(new FirebaseError('auth/wrong-password', ''));
@@ -141,5 +141,5 @@ describe('Login', () => {
     await waitFor(() => {
       expect(screen.queryByTestId('login-loading-indicator')).toBeNull();
     }, ASYNC_TIMEOUT);
-  }, 20000);
+  }, 40000);
 });

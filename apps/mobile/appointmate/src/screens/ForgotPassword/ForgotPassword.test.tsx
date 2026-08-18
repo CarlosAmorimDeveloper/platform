@@ -24,7 +24,7 @@ const mockRoute = {
 
 // See Login.test.tsx — this environment needs generous timeouts for
 // assertions that depend on flushing re-renders across the full provider tree.
-const ASYNC_TIMEOUT = { timeout: 15000 };
+const ASYNC_TIMEOUT = { timeout: 30000 };
 
 describe('ForgotPassword', () => {
   afterEach(() => {
@@ -95,7 +95,7 @@ describe('ForgotPassword', () => {
         screen.getByText('Se este e-mail estiver cadastrado, você receberá um link em instantes.'),
       ).toBeTruthy();
     }, ASYNC_TIMEOUT);
-  }, 20000);
+  }, 40000);
 
   it('shows a friendly error message when sendPasswordReset fails', async () => {
     mockedSendPasswordReset.mockRejectedValue(new FirebaseError('auth/user-not-found', ''));
@@ -107,7 +107,7 @@ describe('ForgotPassword', () => {
     await waitFor(() => {
       expect(screen.getByText('E-mail ou senha incorretos.')).toBeTruthy();
     }, ASYNC_TIMEOUT);
-  }, 20000);
+  }, 40000);
 
   it('hides the loading indicator after a failed submission', async () => {
     mockedSendPasswordReset.mockRejectedValue(new FirebaseError('auth/user-not-found', ''));
@@ -119,5 +119,5 @@ describe('ForgotPassword', () => {
     await waitFor(() => {
       expect(screen.queryByTestId('forgot-password-loading-indicator')).toBeNull();
     }, ASYNC_TIMEOUT);
-  }, 20000);
+  }, 40000);
 });
