@@ -78,6 +78,7 @@ export function Input({
             <PaperTextInput.Icon
               icon={hidden ? 'eye' : 'eye-off'}
               onPress={() => setHidden((h) => !h)}
+              accessibilityLabel={hidden ? 'Mostrar senha' : 'Ocultar senha'}
             />
           ) : undefined
         }
