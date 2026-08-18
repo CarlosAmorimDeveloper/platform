@@ -1,6 +1,5 @@
 import { create } from 'zustand';
-import { signOut } from 'firebase/auth';
-import { auth } from '../../services/firebase';
+import { logout as logoutService } from '../../services/authService';
 import type { User } from '../../domain/user';
 
 export type { UserRole } from '../../domain/user';
@@ -17,5 +16,5 @@ export const useAuthStore = create<AuthState>((set) => ({
   user: null,
   isAuthenticated: false,
   setUser: (user) => set({ user, isAuthenticated: user !== null }),
-  logout: () => signOut(auth),
+  logout: () => logoutService(),
 }));

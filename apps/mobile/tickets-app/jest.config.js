@@ -3,6 +3,7 @@ const path = require('path');
 // Route all react imports to the single React installed in this app's node_modules
 // to avoid "invalid hook call" errors from multiple React instances.
 const sharedReact = path.resolve(__dirname, 'node_modules/react');
+const sharedReactNativePaper = path.resolve(__dirname, 'node_modules/react-native-paper');
 
 /** @type {import('jest').Config} */
 module.exports = {
@@ -24,6 +25,7 @@ module.exports = {
   moduleNameMapper: {
     '^react$': sharedReact,
     '^react/(.*)$': `${sharedReact}/$1`,
+    '^react-native-paper$': sharedReactNativePaper,
     '^react-native-safe-area-context$': '<rootDir>/__mocks__/react-native-safe-area-context.js',
     '^react-native/Libraries/Animated/Animated$': '<rootDir>/__mocks__/react-native-animated.js',
     '^react-native/Libraries/Animated/nodes/AnimatedProps$':

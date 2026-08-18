@@ -36,18 +36,64 @@ function commentsCol(workspaceId: string, ticketId: string) {
   return collection(db, 'workspaces', workspaceId, 'tickets', ticketId, 'comments');
 }
 
+function sortByCreatedAtDesc(tickets: Ticket[]): Ticket[] {
+  return [...tickets].sort((a, b) => {
+    if (!a.createdAt) return 1;
+    if (!b.createdAt) return -1;
+    return b.createdAt.toMillis() - a.createdAt.toMillis();
+  });
+}
+
 export function subscribeToTicketList(
   user: User,
   onData: (tickets: Ticket[]) => void,
   onError: () => void,
 ): Unsubscribe {
   const col = ticketsCol(user.workspaceId);
-  const q =
-    user.role === 'admin'
-      ? query(col, orderBy('createdAt', 'desc'))
-      : query(col, where('creator_id', '==', user.uid), orderBy('createdAt', 'desc'));
 
-  return onSnapshot(q, (snap) => onData(snap.docs.map(toTicket)), onError);
+  if (user.role === 'admin') {
+    const q = query(col, orderBy('createdAt', 'desc'));
+    return onSnapshot(q, (snap) => onData(snap.docs.map(toTicket)), onError);
+  }
+
+  const createdByMe = query(col, where('creator_id', '==', user.uid), orderBy('createdAt', 'desc'));
+  const assignedToMe = query(
+    col,
+    where('assignee_id', '==', user.uid),
+    orderBy('createdAt', 'desc'),
+  );
+
+  let created: Ticket[] | null = null;
+  let assigned: Ticket[] | null = null;
+
+  function emitIfReady() {
+    if (created === null || assigned === null) return;
+    const byId = new Map<string, Ticket>();
+    for (const ticket of [...created, ...assigned]) byId.set(ticket.id, ticket);
+    onData(sortByCreatedAtDesc(Array.from(byId.values())));
+  }
+
+  const unsubscribeCreated = onSnapshot(
+    createdByMe,
+    (snap) => {
+      created = snap.docs.map(toTicket);
+      emitIfReady();
+    },
+    onError,
+  );
+  const unsubscribeAssigned = onSnapshot(
+    assignedToMe,
+    (snap) => {
+      assigned = snap.docs.map(toTicket);
+      emitIfReady();
+    },
+    onError,
+  );
+
+  return () => {
+    unsubscribeCreated();
+    unsubscribeAssigned();
+  };
 }
 
 export function subscribeToTicketById(

@@ -1,11 +1,11 @@
-import { signOut } from 'firebase/auth';
+import { logout } from '../../services/authService';
 import { useAuthStore } from './useAuthStore';
 import type { User } from '../../domain/user';
 
-jest.mock('firebase/auth', () => ({ signOut: jest.fn().mockResolvedValue(undefined) }));
-jest.mock('../../services/firebase', () => ({ auth: {} }));
+jest.mock('../../services/authService');
+jest.mock('../../services/firebase', () => ({ auth: {}, db: {} }));
 
-const mockSignOut = signOut as jest.Mock;
+const mockLogout = logout as jest.Mock;
 
 const initialState = { user: null as User | null, isAuthenticated: false };
 
@@ -44,8 +44,9 @@ describe('useAuthStore', () => {
     expect(state.isAuthenticated).toBe(false);
   });
 
-  it('logout calls firebase signOut', async () => {
+  it('logout calls authService.logout', async () => {
+    mockLogout.mockResolvedValue(undefined);
     await useAuthStore.getState().logout();
-    expect(mockSignOut).toHaveBeenCalledTimes(1);
+    expect(mockLogout).toHaveBeenCalledTimes(1);
   });
 });
