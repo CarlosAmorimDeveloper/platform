@@ -9,8 +9,8 @@ Turborepo + Yarn Workspaces v1 monorepo. **Always use Yarn** — the lockfile an
 ```
 apps/web/todo-app/          # Next.js 16 app (App Router) — deployed to Vercel
 packages/design-system/
-  web/                      # @ds/web — React components (CSS Modules + Tailwind v4)
-  mobile/                   # @ds/mobile — React Native / NativeWind v4 config
+  web/                      # @ds/web — React components wrapping MUI v6
+  mobile/                   # @ds/mobile — React Native components wrapping React Native Paper
   tokens/                   # @ds/tokens — shared design tokens (TS + CSS vars)
 packages/eslint-config/     # @repo/eslint-config — ESLint v9 flat configs
 packages/typescript-config/ # @repo/typescript-config — shared tsconfigs
@@ -130,8 +130,8 @@ Actions: `addTask`, `toggleTask`, `editTask`, `removeTask`, `hydrateState` (bulk
 ### Design system layers
 
 - **`@ds/tokens`** — the source of truth for colors, spacing, font sizes, radii. Exported as TypeScript constants and as CSS custom properties via `global.css`.
-- **`@ds/web`** — React components that consume `@ds/tokens`. Uses CSS Modules (SCSS) + Tailwind v4. Documented in Storybook; visual regression tests run via Chromatic on every push/PR to `main` that touches `packages/design-system/web/`.
-- **`@ds/mobile`** — NativeWind v4 configuration that maps `@ds/tokens` to Tailwind classes for React Native. Ships `tailwind.config.js`, `babel.config.js`, and `metro.config.js` ready for consuming apps. Tests run in Node env (not jsdom) with a minimal Babel config that bypasses `metro-react-native-babel-preset`.
+- **`@ds/web`** — React components that are thin wrappers around MUI v6, themed from `@ds/tokens` via a shared `theme.ts` (MUI's `sx` prop, not CSS Modules). Documented in Storybook; visual regression tests run via Chromatic on every push/PR to `main` that touches `packages/design-system/web/`.
+- **`@ds/mobile`** — React Native components that are thin wrappers around React Native Paper, themed from `@ds/tokens` via a shared `theme.ts` (Paper's theme object + `StyleSheet.create`, not NativeWind/Tailwind). Tests run in Node env (not jsdom) with a minimal Babel config that bypasses `metro-react-native-babel-preset`.
 
 ### CI workflows
 

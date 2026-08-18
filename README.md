@@ -213,7 +213,7 @@ O monorepo possui três pacotes de design system:
 
 ### `@ds/web` — Componentes React
 
-Exporta componentes React reutilizáveis estilizados com CSS Modules (SCSS) e Tailwind CSS. Consumido pela Todo App via alias de workspace.
+Exporta componentes React reutilizáveis, wrappers finos em torno do MUI v6, temados a partir de `@ds/tokens`. Consumido pela Todo App via alias de workspace.
 
 #### `Button`
 
@@ -254,13 +254,13 @@ import { Input } from "@ds/web/components/Input";
 
 ### `@ds/mobile` — Componentes React Native
 
-Configura o [NativeWind v4](https://www.nativewind.dev) para React Native com o tema do design system. Importa os tokens de `@ds/tokens` e os mapeia para o Tailwind CSS, gerando classes de estilo compatíveis com React Native StyleSheet.
+Componentes React Native, wrappers finos em torno do [React Native Paper](https://callstack.github.io/react-native-paper/), temados a partir de `@ds/tokens` via um `theme.ts` compartilhado (sem NativeWind/Tailwind — estilização é `StyleSheet` + o tema do Paper).
 
 ```ts
-import { styled, useColorScheme, vars } from '@ds/mobile';
+import { theme, Button, Input } from '@ds/mobile';
 ```
 
-Inclui `tailwind.config.js`, `babel.config.js` e `metro.config.js` prontos para uso. Consulte [`packages/design-system/mobile`](packages/design-system/mobile/README.md) para a referência completa.
+Consulte [`packages/design-system/mobile`](packages/design-system/mobile/README.md) para a referência completa.
 
 ### `@ds/tokens` — Tokens de design
 
@@ -309,20 +309,20 @@ A edição inline no `TaskItem` é ativada por duplo clique ou pela tecla `Enter
 
 ## Tecnologias
 
-| Camada                      | Tecnologia                     |
-| --------------------------- | ------------------------------ |
-| Monorepo                    | Turborepo + Yarn Workspaces v1 |
-| Framework                   | Next.js 16 (App Router)        |
-| UI                          | React 19                       |
-| Estado                      | Redux Toolkit                  |
-| Estilização                 | Tailwind CSS v4 + SCSS Modules |
-| Design System (web)         | `@ds/web` + `@ds/tokens`       |
-| Design System (mobile)      | `@ds/mobile` + NativeWind v4   |
-| Documentação de componentes | Storybook 8                    |
-| Testes visuais              | Chromatic                      |
-| Testes                      | Jest + Testing Library         |
-| Tipos                       | TypeScript 5.9                 |
-| Lint / Formato              | ESLint + Prettier              |
+| Camada                      | Tecnologia                                       |
+| --------------------------- | ------------------------------------------------ |
+| Monorepo                    | Turborepo + Yarn Workspaces v1                   |
+| Framework                   | Next.js 16 (App Router)                          |
+| UI                          | React 19                                         |
+| Estado                      | Redux Toolkit                                    |
+| Estilização                 | Tailwind CSS v4 (app shell) + MUI v6 (`@ds/web`) |
+| Design System (web)         | `@ds/web` + `@ds/tokens`                         |
+| Design System (mobile)      | `@ds/mobile` + React Native Paper                |
+| Documentação de componentes | Storybook 8                                      |
+| Testes visuais              | Chromatic                                        |
+| Testes                      | Jest + Testing Library                           |
+| Tipos                       | TypeScript 5.9                                   |
+| Lint / Formato              | ESLint + Prettier                                |
 
 ## Contribuindo
 
