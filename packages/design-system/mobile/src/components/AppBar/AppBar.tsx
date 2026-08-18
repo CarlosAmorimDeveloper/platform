@@ -1,4 +1,5 @@
 import React from 'react';
+import { StyleSheet } from 'react-native';
 import { Appbar } from 'react-native-paper';
 
 export interface AppBarAction {
@@ -17,10 +18,13 @@ export interface AppBarProps {
 
 export function AppBar({ title, onBackPress, actions, testID }: AppBarProps) {
   return (
-    // `elevated` left explicitly false — this app bar must stay flat, no shadow.
-    <Appbar.Header testID={testID} elevated={false}>
+    <Appbar.Header testID={testID}>
       {onBackPress && (
-        <Appbar.BackAction onPress={onBackPress} testID={testID ? `${testID}-back` : undefined} />
+        <Appbar.BackAction
+          onPress={onBackPress}
+          style={styles.actionButton}
+          testID={testID ? `${testID}-back` : undefined}
+        />
       )}
       <Appbar.Content title={title} />
       {actions?.map((action) => (
@@ -29,9 +33,16 @@ export function AppBar({ title, onBackPress, actions, testID }: AppBarProps) {
           icon={action.icon}
           onPress={action.onPress}
           accessibilityLabel={action.accessibilityLabel}
+          style={styles.actionButton}
           testID={action.testID}
         />
       ))}
     </Appbar.Header>
   );
 }
+
+const styles = StyleSheet.create({
+  actionButton: {
+    margin: 0,
+  },
+});

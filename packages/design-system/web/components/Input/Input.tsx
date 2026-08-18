@@ -4,7 +4,7 @@ import MuiOutlinedInput from '@mui/material/OutlinedInput';
 
 type Variant = 'default' | 'inline';
 
-interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   variant?: Variant;
 }
 

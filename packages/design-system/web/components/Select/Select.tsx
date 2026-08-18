@@ -9,12 +9,12 @@ import {
 } from '@mui/material';
 import type { SxProps, Theme } from '@mui/material/styles';
 
-interface SelectOption {
+export interface SelectOption {
   value: string;
   label: string;
 }
 
-interface SelectProps {
+export interface SelectProps {
   label: string;
   value: string;
   onChange: (value: string) => void;

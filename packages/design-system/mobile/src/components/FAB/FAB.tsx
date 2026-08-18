@@ -1,11 +1,10 @@
 import React from 'react';
-import type { StyleProp, ViewStyle } from 'react-native';
 import { FAB as PaperFAB } from 'react-native-paper';
 
 export interface FABProps {
   onPress: () => void;
   icon?: string;
-  style?: StyleProp<ViewStyle>;
+  style?: React.ComponentProps<typeof PaperFAB>['style'];
   testID?: string;
   accessibilityLabel?: string;
 }
@@ -15,8 +14,7 @@ export function FAB({ onPress, icon = 'plus', style, testID, accessibilityLabel 
     <PaperFAB
       icon={icon}
       onPress={onPress}
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      style={style as any}
+      style={style}
       testID={testID}
       accessibilityLabel={accessibilityLabel}
     />

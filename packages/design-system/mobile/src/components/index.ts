@@ -19,8 +19,8 @@ export type { InputProps } from './Input';
 export { Menu } from './Menu';
 export type { MenuProps, MenuItemOption } from './Menu';
 
-export { Radio } from './Radio';
-export type { RadioProps } from './Radio';
+export { RadioButton } from './RadioButton';
+export type { RadioButtonProps } from './RadioButton';
 
 export { Select } from './Select';
 export type { SelectProps, SelectOption } from './Select';

@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { Radio } from './Radio';
+import { RadioButton } from './RadioButton';
 
-const meta: Meta<typeof Radio> = {
-  title: 'Components/Radio',
-  component: Radio,
+const meta: Meta<typeof RadioButton> = {
+  title: 'Components/RadioButton',
+  component: RadioButton,
   tags: ['autodocs'],
   argTypes: {
     selected: { control: 'boolean' },
@@ -21,9 +21,9 @@ function RadioGrupo() {
   const [selected, setSelected] = useState('a');
   return (
     <>
-      <Radio selected={selected === 'a'} onPress={() => setSelected('a')} label="Opção A" />
-      <Radio selected={selected === 'b'} onPress={() => setSelected('b')} label="Opção B" />
-      <Radio
+      <RadioButton selected={selected === 'a'} onPress={() => setSelected('a')} label="Opção A" />
+      <RadioButton selected={selected === 'b'} onPress={() => setSelected('b')} label="Opção B" />
+      <RadioButton
         selected={selected === 'c'}
         onPress={() => setSelected('c')}
         label="Opção C"

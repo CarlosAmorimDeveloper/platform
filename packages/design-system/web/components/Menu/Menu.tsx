@@ -9,7 +9,7 @@ import {
 import type { SxProps, Theme } from '@mui/material/styles';
 import type { ReactNode } from 'react';
 
-interface MenuItemConfig {
+export interface MenuItemConfig {
   label: string;
   onClick: () => void;
   icon?: ReactNode;
@@ -17,7 +17,7 @@ interface MenuItemConfig {
   dividerAfter?: boolean;
 }
 
-interface MenuProps {
+export interface MenuProps {
   anchorEl: HTMLElement | null;
   open: boolean;
   onClose: () => void;
