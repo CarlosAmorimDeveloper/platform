@@ -63,18 +63,18 @@ export async function createUser(
   role: UserRole,
   workspaceId: string,
 ): Promise<void> {
-  const secondaryApp = initializeApp(firebaseConfig, `secondary-${Date.now()}`);
-  const secondaryAuth = getAuth(secondaryApp);
+  const disposableApp = initializeApp(firebaseConfig, `disposable-${Date.now()}`);
+  const disposableAuth = getAuth(disposableApp);
   const trimmedEmail = email.trim();
   try {
-    const { user } = await createUserWithEmailAndPassword(secondaryAuth, trimmedEmail, password);
+    const { user } = await createUserWithEmailAndPassword(disposableAuth, trimmedEmail, password);
     await setDoc(doc(db, 'users', user.uid), {
       email: trimmedEmail,
       name: name.trim(),
       role,
       workspace_id: workspaceId,
     });
-    await signOut(secondaryAuth);
+    await signOut(disposableAuth);
   } catch (err: unknown) {
     const message =
       err instanceof FirebaseError
@@ -84,7 +84,7 @@ export async function createUser(
           : 'Falha ao criar usuário';
     throw new Error(message);
   } finally {
-    await deleteApp(secondaryApp).catch(() => undefined);
+    await deleteApp(disposableApp).catch(() => undefined);
   }
 }
 
