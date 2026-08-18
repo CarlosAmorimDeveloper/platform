@@ -1,7 +1,142 @@
+import '@testing-library/react-native/extend-expect';
+import { FirebaseError } from 'firebase/app';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { act, fireEvent, render, screen, waitFor } from '../../test-utils';
+import { sendPasswordReset } from '../../services/authService';
+import type { AuthStackParamList } from '../../navigation/types';
+import { ForgotPassword } from './ForgotPassword';
+
+jest.mock('react-native/Libraries/EventEmitter/NativeEventEmitter', () =>
+  jest.fn().mockImplementation(() => ({
+    addListener: jest.fn(() => ({ remove: jest.fn() })),
+    removeListener: jest.fn(),
+    removeAllListeners: jest.fn(),
+    emit: jest.fn(),
+  })),
+);
+jest.mock('../../services/firebase', () => ({ auth: {}, db: {} }));
+jest.mock('../../services/authService', () => ({
+  ...jest.requireActual('../../services/authService'),
+  sendPasswordReset: jest.fn(),
+}));
+
+const mockedSendPasswordReset = sendPasswordReset as jest.Mock;
+
+type ForgotPasswordProps = NativeStackScreenProps<AuthStackParamList, 'ForgotPassword'>;
+
+const mockNavigation = {
+  navigate: jest.fn(),
+  goBack: jest.fn(),
+} as unknown as ForgotPasswordProps['navigation'];
+const mockRoute = {
+  key: 'ForgotPassword',
+  name: 'ForgotPassword',
+} as unknown as ForgotPasswordProps['route'];
+
+const ASYNC_TIMEOUT = { timeout: 30000 };
+
 describe('ForgotPassword', () => {
-  it.todo('renders email field');
-  it.todo('disables submit button when email is empty');
-  it.todo('shows success snackbar on password reset sent');
-  it.todo('shows error snackbar on failure');
-  it.todo('navigates back on success dismiss');
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('renders email field', () => {
+    render(<ForgotPassword navigation={mockNavigation} route={mockRoute} />);
+
+    expect(screen.getByPlaceholderText('email@exemplo.com')).toBeTruthy();
+    expect(screen.getByText('Enviar link')).toBeTruthy();
+  });
+
+  it('disables submit button when email is empty', () => {
+    render(<ForgotPassword navigation={mockNavigation} route={mockRoute} />);
+
+    expect(screen.getByText('Enviar link')).toBeDisabled();
+
+    fireEvent.changeText(screen.getByPlaceholderText('email@exemplo.com'), 'user@example.com');
+
+    expect(screen.getByText('Enviar link')).toBeEnabled();
+  });
+
+  it('does not call sendPasswordReset when submitting with an empty email', () => {
+    render(<ForgotPassword navigation={mockNavigation} route={mockRoute} />);
+
+    fireEvent.press(screen.getByText('Enviar link'));
+
+    expect(mockedSendPasswordReset).not.toHaveBeenCalled();
+  });
+
+  it('shows a loading indicator while the request is in flight', async () => {
+    let resolveReset: () => void = () => {};
+    mockedSendPasswordReset.mockImplementation(
+      () =>
+        new Promise<void>((resolve) => {
+          resolveReset = resolve;
+        }),
+    );
+    render(<ForgotPassword navigation={mockNavigation} route={mockRoute} />);
+
+    fireEvent.changeText(screen.getByPlaceholderText('email@exemplo.com'), 'user@example.com');
+    fireEvent.press(screen.getByText('Enviar link'));
+
+    await waitFor(() => {
+      expect(screen.getByRole('progressbar')).toBeTruthy();
+    }, ASYNC_TIMEOUT);
+
+    resolveReset();
+
+    await waitFor(() => {
+      expect(screen.queryByRole('progressbar')).toBeNull();
+    }, ASYNC_TIMEOUT);
+  }, 40000);
+
+  it('shows success snackbar on password reset sent', async () => {
+    mockedSendPasswordReset.mockResolvedValue(undefined);
+    render(<ForgotPassword navigation={mockNavigation} route={mockRoute} />);
+
+    fireEvent.changeText(screen.getByPlaceholderText('email@exemplo.com'), 'user@example.com');
+    fireEvent.press(screen.getByText('Enviar link'));
+
+    await waitFor(() => {
+      expect(mockedSendPasswordReset).toHaveBeenCalledWith('user@example.com');
+    });
+
+    await waitFor(() => {
+      expect(
+        screen.getByText('Se este e-mail estiver cadastrado, você receberá um link em instantes.'),
+      ).toBeTruthy();
+    }, ASYNC_TIMEOUT);
+  }, 40000);
+
+  it('shows error snackbar on failure', async () => {
+    mockedSendPasswordReset.mockRejectedValue(new FirebaseError('auth/invalid-email', ''));
+    render(<ForgotPassword navigation={mockNavigation} route={mockRoute} />);
+
+    fireEvent.changeText(screen.getByPlaceholderText('email@exemplo.com'), 'not-an-email');
+    fireEvent.press(screen.getByText('Enviar link'));
+
+    await waitFor(() => {
+      expect(screen.getByText('E-mail inválido.')).toBeTruthy();
+    }, ASYNC_TIMEOUT);
+  }, 40000);
+
+  it('navigates back on success dismiss', async () => {
+    mockedSendPasswordReset.mockResolvedValue(undefined);
+    render(<ForgotPassword navigation={mockNavigation} route={mockRoute} />);
+
+    fireEvent.changeText(screen.getByPlaceholderText('email@exemplo.com'), 'user@example.com');
+    fireEvent.press(screen.getByText('Enviar link'));
+
+    await waitFor(() => {
+      expect(
+        screen.getByText('Se este e-mail estiver cadastrado, você receberá um link em instantes.'),
+      ).toBeTruthy();
+    }, ASYNC_TIMEOUT);
+
+    const [successSnackbar] = screen.UNSAFE_getAllByProps({ variant: 'success' });
+    act(() => {
+      successSnackbar.props.onDismiss();
+    });
+
+    expect(mockNavigation.goBack).toHaveBeenCalled();
+  });
 });
