@@ -18,17 +18,42 @@ service cloud.firestore {
         request.auth.uid == userId ||
         resource.data.workspace_id == userDoc().workspace_id
       );
-      allow create: if request.auth != null;
+
+      // Auto-registro (register()): só cria o próprio doc, como admin, e só
+      // para um workspace que ainda não existe — garante que essa via só
+      // funda um workspace novo, nunca assume admin de um já existente
+      // (o doc do workspace em si só é aceito com owner_id == auth.uid,
+      // ver `workspaces/{workspaceId}` abaixo).
+      // Convite por admin (createUser()): admin cria o doc de outro uid,
+      // mas só dentro do próprio workspace.
+      allow create: if request.auth != null
+        && request.resource.data.keys().hasOnly(['email', 'name', 'role', 'workspace_id'])
+        && request.resource.data.role in ['admin', 'standard']
+        && (
+          (request.auth.uid == userId
+            && request.resource.data.role == 'admin'
+            && !exists(/databases/$(database)/documents/workspaces/$(request.resource.data.workspace_id)))
+          || (isAdmin() && request.resource.data.workspace_id == userDoc().workspace_id)
+        );
+
+      // Auto-edição: só o próprio nome. Admin: qualquer campo de membros do
+      // próprio workspace, exceto mover alguém para outro workspace_id.
       allow update: if request.auth != null && (
-        request.auth.uid == userId || isAdmin()
+        (request.auth.uid == userId
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name']))
+        || (isAdmin()
+          && belongsToWorkspace(resource.data.workspace_id)
+          && request.resource.data.workspace_id == resource.data.workspace_id
+          && request.resource.data.keys().hasOnly(['email', 'name', 'role', 'workspace_id']))
       );
     }
 
-    // Workspace: criação pelo owner; leitura/edição apenas por membros
+    // Workspace: criação pelo owner; leitura por membros; edição/exclusão só por admin
     match /workspaces/{workspaceId} {
       allow create: if request.auth != null
         && request.resource.data.owner_id == request.auth.uid;
-      allow read, update, delete: if request.auth != null && belongsToWorkspace(workspaceId);
+      allow read: if request.auth != null && belongsToWorkspace(workspaceId);
+      allow update, delete: if request.auth != null && belongsToWorkspace(workspaceId) && isAdmin();
 
       // Tickets: apenas membros do workspace
       match /tickets/{ticketId} {
