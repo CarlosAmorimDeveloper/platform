@@ -35,7 +35,7 @@ jobs:
         run: yarn workspace @app/tickets check-types
 
       - name: Test
-        run: yarn workspace @app/tickets test
+        run: yarn workspace @app/tickets test --runInBand
 
   appointmate:
     name: appointmate — lint, check-types, test
@@ -61,4 +61,4 @@ jobs:
         run: yarn workspace @app/appointmate check-types
 
       - name: Test
-        run: yarn workspace @app/appointmate test
+        run: yarn workspace @app/appointmate test --runInBand
