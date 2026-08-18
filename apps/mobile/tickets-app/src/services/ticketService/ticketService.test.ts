@@ -1,12 +1,31 @@
-import { onSnapshot, query, where, orderBy } from 'firebase/firestore';
-import { subscribeToTicketList } from './ticketService';
+import {
+  onSnapshot,
+  query,
+  where,
+  orderBy,
+  collection,
+  doc,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  serverTimestamp,
+} from 'firebase/firestore';
+import {
+  subscribeToTicketList,
+  createTicket,
+  updateTicket,
+  deleteTicket,
+  addComment,
+  deleteComment,
+} from './ticketService';
+import { db } from '../firebase';
 import type { Ticket } from '../../domain/ticket';
 import type { User } from '../../domain/user';
 
 jest.mock('../firebase', () => ({ db: {} }));
 jest.mock('firebase/firestore', () => ({
-  collection: jest.fn(() => ({ __col: true })),
-  doc: jest.fn(),
+  collection: jest.fn((...args) => ({ __col: true, args })),
+  doc: jest.fn((...args) => ({ __doc: true, args })),
   query: jest.fn((col, ...constraints) => ({ col, constraints })),
   where: jest.fn((field, op, value) => ({ type: 'where', field, op, value })),
   orderBy: jest.fn((field, direction) => ({ type: 'orderBy', field, direction })),
@@ -14,13 +33,19 @@ jest.mock('firebase/firestore', () => ({
   addDoc: jest.fn(),
   updateDoc: jest.fn(),
   deleteDoc: jest.fn(),
-  serverTimestamp: jest.fn(),
+  serverTimestamp: jest.fn(() => ({ __serverTimestamp: true })),
 }));
 
 const mockOnSnapshot = onSnapshot as jest.Mock;
 const mockQuery = query as jest.Mock;
 const mockWhere = where as jest.Mock;
 const mockOrderBy = orderBy as jest.Mock;
+const mockCollection = collection as jest.Mock;
+const mockDoc = doc as jest.Mock;
+const mockAddDoc = addDoc as jest.Mock;
+const mockUpdateDoc = updateDoc as jest.Mock;
+const mockDeleteDoc = deleteDoc as jest.Mock;
+const mockServerTimestamp = serverTimestamp as jest.Mock;
 
 const adminUser: User = {
   uid: 'admin-1',
@@ -94,10 +119,7 @@ describe('subscribeToTicketList', () => {
     expect(createdCallback).toBeTruthy();
     expect(assignedCallback).toBeTruthy();
 
-    // Created-by-me: an older ticket the user authored themselves.
     createdSuccess({ docs: [fakeTicketDoc('created-only', standardUser.uid, null, 100)] });
-    // Assigned-to-me: a newer ticket assigned by an admin, plus the same
-    // ticket the user both created AND was assigned (must not duplicate).
     assignedSuccess({
       docs: [
         fakeTicketDoc('assigned-only', 'admin-1', standardUser.uid, 300),
@@ -124,9 +146,144 @@ describe('subscribeToTicketList', () => {
 });
 
 describe('ticketService', () => {
-  it.todo('createTicket adds a new ticket to firestore');
-  it.todo('updateTicket updates ticket fields in firestore');
-  it.todo('deleteTicket removes ticket from firestore');
-  it.todo('addComment adds a comment to ticket subcollection');
-  it.todo('deleteComment removes a comment from ticket subcollection');
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  describe('createTicket', () => {
+    it('adds a new ticket to firestore without an assignee', async () => {
+      await createTicket(
+        { title: 'Fix login bug', description: 'Users cannot log in', priority: 'high' },
+        standardUser,
+      );
+
+      expect(mockCollection).toHaveBeenCalledWith(
+        db,
+        'workspaces',
+        standardUser.workspaceId,
+        'tickets',
+      );
+      expect(mockServerTimestamp).toHaveBeenCalledTimes(1);
+      const colRef = mockCollection.mock.results[0]?.value;
+      expect(mockAddDoc).toHaveBeenCalledWith(colRef, {
+        title: 'Fix login bug',
+        description: 'Users cannot log in',
+        priority: 'high',
+        creator_id: standardUser.uid,
+        creator_name: standardUser.name,
+        status: 'open',
+        createdAt: { __serverTimestamp: true },
+      });
+    });
+
+    it('adds a new ticket to firestore with an assignee', async () => {
+      await createTicket(
+        {
+          title: 'Fix login bug',
+          description: 'Users cannot log in',
+          priority: 'high',
+          assigneeId: 'user-2',
+          assigneeName: 'Alice',
+        },
+        standardUser,
+      );
+
+      const colRef = mockCollection.mock.results[0]?.value;
+      expect(mockAddDoc).toHaveBeenCalledWith(colRef, {
+        title: 'Fix login bug',
+        description: 'Users cannot log in',
+        priority: 'high',
+        creator_id: standardUser.uid,
+        creator_name: standardUser.name,
+        status: 'open',
+        createdAt: { __serverTimestamp: true },
+        assignee_id: 'user-2',
+        assignee_name: 'Alice',
+      });
+    });
+  });
+
+  describe('updateTicket', () => {
+    it('updates status and priority fields in firestore without touching the assignee', async () => {
+      await updateTicket('ticket-1', { status: 'in_progress', priority: 'high' }, 'ws-1');
+
+      expect(mockDoc).toHaveBeenCalledWith(db, 'workspaces', 'ws-1', 'tickets', 'ticket-1');
+      const docRef = mockDoc.mock.results[0]?.value;
+      expect(mockUpdateDoc).toHaveBeenCalledWith(docRef, {
+        status: 'in_progress',
+        priority: 'high',
+      });
+    });
+
+    it('remaps assigneeId/assigneeName to assignee_id/assignee_name when reassigning', async () => {
+      await updateTicket('ticket-1', { assigneeId: 'user-2', assigneeName: 'Alice' }, 'ws-1');
+
+      const docRef = mockDoc.mock.results[0]?.value;
+      expect(mockUpdateDoc).toHaveBeenCalledWith(docRef, {
+        assignee_id: 'user-2',
+        assignee_name: 'Alice',
+      });
+    });
+
+    it('writes null assignee fields when reassigning to null to unassign', async () => {
+      await updateTicket('ticket-1', { assigneeId: null, assigneeName: null }, 'ws-1');
+
+      const docRef = mockDoc.mock.results[0]?.value;
+      expect(mockUpdateDoc).toHaveBeenCalledWith(docRef, {
+        assignee_id: null,
+        assignee_name: null,
+      });
+    });
+  });
+
+  describe('deleteTicket', () => {
+    it('removes ticket from firestore', async () => {
+      await deleteTicket('ticket-1', 'ws-1');
+
+      expect(mockDoc).toHaveBeenCalledWith(db, 'workspaces', 'ws-1', 'tickets', 'ticket-1');
+      const docRef = mockDoc.mock.results[0]?.value;
+      expect(mockDeleteDoc).toHaveBeenCalledWith(docRef);
+    });
+  });
+
+  describe('addComment', () => {
+    it('adds a comment to ticket subcollection', async () => {
+      await addComment('ticket-1', 'Looks good', standardUser);
+
+      expect(mockCollection).toHaveBeenCalledWith(
+        db,
+        'workspaces',
+        standardUser.workspaceId,
+        'tickets',
+        'ticket-1',
+        'comments',
+      );
+      const colRef = mockCollection.mock.results[0]?.value;
+      expect(mockAddDoc).toHaveBeenCalledWith(colRef, {
+        text: 'Looks good',
+        author_id: standardUser.uid,
+        author_name: standardUser.name,
+        createdAt: { __serverTimestamp: true },
+      });
+    });
+  });
+
+  describe('deleteComment', () => {
+    it('removes a comment from ticket subcollection', async () => {
+      await deleteComment('ticket-1', 'comment-1', 'ws-1');
+
+      expect(mockCollection).toHaveBeenCalledWith(
+        db,
+        'workspaces',
+        'ws-1',
+        'tickets',
+        'ticket-1',
+        'comments',
+      );
+      const colRef = mockCollection.mock.results[0]?.value;
+      expect(mockDoc).toHaveBeenCalledWith(colRef, 'comment-1');
+      const docRef = mockDoc.mock.results[0]?.value;
+      expect(mockDeleteDoc).toHaveBeenCalledWith(docRef);
+    });
+  });
 });

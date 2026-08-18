@@ -9,6 +9,7 @@ const sharedReactNativePaper = path.resolve(__dirname, 'node_modules/react-nativ
 module.exports = {
   preset: '@react-native/jest-preset',
   testMatch: ['**/*.test.{ts,tsx}'],
+  testPathIgnorePatterns: ['/node_modules/', 'firestore\\.rules\\.test'],
   transform: {
     '^.+\\.(js|ts|tsx)$': [
       'babel-jest',
