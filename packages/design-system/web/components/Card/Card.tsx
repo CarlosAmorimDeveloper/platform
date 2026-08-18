@@ -2,7 +2,7 @@ import { Card as MuiCard, CardActions, CardContent, CardHeader, CardMedia } from
 import type { SxProps, Theme } from '@mui/material/styles';
 import type { ReactNode } from 'react';
 
-interface CardProps {
+export interface CardProps {
   title?: string;
   subtitle?: string;
   children?: ReactNode;

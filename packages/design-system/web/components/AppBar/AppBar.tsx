@@ -3,7 +3,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import type { SxProps, Theme } from '@mui/material/styles';
 import type { ReactNode } from 'react';
 
-interface AppBarProps {
+export interface AppBarProps {
   title: string;
   onMenuClick?: () => void;
   actions?: ReactNode;

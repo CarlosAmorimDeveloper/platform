@@ -9,7 +9,7 @@ import {
 import type { SxProps, Theme } from '@mui/material/styles';
 import type { ReactNode } from 'react';
 
-interface DialogProps {
+export interface DialogProps {
   open: boolean;
   title: string;
   children: ReactNode;

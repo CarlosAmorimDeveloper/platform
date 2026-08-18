@@ -8,12 +8,12 @@ import {
 } from '@mui/material';
 import type { SxProps, Theme } from '@mui/material/styles';
 
-interface RadioOption {
+export interface RadioOption {
   value: string;
   label: string;
 }
 
-interface RadioProps {
+export interface RadioProps {
   label: string;
   value: string;
   onChange: (value: string) => void;
