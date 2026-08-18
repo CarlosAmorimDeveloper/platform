@@ -1,12 +1,13 @@
 import { StyleSheet } from 'react-native';
-import { colors, fontSizes, spacing } from '@ds/tokens';
+import { colors, fontSizes, radii, spacing } from '@ds/tokens';
 
 export const styles = StyleSheet.create({
   screen: {
     flex: 1,
   },
   header: {
-    padding: spacing[6],
+    paddingTop: spacing[6],
+    paddingBottom: spacing[6],
   },
   actionsRow: {
     flexDirection: 'row',
@@ -19,25 +20,44 @@ export const styles = StyleSheet.create({
   },
   card: {
     marginBottom: spacing[3],
+    padding: spacing[3],
   },
   cardHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    gap: spacing[1],
   },
   cardDate: {
+    flex: 1,
     fontSize: fontSizes.base,
     fontWeight: '600',
     color: colors.neutral[900],
   },
-  cardStatus: {
+  statusBadge: {
+    paddingHorizontal: spacing[3],
+    paddingVertical: spacing[1],
+    borderRadius: radii.full,
+  },
+  statusBadgeDraft: {
+    backgroundColor: colors.neutral[100],
+  },
+  statusBadgeSubmitted: {
+    backgroundColor: colors.primary[100],
+  },
+  statusText: {
     fontSize: fontSizes.xs,
-    fontWeight: '600',
-    color: colors.primary[600],
+    fontWeight: '700',
+  },
+  statusTextDraft: {
+    color: colors.neutral[600],
+  },
+  statusTextSubmitted: {
+    color: colors.primary[700],
   },
   cardSummary: {
     fontSize: fontSizes.sm,
-    color: colors.neutral[600],
-    marginTop: spacing[1],
+    color: colors.neutral[500],
+    marginTop: spacing[2],
   },
 });

@@ -1,4 +1,5 @@
 import React from 'react';
+import { StyleSheet } from 'react-native';
 import { IconButton as PaperIconButton } from 'react-native-paper';
 import { colors } from '@ds/tokens';
 
@@ -37,6 +38,15 @@ export function IconButton({
       iconColor={colorByVariant[variant]}
       accessibilityLabel={accessibilityLabel}
       testID={testID}
+      style={styles.button}
     />
   );
 }
+
+// react-native-paper's IconButton hardcodes `margin: 6` on its container,
+// which is layout the consuming screen should control, not the component.
+const styles = StyleSheet.create({
+  button: {
+    margin: 0,
+  },
+});
