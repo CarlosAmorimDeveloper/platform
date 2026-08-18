@@ -14,6 +14,7 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { AppStackParamList } from '../../navigation/types';
 import { useAuth } from '../../context/AuthContext';
 import { listForms, type FormSummary } from '../../services/formsService';
+import { mapFirestoreError } from '../../utils/firebaseErrors';
 import {
   DEFAULT_TIME_FILTER,
   TIME_FILTER_PRESETS,
@@ -48,8 +49,8 @@ export function Home({ navigation }: Props) {
           setForms(result);
           setErrorMessage(null);
         })
-        .catch(() => {
-          setErrorMessage('Não foi possível carregar seus formulários.');
+        .catch((err) => {
+          setErrorMessage(mapFirestoreError(err, 'Não foi possível carregar seus formulários.'));
         })
         .finally(() => {
           setLoading(false);

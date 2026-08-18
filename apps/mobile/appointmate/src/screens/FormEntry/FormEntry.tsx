@@ -15,6 +15,7 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { AppStackParamList } from '../../navigation/types';
 import { useAuth } from '../../context/AuthContext';
 import { createForm, getForm, updateForm } from '../../services/formsService';
+import { mapFirestoreError } from '../../utils/firebaseErrors';
 import {
   EMPTY_FORM_VALUES,
   MOOD_OPTIONS,
@@ -96,9 +97,9 @@ export function FormEntry({ navigation, route }: Props) {
         if (values) reset(values);
         setLoadingForm(false);
       })
-      .catch(() => {
+      .catch((err) => {
         if (cancelled) return;
-        setErrorMessage('Não foi possível carregar o formulário.');
+        setErrorMessage(mapFirestoreError(err, 'Não foi possível carregar o formulário.'));
         setLoadingForm(false);
       });
 
@@ -128,8 +129,10 @@ export function FormEntry({ navigation, route }: Props) {
       // Always `replace` (not `goBack`) so FormDetail remounts and shows the
       // values just saved, instead of the stale data it fetched on its first mount.
       navigation.replace('FormDetail', { formId: savedFormId! });
-    } catch {
-      setErrorMessage('Não foi possível salvar o formulário. Tente novamente.');
+    } catch (err) {
+      setErrorMessage(
+        mapFirestoreError(err, 'Não foi possível salvar o formulário. Tente novamente.'),
+      );
     } finally {
       setSaving(false);
     }

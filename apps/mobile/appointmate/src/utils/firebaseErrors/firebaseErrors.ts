@@ -1,5 +1,12 @@
 import { FirebaseError } from 'firebase/app';
 
+export function mapFirestoreError(err: unknown, fallback: string): string {
+  if (err instanceof FirebaseError && err.code === 'unavailable') {
+    return 'Sem conexão. Verifique sua internet e tente novamente.';
+  }
+  return fallback;
+}
+
 export function mapFirebaseAuthError(err: unknown): string {
   if (err instanceof FirebaseError) {
     switch (err.code) {
