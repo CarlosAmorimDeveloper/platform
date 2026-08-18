@@ -28,6 +28,7 @@ export function Chip({
       icon={icon}
       testID={testID}
       accessibilityLabel={accessibilityLabel}
+      hitSlop={{ top: 4, bottom: 4, left: 4, right: 4 }}
     >
       {children}
     </PaperChip>

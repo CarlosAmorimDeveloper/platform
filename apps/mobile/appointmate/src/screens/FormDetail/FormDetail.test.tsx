@@ -1,4 +1,5 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { FirebaseError } from 'firebase/app';
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import { fireEvent, render, screen, waitFor } from '../../test-utils';
@@ -120,6 +121,18 @@ describe('FormDetail', () => {
       expect(screen.getByTestId('form-detail-error')).toBeTruthy();
     }, ASYNC_TIMEOUT);
     expect(screen.getByText('Não foi possível carregar o formulário.')).toBeTruthy();
+  }, 20000);
+
+  it('shows a connectivity-specific message when loading fails offline', async () => {
+    mockedGetFormRecord.mockRejectedValue(new FirebaseError('unavailable', ''));
+
+    render(<FormDetail navigation={mockNavigation} route={makeRoute('form-1')} />);
+
+    await waitFor(() => {
+      expect(
+        screen.getByText('Sem conexão. Verifique sua internet e tente novamente.'),
+      ).toBeTruthy();
+    }, ASYNC_TIMEOUT);
   }, 20000);
 
   it('renders the filled fields and hides empty ones', async () => {

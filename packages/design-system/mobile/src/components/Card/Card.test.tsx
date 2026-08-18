@@ -45,4 +45,9 @@ describe('Card', () => {
     render(<Card testID="card" coverUri="https://picsum.photos/400/200" title="Test" />);
     expect(screen.getByTestId('card')).toBeTruthy();
   });
+
+  it('encaminha accessibilityLabel', () => {
+    render(<Card testID="card" accessibilityLabel="Cartão de exemplo" />);
+    expect(screen.getByTestId('card-container').props.accessibilityLabel).toBe('Cartão de exemplo');
+  });
 });

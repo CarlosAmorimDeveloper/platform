@@ -46,4 +46,14 @@ describe('Chip', () => {
     render(<Chip testID="meu-chip">OK</Chip>);
     expect(screen.getByTestId('meu-chip')).toBeTruthy();
   });
+
+  it('expõe hitSlop para ampliar a área de toque', () => {
+    render(<Chip testID="chip">Toque</Chip>);
+    expect(screen.getByTestId('chip').props.hitSlop).toEqual({
+      top: 4,
+      bottom: 4,
+      left: 4,
+      right: 4,
+    });
+  });
 });

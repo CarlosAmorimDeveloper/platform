@@ -1,1 +1,1 @@
-export { mapFirebaseAuthError } from './firebaseErrors';
+export { mapFirebaseAuthError, mapFirestoreError } from './firebaseErrors';

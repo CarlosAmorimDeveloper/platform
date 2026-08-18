@@ -1,4 +1,5 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { FirebaseError } from 'firebase/app';
 import { fireEvent, render, screen, waitFor } from '../../test-utils';
 import { createForm, getForm, updateForm } from '../../services/formsService';
 import { useAuth } from '../../context/AuthContext';
@@ -304,6 +305,20 @@ describe('FormEntry', () => {
         ).toBeTruthy();
       }, ASYNC_TIMEOUT);
       expect(mockNavigation.replace).not.toHaveBeenCalled();
+    }, 20000);
+
+    it('shows a connectivity-specific message when saving fails offline', async () => {
+      mockedCreateForm.mockRejectedValue(new FirebaseError('unavailable', ''));
+      render(<FormEntry navigation={mockNavigation} route={makeRoute()} />);
+
+      fillAllRequiredFields();
+      fireEvent.press(screen.getByTestId('form-entry-submit-button'));
+
+      await waitFor(() => {
+        expect(
+          screen.getByText('Sem conexão. Verifique sua internet e tente novamente.'),
+        ).toBeTruthy();
+      }, ASYNC_TIMEOUT);
     }, 20000);
   });
 

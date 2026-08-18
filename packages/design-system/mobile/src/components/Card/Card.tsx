@@ -10,11 +10,26 @@ export interface CardProps {
   coverUri?: string;
   style?: React.ComponentProps<typeof PaperCard>['style'];
   testID?: string;
+  accessibilityLabel?: string;
 }
 
-export function Card({ title, subtitle, children, onPress, coverUri, style, testID }: CardProps) {
+export function Card({
+  title,
+  subtitle,
+  children,
+  onPress,
+  coverUri,
+  style,
+  testID,
+  accessibilityLabel,
+}: CardProps) {
   return (
-    <PaperCard onPress={onPress} style={style} testID={testID}>
+    <PaperCard
+      onPress={onPress}
+      style={style}
+      testID={testID}
+      accessibilityLabel={accessibilityLabel}
+    >
       {coverUri && <PaperCard.Cover source={{ uri: coverUri }} />}
       {(title != null || subtitle != null) && (
         <PaperCard.Title title={title ?? ''} subtitle={subtitle} />

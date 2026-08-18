@@ -1,4 +1,5 @@
 import { RefreshControl } from 'react-native';
+import { FirebaseError } from 'firebase/app';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { fireEvent, render, screen, waitFor } from '../../test-utils';
 import { useAuth } from '../../context/AuthContext';
@@ -71,6 +72,18 @@ describe('Home', () => {
 
     await waitFor(() => {
       expect(screen.getByTestId('home-error')).toBeTruthy();
+    }, ASYNC_TIMEOUT);
+  }, 20000);
+
+  it('shows a connectivity-specific message when the load fails offline', async () => {
+    mockedListForms.mockRejectedValue(new FirebaseError('unavailable', ''));
+
+    render(<Home navigation={mockNavigation} route={mockRoute} />);
+
+    await waitFor(() => {
+      expect(
+        screen.getByText('Sem conexão. Verifique sua internet e tente novamente.'),
+      ).toBeTruthy();
     }, ASYNC_TIMEOUT);
   }, 20000);
 
