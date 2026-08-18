@@ -15,6 +15,7 @@ import {
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { AppStackParamList } from '../../navigation/types';
 import { deleteForm, getFormRecord, type FormRecord } from '../../services/formsService';
+import { mapFirestoreError } from '../../utils/firebaseErrors';
 import { MOOD_OPTIONS } from '../../domain/form';
 import { buildFormHtml } from '../../domain/pdf';
 import { styles } from './FormDetail.styles';
@@ -99,9 +100,9 @@ export function FormDetail({ navigation, route }: Props) {
         setRecord(result);
         setLoading(false);
       })
-      .catch(() => {
+      .catch((err) => {
         if (cancelled) return;
-        setErrorMessage('Não foi possível carregar o formulário.');
+        setErrorMessage(mapFirestoreError(err, 'Não foi possível carregar o formulário.'));
         setLoading(false);
       });
 
@@ -134,8 +135,10 @@ export function FormDetail({ navigation, route }: Props) {
       await deleteForm(formId);
       setDeleteDialogVisible(false);
       navigation.goBack();
-    } catch {
-      setActionError('Não foi possível excluir o formulário. Tente novamente.');
+    } catch (err) {
+      setActionError(
+        mapFirestoreError(err, 'Não foi possível excluir o formulário. Tente novamente.'),
+      );
       setDeleteDialogVisible(false);
     } finally {
       setDeleting(false);

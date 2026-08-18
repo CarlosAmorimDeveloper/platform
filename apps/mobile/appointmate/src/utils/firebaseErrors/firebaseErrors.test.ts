@@ -1,5 +1,25 @@
 import { FirebaseError } from 'firebase/app';
-import { mapFirebaseAuthError } from './firebaseErrors';
+import { mapFirebaseAuthError, mapFirestoreError } from './firebaseErrors';
+
+describe('mapFirestoreError', () => {
+  it('maps unavailable to a connectivity message', () => {
+    const err = new FirebaseError('unavailable', '');
+    expect(mapFirestoreError(err, 'fallback')).toBe(
+      'Sem conexão. Verifique sua internet e tente novamente.',
+    );
+  });
+
+  it('returns the given fallback for other firebase error codes', () => {
+    const err = new FirebaseError('permission-denied', '');
+    expect(mapFirestoreError(err, 'Não foi possível carregar.')).toBe('Não foi possível carregar.');
+  });
+
+  it('returns the given fallback for non-firebase errors', () => {
+    expect(mapFirestoreError(new Error('plain error'), 'Não foi possível salvar.')).toBe(
+      'Não foi possível salvar.',
+    );
+  });
+});
 
 describe('mapFirebaseAuthError', () => {
   it('maps auth/invalid-credential to login error message', () => {
