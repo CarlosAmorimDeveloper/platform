@@ -1,7 +1,7 @@
 import { Checkbox as MuiCheckbox, FormControlLabel } from '@mui/material';
 import type { SxProps, Theme } from '@mui/material/styles';
 
-interface CheckboxProps {
+export interface CheckboxProps {
   label: string;
   checked: boolean;
   onChange: (checked: boolean) => void;

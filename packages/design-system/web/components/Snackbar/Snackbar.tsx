@@ -3,7 +3,7 @@ import type { SxProps, Theme } from '@mui/material/styles';
 
 type Severity = 'success' | 'error' | 'warning' | 'info';
 
-interface SnackbarProps {
+export interface SnackbarProps {
   open: boolean;
   message: string;
   severity?: Severity;

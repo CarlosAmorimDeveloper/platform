@@ -28,7 +28,7 @@ export function Snackbar({
   message,
   variant,
   position = 'bottom',
-  duration = 1500,
+  duration = 6000,
   action,
   testID,
 }: SnackbarProps) {

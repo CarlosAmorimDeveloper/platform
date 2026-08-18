@@ -1,8 +1,8 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { TouchableRipple, Text, RadioButton } from 'react-native-paper';
+import { TouchableRipple, Text, RadioButton as PaperRadioButton } from 'react-native-paper';
 
-export interface RadioProps {
+export interface RadioButtonProps {
   selected: boolean;
   onPress: () => void;
   label?: string;
@@ -11,14 +11,14 @@ export interface RadioProps {
   accessibilityLabel?: string;
 }
 
-export function Radio({
+export function RadioButton({
   selected,
   onPress,
   label = '',
   disabled = false,
   testID,
   accessibilityLabel,
-}: RadioProps) {
+}: RadioButtonProps) {
   /*
    * Dual-disable pattern (same as Checkbox):
    *   - `disabled` on TouchableRipple: provides visual feedback (greyed-out appearance)
@@ -37,7 +37,7 @@ export function Radio({
     >
       <View style={styles.container}>
         <Text>{label}</Text>
-        <RadioButton
+        <PaperRadioButton
           status={selected ? 'checked' : 'unchecked'}
           disabled={disabled}
           onPress={disabled ? undefined : onPress}
