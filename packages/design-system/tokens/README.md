@@ -126,15 +126,22 @@ radii.full; // 9999
 
 ## Uso no React Native
 
-Para React Native, os tokens são consumidos pelo pacote `@ds/mobile`, que os importa via `jiti` em tempo de configuração e os mapeia para o tema do Tailwind CSS / NativeWind v4. Os valores unitless (números) são convertidos automaticamente para strings `px` pelo utilitário `mapToPx`.
+Para React Native, os tokens são consumidos diretamente pelo pacote `@ds/mobile` — importados como constantes TypeScript comuns e usados para montar o `theme` do React Native Paper (`src/theme.ts`) e em `StyleSheet.create` dos componentes. Não há NativeWind/Tailwind no caminho — os valores em px continuam unitless, como em qualquer `StyleSheet` do React Native.
 
-```js
-// Exemplo interno do @ds/mobile/tailwind.config.js
-const { colors, spacing, fontSizes, radii } = require('@ds/tokens');
+```ts
+// Exemplo interno do @ds/mobile/src/theme.ts
+import { MD3LightTheme } from 'react-native-paper';
+import { colors, radii } from '@ds/tokens';
 
-// spacing[4] === 16  →  "16px" no tema Tailwind
-// radii.lg === 8     →  "8px" no tema Tailwind
-// colors.primary[500] === "#6366F1"  →  usado diretamente
+export const theme = {
+  ...MD3LightTheme,
+  roundness: radii.md, // 6, unitless — RN usa números puros, não "6px"
+  colors: {
+    ...MD3LightTheme.colors,
+    primary: colors.primary[600],
+    // ...
+  },
+};
 ```
 
 Consulte [`packages/design-system/mobile`](../mobile/README.md) para mais detalhes.
