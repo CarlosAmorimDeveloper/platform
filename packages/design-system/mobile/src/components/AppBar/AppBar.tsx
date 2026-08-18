@@ -5,6 +5,7 @@ export interface AppBarAction {
   icon: string;
   onPress: () => void;
   accessibilityLabel?: string;
+  testID?: string;
 }
 
 export interface AppBarProps {
@@ -16,7 +17,8 @@ export interface AppBarProps {
 
 export function AppBar({ title, onBackPress, actions, testID }: AppBarProps) {
   return (
-    <Appbar.Header testID={testID}>
+    // `elevated` left explicitly false — this app bar must stay flat, no shadow.
+    <Appbar.Header testID={testID} elevated={false}>
       {onBackPress && (
         <Appbar.BackAction onPress={onBackPress} testID={testID ? `${testID}-back` : undefined} />
       )}
@@ -27,6 +29,7 @@ export function AppBar({ title, onBackPress, actions, testID }: AppBarProps) {
           icon={action.icon}
           onPress={action.onPress}
           accessibilityLabel={action.accessibilityLabel}
+          testID={action.testID}
         />
       ))}
     </Appbar.Header>

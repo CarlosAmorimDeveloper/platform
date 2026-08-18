@@ -3,6 +3,7 @@ import { ScrollView, Text, View } from 'react-native';
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import {
+  AppBar,
   Button,
   Dialog,
   EmptyState,
@@ -141,21 +142,42 @@ export function FormDetail({ navigation, route }: Props) {
     }
   }
 
+  const appBar = (
+    <AppBar
+      title="Detalhes do formulário"
+      onBackPress={() => navigation.goBack()}
+      testID="form-detail-app-bar"
+    />
+  );
+
   if (loading) {
-    return <LoadingView testID="form-detail-loading" />;
+    return (
+      <View style={styles.screen}>
+        {appBar}
+        <LoadingView testID="form-detail-loading" />
+      </View>
+    );
   }
 
   if (errorMessage) {
-    return <ErrorView description={errorMessage} testID="form-detail-error" />;
+    return (
+      <View style={styles.screen}>
+        {appBar}
+        <ErrorView description={errorMessage} testID="form-detail-error" />
+      </View>
+    );
   }
 
   if (!record) {
     return (
-      <EmptyState
-        title="Formulário não encontrado"
-        description="Este formulário pode ter sido removido."
-        testID="form-detail-not-found"
-      />
+      <View style={styles.screen}>
+        {appBar}
+        <EmptyState
+          title="Formulário não encontrado"
+          description="Este formulário pode ter sido removido."
+          testID="form-detail-not-found"
+        />
+      </View>
     );
   }
 
@@ -164,132 +186,135 @@ export function FormDetail({ navigation, route }: Props) {
   const moodLabel = MOOD_OPTIONS.find((option) => option.value === values.overallMood)?.label;
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      {updatedAtLabel && (
-        <Text style={styles.updatedAt} testID="form-detail-updated-at">
-          Última atualização em {updatedAtLabel}
-        </Text>
-      )}
+    <View style={styles.screen}>
+      {appBar}
+      <ScrollView contentContainerStyle={styles.container}>
+        {updatedAtLabel && (
+          <Text style={styles.updatedAt} testID="form-detail-updated-at">
+            Última atualização em {updatedAtLabel}
+          </Text>
+        )}
 
-      {isRecordEmpty(record) ? (
-        <EmptyState
-          title="Nenhuma resposta registrada"
-          description="Este formulário ainda não tem respostas preenchidas."
-          testID="form-detail-empty-state"
-        />
-      ) : (
-        <>
-          <Text style={styles.sectionTitle}>Cabeçalho</Text>
-          <Field label="Data desta consulta" value={values.appointmentDate} />
-          <Field label="Última consulta foi em" value={values.lastAppointmentDate} />
-
-          <Text style={styles.sectionTitle}>Panorama geral</Text>
-          {moodLabel && (
-            <View style={styles.field}>
-              <Text style={styles.fieldLabel}>Como você tem estado</Text>
-              <Text style={styles.fieldValue} testID="form-detail-overall-mood">
-                {moodLabel}
-              </Text>
-            </View>
-          )}
-          <Field label="Em poucas palavras" value={values.overallSummary} />
-
-          <Text style={styles.sectionTitle}>No dia a dia</Text>
-          <Field label="Sono" value={values.sleep} />
-          <Field label="Energia e disposição" value={values.energy} />
-          <Field label="Apetite e alimentação" value={values.appetite} />
-          <Field label="Concentração e memória" value={values.concentration} />
-
-          <Text style={styles.sectionTitle}>Medicação</Text>
-          <ListField label="Medicamentos e doses" items={values.medications} />
-          <Field
-            label="Tenho conseguido tomar como combinado?"
-            value={values.medicationAdherence}
+        {isRecordEmpty(record) ? (
+          <EmptyState
+            title="Nenhuma resposta registrada"
+            description="Este formulário ainda não tem respostas preenchidas."
+            testID="form-detail-empty-state"
           />
-          <Field label="Efeitos que percebi (bons e ruins)" value={values.medicationEffects} />
+        ) : (
+          <>
+            <Text style={styles.sectionTitle}>Cabeçalho</Text>
+            <Field label="Data desta consulta" value={values.appointmentDate} />
+            <Field label="Última consulta foi em" value={values.lastAppointmentDate} />
 
-          <Text style={styles.sectionTitle}>O que foi bem ou melhorou</Text>
-          <Field label="O que foi bem ou melhorou" value={values.whatWentWell} />
+            <Text style={styles.sectionTitle}>Panorama geral</Text>
+            {moodLabel && (
+              <View style={styles.field}>
+                <Text style={styles.fieldLabel}>Como você tem estado</Text>
+                <Text style={styles.fieldValue} testID="form-detail-overall-mood">
+                  {moodLabel}
+                </Text>
+              </View>
+            )}
+            <Field label="Em poucas palavras" value={values.overallSummary} />
 
-          <Text style={styles.sectionTitle}>O que tem sido difícil</Text>
-          <Field label="O que tem sido difícil" value={values.whatHasBeenHard} />
+            <Text style={styles.sectionTitle}>No dia a dia</Text>
+            <Field label="Sono" value={values.sleep} />
+            <Field label="Energia e disposição" value={values.energy} />
+            <Field label="Apetite e alimentação" value={values.appetite} />
+            <Field label="Concentração e memória" value={values.concentration} />
 
-          <Text style={styles.sectionTitle}>Contexto</Text>
-          <Field label="Situações importantes desde a última consulta" value={values.context} />
+            <Text style={styles.sectionTitle}>Medicação</Text>
+            <ListField label="Medicamentos e doses" items={values.medications} />
+            <Field
+              label="Tenho conseguido tomar como combinado?"
+              value={values.medicationAdherence}
+            />
+            <Field label="Efeitos que percebi (bons e ruins)" value={values.medicationEffects} />
 
-          <Text style={styles.sectionTitle}>Minhas perguntas</Text>
-          <ListField label="Perguntas" items={values.questions} />
+            <Text style={styles.sectionTitle}>O que foi bem ou melhorou</Text>
+            <Field label="O que foi bem ou melhorou" value={values.whatWentWell} />
 
-          <Text style={styles.sectionTitle}>Foco do dia</Text>
-          <Field label="O que quero desta consulta" value={values.todayFocus} />
+            <Text style={styles.sectionTitle}>O que tem sido difícil</Text>
+            <Field label="O que tem sido difícil" value={values.whatHasBeenHard} />
 
-          <Text style={styles.sectionTitle}>Durante a consulta</Text>
-          <Field label="Anotações e orientações" value={values.consultationNotes} />
-        </>
-      )}
+            <Text style={styles.sectionTitle}>Contexto</Text>
+            <Field label="Situações importantes desde a última consulta" value={values.context} />
 
-      <Button
-        style={styles.editButton}
-        onPress={() => navigation.navigate('FormEntry', { formId })}
-        testID="form-detail-edit-button"
-      >
-        Editar
-      </Button>
-      <Button
-        variant="secondary"
-        onPress={onExportPdf}
-        disabled={exporting}
-        testID="form-detail-export-pdf-button"
-      >
-        Exportar PDF
-      </Button>
-      <LoadingIndicator visible={exporting} testID="form-detail-exporting-indicator" />
-      <Button
-        variant="danger"
-        onPress={() => setDeleteDialogVisible(true)}
-        testID="form-detail-delete-button"
-      >
-        Excluir
-      </Button>
+            <Text style={styles.sectionTitle}>Minhas perguntas</Text>
+            <ListField label="Perguntas" items={values.questions} />
 
-      <Dialog
-        visible={deleteDialogVisible}
-        onDismiss={() => setDeleteDialogVisible(false)}
-        title="Excluir formulário"
-        testID="form-detail-delete-dialog"
-        actions={[
-          <Button
-            key="cancel"
-            variant="ghost"
-            onPress={() => setDeleteDialogVisible(false)}
-            testID="form-detail-delete-cancel-button"
-          >
-            Cancelar
-          </Button>,
-          <Button
-            key="confirm"
-            variant="danger"
-            onPress={onConfirmDelete}
-            disabled={deleting}
-            testID="form-detail-delete-confirm-button"
-          >
-            Excluir
-          </Button>,
-        ]}
-      >
-        <Text>
-          Tem certeza que deseja excluir este formulário? Essa ação não pode ser desfeita.
-        </Text>
-      </Dialog>
+            <Text style={styles.sectionTitle}>Foco do dia</Text>
+            <Field label="O que quero desta consulta" value={values.todayFocus} />
 
-      <Snackbar
-        visible={actionError !== null}
-        onDismiss={() => setActionError(null)}
-        message={actionError ?? ''}
-        position="top"
-        variant="error"
-        testID="form-detail-action-error-snackbar"
-      />
-    </ScrollView>
+            <Text style={styles.sectionTitle}>Durante a consulta</Text>
+            <Field label="Anotações e orientações" value={values.consultationNotes} />
+          </>
+        )}
+
+        <Button
+          style={styles.editButton}
+          onPress={() => navigation.navigate('FormEntry', { formId })}
+          testID="form-detail-edit-button"
+        >
+          Editar
+        </Button>
+        <Button
+          variant="secondary"
+          onPress={onExportPdf}
+          disabled={exporting}
+          testID="form-detail-export-pdf-button"
+        >
+          Exportar PDF
+        </Button>
+        <LoadingIndicator visible={exporting} testID="form-detail-exporting-indicator" />
+        <Button
+          variant="danger"
+          onPress={() => setDeleteDialogVisible(true)}
+          testID="form-detail-delete-button"
+        >
+          Excluir
+        </Button>
+
+        <Dialog
+          visible={deleteDialogVisible}
+          onDismiss={() => setDeleteDialogVisible(false)}
+          title="Excluir formulário"
+          testID="form-detail-delete-dialog"
+          actions={[
+            <Button
+              key="cancel"
+              variant="ghost"
+              onPress={() => setDeleteDialogVisible(false)}
+              testID="form-detail-delete-cancel-button"
+            >
+              Cancelar
+            </Button>,
+            <Button
+              key="confirm"
+              variant="danger"
+              onPress={onConfirmDelete}
+              disabled={deleting}
+              testID="form-detail-delete-confirm-button"
+            >
+              Excluir
+            </Button>,
+          ]}
+        >
+          <Text>
+            Tem certeza que deseja excluir este formulário? Essa ação não pode ser desfeita.
+          </Text>
+        </Dialog>
+
+        <Snackbar
+          visible={actionError !== null}
+          onDismiss={() => setActionError(null)}
+          message={actionError ?? ''}
+          position="top"
+          variant="error"
+          testID="form-detail-action-error-snackbar"
+        />
+      </ScrollView>
+    </View>
   );
 }

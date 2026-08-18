@@ -1,6 +1,15 @@
-import { useCallback, useEffect, useLayoutEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { FlatList, RefreshControl, View } from 'react-native';
-import { Button, EmptyState, ErrorView, IconButton, LoadingView, Menu, Snackbar } from '@ds/mobile';
+import {
+  AppBar,
+  Button,
+  EmptyState,
+  ErrorView,
+  IconButton,
+  LoadingView,
+  Menu,
+  Snackbar,
+} from '@ds/mobile';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { AppStackParamList } from '../../navigation/types';
 import { useAuth } from '../../context/AuthContext';
@@ -65,16 +74,20 @@ export function Home({ navigation }: Props) {
     return unsubscribe;
   }, [navigation, loadForms]);
 
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      title: 'Meus formulários',
-      headerRight: () => (
-        <Button variant="ghost" size="sm" onPress={logout} testID="home-logout-button">
-          Sair
-        </Button>
-      ),
-    });
-  }, [navigation, logout]);
+  const appBar = (
+    <AppBar
+      title="Meus formulários"
+      actions={[
+        {
+          icon: 'logout',
+          onPress: logout,
+          accessibilityLabel: 'Sair',
+          testID: 'home-logout-button',
+        },
+      ]}
+      testID="home-app-bar"
+    />
+  );
 
   function onRefresh() {
     setRefreshing(true);
@@ -87,12 +100,20 @@ export function Home({ navigation }: Props) {
   }
 
   if (loading) {
-    return <LoadingView testID="home-loading" />;
+    return (
+      <View style={styles.screen}>
+        {appBar}
+        <LoadingView testID="home-loading" />
+      </View>
+    );
   }
 
   if (errorMessage && forms.length === 0) {
     return (
-      <ErrorView description={errorMessage} onAction={() => loadForms()} testID="home-error" />
+      <View style={styles.screen}>
+        {appBar}
+        <ErrorView description={errorMessage} onAction={() => loadForms()} testID="home-error" />
+      </View>
     );
   }
 
@@ -100,6 +121,7 @@ export function Home({ navigation }: Props) {
 
   return (
     <View style={styles.screen}>
+      {appBar}
       <FlatList
         testID="home-list"
         data={filteredForms}

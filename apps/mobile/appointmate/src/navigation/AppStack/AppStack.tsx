@@ -8,7 +8,9 @@ const Stack = createNativeStackNavigator<AppStackParamList>();
 
 export function AppStack() {
   return (
-    <Stack.Navigator screenOptions={{ contentStyle: { backgroundColor: '#FFFFFF' } }}>
+    <Stack.Navigator
+      screenOptions={{ headerShown: false, contentStyle: { backgroundColor: '#FFFFFF' } }}
+    >
       <Stack.Screen name="Home" component={Home} />
       <Stack.Screen name="FormEntry" component={FormEntry} />
       <Stack.Screen name="FormDetail" component={FormDetail} />

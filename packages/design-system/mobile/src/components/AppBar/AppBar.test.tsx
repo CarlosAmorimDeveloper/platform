@@ -36,4 +36,14 @@ describe('AppBar', () => {
     fireEvent.press(screen.getByLabelText('Buscar'));
     expect(onPress).toHaveBeenCalledTimes(1);
   });
+
+  it('repassa o testID de uma ação', () => {
+    render(
+      <AppBar
+        title="Título"
+        actions={[{ icon: 'magnify', onPress: () => {}, testID: 'search-action' }]}
+      />,
+    );
+    expect(screen.getByTestId('search-action')).toBeTruthy();
+  });
 });

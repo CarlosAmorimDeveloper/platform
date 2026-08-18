@@ -22,7 +22,6 @@ type HomeProps = NativeStackScreenProps<AppStackParamList, 'Home'>;
 const mockNavigation = {
   navigate: jest.fn(),
   addListener: jest.fn(() => jest.fn()),
-  setOptions: jest.fn(),
 } as unknown as HomeProps['navigation'];
 const mockRoute = { key: 'Home', name: 'Home' } as unknown as HomeProps['route'];
 
@@ -176,32 +175,26 @@ describe('Home', () => {
   }, 20000);
 
   describe('header', () => {
-    it('sets the header title to "Meus formulários"', async () => {
+    it('shows "Meus formulários" as the header title', async () => {
       mockedListForms.mockResolvedValue([]);
 
       render(<Home navigation={mockNavigation} route={mockRoute} />);
 
       await waitFor(() => {
-        expect(mockNavigation.setOptions).toHaveBeenCalledWith(
-          expect.objectContaining({ title: 'Meus formulários' }),
-        );
+        expect(screen.getByText('Meus formulários')).toBeTruthy();
       }, ASYNC_TIMEOUT);
     }, 20000);
 
-    it('renders a "Sair" button in the header that calls logout when pressed', async () => {
+    it('renders a "Sair" action in the header that calls logout when pressed', async () => {
       mockedListForms.mockResolvedValue([]);
 
       render(<Home navigation={mockNavigation} route={mockRoute} />);
 
       await waitFor(() => {
-        expect(mockNavigation.setOptions).toHaveBeenCalled();
+        expect(screen.getByTestId('home-logout-button')).toBeTruthy();
       }, ASYNC_TIMEOUT);
 
-      const lastCall = (mockNavigation.setOptions as jest.Mock).mock.calls.at(-1);
-      const { headerRight } = lastCall[0];
-      const { getByTestId } = render(headerRight());
-
-      fireEvent.press(getByTestId('home-logout-button'));
+      fireEvent.press(screen.getByTestId('home-logout-button'));
 
       expect(logout).toHaveBeenCalled();
     }, 20000);

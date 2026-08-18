@@ -13,7 +13,10 @@ const mockedRegister = register as jest.Mock;
 
 type RegisterProps = NativeStackScreenProps<AuthStackParamList, 'Register'>;
 
-const mockNavigation = { navigate: jest.fn() } as unknown as RegisterProps['navigation'];
+const mockNavigation = {
+  navigate: jest.fn(),
+  goBack: jest.fn(),
+} as unknown as RegisterProps['navigation'];
 const mockRoute = { key: 'Register', name: 'Register' } as unknown as RegisterProps['route'];
 
 // See Login.test.tsx — this environment needs generous timeouts for
