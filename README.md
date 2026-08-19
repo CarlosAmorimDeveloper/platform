@@ -6,31 +6,44 @@
 [![Issues][issues-shield]][issues-url]
 [![Vercel][vercel-shield]][vercel-url]
 
-Monorepo contendo uma aplicação Todo e um Design System de componentes React compartilhados, construído com [Turborepo](https://turborepo.dev), [Next.js](https://nextjs.org) e [Yarn Workspaces](https://classic.yarnpkg.com/en/docs/workspaces/).
+Monorepo pessoal reunindo uma aplicação web, dois apps mobile publicados na Google Play Store e um Design System compartilhado entre as duas plataformas — construído com [Turborepo](https://turborepo.dev), [Yarn Workspaces](https://classic.yarnpkg.com/en/docs/workspaces/), [Next.js](https://nextjs.org) e [Expo](https://expo.dev).
 
 **Todo App:** [https://todo-app-vuotto.vercel.app](https://todo-app-vuotto.vercel.app)
 
 ## Índice
 
+- [Aplicações](#aplicações)
 - [Construído com](#construído-com)
 - [Pré-requisitos](#pré-requisitos)
 - [Estrutura do projeto](#estrutura-do-projeto)
 - [Instalação](#instalação)
 - [Desenvolvimento](#desenvolvimento)
-- [Scripts disponíveis](#scripts-disponíveis)
-- [Build de produção](#build-de-produção)
-- [Testes](#testes)
+- [Scripts](#scripts)
 - [Design System](#design-system)
-- [Arquitetura da Todo App](#arquitetura-da-todo-app)
 - [Tecnologias](#tecnologias)
 - [Contribuindo](#contribuindo)
 - [Licença](#licença)
+
+## Aplicações
+
+Cada app tem seu próprio README com detalhes de arquitetura, funcionalidades e scripts.
+
+| App                                              | Plataforma                | O que é                                                                                             | Stack principal                         |
+| ------------------------------------------------ | ------------------------- | --------------------------------------------------------------------------------------------------- | --------------------------------------- |
+| [Todo App](apps/web/todo-app/README.md)          | Web (Next.js 16)          | Gerenciador de tarefas com persistência local                                                       | Redux Toolkit, Tailwind CSS, `@ds/web`  |
+| [AppointMate](apps/mobile/appointmate/README.md) | Mobile (Expo/Android/iOS) | Registro estruturado de humor/sono/medicação entre consultas de saúde mental, com exportação em PDF | Firebase, React Hook Form, `@ds/mobile` |
+| [Tickets App](apps/mobile/tickets-app/README.md) | Mobile (Expo/Android/iOS) | Sistema de tickets multi-tenant por workspace, publicado na Play Store                              | Firebase, Zustand, `@ds/mobile`         |
+
+As três consomem o mesmo Design System (`@ds/web` na web, `@ds/mobile` nos apps nativos), temado a partir de `@ds/tokens`.
 
 ## Construído com
 
 [![Turborepo][turborepo-shield]][turborepo-url]
 [![Next.js][nextjs-shield]][nextjs-url]
 [![React][react-shield]][react-url]
+[![Expo][expo-shield]][expo-url]
+[![React Native][reactnative-shield]][reactnative-url]
+[![Firebase][firebase-shield]][firebase-url]
 [![Redux][redux-shield]][redux-url]
 [![TypeScript][typescript-shield]][typescript-url]
 [![Tailwind CSS][tailwind-shield]][tailwind-url]
@@ -53,50 +66,23 @@ Monorepo contendo uma aplicação Todo e um Design System de componentes React c
 ```
 platform/
 ├── apps/
-│   └── web/
-│       └── todo-app/                  # Aplicação Next.js 16
-│           ├── src/
-│           │   ├── app/               # App Router (layout, page, globals.css)
-│           │   ├── components/
-│           │   │   ├── TaskForm/
-│           │   │   ├── TaskItem/
-│           │   │   └── TaskList/
-│           │   └── redux/             # Store, slice e provider
-│           └── package.json
+│   ├── web/
+│   │   └── todo-app/           # Next.js 16 — ver README do projeto
+│   └── mobile/
+│       ├── appointmate/        # Expo — registro de saúde mental (LGPD)
+│       └── tickets-app/        # Expo — tickets multi-tenant (Play Store)
 ├── packages/
 │   ├── design-system/
-│   │   ├── web/                       # Componentes React (@ds/web)
-│   │   │   ├── components/
-│   │   │   │   ├── Button/
-│   │   │   │   └── Input/
-│   │   │   └── package.json
-│   │   ├── mobile/                    # Componentes React Native (@ds/mobile)
-│   │   │   ├── src/
-│   │   │   │   └── index.ts
-│   │   │   ├── tailwind.config.js
-│   │   │   ├── tailwind-utils.js
-│   │   │   ├── babel.config.js
-│   │   │   ├── metro.config.js
-│   │   │   ├── global.css
-│   │   │   └── package.json
-│   │   └── tokens/                    # Tokens de design (@ds/tokens)
-│   │       ├── src/
-│   │       │   ├── colors.ts
-│   │       │   ├── spacing.ts
-│   │       │   ├── font-sizes.ts
-│   │       │   ├── radii.ts
-│   │       │   ├── global.css
-│   │       │   └── index.ts
-│   │       └── package.json
-│   ├── eslint-config/                 # Configuração ESLint compartilhada
-│   └── typescript-config/             # tsconfig base compartilhado
+│   │   ├── web/                # Componentes React (@ds/web)
+│   │   ├── mobile/              # Componentes React Native (@ds/mobile)
+│   │   └── tokens/               # Tokens de design (@ds/tokens)
+│   ├── eslint-config/          # Configuração ESLint compartilhada
+│   └── typescript-config/      # tsconfig base compartilhado
 ├── turbo.json
 └── package.json
 ```
 
 ## Instalação
-
-Clone o repositório e instale as dependências a partir da raiz do monorepo:
 
 ```sh
 git clone <url-do-repositorio>
@@ -108,225 +94,59 @@ O Yarn Workspaces instala as dependências de todos os pacotes em uma única eta
 
 ## Desenvolvimento
 
-### Tudo ao mesmo tempo (recomendado)
-
-Inicia a Todo App e o Storybook em paralelo via Turborepo:
-
 ```sh
-yarn dev
+yarn dev                                # Todo App + Storybook em paralelo (recomendado)
+yarn dev --filter=todo-app              # Só a Todo App -> http://localhost:3000
+yarn workspace @ds/web storybook        # Só o Storybook -> http://localhost:6006
+yarn workspace @app/appointmate start   # Um app mobile (ou @app/tickets)
 ```
 
-### Somente a Todo App
+Cada app mobile requer seu próprio `.env` local com credenciais do Firebase — veja o `.env.example` de cada projeto.
 
-```sh
-yarn dev --filter=todo-app
-# ou diretamente:
-cd apps/web/todo-app
-yarn dev
-```
+## Scripts
 
-A aplicação ficará disponível em `http://localhost:3000`.
-
-### Somente o Storybook
-
-```sh
-yarn workspace @ds/web storybook
-# ou via turbo:
-yarn turbo storybook
-```
-
-O Storybook ficará disponível em `http://localhost:6006`.
-
-## Scripts disponíveis
-
-Execute os scripts abaixo a partir da **raiz do monorepo**:
+Execute a partir da **raiz do monorepo**:
 
 | Comando             | Descrição                                          |
 | ------------------- | -------------------------------------------------- |
 | `yarn dev`          | Inicia todos os servidores em modo desenvolvimento |
 | `yarn build`        | Compila todas as aplicações e pacotes              |
-| `yarn lint`         | Executa o ESLint em todo o projeto                 |
-| `yarn check-types`  | Verifica os tipos TypeScript em todo o projeto     |
+| `yarn lint`         | ESLint em todo o projeto                           |
+| `yarn check-types`  | TypeScript em todo o projeto                       |
 | `yarn format`       | Formata o código com Prettier                      |
 | `yarn format:check` | Verifica a formatação sem aplicar mudanças         |
 | `yarn changeset`    | Cria um changeset para versionamento de pacotes    |
 
-### Scripts da Todo App
-
-```sh
-cd apps/web/todo-app
-
-yarn dev        # Servidor de desenvolvimento Next.js
-yarn build      # Build de produção
-yarn start      # Inicia o servidor de produção (requer build)
-yarn test       # Executa os testes com Jest
-yarn lint       # Lint do projeto
-```
-
-### Scripts do Design System Web (`packages/design-system/web`)
-
-```sh
-cd packages/design-system/web
-
-yarn storybook        # Inicia o Storybook em modo desenvolvimento
-yarn build-storybook  # Gera o build estático do Storybook
-yarn check-types      # Verificação de tipos TypeScript
-yarn lint             # Lint do pacote
-```
-
-### Scripts do Design System Mobile (`packages/design-system/mobile`)
-
-```sh
-cd packages/design-system/mobile
-
-yarn test             # Executa os testes com Jest
-yarn check-types      # Verificação de tipos TypeScript
-```
-
-## Build de produção
-
-```sh
-# Build completo do monorepo
-yarn build
-
-# Build somente da Todo App
-yarn build --filter=todo-app
-```
-
-O output da Todo App fica em `apps/web/todo-app/.next/`.
-
-## Testes
-
-```sh
-cd apps/web/todo-app
-yarn test
-
-# Com watch mode
-yarn test --watch
-```
-
-Os testes usam **Jest** + **Testing Library**. Cada componente tem seu arquivo `*.spec.tsx` no mesmo diretório.
+Scripts específicos de cada app/pacote (`test`, `build:android`, `storybook` etc.) estão listados no README correspondente.
 
 ## Design System
 
-O monorepo possui três pacotes de design system:
+Três pacotes, todos temados a partir de `@ds/tokens`:
 
-### `@ds/web` — Componentes React
-
-Exporta componentes React reutilizáveis, wrappers finos em torno do MUI v6, temados a partir de `@ds/tokens`. Consumido pela Todo App via alias de workspace.
-
-#### `Button`
-
-```tsx
-import { Button } from "@ds/web/components/Button";
-
-<Button>Adicionar</Button>
-<Button variant="secondary">Cancelar</Button>
-<Button variant="ghost" size="sm">Editar</Button>
-<Button variant="danger" size="sm">Remover</Button>
-<Button type="submit" disabled={!value}>Salvar</Button>
-```
-
-| Prop       | Tipo    | Padrão      | Opções                                         |
-| ---------- | ------- | ----------- | ---------------------------------------------- |
-| `variant`  | string  | `"primary"` | `"primary"` `"secondary"` `"ghost"` `"danger"` |
-| `size`     | string  | `"md"`      | `"md"` `"sm"`                                  |
-| `type`     | string  | `"button"`  | `"button"` `"submit"` `"reset"`                |
-| `disabled` | boolean | `false`     | —                                              |
-
-#### `Input`
-
-```tsx
-import { Input } from "@ds/web/components/Input";
-
-<Input placeholder="Nova tarefa…" />
-<Input variant="inline" autoFocus />
-<Input type="checkbox" checked={done} onChange={handleToggle} />
-<Input disabled placeholder="Desativado" />
-```
-
-| Prop      | Tipo   | Padrão      | Opções                            |
-| --------- | ------ | ----------- | --------------------------------- |
-| `variant` | string | `"default"` | `"default"` `"inline"`            |
-| `type`    | string | `"text"`    | qualquer tipo nativo de `<input>` |
-
-> Quando `type="checkbox"`, o `variant` é ignorado e o estilo de checkbox é aplicado automaticamente.
-
-### `@ds/mobile` — Componentes React Native
-
-Componentes React Native, wrappers finos em torno do [React Native Paper](https://callstack.github.io/react-native-paper/), temados a partir de `@ds/tokens` via um `theme.ts` compartilhado (sem NativeWind/Tailwind — estilização é `StyleSheet` + o tema do Paper).
-
-```ts
-import { theme, Button, Input } from '@ds/mobile';
-```
-
-Consulte [`packages/design-system/mobile`](packages/design-system/mobile/README.md) para a referência completa.
-
-### `@ds/tokens` — Tokens de design
-
-Exporta constantes TypeScript e variáveis CSS para cores, espaçamentos, tamanhos de fonte e raios de borda.
-
-```ts
-import { colors, spacing, fontSizes, radii } from '@ds/tokens';
-import '@ds/tokens/global.css';
-```
-
-Consulte [`packages/design-system/tokens`](packages/design-system/tokens/README.md) para a referência completa.
-
-## Arquitetura da Todo App
-
-### Estado global (Redux)
-
-O estado das tarefas é gerenciado com **Redux Toolkit** e persiste automaticamente no `localStorage`.
-
-```
-src/redux/
-├── store.ts          # configureStore + subscribe para persistência
-├── taskSlice.ts      # actions: addTask, toggleTask, editTask, removeTask, hydrateState
-└── ReduxProvider.tsx # Provider com hidratação segura via useEffect (evita mismatch de SSR)
-```
-
-**Modelo de dados (`Task`):**
-
-```ts
-interface Task {
-  id: string; // UUID gerado com crypto.randomUUID()
-  title: string;
-  completed: boolean;
-  createdAt: string; // ISO 8601
-}
-```
-
-### Componentes
-
-| Componente | Responsabilidade                                                    |
-| ---------- | ------------------------------------------------------------------- |
-| `TaskForm` | Formulário para criar ou editar uma tarefa                          |
-| `TaskList` | Lista todas as tarefas do store                                     |
-| `TaskItem` | Renderiza uma tarefa individual com toggle, edição inline e remoção |
-
-A edição inline no `TaskItem` é ativada por duplo clique ou pela tecla `Enter`/`Espaço` quando o item está focado.
+- **[`@ds/web`](packages/design-system/web/README.md)** — componentes React, wrappers finos sobre MUI v6. Documentado no Storybook, com regressão visual via Chromatic.
+- **[`@ds/mobile`](packages/design-system/mobile/README.md)** — componentes React Native, wrappers finos sobre React Native Paper.
+- **[`@ds/tokens`](packages/design-system/tokens/README.md)** — cores, espaçamentos, tamanhos de fonte e raios, como constantes TypeScript e variáveis CSS.
 
 ## Tecnologias
 
-| Camada                      | Tecnologia                                       |
-| --------------------------- | ------------------------------------------------ |
-| Monorepo                    | Turborepo + Yarn Workspaces v1                   |
-| Framework                   | Next.js 16 (App Router)                          |
-| UI                          | React 19                                         |
-| Estado                      | Redux Toolkit                                    |
-| Estilização                 | Tailwind CSS v4 (app shell) + MUI v6 (`@ds/web`) |
-| Design System (web)         | `@ds/web` + `@ds/tokens`                         |
-| Design System (mobile)      | `@ds/mobile` + React Native Paper                |
-| Documentação de componentes | Storybook 8                                      |
-| Testes visuais              | Chromatic                                        |
-| Testes                      | Jest + Testing Library                           |
-| Tipos                       | TypeScript 5.9                                   |
-| Lint / Formato              | ESLint + Prettier                                |
+| Camada                | Tecnologia                                        |
+| --------------------- | ------------------------------------------------- |
+| Monorepo              | Turborepo + Yarn Workspaces v1                    |
+| Framework (web)       | Next.js 16 (App Router)                           |
+| Framework (mobile)    | Expo SDK 54 (React Native 0.81, New Architecture) |
+| Estado (web)          | Redux Toolkit                                     |
+| Estado (mobile)       | Zustand (Tickets App) / Context API (AppointMate) |
+| Backend (mobile)      | Firebase Auth + Firestore                         |
+| Design System         | `@ds/web` / `@ds/mobile` + `@ds/tokens`           |
+| Testes                | Jest + Testing Library                            |
+| Testes visuais        | Chromatic (Storybook)                             |
+| Build/Deploy (mobile) | EAS Build + EAS Submit                            |
+| Tipos                 | TypeScript 5.9 (strict)                           |
+| Lint / Formato        | ESLint + Prettier                                 |
 
 ## Contribuindo
 
-Pull requests são bem-vindos. Para mudanças maiores, abra uma issue primeiro para discutir o que você gostaria de mudar.
+Pull requests são bem-vindos. Para mudanças maiores, abra uma issue primeiro.
 
 Ao alterar pacotes do design system (`@ds/web`, `@ds/mobile` ou `@ds/tokens`), lembre-se de criar um changeset:
 
@@ -368,3 +188,9 @@ Uso interno — repositório privado.
 [chromatic-url]: https://www.chromatic.com
 [yarn-shield]: https://img.shields.io/badge/Yarn-2C8EBB?style=for-the-badge&logo=yarn&logoColor=white
 [yarn-url]: https://classic.yarnpkg.com
+[expo-shield]: https://img.shields.io/badge/Expo-000020?style=for-the-badge&logo=expo&logoColor=white
+[expo-url]: https://expo.dev
+[reactnative-shield]: https://img.shields.io/badge/React_Native-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
+[reactnative-url]: https://reactnative.dev
+[firebase-shield]: https://img.shields.io/badge/Firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=black
+[firebase-url]: https://firebase.google.com

@@ -5,22 +5,32 @@
 [![React][react-shield]][react-url]
 [![Redux][redux-shield]][redux-url]
 [![TypeScript][typescript-shield]][typescript-url]
+[![Jest][jest-shield]][jest-url]
 
-Aplicação de gerenciamento de tarefas construída com [Next.js 16](https://nextjs.org) e [Redux Toolkit](https://redux-toolkit.js.org). Parte do monorepo `platform`.
+Aplicação de gerenciamento de tarefas construída com [Next.js 16](https://nextjs.org) e [Redux Toolkit](https://redux-toolkit.js.org). Parte do monorepo `platform`, em `apps/web/todo-app`.
 
 **Deploy:** [https://todo-app-vuotto.vercel.app](https://todo-app-vuotto.vercel.app)
 
 ## Índice
 
+- [Funcionalidades](#funcionalidades)
 - [Construído com](#construído-com)
+- [Arquitetura](#arquitetura)
 - [Desenvolvimento](#desenvolvimento)
 - [Scripts](#scripts)
-- [Estrutura](#estrutura)
-- [Estado global](#estado-global)
 - [Testes](#testes)
-- [Dependências principais](#dependências-principais)
+- [Estrutura](#estrutura)
+- [Tecnologias](#tecnologias)
 - [Contribuindo](#contribuindo)
 - [Licença](#licença)
+
+## Funcionalidades
+
+- **Criar tarefa** — formulário simples com título.
+- **Concluir/reabrir** — toggle de status por clique.
+- **Editar inline** — duplo clique no título, ou `Enter`/`Espaço` com o item focado, ativa edição direta na lista.
+- **Remover tarefa**.
+- **Persistência automática** — todo o estado é salvo no `localStorage` a cada mudança, sem precisar de backend.
 
 ## Construído com
 
@@ -31,17 +41,45 @@ Aplicação de gerenciamento de tarefas construída com [Next.js 16](https://nex
 [![TypeScript][typescript-shield]][typescript-url]
 [![Jest][jest-shield]][jest-url]
 
-## Desenvolvimento
+## Arquitetura
 
-A partir da raiz do monorepo:
+O estado das tarefas é gerenciado com **Redux Toolkit** e persiste automaticamente no `localStorage`:
 
-```sh
-yarn dev --filter=todo-app
+```
+src/redux/
+├── store.ts          # configureStore + subscribe para persistência
+├── taskSlice.ts      # actions: addTask, toggleTask, editTask, removeTask, hydrateState
+└── ReduxProvider.tsx # Provider com hidratação segura via useEffect (evita mismatch de SSR)
 ```
 
-Ou diretamente neste diretório:
+**Modelo de dados (`Task`):**
+
+```ts
+interface Task {
+  id: string; // crypto.randomUUID()
+  title: string;
+  completed: boolean;
+  createdAt: string; // ISO 8601
+}
+```
+
+**Componentes:**
+
+| Componente | Responsabilidade                                                    |
+| ---------- | ------------------------------------------------------------------- |
+| `TaskForm` | Formulário para criar ou editar uma tarefa                          |
+| `TaskList` | Lista todas as tarefas do store                                     |
+| `TaskItem` | Renderiza uma tarefa individual com toggle, edição inline e remoção |
+
+`ReduxProvider` hidrata o store via `useEffect` para evitar mismatch de SSR — o store nunca é acessado diretamente durante o render no servidor.
+
+## Desenvolvimento
 
 ```sh
+# a partir da raiz do monorepo
+yarn dev --filter=todo-app
+# ou diretamente:
+cd apps/web/todo-app
 yarn dev
 ```
 
@@ -54,41 +92,8 @@ A aplicação ficará disponível em `http://localhost:3000`.
 | `yarn dev`   | Servidor de desenvolvimento Next.js          |
 | `yarn build` | Build de produção                            |
 | `yarn start` | Inicia o servidor de produção (requer build) |
-| `yarn test`  | Executa os testes com Jest                   |
+| `yarn test`  | Testes com Jest                              |
 | `yarn lint`  | Lint do projeto                              |
-
-## Estrutura
-
-```
-src/
-├── app/
-│   ├── layout.tsx        # Layout raiz (fonte, metadados)
-│   ├── page.tsx          # Página principal
-│   └── globals.css       # Estilos globais + Tailwind
-├── components/
-│   ├── TaskForm/         # Formulário de criação/edição de tarefas
-│   ├── TaskItem/         # Item individual com toggle, edição inline e remoção
-│   └── TaskList/         # Lista de tarefas do store
-└── redux/
-    ├── store.ts          # configureStore + persistência no localStorage
-    ├── taskSlice.ts      # Slice com actions: addTask, toggleTask, editTask, removeTask
-    └── ReduxProvider.tsx # Provider com hidratação SSR-safe
-```
-
-## Estado global
-
-O estado é gerenciado com **Redux Toolkit** e persiste automaticamente no `localStorage`.
-
-**Modelo de dados:**
-
-```ts
-interface Task {
-  id: string; // crypto.randomUUID()
-  title: string;
-  completed: boolean;
-  createdAt: string; // ISO 8601
-}
-```
 
 ## Testes
 
@@ -99,21 +104,44 @@ yarn test
 yarn test --watch
 ```
 
-Os testes usam **Jest** + **Testing Library**. Cada componente tem seu arquivo `*.spec.tsx` no mesmo diretório.
+Jest + Testing Library. Cada componente tem seu arquivo `*.spec.tsx` no mesmo diretório.
 
-## Dependências principais
+## Estrutura
 
-| Pacote        | Versão    |
-| ------------- | --------- |
-| Next.js       | 16        |
-| React         | 19        |
-| Redux Toolkit | ^2        |
-| `@ds/web`     | workspace |
-| Tailwind CSS  | v4        |
+```
+apps/web/todo-app/
+├── src/
+│   ├── app/
+│   │   ├── layout.tsx        # Layout raiz (fonte, metadados)
+│   │   ├── page.tsx          # Página principal
+│   │   └── globals.css       # Estilos globais + Tailwind
+│   ├── components/
+│   │   ├── TaskForm/
+│   │   ├── TaskItem/
+│   │   └── TaskList/
+│   └── redux/
+│       ├── store.ts
+│       ├── taskSlice.ts
+│       └── ReduxProvider.tsx
+└── package.json
+```
+
+## Tecnologias
+
+| Camada        | Tecnologia              |
+| ------------- | ----------------------- |
+| Framework     | Next.js 16 (App Router) |
+| UI            | React 19                |
+| Estado global | Redux Toolkit           |
+| Estilização   | Tailwind CSS v4         |
+| Design System | `@ds/web`               |
+| Testes        | Jest + Testing Library  |
+| Deploy        | Vercel                  |
+| Tipos         | TypeScript 5.9 (strict) |
 
 ## Contribuindo
 
-Consulte o [README raiz do monorepo](../../README.md) para instruções de configuração e fluxo de contribuição.
+Consulte o [README raiz do monorepo](../../../README.md) para instruções de configuração e fluxo de contribuição.
 
 ## Licença
 
