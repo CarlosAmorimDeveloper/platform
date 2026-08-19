@@ -22,7 +22,7 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.appointmate.app",
+      "package": "com.vuotto.appointmate",
       "versionCode": 1
     },
     "web": {
