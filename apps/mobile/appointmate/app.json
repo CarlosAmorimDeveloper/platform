@@ -27,6 +27,12 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "0c744a42-634a-4d07-9030-974103b99e1a"
+      }
+    },
+    "owner": "kaduvuotto"
   }
 }

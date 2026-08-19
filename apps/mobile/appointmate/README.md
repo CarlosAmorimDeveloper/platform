@@ -17,6 +17,7 @@ App Expo / React Native para preparar consultas de acompanhamento de saúde ment
 - [Desenvolvimento](#desenvolvimento)
 - [Scripts](#scripts)
 - [Testes](#testes)
+- [Build e deploy](#build-e-deploy)
 - [Estrutura](#estrutura)
 - [Tecnologias](#tecnologias)
 - [Contribuindo](#contribuindo)
@@ -80,14 +81,17 @@ Requer um arquivo `.env` local (veja `.env.example`) com as credenciais do proje
 
 ## Scripts
 
-| Comando                | Descrição                                      |
-| ---------------------- | ---------------------------------------------- |
-| `yarn start`           | Inicia o Metro bundler (Expo)                  |
-| `yarn android` / `ios` | Abre no emulador/dispositivo Android ou iOS    |
-| `yarn lint`            | ESLint (`--max-warnings 0`)                    |
-| `yarn check-types`     | Verificação de tipos TypeScript                |
-| `yarn test`            | Testes com Jest                                |
-| `yarn test:rules`      | Testa as Firestore Security Rules via emulador |
+| Comando                | Descrição                                             |
+| ---------------------- | ----------------------------------------------------- |
+| `yarn start`           | Inicia o Metro bundler (Expo)                         |
+| `yarn android` / `ios` | Abre no emulador/dispositivo Android ou iOS           |
+| `yarn lint`            | ESLint (`--max-warnings 0`)                           |
+| `yarn check-types`     | Verificação de tipos TypeScript                       |
+| `yarn test`            | Testes com Jest                                       |
+| `yarn test:rules`      | Testa as Firestore Security Rules via emulador        |
+| `yarn build:android`   | Build de produção (app bundle) via EAS                |
+| `yarn build:preview`   | Build de teste interno (APK) via EAS                  |
+| `yarn submit:android`  | Envia o build para a Google Play Store via EAS Submit |
 
 ## Testes
 
@@ -96,6 +100,15 @@ yarn test
 ```
 
 Jest + Testing Library cobrindo `domain/` (sem mocks — funções puras), `services/` (Firebase mockado) e as telas principais. Rodam em CI a cada PR que toca `apps/mobile/**` (ver `.github/workflows/mobile-apps.yml`).
+
+## Build e deploy
+
+Builds gerenciados pelo [EAS Build](https://docs.expo.dev/build/introduction/) (`eas.json`), com credenciais de assinatura gerenciadas remotamente pela Expo (`credentialsSource: "remote"`) — nenhuma chave de assinatura fica no repositório. Ainda não publicado (`versionCode: 1`, sem submit até o momento).
+
+```sh
+eas build --platform android --profile production
+eas submit --platform android
+```
 
 ## Estrutura
 
@@ -108,21 +121,23 @@ apps/mobile/appointmate/
 │   ├── screens/            # Login, Register, Home, FormEntry, FormDetail…
 │   └── navigation/           # AuthStack, AppStack
 ├── firestore.rules
+├── eas.json
 └── app.json
 ```
 
 ## Tecnologias
 
-| Camada      | Tecnologia                                        |
-| ----------- | ------------------------------------------------- |
-| Framework   | Expo SDK 54 (React Native 0.81, New Architecture) |
-| UI          | React 19 + React Native Paper (via `@ds/mobile`)  |
-| Navegação   | React Navigation (native-stack)                   |
-| Formulários | React Hook Form                                   |
-| Backend     | Firebase Auth + Firestore                         |
-| Exportação  | expo-print + expo-sharing                         |
-| Testes      | Jest + Testing Library + Firestore emulator       |
-| Tipos       | TypeScript 5.9 (strict)                           |
+| Camada       | Tecnologia                                        |
+| ------------ | ------------------------------------------------- |
+| Framework    | Expo SDK 54 (React Native 0.81, New Architecture) |
+| UI           | React 19 + React Native Paper (via `@ds/mobile`)  |
+| Navegação    | React Navigation (native-stack)                   |
+| Formulários  | React Hook Form                                   |
+| Backend      | Firebase Auth + Firestore                         |
+| Exportação   | expo-print + expo-sharing                         |
+| Testes       | Jest + Testing Library + Firestore emulator       |
+| Build/Deploy | EAS Build + EAS Submit                            |
+| Tipos        | TypeScript 5.9 (strict)                           |
 
 ## Contribuindo
 
