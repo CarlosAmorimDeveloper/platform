@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Icon } from 'react-native-paper';
-import { fontSizes, semanticColors, spacing } from '@ds/tokens';
+import { fontSizes, fontWeights, semanticColors, spacing } from '@ds/tokens';
 import { Button } from '../Button';
 
 export interface EmptyStateProps {
@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: fontSizes.lg,
-    fontWeight: '600',
+    fontWeight: fontWeights.semibold,
     color: semanticColors.textPrimary,
     textAlign: 'center',
   },
