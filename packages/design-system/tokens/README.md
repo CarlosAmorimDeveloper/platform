@@ -8,11 +8,22 @@ Tokens de design do monorepo `platform`. Exporta constantes TypeScript tipadas e
 
 - [Construído com](#construído-com)
 - [Instalação](#instalação)
+- [Arquitetura em camadas](#arquitetura-em-camadas)
 - [Tokens disponíveis](#tokens-disponíveis)
 - [Uso no React Native](#uso-no-react-native)
 - [Scripts](#scripts)
 - [Contribuindo](#contribuindo)
 - [Licença](#licença)
+
+## Arquitetura em camadas
+
+`@ds/tokens` é a fonte única da verdade consumida por `@ds/web` e `@ds/mobile` — nenhum dos dois define paleta, escala ou raio próprios. A partir de três camadas:
+
+1. **Primitivos** (`src/primitives/`) — valores brutos, sem unidade, nomeados por aparência (`colors.primary[600]`, `radii.md`). Continuam exportados no nível raiz do pacote por compatibilidade.
+2. **Semânticos** (`src/semantic.ts`, exportado como `semanticColors`/`semanticRadii`) — nomeados por função (`textSecondary`, `border`, `accent`), nunca por aparência. Cada valor referencia um primitivo; um componente nunca deveria precisar saber que `textSecondary` "é" `neutral[600]`.
+3. **Adaptadores de plataforma** (`src/platform/`) — resolvem a unidade por ambiente. Web usa `px()`/`rem()` (`@ds/tokens/platform/web`); mobile consome os números crus do React Native diretamente, sem adaptador.
+
+Hoje a camada semântica cobre só os papéis já confirmados iguais (ou deliberadamente unificados) entre web e mobile — ver POR-74/POR-75/POR-76 no Jira. Papéis ainda não decididos (`surfaceRaised`, `borderFocus`, `accentPressed`, tipografia, espaçamento, breakpoint, z-index) seguem resolvidos via primitivo direto até suas tarefas (POR-78 a POR-81) os promoverem.
 
 ## Construído com
 
@@ -124,6 +135,40 @@ radii.md; // 6
 radii.full; // 9999
 ```
 
+### Tokens semânticos
+
+`semanticColors` e `semanticRadii` resolvem primitivos para papéis nomeados por função. Use-os em vez do primitivo sempre que o papel já existir aqui.
+
+| Token                          | Papel                                    | Primitivo             |
+| ------------------------------ | ---------------------------------------- | --------------------- |
+| `semanticColors.surface`       | fundo de superfície elevada (card/paper) | `colors.neutral[0]`   |
+| `semanticColors.background`    | fundo de página                          | `colors.neutral[50]`  |
+| `semanticColors.textPrimary`   | texto principal                          | `colors.neutral[900]` |
+| `semanticColors.textSecondary` | texto secundário                         | `colors.neutral[600]` |
+| `semanticColors.textOnAccent`  | texto sobre cor de marca                 | `colors.neutral[0]`   |
+| `semanticColors.border`        | borda/divisor padrão                     | `colors.neutral[200]` |
+| `semanticColors.accent`        | cor de marca principal                   | `colors.primary[600]` |
+| `semanticColors.error`         | erro                                     | `colors.error[500]`   |
+| `semanticRadii.radiusBase`     | raio padrão de componente                | `radii.md`            |
+
+```ts
+import { semanticColors, semanticRadii } from '@ds/tokens';
+
+semanticColors.textSecondary; // '#4B5563'
+semanticRadii.radiusBase; // 6
+```
+
+### Adaptador de plataforma (web)
+
+```ts
+import { px, rem } from '@ds/tokens/platform/web';
+
+px(semanticRadii.radiusBase); // '6px'
+rem(fontSizes.base); // '1rem'
+```
+
+No mobile não há adaptador — React Native já consome números crus diretamente.
+
 ## Uso no React Native
 
 Para React Native, os tokens são consumidos diretamente pelo pacote `@ds/mobile` — importados como constantes TypeScript comuns e usados para montar o `theme` do React Native Paper (`src/theme.ts`) e em `StyleSheet.create` dos componentes. Não há NativeWind/Tailwind no caminho — os valores em px continuam unitless, como em qualquer `StyleSheet` do React Native.
@@ -131,14 +176,14 @@ Para React Native, os tokens são consumidos diretamente pelo pacote `@ds/mobile
 ```ts
 // Exemplo interno do @ds/mobile/src/theme.ts
 import { MD3LightTheme } from 'react-native-paper';
-import { colors, radii } from '@ds/tokens';
+import { colors, semanticColors, semanticRadii } from '@ds/tokens';
 
 export const theme = {
   ...MD3LightTheme,
-  roundness: radii.md, // 6, unitless — RN usa números puros, não "6px"
+  roundness: semanticRadii.radiusBase, // 6, unitless — RN usa números puros, não "6px"
   colors: {
     ...MD3LightTheme.colors,
-    primary: colors.primary[600],
+    primary: semanticColors.accent,
     // ...
   },
 };

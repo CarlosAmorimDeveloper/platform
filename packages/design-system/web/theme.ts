@@ -1,5 +1,5 @@
 import { createTheme } from '@mui/material/styles';
-import { colors, radii } from '@ds/tokens';
+import { colors, fontSizes, semanticColors, semanticRadii } from '@ds/tokens';
 
 export const theme = createTheme({
   palette: {
@@ -7,7 +7,7 @@ export const theme = createTheme({
       main: colors.primary[600],
       light: colors.primary[400],
       dark: colors.primary[800],
-      contrastText: colors.neutral[0],
+      contrastText: semanticColors.textOnAccent,
     },
     // MUI fills any palette color left unset with its own default (e.g.
     // `secondary` defaults to `purple[500]`) — defined explicitly here so
@@ -16,10 +16,10 @@ export const theme = createTheme({
       main: colors.primary[400],
       light: colors.primary[300],
       dark: colors.primary[600],
-      contrastText: colors.neutral[0],
+      contrastText: semanticColors.textOnAccent,
     },
     error: {
-      main: colors.error[500],
+      main: semanticColors.error,
     },
     success: {
       main: colors.success[500],
@@ -31,21 +31,21 @@ export const theme = createTheme({
       main: colors.info[500],
     },
     text: {
-      primary: colors.neutral[900],
-      secondary: colors.neutral[500],
+      primary: semanticColors.textPrimary,
+      secondary: semanticColors.textSecondary,
     },
-    divider: colors.neutral[200],
+    divider: semanticColors.border,
     background: {
-      default: colors.neutral[50],
-      paper: colors.neutral[0],
+      default: semanticColors.background,
+      paper: semanticColors.surface,
     },
   },
   typography: {
     fontFamily: 'inherit',
-    fontSize: 14,
+    fontSize: fontSizes.sm,
   },
   shape: {
-    borderRadius: radii.lg,
+    borderRadius: semanticRadii.radiusBase,
   },
   components: {
     MuiButton: {
