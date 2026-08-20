@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Icon } from 'react-native-paper';
-import { colors, fontSizes, spacing } from '@ds/tokens';
+import { colors, fontSizes, semanticColors, spacing } from '@ds/tokens';
 import { Button } from '../Button';
 
 export interface ErrorViewProps {
@@ -23,7 +23,7 @@ export function ErrorView({
 }: ErrorViewProps) {
   return (
     <View style={styles.container} testID={testID}>
-      {icon && <Icon source={icon} size={48} color={`${colors.error[500]}`} />}
+      {icon && <Icon source={icon} size={48} color={semanticColors.error} />}
       {title && <Text style={styles.title}>{title}</Text>}
       <Text style={styles.message}>{description}</Text>
       {onAction && (
@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: fontSizes.lg,
     fontWeight: '600',
-    color: `${colors.neutral[900]}`,
+    color: semanticColors.textPrimary,
     textAlign: 'center',
   },
   message: {

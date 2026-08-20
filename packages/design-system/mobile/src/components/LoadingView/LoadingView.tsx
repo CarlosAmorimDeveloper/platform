@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { colors, fontSizes, spacing } from '@ds/tokens';
+import { fontSizes, semanticColors, spacing } from '@ds/tokens';
 import { LoadingIndicator } from '../LoadingIndicator';
 
 export interface LoadingViewProps {
@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
   },
   message: {
     fontSize: fontSizes.sm,
-    color: `${colors.neutral[600]}`,
+    color: semanticColors.textSecondary,
     textAlign: 'center',
   },
 });

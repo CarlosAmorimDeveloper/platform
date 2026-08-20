@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import { IconButton as PaperIconButton } from 'react-native-paper';
-import { colors } from '@ds/tokens';
+import { colors, semanticColors } from '@ds/tokens';
 
 type Variant = 'default' | 'primary';
 
@@ -17,7 +17,7 @@ export interface IconButtonProps {
 
 const colorByVariant: Record<Variant, string> = {
   default: `${colors.neutral[700]}`,
-  primary: `${colors.primary[600]}`,
+  primary: semanticColors.accent,
 };
 
 export function IconButton({

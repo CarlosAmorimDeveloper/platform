@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Icon } from 'react-native-paper';
-import { colors, fontSizes, spacing } from '@ds/tokens';
+import { fontSizes, semanticColors, spacing } from '@ds/tokens';
 import { Button } from '../Button';
 
 export interface EmptyStateProps {
@@ -23,7 +23,7 @@ export function EmptyState({
 }: EmptyStateProps) {
   return (
     <View style={styles.container} testID={testID}>
-      {icon && <Icon source={icon} size={48} color={`${colors.neutral[400]}`} />}
+      {icon && <Icon source={icon} size={48} color={semanticColors.textDisabled} />}
       <Text style={styles.title}>{title}</Text>
       {description && <Text style={styles.description}>{description}</Text>}
       {actionLabel && onAction && (
@@ -46,12 +46,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: fontSizes.lg,
     fontWeight: '600',
-    color: `${colors.neutral[900]}`,
+    color: semanticColors.textPrimary,
     textAlign: 'center',
   },
   description: {
     fontSize: fontSizes.sm,
-    color: `${colors.neutral[500]}`,
+    color: semanticColors.textSecondary,
     textAlign: 'center',
   },
   action: {
