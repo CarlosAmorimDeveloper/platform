@@ -38,3 +38,11 @@ export const semanticRadii = {
 } as const;
 
 export type SemanticRadii = typeof semanticRadii;
+
+// Abstract elevation steps (POR-80) — each platform adapter resolves a level
+// to its own concrete shadow representation (`platform/web.ts#boxShadow`,
+// `platform/native.ts#shadowStyle`). The level itself is the shared token,
+// not the box-shadow string or the shadowRadius/elevation numbers.
+export const elevationLevels = [0, 1, 2, 3] as const;
+
+export type ElevationLevel = (typeof elevationLevels)[number];
