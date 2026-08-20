@@ -1,11 +1,14 @@
-export { colors } from './colors';
-export type { Colors } from './colors';
+export { colors } from './primitives/colors';
+export type { Colors } from './primitives/colors';
 
-export { spacing } from './spacing';
-export type { Spacing } from './spacing';
+export { spacing } from './primitives/spacing';
+export type { Spacing } from './primitives/spacing';
 
-export { fontSizes } from './font-sizes';
-export type { FontSizes } from './font-sizes';
+export { fontSizes } from './primitives/font-sizes';
+export type { FontSizes } from './primitives/font-sizes';
 
-export { radii } from './radii';
-export type { Radii } from './radii';
+export { radii } from './primitives/radii';
+export type { Radii } from './primitives/radii';
+
+export { semanticColors, semanticRadii } from './semantic';
+export type { SemanticColors, SemanticRadii } from './semantic';
