@@ -23,6 +23,10 @@ export const spacing = {
   48: 192,
   56: 224,
   64: 256,
+  80: 320,
+  96: 384,
+  112: 448,
+  128: 512,
 } as const;
 
 export type Spacing = typeof spacing;

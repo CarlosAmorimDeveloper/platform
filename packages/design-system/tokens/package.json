@@ -6,6 +6,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./platform/web": "./src/platform/web.ts",
+    "./platform/native": "./src/platform/native.ts",
     "./global.css": "./src/global.css"
   },
   "scripts": {

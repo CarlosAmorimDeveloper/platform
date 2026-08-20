@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { colors, fontSizes, spacing, radii } from '@ds/tokens';
+import { colors, fontSizes, fontWeights, spacing, semanticRadii } from '@ds/tokens';
 
 export type AlertVariant = 'error' | 'warning' | 'success' | 'info';
 
@@ -31,9 +31,9 @@ export function Alert({ message, variant = 'error', testID }: AlertProps) {
 
 const styles = StyleSheet.create({
   container: {
-    borderRadius: radii.md,
+    borderRadius: semanticRadii.radiusBase,
     paddingHorizontal: spacing[4],
     paddingVertical: spacing[3],
   },
-  text: { fontSize: fontSizes.sm, fontWeight: '500' },
+  text: { fontSize: fontSizes.sm, fontWeight: fontWeights.medium },
 });

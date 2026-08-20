@@ -1,7 +1,8 @@
 import React from 'react';
 import { Text } from 'react-native';
 import { Snackbar as PaperSnackbar } from 'react-native-paper';
-import { colors } from '@ds/tokens';
+import { colors, zIndices } from '@ds/tokens';
+import { shadowStyle } from '@ds/tokens/platform/native';
 import type { AlertVariant } from '../Alert';
 
 const variantStyles: Record<AlertVariant, { bg: string; text: string }> = {
@@ -43,7 +44,16 @@ export function Snackbar({
       style={themed ? { backgroundColor: themed.bg } : undefined}
       wrapperStyle={
         position === 'top'
-          ? { top: 0, bottom: 'auto', alignSelf: 'center', zIndex: 999, elevation: 999 }
+          ? {
+              top: 0,
+              bottom: 'auto',
+              alignSelf: 'center',
+              // Was a bare `999` for both — zIndex now names the stacking
+              // layer (toast), and elevation reuses the top shadow tier
+              // instead of an Android depth value with no real meaning.
+              zIndex: zIndices.toast,
+              elevation: shadowStyle(3).elevation,
+            }
           : undefined
       }
       testID={testID}

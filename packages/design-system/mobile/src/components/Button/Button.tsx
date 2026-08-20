@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button as PaperButton } from 'react-native-paper';
-import { colors } from '@ds/tokens';
+import { semanticColors } from '@ds/tokens';
 
 type Variant = 'primary' | 'secondary' | 'ghost' | 'danger';
 type Size = 'md' | 'sm';
@@ -39,8 +39,8 @@ export function Button({
       onPress={disabled ? undefined : onPress}
       disabled={disabled}
       compact={size === 'sm'}
-      buttonColor={variant === 'danger' ? colors.error[500] : undefined}
-      textColor={variant === 'danger' ? colors.neutral[0] : undefined}
+      buttonColor={variant === 'danger' ? semanticColors.error : undefined}
+      textColor={variant === 'danger' ? semanticColors.textOnAccent : undefined}
       testID={testID}
       accessibilityLabel={accessibilityLabel}
       style={style}

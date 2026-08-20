@@ -1,5 +1,13 @@
 import { createTheme } from '@mui/material/styles';
-import { colors, fontSizes, semanticColors, semanticRadii } from '@ds/tokens';
+import {
+  breakpoints,
+  colors,
+  fontSizes,
+  fontWeights,
+  semanticColors,
+  semanticRadii,
+  zIndices,
+} from '@ds/tokens';
 
 export const theme = createTheme({
   palette: {
@@ -47,6 +55,27 @@ export const theme = createTheme({
   shape: {
     borderRadius: semanticRadii.radiusBase,
   },
+  // `xs` isn't part of the DS breakpoint set (POR-81 defines sm/md/lg/xl
+  // only) — MUI requires it regardless, so it's set inline here, not as a
+  // token.
+  breakpoints: {
+    values: {
+      xs: 0,
+      sm: breakpoints.sm,
+      md: breakpoints.md,
+      lg: breakpoints.lg,
+      xl: breakpoints.xl,
+    },
+  },
+  // Aligns MUI's stacking order to the DS's zIndex scale instead of
+  // leaving it on MUI's own defaults (the gap flagged in POR-74/75).
+  // `tooltip` has no DS role yet, so it keeps MUI's default.
+  zIndex: {
+    appBar: zIndices.header,
+    drawer: zIndices.overlay,
+    modal: zIndices.modal,
+    snackbar: zIndices.toast,
+  },
   components: {
     MuiButton: {
       defaultProps: {
@@ -56,7 +85,7 @@ export const theme = createTheme({
       styleOverrides: {
         root: {
           textTransform: 'none',
-          fontWeight: 500,
+          fontWeight: Number(fontWeights.medium),
         },
       },
     },

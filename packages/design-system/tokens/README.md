@@ -2,7 +2,7 @@
 
 [![TypeScript][typescript-shield]][typescript-url]
 
-Tokens de design do monorepo `platform`. Exporta constantes TypeScript tipadas e variáveis CSS para cores, espaçamentos, tamanhos de fonte e raios de borda.
+Tokens de design do monorepo `platform`. Exporta constantes TypeScript tipadas e variáveis CSS para cor, tipografia, espaçamento, raio, borda, sombra, breakpoint e z-index.
 
 ## Índice
 
@@ -21,9 +21,9 @@ Tokens de design do monorepo `platform`. Exporta constantes TypeScript tipadas e
 
 1. **Primitivos** (`src/primitives/`) — valores brutos, sem unidade, nomeados por aparência (`colors.primary[600]`, `radii.md`). Continuam exportados no nível raiz do pacote por compatibilidade.
 2. **Semânticos** (`src/semantic.ts`, exportado como `semanticColors`/`semanticRadii`) — nomeados por função (`textSecondary`, `border`, `accent`), nunca por aparência. Cada valor referencia um primitivo; um componente nunca deveria precisar saber que `textSecondary` "é" `neutral[600]`.
-3. **Adaptadores de plataforma** (`src/platform/`) — resolvem a unidade por ambiente. Web usa `px()`/`rem()` (`@ds/tokens/platform/web`); mobile consome os números crus do React Native diretamente, sem adaptador.
+3. **Adaptadores de plataforma** (`src/platform/`) — resolvem a unidade por ambiente. A maioria dos tokens é um número cru que o React Native já consome diretamente sem adaptador; web usa `@ds/tokens/platform/web` (`px()`, `rem()`, `em()`, `fluidFontSize()`, `boxShadow()`) quando precisa de unidade CSS. Duas exceções pedem adaptador dos dois lados: `lineHeight`/`letterSpacing` são proporções que o CSS aceita direto mas o RN exige em px absolutos (`@ds/tokens/platform/native#resolveLineHeight`/`resolveLetterSpacing`), e `elevation` é um nível abstrato que cada plataforma resolve para sua própria API de sombra (`boxShadow()` no web, `shadowStyle()` no native).
 
-Hoje a camada semântica cobre só os papéis já confirmados iguais (ou deliberadamente unificados) entre web e mobile — ver POR-74/POR-75/POR-76 no Jira. Papéis ainda não decididos (`surfaceRaised`, `borderFocus`, `accentPressed`, tipografia, espaçamento, breakpoint, z-index) seguem resolvidos via primitivo direto até suas tarefas (POR-78 a POR-81) os promoverem.
+A camada semântica cobre os papéis já confirmados iguais (ou deliberadamente unificados) entre web e mobile — ver POR-74 a POR-81 no Jira. Papéis ainda não decididos (variantes de alerta por cor, `surfaceSunken` como nome à parte, etc.) seguem resolvidos via primitivo direto até alguma tarefa futura os promover.
 
 ## Construído com
 
@@ -85,6 +85,7 @@ import { spacing } from '@ds/tokens';
 
 spacing[4]; // 16
 spacing[8]; // 32
+spacing[128]; // 512
 ```
 
 ### `fontSizes`
@@ -135,39 +136,111 @@ radii.md; // 6
 radii.full; // 9999
 ```
 
+### `fontWeights`, `lineHeights`, `letterSpacings`
+
+Escalas tipográficas complementares ao `fontSizes`.
+
+| Grupo            | Chaves                               | Valores                                                                 |
+| ---------------- | ------------------------------------ | ----------------------------------------------------------------------- |
+| `fontWeights`    | `regular`/`medium`/`semibold`/`bold` | `'400'`/`'500'`/`'600'`/`'700'` (string — direto no `fontWeight` do RN) |
+| `lineHeights`    | `tight`/`snug`/`normal`/`relaxed`    | `1.25`/`1.375`/`1.5`/`1.625` (proporção sem unidade)                    |
+| `letterSpacings` | `tight`/`normal`/`wide`/`wider`      | `-0.02`/`0`/`0.02`/`0.04` (proporção em-equivalente)                    |
+
+`lineHeights` e `letterSpacings` são proporções, não valores absolutos — CSS aceita `line-height` sem unidade direto, mas `letter-spacing` exige `em`/`px` (use `em()` do adaptador web). Nenhuma das duas unidades existe no RN: lá sempre se resolve a proporção contra um `fontSizes` específico via `resolveLineHeight`/`resolveLetterSpacing` do adaptador native.
+
+```ts
+import { fontWeights, lineHeights, letterSpacings } from '@ds/tokens';
+
+fontWeights.medium; // '500'
+lineHeights.normal; // 1.5
+letterSpacings.wide; // 0.02
+```
+
+### `borderWidths`
+
+| Chave      | px  |
+| ---------- | --- |
+| `hairline` | 1   |
+| `thick`    | 2   |
+
+### `breakpoints`
+
+Único grupo que não precisa existir no mobile (POR-81).
+
+| Chave | px   |
+| ----- | ---- |
+| `sm`  | 640  |
+| `md`  | 768  |
+| `lg`  | 1024 |
+| `xl`  | 1280 |
+
+### `zIndices`
+
+| Chave      | Valor |
+| ---------- | ----- |
+| `base`     | 0     |
+| `dropdown` | 1000  |
+| `header`   | 1100  |
+| `overlay`  | 1200  |
+| `modal`    | 1300  |
+| `toast`    | 1400  |
+
 ### Tokens semânticos
 
 `semanticColors` e `semanticRadii` resolvem primitivos para papéis nomeados por função. Use-os em vez do primitivo sempre que o papel já existir aqui.
 
-| Token                          | Papel                                    | Primitivo             |
-| ------------------------------ | ---------------------------------------- | --------------------- |
-| `semanticColors.surface`       | fundo de superfície elevada (card/paper) | `colors.neutral[0]`   |
-| `semanticColors.background`    | fundo de página                          | `colors.neutral[50]`  |
-| `semanticColors.textPrimary`   | texto principal                          | `colors.neutral[900]` |
-| `semanticColors.textSecondary` | texto secundário                         | `colors.neutral[600]` |
-| `semanticColors.textOnAccent`  | texto sobre cor de marca                 | `colors.neutral[0]`   |
-| `semanticColors.border`        | borda/divisor padrão                     | `colors.neutral[200]` |
-| `semanticColors.accent`        | cor de marca principal                   | `colors.primary[600]` |
-| `semanticColors.error`         | erro                                     | `colors.error[500]`   |
-| `semanticRadii.radiusBase`     | raio padrão de componente                | `radii.md`            |
+| Token                          | Papel                                                    | Primitivo               |
+| ------------------------------ | -------------------------------------------------------- | ----------------------- |
+| `semanticColors.surface`       | fundo de superfície elevada (card/paper)                 | `colors.neutral[0]`     |
+| `semanticColors.surfaceRaised` | superfície acima de `surface` (via `elevation`, não cor) | `colors.neutral[0]`     |
+| `semanticColors.background`    | fundo de página                                          | `colors.neutral[50]`    |
+| `semanticColors.textPrimary`   | texto principal                                          | `colors.neutral[900]`   |
+| `semanticColors.textSecondary` | texto secundário                                         | `colors.neutral[600]`   |
+| `semanticColors.textDisabled`  | texto/ícone desabilitado                                 | `colors.neutral[400]`   |
+| `semanticColors.textOnAccent`  | texto sobre cor de marca                                 | `colors.neutral[0]`     |
+| `semanticColors.border`        | borda/divisor padrão                                     | `colors.neutral[200]`   |
+| `semanticColors.borderStrong`  | borda com mais contraste                                 | `colors.neutral[300]`   |
+| `semanticColors.borderFocus`   | anel de foco                                             | `colors.primary[600]`   |
+| `semanticColors.accent`        | cor de marca principal                                   | `colors.primary[600]`   |
+| `semanticColors.accentHover`   | marca — estado hover (web)                               | `colors.primary[700]`   |
+| `semanticColors.accentPressed` | marca — estado pressed/touch (mobile)                    | `colors.primary[800]`   |
+| `semanticColors.success`       | sucesso                                                  | `colors.success[500]`   |
+| `semanticColors.warning`       | alerta                                                   | `colors.warning[500]`   |
+| `semanticColors.error`         | erro                                                     | `colors.error[500]`     |
+| `semanticRadii.radiusBase`     | raio padrão de componente                                | `radii.md`              |
+| `elevationLevels`              | níveis abstratos de elevação (`0\|1\|2\|3`)              | resolvido por adaptador |
 
 ```ts
-import { semanticColors, semanticRadii } from '@ds/tokens';
+import { semanticColors, semanticRadii, elevationLevels } from '@ds/tokens';
 
 semanticColors.textSecondary; // '#4B5563'
 semanticRadii.radiusBase; // 6
+elevationLevels; // [0, 1, 2, 3]
 ```
 
-### Adaptador de plataforma (web)
+### Adaptadores de plataforma
 
 ```ts
-import { px, rem } from '@ds/tokens/platform/web';
+// Web — @ds/tokens/platform/web
+import { px, rem, em, fluidFontSize, boxShadow } from '@ds/tokens/platform/web';
 
 px(semanticRadii.radiusBase); // '6px'
 rem(fontSizes.base); // '1rem'
+em(letterSpacings.wide); // '0.02em'
+fluidFontSize(fontSizes.base, fontSizes['2xl']); // clamp(...) entre 320px e 1280px de viewport
+boxShadow(2); // '0 2px 6px rgba(0, 0, 0, 0.12)'
 ```
 
-No mobile não há adaptador — React Native já consome números crus diretamente.
+```ts
+// Native — @ds/tokens/platform/native
+import { resolveLineHeight, resolveLetterSpacing, shadowStyle } from '@ds/tokens/platform/native';
+
+resolveLineHeight(fontSizes.base, lineHeights.normal); // 24
+resolveLetterSpacing(fontSizes.base, letterSpacings.wide); // 0.32
+shadowStyle(2); // { shadowColor, shadowOffset, shadowRadius, shadowOpacity, elevation }
+```
+
+Os demais tokens (`spacing`, `radii`, `borderWidths`, `zIndices`, cores) já são números/strings unitless prontos para uso direto no RN — não precisam de adaptador.
 
 ## Uso no React Native
 
