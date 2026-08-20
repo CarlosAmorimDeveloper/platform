@@ -1,0 +1,99 @@
+:root {
+  /* ── Base neutrals (cool charcoal, dark-first) ───────────────── */
+  --vt-black: oklch(0.13 0.006 250);
+  --vt-ink-0: oklch(0.16 0.008 250);
+  --vt-ink-1: oklch(0.2 0.008 250);
+  --vt-ink-2: oklch(0.25 0.008 250);
+  --vt-ink-3: oklch(0.34 0.008 250);
+  --vt-ink-4: oklch(0.48 0.008 250);
+  --vt-mute: oklch(0.65 0.006 250);
+  --vt-soft: oklch(0.8 0.004 250);
+  --vt-white: oklch(0.925 0 0); /* #E8E8E8 — brand accent */
+  --vt-pure: oklch(1 0 0);
+
+  /* ── Accents: same L & C, hue only varies ───────────────────── */
+  --vt-accent: var(--vt-white);
+  --vt-cool: oklch(0.8 0.07 215);
+  --vt-violet: oklch(0.8 0.07 300);
+
+  /* ── Semantic status ────────────────────────────────────────── */
+  --vt-success: oklch(0.78 0.12 158);
+  --vt-warning: oklch(0.83 0.12 82);
+  --vt-danger: oklch(0.68 0.16 22);
+  --vt-info: var(--vt-cool);
+
+  /* ── Semantic aliases (dark theme = default) ────────────────── */
+  --bg-canvas: var(--vt-black);
+  --bg-elevated: var(--vt-ink-0);
+  --bg-sunken: oklch(0.11 0.006 250);
+
+  --glass-1: color-mix(in oklab, var(--vt-pure) 5%, transparent);
+  --glass-2: color-mix(in oklab, var(--vt-pure) 8%, transparent);
+  --glass-3: color-mix(in oklab, var(--vt-pure) 12%, transparent);
+  --glass-scrim: color-mix(in oklab, var(--vt-black) 60%, transparent);
+
+  --line-hairline: color-mix(in oklab, var(--vt-pure) 9%, transparent);
+  --line-strong: color-mix(in oklab, var(--vt-pure) 18%, transparent);
+  --line-focus: color-mix(in oklab, var(--vt-white) 55%, transparent);
+
+  --text-primary: var(--vt-soft);
+  --text-heading: var(--vt-white);
+  --text-secondary: var(--vt-mute);
+  --text-tertiary: var(--vt-ink-4);
+  --text-inverse: var(--vt-black);
+  --text-link: var(--vt-cool);
+
+  --surface-card: var(--glass-1);
+  --surface-raised: var(--glass-2);
+  --surface-input: color-mix(in oklab, var(--vt-pure) 4%, transparent);
+  --surface-solid: var(--vt-ink-1);
+
+  --sheen-top: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--vt-pure) 7%, transparent),
+    transparent 62%
+  );
+  --sheen-edge: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in oklab, var(--vt-pure) 22%, transparent),
+    transparent
+  );
+  --glow-cool: radial-gradient(
+    60% 60% at 50% 0%,
+    color-mix(in oklab, var(--vt-cool) 16%, transparent),
+    transparent 70%
+  );
+  --glow-violet: radial-gradient(
+    60% 60% at 50% 100%,
+    color-mix(in oklab, var(--vt-violet) 14%, transparent),
+    transparent 70%
+  );
+}
+
+/* ── Light theme scope ─────────────────────────────────────────── */
+[data-theme='light'] {
+  --bg-canvas: oklch(0.975 0.002 250);
+  --bg-elevated: oklch(0.995 0.001 250);
+  --bg-sunken: oklch(0.945 0.003 250);
+
+  --glass-1: color-mix(in oklab, var(--vt-pure) 66%, transparent);
+  --glass-2: color-mix(in oklab, var(--vt-pure) 82%, transparent);
+  --glass-3: color-mix(in oklab, var(--vt-pure) 92%, transparent);
+  --glass-scrim: color-mix(in oklab, var(--vt-pure) 65%, transparent);
+
+  --line-hairline: color-mix(in oklab, var(--vt-black) 10%, transparent);
+  --line-strong: color-mix(in oklab, var(--vt-black) 20%, transparent);
+  --line-focus: color-mix(in oklab, var(--vt-black) 45%, transparent);
+
+  --text-primary: var(--vt-ink-1);
+  --text-heading: var(--vt-black);
+  --text-secondary: var(--vt-ink-3);
+  --text-tertiary: var(--vt-ink-4);
+  --text-inverse: var(--vt-white);
+
+  --surface-card: var(--glass-1);
+  --surface-raised: var(--glass-2);
+  --surface-input: color-mix(in oklab, var(--vt-pure) 70%, transparent);
+  --surface-solid: var(--vt-pure);
+}

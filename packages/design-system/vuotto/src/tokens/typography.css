@@ -1,0 +1,37 @@
+:root {
+  --font-sans: 'Manrope', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-display: 'Instrument Serif', 'Times New Roman', serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  /* Display (serif) — headlines only */
+  --display-xl: clamp(3.25rem, 6.2vw, 5.5rem);
+  --display-lg: clamp(2.5rem, 4.4vw, 3.75rem);
+  --display-md: 2.5rem;
+  --display-sm: 1.875rem;
+
+  /* Sans scale */
+  --text-3xl: 1.75rem;
+  --text-2xl: 1.5rem;
+  --text-xl: 1.25rem;
+  --text-lg: 1.0625rem;
+  --text-md: 0.9375rem;
+  --text-sm: 0.8125rem;
+  --text-xs: 0.75rem;
+
+  --leading-tight: 1.06;
+  --leading-snug: 1.28;
+  --leading-normal: 1.55;
+  --leading-loose: 1.7;
+
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+
+  --tracking-display: -0.02em;
+  --tracking-tight: -0.012em;
+  --tracking-normal: 0;
+  --tracking-label: 0.14em; /* mono eyebrows / overlines */
+
+  --label-mono: var(--weight-medium) var(--text-xs)/1.2 var(--font-mono);
+}
