@@ -42,7 +42,10 @@ const config: StorybookConfig = {
       },
       optimizeDeps: {
         include: ['react-native-web'],
-        exclude: ['react-native-svg'],
+        // esbuild's dependency pre-bundler doesn't run Vite plugins, so
+        // `codegenStubPlugin` never fires for these unless they're excluded
+        // from it and left to Vite's normal (plugin-aware) resolution.
+        exclude: ['react-native-svg', 'react-native-safe-area-context'],
       },
     });
   },
