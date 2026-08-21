@@ -35,7 +35,7 @@ yarn workspace @vuotto/mobile dev  # tsup --watch
 
 ## Limitação conhecida: ícones e SVG não renderizam no Storybook
 
-`Icon`, `IconButton` e qualquer componente que desenha via `react-native-svg` (`LineChart`, `BarChart`) não aparecem visualmente no preview do Storybook — o componente monta sem erro no console, mas nenhum elemento `<svg>` chega a existir no DOM.
+`Icon`, `IconButton` e qualquer componente que desenha via `react-native-svg` (`LineChart`, `BarChart`, `PieChart`) não aparecem visualmente no preview do Storybook — o componente monta sem erro no console, mas nenhum elemento `<svg>` chega a existir no DOM.
 
 **Causa**: o Storybook simula RN no navegador via `react-native-web`, e a versão atual (`0.19.x`) [ainda não suporta React 19](https://github.com/necolas/react-native-web/issues/2686) (o monorepo inteiro usa React 19). Não é um bug deste pacote nem da configuração do Storybook — é uma incompatibilidade upstream ativa, sem correção oficial lançada ainda.
 
@@ -43,4 +43,6 @@ yarn workspace @vuotto/mobile dev  # tsup --watch
 
 ## Escopo
 
-Biblioteca de componentes completa (REB-2 a REB-6): `Icon`, `Button`, `IconButton`, `Card`, `Badge`, `Tag`, `Lockup` (Core); `Field`, `Input`, `Textarea`, `Select`, `Checkbox`, `RadioGroup`, `Switch`, `SegmentedControl`, `FileDrop` (Forms); `Table`, `Stat`, `ProgressBar`, `EmptyState`, `Skeleton`, `LineChart`, `BarChart` (Data); `Tabs`, `Breadcrumbs`, `Stepper`, `SideNav`, `TabBar` (Navigation); `Banner`, `Tooltip`, `Dialog`, `Toast`/`ToastProvider`/`useToast` (Feedback); `useTheme`.
+Biblioteca de componentes completa (REB-2 a REB-6): `Icon`, `Button`, `IconButton`, `FAB`, `Card`, `Badge`, `Tag`, `Lockup` (Core); `Field`, `Input`, `Textarea`, `Select`, `Checkbox`, `RadioGroup`, `Switch`, `SegmentedControl`, `FileDrop` (Forms); `Table`, `Stat`, `ProgressBar`, `EmptyState`, `Skeleton`, `LoadingIndicator`, `LineChart`, `BarChart`, `PieChart` (Data); `AppBar`, `Tabs`, `Breadcrumbs`, `Stepper`, `SideNav`, `TabBar` (Navigation); `Banner`, `Tooltip`, `Dialog`, `Toast`/`ToastProvider`/`useToast` (Feedback); `useTheme`.
+
+`FAB`, `LoadingIndicator`, `AppBar` e `PieChart` foram adicionados depois dos épicos REB-2 a REB-6, para cobrir gaps encontrados na migração de `appointmate`/`tickets-app` de `@ds/mobile`.
