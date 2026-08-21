@@ -1,5 +1,6 @@
 import { forwardRef, useState } from 'react';
 import {
+  Pressable,
   TextInput,
   View,
   Text,
@@ -20,6 +21,8 @@ export interface InputProps extends Omit<TextInputProps, 'style'> {
   suffix?: string;
   invalid?: boolean;
   mono?: boolean;
+  /** Adds a trailing eye/eye-off toggle that flips `secureTextEntry`. */
+  secureToggle?: boolean;
   style?: StyleProp<ViewStyle>;
 }
 
@@ -32,6 +35,8 @@ export const Input = forwardRef<TextInput, InputProps>(function Input(
     invalid = false,
     mono = false,
     editable = true,
+    secureToggle = false,
+    secureTextEntry,
     style,
     onFocus,
     onBlur,
@@ -41,7 +46,9 @@ export const Input = forwardRef<TextInput, InputProps>(function Input(
 ) {
   const { colors } = useTheme();
   const [focused, setFocused] = useState(false);
+  const [hidden, setHidden] = useState(secureTextEntry ?? true);
   const disabled = editable === false;
+  const resolvedSecureTextEntry = secureToggle ? hidden : secureTextEntry;
   const borderColor = invalid
     ? alpha(vtColors.danger, 55)
     : focused
@@ -87,8 +94,19 @@ export const Input = forwardRef<TextInput, InputProps>(function Input(
           color: colors.textHeading,
         }}
         placeholderTextColor={colors.textTertiary}
+        secureTextEntry={resolvedSecureTextEntry}
         {...rest}
       />
+      {secureToggle && (
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={hidden ? 'Mostrar senha' : 'Ocultar senha'}
+          onPress={() => setHidden((h) => !h)}
+          hitSlop={8}
+        >
+          <Icon name={hidden ? 'Eye' : 'EyeOff'} size="sm" color={colors.textTertiary} />
+        </Pressable>
+      )}
       {suffix && (
         <Text
           style={{ fontFamily: fontFamily.mono, fontSize: fontSize.xs, color: colors.textTertiary }}

@@ -20,3 +20,12 @@ export const Mono: Story = {
 export const Invalid: Story = {
   args: { invalid: true, defaultValue: 'valor inválido' },
 };
+
+export const SecureToggle: Story = {
+  args: {
+    placeholder: 'Senha',
+    secureTextEntry: true,
+    secureToggle: true,
+    defaultValue: 'segredo123',
+  },
+};
