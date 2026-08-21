@@ -18,3 +18,6 @@ export type { LineChartProps, ChartSeries, ChartDatum } from './LineChart';
 
 export { BarChart } from './BarChart';
 export type { BarChartProps } from './BarChart';
+
+export { PieChart } from './PieChart';
+export type { PieChartProps, PieChartSlice } from './PieChart';
