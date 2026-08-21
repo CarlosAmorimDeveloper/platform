@@ -1,0 +1,58 @@
+{
+  "name": "@vuotto/mobile",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "check-types": "tsc --noEmit",
+    "lint": "eslint . --max-warnings 0",
+    "storybook": "storybook dev -p 6009",
+    "build-storybook": "storybook build",
+    "chromatic": "chromatic --exit-zero-on-changes"
+  },
+  "dependencies": {
+    "@vuotto/tokens": "*",
+    "lucide-react-native": "^1.33.0"
+  },
+  "peerDependencies": {
+    "@react-native-async-storage/async-storage": "^2.0.0",
+    "react": ">=18",
+    "react-native": ">=0.72",
+    "react-native-svg": ">=13"
+  },
+  "devDependencies": {
+    "@react-native-async-storage/async-storage": "^2.0.0",
+    "@repo/eslint-config": "*",
+    "@repo/typescript-config": "*",
+    "@storybook/addon-essentials": "^8.6.14",
+    "@storybook/react": "^8.6.14",
+    "@storybook/react-vite": "^8.6.14",
+    "@types/react": "^19",
+    "@types/react-native": "*",
+    "chromatic": "^16.6.0",
+    "eslint": "^9",
+    "globals": "*",
+    "react": "^19",
+    "react-native": "0.81.5",
+    "react-native-svg": "^15.0.0",
+    "react-native-web": "^0.19",
+    "storybook": "^8.6.14",
+    "tsup": "^8",
+    "typescript": "5.9.2",
+    "vite": "^6"
+  }
+}

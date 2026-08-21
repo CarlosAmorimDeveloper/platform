@@ -41,6 +41,6 @@ export const config = [
     },
   },
   {
-    ignores: ['dist/**', '.turbo/**', 'node_modules/**'],
+    ignores: ['dist/**', '.turbo/**', 'node_modules/**', 'storybook-static/**'],
   },
 ];
