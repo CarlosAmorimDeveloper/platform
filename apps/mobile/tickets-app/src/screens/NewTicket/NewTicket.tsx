@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { ScrollView } from 'react-native';
-import { Input, Button, LoadingIndicator, Snackbar, Select } from '@ds/mobile';
+import { Button, Field, Input, LoadingIndicator, Select, useToast } from '@vuotto/mobile';
 import { createTicket } from '../../services/ticketService';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useUserList } from '../../hooks/useUserList';
@@ -16,12 +16,12 @@ import { styles } from './NewTicket.styles';
 type Props = NativeStackScreenProps<AppStackParamList, 'NewTicket'>;
 
 export function NewTicket({ navigation }: Props) {
+  const toast = useToast();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [priority, setPriority] = useState<TicketPriority>('medium');
   const [assigneeId, setAssigneeId] = useState('');
   const [loading, setLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const user = useAuthStore((s) => s.user);
   const { users } = useUserList();
 
@@ -45,7 +45,10 @@ export function NewTicket({ navigation }: Props) {
       );
       navigation.goBack();
     } catch (err: unknown) {
-      setErrorMessage(err instanceof Error ? err.message : 'Falha ao criar o chamado.');
+      toast.show({
+        tone: 'danger',
+        title: err instanceof Error ? err.message : 'Falha ao criar o chamado.',
+      });
     } finally {
       setLoading(false);
     }
@@ -53,43 +56,41 @@ export function NewTicket({ navigation }: Props) {
 
   return (
     <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-      <Select
-        label="Prioridade"
-        value={priority}
-        onChange={(v) => setPriority(v as TicketPriority)}
-        options={ALL_PRIORITIES.map((p) => ({ label: PRIORITY_LABELS[p], value: p }))}
-      />
-      {isAdmin && (
+      <Field label="Prioridade">
         <Select
-          label="Responsável"
-          value={assigneeId}
-          onChange={(v) => setAssigneeId(v)}
-          options={[
-            { label: 'Nenhum', value: '' },
-            ...users.map((u) => ({ label: u.name, value: u.uid })),
-          ]}
+          value={priority}
+          onChange={(v) => setPriority(v as TicketPriority)}
+          options={ALL_PRIORITIES.map((p) => ({ label: PRIORITY_LABELS[p], value: p }))}
         />
+      </Field>
+      {isAdmin && (
+        <Field label="Responsável">
+          <Select
+            value={assigneeId}
+            onChange={(v) => setAssigneeId(v)}
+            options={[
+              { label: 'Nenhum', value: '' },
+              ...users.map((u) => ({ label: u.name, value: u.uid })),
+            ]}
+          />
+        </Field>
       )}
-      <Input label="Título" placeholder="Título do chamado" value={title} onChangeText={setTitle} />
-      <Input
-        label="Descrição"
-        placeholder="Descreva o problema..."
-        value={description}
-        onChangeText={setDescription}
-        multiline
-        numberOfLines={4}
-      />
+      <Field label="Título">
+        <Input placeholder="Título do chamado" value={title} onChangeText={setTitle} />
+      </Field>
+      <Field label="Descrição">
+        <Input
+          placeholder="Descreva o problema..."
+          value={description}
+          onChangeText={setDescription}
+          multiline
+          numberOfLines={4}
+        />
+      </Field>
       <LoadingIndicator visible={loading} />
       <Button onPress={handleSave} disabled={!title.trim() || loading}>
         Salvar Ticket
       </Button>
-      <Snackbar
-        visible={errorMessage !== null}
-        onDismiss={() => setErrorMessage(null)}
-        message={errorMessage ?? ''}
-        variant="error"
-        position="top"
-      />
     </ScrollView>
   );
 }

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { View, Text, KeyboardAvoidingView, Platform } from 'react-native';
-import { Input, Button, LoadingIndicator, Snackbar } from '@ds/mobile';
+import { Button, Field, Input, LoadingIndicator, useTheme, useToast } from '@vuotto/mobile';
+import { vtColors } from '@vuotto/tokens';
 import { login, mapFirebaseAuthError } from '../../services/authService';
 import { useAuthStore } from '../../store/useAuthStore';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -10,10 +11,11 @@ import { styles } from './Login.styles';
 type Props = NativeStackScreenProps<AuthStackParamList, 'Login'>;
 
 export function Login({ navigation }: Props) {
+  const { colors } = useTheme();
+  const toast = useToast();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const setUser = useAuthStore((s) => s.setUser);
 
   async function handleLogin() {
@@ -23,7 +25,7 @@ export function Login({ navigation }: Props) {
       const user = await login(email, password);
       setUser(user);
     } catch (err: unknown) {
-      setErrorMessage(mapFirebaseAuthError(err));
+      toast.show({ tone: 'danger', title: mapFirebaseAuthError(err) });
     } finally {
       setLoading(false);
     }
@@ -34,28 +36,32 @@ export function Login({ navigation }: Props) {
       style={styles.keyboardView}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-      <View style={styles.container}>
+      <View style={[styles.container, { backgroundColor: colors.bgCanvas }]}>
         <View style={styles.header}>
-          <Text style={styles.appTitle}>Tickets App</Text>
-          <Text style={styles.appSubtitle}>Gerencie seus chamados</Text>
+          <Text style={[styles.appTitle, { color: vtColors.cool }]}>Tickets App</Text>
+          <Text style={[styles.appSubtitle, { color: colors.textSecondary }]}>
+            Gerencie seus chamados
+          </Text>
         </View>
         <View style={styles.form}>
-          <Input
-            label="E-mail"
-            placeholder="email@exemplo.com"
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-            autoCapitalize="none"
-          />
-          <Input
-            label="Senha"
-            placeholder="Sua senha"
-            secureTextEntry
-            showPasswordToggle
-            value={password}
-            onChangeText={setPassword}
-          />
+          <Field label="E-mail">
+            <Input
+              placeholder="email@exemplo.com"
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+              autoCapitalize="none"
+            />
+          </Field>
+          <Field label="Senha">
+            <Input
+              placeholder="Sua senha"
+              secureTextEntry
+              secureToggle
+              value={password}
+              onChangeText={setPassword}
+            />
+          </Field>
           <LoadingIndicator visible={loading} />
           <Button onPress={handleLogin} disabled={loading}>
             Entrar
@@ -67,13 +73,6 @@ export function Login({ navigation }: Props) {
             Criar conta
           </Button>
         </View>
-        <Snackbar
-          visible={errorMessage !== null}
-          onDismiss={() => setErrorMessage(null)}
-          message={errorMessage ?? ''}
-          position="top"
-          variant="error"
-        />
       </View>
     </KeyboardAvoidingView>
   );

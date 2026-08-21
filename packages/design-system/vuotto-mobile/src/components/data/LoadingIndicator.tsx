@@ -22,6 +22,8 @@ export function LoadingIndicator({
       size={size}
       color={color ?? colors.textSecondary}
       style={style}
+      accessible
+      accessibilityRole="progressbar"
       accessibilityLabel="Carregando"
     />
   );

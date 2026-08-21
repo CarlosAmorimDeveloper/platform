@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
-import { spacing } from '@ds/tokens';
+import { space } from '@vuotto/tokens';
 
 export const styles = StyleSheet.create({
-  wrapper: { gap: spacing[3] },
+  wrapper: { gap: space[3] },
 });

@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
-import { colors, fontSizes, spacing } from '@ds/tokens';
+import { fontSize, space } from '@vuotto/tokens';
 
 export const styles = StyleSheet.create({
-  metaRow: { gap: spacing[1], paddingHorizontal: spacing[6] },
-  metaText: { fontSize: fontSizes.sm, color: colors.neutral[500] },
+  metaRow: { gap: space[1], paddingHorizontal: space[6] },
+  metaText: { fontSize: fontSize.sm },
 });

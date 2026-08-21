@@ -1,4 +1,4 @@
-import { colors } from '@ds/tokens';
+import type { BadgeTone } from '@vuotto/mobile';
 
 export type TicketPriority = 'very_low' | 'low' | 'medium' | 'high' | 'very_high';
 
@@ -12,10 +12,10 @@ export const PRIORITY_LABELS: Record<TicketPriority, string> = {
   very_high: 'Muito Alto',
 };
 
-export const PRIORITY_COLORS: Record<TicketPriority, string> = {
-  very_low: colors.neutral[400],
-  low: colors.success[500],
-  medium: colors.primary[500],
-  high: colors.warning[500],
-  very_high: colors.error[500],
+export const PRIORITY_TONES: Record<TicketPriority, BadgeTone> = {
+  very_low: 'neutral',
+  low: 'success',
+  medium: 'info',
+  high: 'warning',
+  very_high: 'danger',
 };

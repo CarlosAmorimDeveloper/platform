@@ -119,24 +119,25 @@ describe('ForgotPassword', () => {
     }, ASYNC_TIMEOUT);
   }, 40000);
 
-  it('navigates back on success dismiss', async () => {
+  it('navigates back a moment after the reset link is sent', async () => {
+    jest.useFakeTimers();
     mockedSendPasswordReset.mockResolvedValue(undefined);
     render(<ForgotPassword navigation={mockNavigation} route={mockRoute} />);
 
     fireEvent.changeText(screen.getByPlaceholderText('email@exemplo.com'), 'user@example.com');
-    fireEvent.press(screen.getByText('Enviar link'));
+    await act(async () => {
+      fireEvent.press(screen.getByText('Enviar link'));
+    });
 
-    await waitFor(() => {
-      expect(
-        screen.getByText('Se este e-mail estiver cadastrado, você receberá um link em instantes.'),
-      ).toBeTruthy();
-    }, ASYNC_TIMEOUT);
+    expect(
+      screen.getByText('Se este e-mail estiver cadastrado, você receberá um link em instantes.'),
+    ).toBeTruthy();
 
-    const [successSnackbar] = screen.UNSAFE_getAllByProps({ variant: 'success' });
     act(() => {
-      successSnackbar.props.onDismiss();
+      jest.advanceTimersByTime(2000);
     });
 
     expect(mockNavigation.goBack).toHaveBeenCalled();
+    jest.useRealTimers();
   });
 });

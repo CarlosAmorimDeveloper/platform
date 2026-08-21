@@ -1,4 +1,4 @@
-import { ALL_STATUSES, STATUS_COLORS, STATUS_LABELS } from './ticketStatus';
+import { ALL_STATUSES, STATUS_TONES, STATUS_LABELS } from './ticketStatus';
 
 describe('ticketStatus', () => {
   beforeEach(() => jest.clearAllMocks());
@@ -13,9 +13,9 @@ describe('ticketStatus', () => {
     });
   });
 
-  it('STATUS_COLORS has a color for every status', () => {
+  it('STATUS_TONES has a color for every status', () => {
     ALL_STATUSES.forEach((status) => {
-      expect(STATUS_COLORS[status]).toBeTruthy();
+      expect(STATUS_TONES[status]).toBeTruthy();
     });
   });
 
@@ -26,8 +26,8 @@ describe('ticketStatus', () => {
     });
   });
 
-  it('STATUS_COLORS values are non-empty strings', () => {
-    Object.values(STATUS_COLORS).forEach((color) => {
+  it('STATUS_TONES values are non-empty strings', () => {
+    Object.values(STATUS_TONES).forEach((color) => {
       expect(typeof color).toBe('string');
       expect(color.length).toBeGreaterThan(0);
     });

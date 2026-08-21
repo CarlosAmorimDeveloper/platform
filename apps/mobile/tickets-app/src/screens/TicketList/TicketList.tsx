@@ -1,5 +1,6 @@
+import { useEffect } from 'react';
 import { View, Text, FlatList } from 'react-native';
-import { LoadingIndicator, Snackbar } from '@ds/mobile';
+import { LoadingIndicator, useTheme, useToast } from '@vuotto/mobile';
 import { useTicketList } from '../../hooks/useTicketList';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { AppStackParamList } from '../../navigation/types';
@@ -9,8 +10,16 @@ import { TicketCard } from './components/TicketCard';
 type Props = NativeStackScreenProps<AppStackParamList, 'TicketList'>;
 
 export function TicketList({ route, navigation }: Props) {
+  const { colors } = useTheme();
+  const toast = useToast();
   const { status } = route.params;
   const { tickets, loading, error, clearError } = useTicketList(status);
+
+  useEffect(() => {
+    if (!error) return;
+    toast.show({ tone: 'danger', title: error });
+    clearError();
+  }, [error, toast, clearError]);
 
   if (loading) {
     return (
@@ -21,7 +30,7 @@ export function TicketList({ route, navigation }: Props) {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.bgCanvas }]}>
       <FlatList
         data={tickets}
         keyExtractor={(item) => item.id}
@@ -40,17 +49,12 @@ export function TicketList({ route, navigation }: Props) {
         )}
         ListEmptyComponent={
           <View style={styles.center}>
-            <Text style={styles.emptyText}>Nenhum ticket encontrado.</Text>
+            <Text style={[styles.emptyText, { color: colors.textSecondary }]}>
+              Nenhum ticket encontrado.
+            </Text>
           </View>
         }
         contentContainerStyle={tickets.length === 0 ? styles.fillHeight : styles.list}
-      />
-      <Snackbar
-        visible={error !== null}
-        onDismiss={clearError}
-        message={error ?? ''}
-        variant="error"
-        position="top"
       />
     </View>
   );

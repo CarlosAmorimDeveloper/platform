@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, View } from 'react-native';
+import { Alert, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { PaperProvider } from 'react-native-paper';
-import { theme } from '@ds/mobile';
+import { LoadingIndicator, ToastProvider } from '@vuotto/mobile';
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import { auth, db } from './src/services/firebase';
@@ -49,14 +48,14 @@ export default function App() {
   if (loading) {
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <ActivityIndicator size="large" />
+        <LoadingIndicator />
       </View>
     );
   }
 
   return (
-    <PaperProvider theme={theme}>
+    <ToastProvider>
       <NavigationContainer>{isAuthenticated ? <AppStack /> : <AuthStack />}</NavigationContainer>
-    </PaperProvider>
+    </ToastProvider>
   );
 }

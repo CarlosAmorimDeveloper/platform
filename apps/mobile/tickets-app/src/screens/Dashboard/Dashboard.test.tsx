@@ -1,9 +1,9 @@
 import React from 'react';
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
-import { ActivityIndicator } from 'react-native-paper';
+import { ActivityIndicator } from 'react-native';
 import { render, screen, fireEvent } from '../../test-utils';
 import { useTicketList } from '../../hooks/useTicketList';
-import { ALL_STATUSES, STATUS_LABELS } from '../../constants/ticketStatus';
+import { STATUS_LABELS } from '../../constants/ticketStatus';
 import type { Ticket } from '../../domain/ticket';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { AppStackParamList } from '../../navigation/types';
@@ -11,7 +11,6 @@ import { Dashboard } from './Dashboard';
 
 jest.mock('../../hooks/useTicketList');
 jest.mock('../../services/firebase', () => ({ auth: {}, db: {} }));
-jest.mock('@expo/vector-icons', () => ({ MaterialIcons: () => null }));
 
 const mockUseTicketList = useTicketList as jest.Mock;
 
@@ -70,7 +69,7 @@ describe('Dashboard', () => {
 
     render(<Dashboard navigation={mockNavigation} route={mockRoute} />);
 
-    expect(screen.getByText(STATUS_LABELS.open, { exact: false })).toBeTruthy();
+    expect(screen.getAllByText(STATUS_LABELS.open, { exact: false }).length).toBeGreaterThan(0);
   });
 
   it('renders recent tickets card with up to 3 tickets', () => {
@@ -107,9 +106,9 @@ describe('Dashboard', () => {
 
     render(<Dashboard navigation={mockNavigation} route={mockRoute} />);
 
-    for (const status of ALL_STATUSES) {
-      expect(screen.getByText(new RegExp(STATUS_LABELS[status]))).toBeTruthy();
-    }
+    expect(screen.getByText(`${STATUS_LABELS.open} 2`)).toBeTruthy();
+    expect(screen.getByText(`${STATUS_LABELS.in_progress} 1`)).toBeTruthy();
+    expect(screen.getByText(`${STATUS_LABELS.done} 1`)).toBeTruthy();
   });
 
   it('navigates to TicketList filtered by status on stat card press', () => {
@@ -119,7 +118,7 @@ describe('Dashboard', () => {
 
     render(<Dashboard navigation={mockNavigation} route={mockRoute} />);
 
-    fireEvent.press(screen.getByText(new RegExp(STATUS_LABELS.open)));
+    fireEvent.press(screen.getByText(`${STATUS_LABELS.open} 1`));
 
     expect(mockNavigation.navigate).toHaveBeenCalledWith('TicketList', { status: 'open' });
   });

@@ -3,14 +3,14 @@ import type { ReactElement } from 'react';
 import { render } from '@testing-library/react-native';
 import type { RenderOptions } from '@testing-library/react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { PaperProvider } from 'react-native-paper';
+import { ToastProvider } from '@vuotto/mobile';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 function AllProviders({ children }: { children: ReactElement }) {
   return (
     <NavigationContainer>
       <SafeAreaProvider>
-        <PaperProvider>{children}</PaperProvider>
+        <ToastProvider>{children}</ToastProvider>
       </SafeAreaProvider>
     </NavigationContainer>
   );

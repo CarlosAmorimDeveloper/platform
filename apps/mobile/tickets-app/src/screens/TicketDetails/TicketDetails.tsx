@@ -1,13 +1,20 @@
-import { useEffect, useMemo } from 'react';
-import { View, Text, Pressable, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
-import { MaterialIcons } from '@expo/vector-icons';
-import { LoadingIndicator, Button, Snackbar, Dialog, Select } from '@ds/mobile';
-import { colors } from '@ds/tokens';
+import { useEffect, useMemo, useRef } from 'react';
+import { View, Text, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import {
+  Button,
+  Dialog,
+  Field,
+  IconButton,
+  LoadingIndicator,
+  Select,
+  useTheme,
+  useToast,
+} from '@vuotto/mobile';
 import { useTicketDetails } from '../../hooks/useTicketDetails';
 import { useUserList } from '../../hooks/useUserList';
 import { useAuthStore } from '../../store/useAuthStore';
-import { ALL_STATUSES, STATUS_LABELS, STATUS_COLORS } from '../../constants/ticketStatus';
-import { ALL_PRIORITIES, PRIORITY_LABELS, PRIORITY_COLORS } from '../../constants/ticketPriority';
+import { ALL_STATUSES, STATUS_LABELS, STATUS_TONES } from '../../constants/ticketStatus';
+import { ALL_PRIORITIES, PRIORITY_LABELS, PRIORITY_TONES } from '../../constants/ticketPriority';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { AppStackParamList } from '../../navigation/types';
 import { useTicketEditMode } from './hooks/useTicketEditMode';
@@ -22,6 +29,8 @@ import { styles } from './TicketDetails.styles';
 type Props = NativeStackScreenProps<AppStackParamList, 'TicketDetails'>;
 
 export function TicketDetails({ route, navigation }: Props) {
+  const { colors } = useTheme();
+  const toast = useToast();
   const { ticketId } = route.params;
   const user = useAuthStore((s) => s.user);
   const { ticket, comments, loading, error, clearError, addComment, deleteComment } =
@@ -47,27 +56,35 @@ export function TicketDetails({ route, navigation }: Props) {
     navigation.setOptions({
       headerRight: () => (
         <View style={styles.headerIcons}>
-          <Pressable onPress={editMode.onEditPress} style={styles.headerIcon}>
-            <MaterialIcons
-              name={editMode.editing ? 'check' : 'edit'}
-              size={24}
-              color={editMode.editing ? colors.success[500] : colors.neutral[600]}
-            />
-          </Pressable>
-          <Pressable onPress={() => deletion.setDeleteVisible(true)} style={styles.headerIcon}>
-            <MaterialIcons name="delete-outline" size={24} color={colors.error[500]} />
-          </Pressable>
+          <IconButton
+            icon={editMode.editing ? 'Check' : 'Pencil'}
+            label={editMode.editing ? 'Confirmar edição' : 'Editar chamado'}
+            onPress={editMode.onEditPress}
+          />
+          <IconButton
+            icon="Trash2"
+            label="Apagar chamado"
+            onPress={() => deletion.setDeleteVisible(true)}
+          />
         </View>
       ),
     });
   }, [navigation, user?.role, editMode.editing, ticket?.status, ticket?.priority]);
 
   const displayError = error ?? editMode.mutationError ?? deletion.mutationError;
-  function handleDismissError() {
+
+  const dismissError = useRef(() => {});
+  dismissError.current = () => {
+    toast.show({ tone: 'danger', title: displayError ?? '' });
     clearError();
     editMode.clearMutationError();
     deletion.clearMutationError();
-  }
+  };
+
+  useEffect(() => {
+    if (!displayError) return;
+    dismissError.current();
+  }, [displayError]);
 
   const assigneeName = useMemo(
     () => users.find((u) => u.uid === editMode.draftAssigneeId)?.name ?? 'Nenhum',
@@ -97,8 +114,10 @@ export function TicketDetails({ route, navigation }: Props) {
       keyboardVerticalOffset={80}
     >
       <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-        <Text style={styles.title}>{ticket.title}</Text>
-        <Text style={styles.description}>{ticket.description}</Text>
+        <Text style={[styles.title, { color: colors.textHeading }]}>{ticket.title}</Text>
+        <Text style={[styles.description, { color: colors.textSecondary }]}>
+          {ticket.description}
+        </Text>
 
         <TicketMetaRow
           creatorName={ticket.creatorName}
@@ -109,19 +128,20 @@ export function TicketDetails({ route, navigation }: Props) {
 
         {editMode.editing && (
           <View style={styles.paddedRow}>
-            <Select
-              label="Responsável"
-              value={editMode.draftAssigneeId}
-              onChange={(v) => editMode.setDraftAssigneeId(v)}
-              options={[
-                { label: 'Nenhum', value: '' },
-                ...users.map((u) => ({ label: u.name, value: u.uid })),
-              ]}
-            />
+            <Field label="Responsável">
+              <Select
+                value={editMode.draftAssigneeId}
+                onChange={(v) => editMode.setDraftAssigneeId(v)}
+                options={[
+                  { label: 'Nenhum', value: '' },
+                  ...users.map((u) => ({ label: u.name, value: u.uid })),
+                ]}
+              />
+            </Field>
           </View>
         )}
 
-        <Text style={styles.sectionLabel}>Status</Text>
+        <Text style={[styles.sectionLabel, { color: colors.textPrimary }]}>Status</Text>
         <TicketOptionField
           value={ticket.status}
           editing={editMode.editing}
@@ -129,10 +149,10 @@ export function TicketDetails({ route, navigation }: Props) {
           onChangeDraft={editMode.setDraftStatus}
           options={ALL_STATUSES}
           labels={STATUS_LABELS}
-          colors={STATUS_COLORS}
+          tones={STATUS_TONES}
         />
 
-        <Text style={styles.sectionLabel}>Prioridade</Text>
+        <Text style={[styles.sectionLabel, { color: colors.textPrimary }]}>Prioridade</Text>
         <TicketOptionField
           value={ticket.priority}
           editing={editMode.editing}
@@ -140,13 +160,15 @@ export function TicketDetails({ route, navigation }: Props) {
           onChangeDraft={editMode.setDraftPriority}
           options={ALL_PRIORITIES}
           labels={PRIORITY_LABELS}
-          colors={PRIORITY_COLORS}
+          tones={PRIORITY_TONES}
         />
 
-        <Text style={styles.sectionLabel}>Comentários</Text>
+        <Text style={[styles.sectionLabel, { color: colors.textPrimary }]}>Comentários</Text>
 
         {comments.length === 0 && (
-          <Text style={styles.emptyComments}>Nenhum comentário ainda.</Text>
+          <Text style={[styles.emptyComments, { color: colors.textTertiary }]}>
+            Nenhum comentário ainda.
+          </Text>
         )}
 
         {comments.map((c) => (
@@ -169,17 +191,19 @@ export function TicketDetails({ route, navigation }: Props) {
         </View>
 
         <Dialog
-          visible={editMode.saveVisible}
-          onDismiss={editMode.handleCancelSave}
+          open={editMode.saveVisible}
+          onClose={editMode.handleCancelSave}
           title="Salvar alterações"
-          actions={[
-            <Button key="cancel" variant="ghost" onPress={editMode.handleCancelSave}>
-              Cancelar
-            </Button>,
-            <Button key="confirm" variant="primary" onPress={editMode.handleConfirmSave}>
-              Salvar
-            </Button>,
-          ]}
+          footer={
+            <>
+              <Button key="cancel" variant="ghost" onPress={editMode.handleCancelSave}>
+                Cancelar
+              </Button>
+              <Button key="confirm" variant="primary" onPress={editMode.handleConfirmSave}>
+                Salvar
+              </Button>
+            </>
+          }
         >
           <Text>
             Status: <Text style={styles.bold}>{STATUS_LABELS[editMode.draftStatus]}</Text>
@@ -191,43 +215,37 @@ export function TicketDetails({ route, navigation }: Props) {
         </Dialog>
 
         <Dialog
-          visible={deletion.deleteVisible}
-          onDismiss={() => deletion.setDeleteVisible(false)}
+          open={deletion.deleteVisible}
+          onClose={() => deletion.setDeleteVisible(false)}
           title="Apagar ticket"
-          actions={[
-            <Button key="cancel" variant="ghost" onPress={() => deletion.setDeleteVisible(false)}>
-              Cancelar
-            </Button>,
-            <Button key="confirm" variant="danger" onPress={deletion.handleDelete}>
-              Apagar
-            </Button>,
-          ]}
-        >
-          <Text>Esta ação não pode ser desfeita.</Text>
-        </Dialog>
+          description="Esta ação não pode ser desfeita."
+          footer={
+            <>
+              <Button key="cancel" variant="ghost" onPress={() => deletion.setDeleteVisible(false)}>
+                Cancelar
+              </Button>
+              <Button key="confirm" variant="danger" onPress={deletion.handleDelete}>
+                Apagar
+              </Button>
+            </>
+          }
+        />
 
         <Dialog
-          visible={deletion.deleteCommentVisible}
-          onDismiss={deletion.handleCancelDeleteComment}
+          open={deletion.deleteCommentVisible}
+          onClose={deletion.handleCancelDeleteComment}
           title="Apagar comentário"
-          actions={[
-            <Button key="cancel" variant="ghost" onPress={deletion.handleCancelDeleteComment}>
-              Cancelar
-            </Button>,
-            <Button key="confirm" variant="danger" onPress={deletion.handleDeleteComment}>
-              Apagar
-            </Button>,
-          ]}
-        >
-          <Text>Esta ação não pode ser desfeita.</Text>
-        </Dialog>
-
-        <Snackbar
-          visible={displayError !== null}
-          onDismiss={handleDismissError}
-          message={displayError ?? ''}
-          variant="error"
-          position="top"
+          description="Esta ação não pode ser desfeita."
+          footer={
+            <>
+              <Button key="cancel" variant="ghost" onPress={deletion.handleCancelDeleteComment}>
+                Cancelar
+              </Button>
+              <Button key="confirm" variant="danger" onPress={deletion.handleDeleteComment}>
+                Apagar
+              </Button>
+            </>
+          }
         />
       </ScrollView>
     </KeyboardAvoidingView>

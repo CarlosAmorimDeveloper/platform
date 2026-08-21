@@ -1,6 +1,6 @@
 import React from 'react';
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
-import { ActivityIndicator } from 'react-native-paper';
+import { ActivityIndicator } from 'react-native';
 import { render, screen, fireEvent } from '../../test-utils';
 import { useTicketList } from '../../hooks/useTicketList';
 import type { Ticket } from '../../domain/ticket';

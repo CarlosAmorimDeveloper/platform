@@ -1,4 +1,4 @@
-import { ALL_PRIORITIES, PRIORITY_COLORS, PRIORITY_LABELS } from './ticketPriority';
+import { ALL_PRIORITIES, PRIORITY_TONES, PRIORITY_LABELS } from './ticketPriority';
 
 describe('ticketPriority', () => {
   beforeEach(() => jest.clearAllMocks());
@@ -13,9 +13,9 @@ describe('ticketPriority', () => {
     });
   });
 
-  it('PRIORITY_COLORS has a color for every priority', () => {
+  it('PRIORITY_TONES has a color for every priority', () => {
     ALL_PRIORITIES.forEach((priority) => {
-      expect(PRIORITY_COLORS[priority]).toBeTruthy();
+      expect(PRIORITY_TONES[priority]).toBeTruthy();
     });
   });
 
@@ -26,8 +26,8 @@ describe('ticketPriority', () => {
     });
   });
 
-  it('PRIORITY_COLORS values are non-empty strings', () => {
-    Object.values(PRIORITY_COLORS).forEach((color) => {
+  it('PRIORITY_TONES values are non-empty strings', () => {
+    Object.values(PRIORITY_TONES).forEach((color) => {
       expect(typeof color).toBe('string');
       expect(color.length).toBeGreaterThan(0);
     });

@@ -2,11 +2,11 @@ import React from 'react';
 import { describe, expect, it, jest, beforeEach } from '@jest/globals';
 import { fireEvent, render, screen } from '../../../../test-utils';
 import { TicketOptionField } from './TicketOptionField';
-import { ALL_STATUSES, STATUS_LABELS, STATUS_COLORS } from '../../../../constants/ticketStatus';
+import { ALL_STATUSES, STATUS_LABELS, STATUS_TONES } from '../../../../constants/ticketStatus';
 import {
   ALL_PRIORITIES,
   PRIORITY_LABELS,
-  PRIORITY_COLORS,
+  PRIORITY_TONES,
 } from '../../../../constants/ticketPriority';
 
 const onChangeDraft = jest.fn();
@@ -25,7 +25,7 @@ describe('TicketOptionField — status', () => {
         onChangeDraft={onChangeDraft}
         options={ALL_STATUSES}
         labels={STATUS_LABELS}
-        colors={STATUS_COLORS}
+        tones={STATUS_TONES}
       />,
     );
     expect(screen.getByText('Aberto')).toBeTruthy();
@@ -40,7 +40,7 @@ describe('TicketOptionField — status', () => {
         onChangeDraft={onChangeDraft}
         options={ALL_STATUSES}
         labels={STATUS_LABELS}
-        colors={STATUS_COLORS}
+        tones={STATUS_TONES}
       />,
     );
     expect(screen.getByText('Aberto')).toBeTruthy();
@@ -57,7 +57,7 @@ describe('TicketOptionField — status', () => {
         onChangeDraft={onChangeDraft}
         options={ALL_STATUSES}
         labels={STATUS_LABELS}
-        colors={STATUS_COLORS}
+        tones={STATUS_TONES}
       />,
     );
     expect(screen.getByText('Aberto')).toBeTruthy();
@@ -74,7 +74,7 @@ describe('TicketOptionField — status', () => {
         onChangeDraft={onChangeDraft}
         options={ALL_STATUSES}
         labels={STATUS_LABELS}
-        colors={STATUS_COLORS}
+        tones={STATUS_TONES}
       />,
     );
     fireEvent.press(screen.getByText('Concluído'));
@@ -92,7 +92,7 @@ describe('TicketOptionField — priority', () => {
         onChangeDraft={onChangeDraft}
         options={ALL_PRIORITIES}
         labels={PRIORITY_LABELS}
-        colors={PRIORITY_COLORS}
+        tones={PRIORITY_TONES}
       />,
     );
     expect(screen.getByText('Médio')).toBeTruthy();
@@ -107,7 +107,7 @@ describe('TicketOptionField — priority', () => {
         onChangeDraft={onChangeDraft}
         options={ALL_PRIORITIES}
         labels={PRIORITY_LABELS}
-        colors={PRIORITY_COLORS}
+        tones={PRIORITY_TONES}
       />,
     );
     expect(screen.getByText('Muito Baixo')).toBeTruthy();
@@ -126,7 +126,7 @@ describe('TicketOptionField — priority', () => {
         onChangeDraft={onChangeDraft}
         options={ALL_PRIORITIES}
         labels={PRIORITY_LABELS}
-        colors={PRIORITY_COLORS}
+        tones={PRIORITY_TONES}
       />,
     );
     expect(screen.getByText('Médio')).toBeTruthy();
@@ -143,7 +143,7 @@ describe('TicketOptionField — priority', () => {
         onChangeDraft={onChangeDraft}
         options={ALL_PRIORITIES}
         labels={PRIORITY_LABELS}
-        colors={PRIORITY_COLORS}
+        tones={PRIORITY_TONES}
       />,
     );
     fireEvent.press(screen.getByText('Alto'));
