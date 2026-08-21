@@ -19,7 +19,10 @@
     "build": "tsup",
     "dev": "tsup --watch",
     "check-types": "tsc --noEmit",
-    "lint": "eslint . --max-warnings 0"
+    "lint": "eslint . --max-warnings 0",
+    "storybook": "storybook dev -p 6008",
+    "build-storybook": "storybook build",
+    "chromatic": "chromatic --exit-zero-on-changes"
   },
   "dependencies": {
     "@vuotto/tokens": "*",
@@ -32,12 +35,18 @@
   "devDependencies": {
     "@repo/eslint-config": "*",
     "@repo/typescript-config": "*",
+    "@storybook/addon-essentials": "^8.6.14",
+    "@storybook/react": "^8.6.14",
+    "@storybook/react-vite": "^8.6.14",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "chromatic": "^16.6.0",
     "eslint": "^9",
     "react": "^19",
     "react-dom": "^19",
+    "storybook": "^8.6.14",
     "tsup": "^8",
-    "typescript": "5.9.2"
+    "typescript": "5.9.2",
+    "vite": "^6"
   }
 }
