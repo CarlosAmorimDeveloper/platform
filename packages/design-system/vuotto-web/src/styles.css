@@ -18,3 +18,24 @@
     -webkit-backdrop-filter: none !important;
   }
 }
+
+@keyframes vt-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+.vt-skeleton-bar {
+  background: linear-gradient(90deg, var(--glass-2), var(--glass-3), var(--glass-2));
+  background-size: 200% 100%;
+  animation: vt-shimmer 1.6s var(--ease-inout) infinite;
+}
+/* REB-25 AC: Skeleton respects prefers-reduced-motion (no shimmer). */
+@media (prefers-reduced-motion: reduce) {
+  .vt-skeleton-bar {
+    animation: none;
+    background: var(--glass-2);
+  }
+}
