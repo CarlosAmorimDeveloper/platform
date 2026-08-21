@@ -39,3 +39,8 @@
     background: var(--glass-2);
   }
 }
+
+/* REB-27 AC: Tabs collapses with horizontal scroll instead of wrapping — hide the scrollbar itself, `scrollbarWidth: none` (Firefox) is set inline. */
+[data-vt-scroll-x]::-webkit-scrollbar {
+  display: none;
+}
