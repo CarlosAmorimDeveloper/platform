@@ -1,5 +1,5 @@
-import { View, Text, FlatList } from 'react-native';
-import { Button } from '@ds/mobile';
+import { View, FlatList } from 'react-native';
+import { Badge, Button, type BadgeTone } from '@vuotto/mobile';
 import { sharedOptionFieldStyles as styles } from '../sharedOptionField.styles';
 
 interface Props<T extends string> {
@@ -9,7 +9,7 @@ interface Props<T extends string> {
   onChangeDraft: (v: T) => void;
   options: readonly T[];
   labels: Record<T, string>;
-  colors: Record<T, string>;
+  tones: Record<T, BadgeTone>;
 }
 
 const ListEdge = () => <View style={styles.listLeadingSpace} />;
@@ -22,7 +22,7 @@ export function TicketOptionField<T extends string>({
   onChangeDraft,
   options,
   labels,
-  colors,
+  tones,
 }: Props<T>) {
   if (editing) {
     return (
@@ -51,8 +51,8 @@ export function TicketOptionField<T extends string>({
   }
 
   return (
-    <View style={[styles.badge, { backgroundColor: colors[value] + '20' }]}>
-      <Text style={[styles.badgeText, { color: colors[value] }]}>{labels[value]}</Text>
+    <View style={styles.badge}>
+      <Badge tone={tones[value]}>{labels[value]}</Badge>
     </View>
   );
 }

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { View } from 'react-native';
-import { Input, Button, LoadingIndicator, Snackbar, Select } from '@ds/mobile';
+import { Button, Field, Input, LoadingIndicator, Select, useToast } from '@vuotto/mobile';
 import { createUser } from '../../services/authService';
 import { passwordMinLengthError } from '../../utils/validation';
 import { useAuthStore } from '../../store/useAuthStore';
@@ -18,13 +18,12 @@ const ROLE_OPTIONS = [
 
 export function CreateUser({ navigation }: Props) {
   const currentUser = useAuthStore((s) => s.user);
+  const toast = useToast();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState<UserRole>('standard');
   const [loading, setLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [successVisible, setSuccessVisible] = useState(false);
 
   if (currentUser?.role !== 'admin') {
     navigation.goBack();
@@ -40,10 +39,13 @@ export function CreateUser({ navigation }: Props) {
     setLoading(true);
     try {
       await createUser(name, email, password, role, currentUser!.workspaceId);
-      setSuccessVisible(true);
+      toast.show({ tone: 'success', title: 'Usuário criado com sucesso!' });
       setTimeout(() => navigation.goBack(), 1500);
     } catch (err: unknown) {
-      setErrorMessage(err instanceof Error ? err.message : 'Falha ao criar usuário');
+      toast.show({
+        tone: 'danger',
+        title: err instanceof Error ? err.message : 'Falha ao criar usuário',
+      });
     } finally {
       setLoading(false);
     }
@@ -51,23 +53,25 @@ export function CreateUser({ navigation }: Props) {
 
   return (
     <View style={styles.container}>
-      <Input label="Nome" placeholder="Nome completo" value={name} onChangeText={setName} />
-      <Input label="Email" placeholder="email@exemplo.com" value={email} onChangeText={setEmail} />
-      <Input
-        label="Senha"
-        placeholder="Mínimo 6 caracteres"
-        secureTextEntry
-        showPasswordToggle
-        value={password}
-        onChangeText={setPassword}
-        error={passwordError}
-      />
-      <Select
-        label="Perfil"
-        value={role}
-        onChange={(v) => setRole(v as UserRole)}
-        options={ROLE_OPTIONS}
-      />
+      <Field label="Nome">
+        <Input placeholder="Nome completo" value={name} onChangeText={setName} />
+      </Field>
+      <Field label="Email">
+        <Input placeholder="email@exemplo.com" value={email} onChangeText={setEmail} />
+      </Field>
+      <Field label="Senha" error={passwordError}>
+        <Input
+          placeholder="Mínimo 6 caracteres"
+          secureTextEntry
+          secureToggle
+          value={password}
+          onChangeText={setPassword}
+          invalid={Boolean(passwordError)}
+        />
+      </Field>
+      <Field label="Perfil">
+        <Select value={role} onChange={(v) => setRole(v as UserRole)} options={ROLE_OPTIONS} />
+      </Field>
       <LoadingIndicator visible={loading} />
       <Button onPress={handleCreate} disabled={!isValid || loading}>
         Criar Usuário
@@ -75,20 +79,6 @@ export function CreateUser({ navigation }: Props) {
       <Button variant="secondary" onPress={() => navigation.goBack()}>
         Cancelar
       </Button>
-      <Snackbar
-        visible={successVisible}
-        onDismiss={() => setSuccessVisible(false)}
-        message="Usuário criado com sucesso!"
-        variant="success"
-        position="top"
-      />
-      <Snackbar
-        visible={errorMessage !== null}
-        onDismiss={() => setErrorMessage(null)}
-        message={errorMessage ?? ''}
-        variant="error"
-        position="top"
-      />
     </View>
   );
 }

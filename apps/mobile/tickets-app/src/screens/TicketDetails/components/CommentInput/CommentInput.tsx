@@ -1,5 +1,5 @@
 import { View } from 'react-native';
-import { Input, Button } from '@ds/mobile';
+import { Button, Field, Input } from '@vuotto/mobile';
 import { styles } from './CommentInput.styles';
 
 interface Props {
@@ -13,15 +13,16 @@ interface Props {
 export function CommentInput({ value, onChangeText, onSubmit, disabled, onFocus }: Props) {
   return (
     <View style={styles.wrapper}>
-      <Input
-        label="Novo comentário"
-        placeholder="Escreva um comentário..."
-        value={value}
-        onChangeText={onChangeText}
-        onFocus={onFocus}
-        multiline
-        numberOfLines={3}
-      />
+      <Field label="Novo comentário">
+        <Input
+          placeholder="Escreva um comentário..."
+          value={value}
+          onChangeText={onChangeText}
+          onFocus={onFocus}
+          multiline
+          numberOfLines={3}
+        />
+      </Field>
       <Button onPress={onSubmit} disabled={disabled}>
         Enviar
       </Button>

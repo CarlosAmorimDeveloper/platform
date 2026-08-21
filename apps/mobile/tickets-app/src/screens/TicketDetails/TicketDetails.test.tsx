@@ -1,7 +1,7 @@
 import React from 'react';
 import type { ReactElement } from 'react';
 import { beforeEach, describe, expect, it } from '@jest/globals';
-import { ActivityIndicator } from 'react-native-paper';
+import { ActivityIndicator } from 'react-native';
 import { act, render, screen, fireEvent, waitFor } from '../../test-utils';
 import { useTicketDetails } from '../../hooks/useTicketDetails';
 import { useUserList } from '../../hooks/useUserList';
@@ -20,7 +20,6 @@ jest.mock('../../hooks/useUserList');
 jest.mock('../../store/useAuthStore');
 jest.mock('../../services/ticketService');
 jest.mock('../../services/firebase', () => ({ auth: {}, db: {} }));
-jest.mock('@expo/vector-icons', () => ({ MaterialIcons: () => null }));
 jest.mock('react-native/Libraries/Components/Keyboard/Keyboard', () => {
   const mockKeyboard = {
     addListener: jest.fn(() => ({ remove: jest.fn() })),

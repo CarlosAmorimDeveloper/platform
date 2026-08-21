@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { View, Text, KeyboardAvoidingView, Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Input, Button, LoadingIndicator, Snackbar } from '@ds/mobile';
+import { Button, Field, Input, LoadingIndicator, useTheme, useToast } from '@vuotto/mobile';
 import { register, mapFirebaseAuthError } from '../../services/authService';
 import { passwordMinLengthError } from '../../utils/validation';
 import { useAuthStore } from '../../store/useAuthStore';
@@ -12,11 +12,12 @@ import { styles } from './Register.styles';
 type Props = NativeStackScreenProps<AuthStackParamList, 'Register'>;
 
 export function Register({ navigation }: Props) {
+  const { colors } = useTheme();
+  const toast = useToast();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isFirstUser, setIsFirstUser] = useState(false);
   const setUser = useAuthStore((s) => s.setUser);
 
@@ -35,7 +36,7 @@ export function Register({ navigation }: Props) {
       const user = await register(name, email, password);
       setUser(user);
     } catch (err: unknown) {
-      setErrorMessage(mapFirebaseAuthError(err));
+      toast.show({ tone: 'danger', title: mapFirebaseAuthError(err) });
     } finally {
       setLoading(false);
     }
@@ -46,30 +47,36 @@ export function Register({ navigation }: Props) {
       style={styles.keyboardView}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-      <View style={styles.container}>
-        <Text style={styles.subtitle}>Preencha os dados para criar sua conta</Text>
+      <View style={[styles.container, { backgroundColor: colors.bgCanvas }]}>
+        <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
+          Preencha os dados para criar sua conta
+        </Text>
         <View style={styles.form}>
-          <Input label="Nome" placeholder="Seu nome completo" value={name} onChangeText={setName} />
-          <Input
-            label="E-mail"
-            placeholder="email@exemplo.com"
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-            autoCapitalize="none"
-          />
-          <Input
-            label="Senha"
-            placeholder="Mínimo 6 caracteres"
-            secureTextEntry
-            showPasswordToggle
-            value={password}
-            onChangeText={setPassword}
-            error={passwordError}
-          />
+          <Field label="Nome">
+            <Input placeholder="Seu nome completo" value={name} onChangeText={setName} />
+          </Field>
+          <Field label="E-mail">
+            <Input
+              placeholder="email@exemplo.com"
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+              autoCapitalize="none"
+            />
+          </Field>
+          <Field label="Senha" error={passwordError}>
+            <Input
+              placeholder="Mínimo 6 caracteres"
+              secureTextEntry
+              secureToggle
+              value={password}
+              onChangeText={setPassword}
+              invalid={Boolean(passwordError)}
+            />
+          </Field>
           {isFirstUser && (
-            <View style={styles.adminNotice}>
-              <Text style={styles.adminNoticeText}>
+            <View style={[styles.adminNotice, { backgroundColor: colors.glass2 }]}>
+              <Text style={[styles.adminNoticeText, { color: colors.textHeading }]}>
                 Esta será a primeira conta criada e terá perfil de Administrador.
               </Text>
             </View>
@@ -85,13 +92,6 @@ export function Register({ navigation }: Props) {
             Voltar para o login
           </Button>
         </View>
-        <Snackbar
-          visible={errorMessage !== null}
-          onDismiss={() => setErrorMessage(null)}
-          message={errorMessage ?? ''}
-          variant="error"
-          position="top"
-        />
       </View>
     </KeyboardAvoidingView>
   );

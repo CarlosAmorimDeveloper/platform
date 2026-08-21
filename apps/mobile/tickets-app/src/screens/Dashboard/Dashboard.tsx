@@ -1,15 +1,33 @@
-import { View, Text, Pressable, FlatList, TouchableOpacity } from 'react-native';
-import { MaterialIcons } from '@expo/vector-icons';
-import { LoadingIndicator, FAB, Card, PieChart, Snackbar } from '@ds/mobile';
-import { colors } from '@ds/tokens';
+import { useEffect } from 'react';
+import { View, Text, Pressable, FlatList } from 'react-native';
+import {
+  Badge,
+  Card,
+  FAB,
+  Icon,
+  LoadingIndicator,
+  PieChart,
+  useTheme,
+  useToast,
+  type BadgeTone,
+} from '@vuotto/mobile';
+import { vtColors } from '@vuotto/tokens';
 import { useTicketList } from '../../hooks/useTicketList';
 import { formatDate } from '../../domain/ticket';
 import type { Ticket } from '../../domain/ticket';
 import type { TicketStatus } from '../../constants/ticketStatus';
-import { ALL_STATUSES, STATUS_LABELS, STATUS_COLORS } from '../../constants/ticketStatus';
+import { ALL_STATUSES, STATUS_LABELS, STATUS_TONES } from '../../constants/ticketStatus';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { AppStackParamList } from '../../navigation/types';
 import { styles } from './Dashboard.styles';
+
+const TONE_COLOR: Record<BadgeTone, string> = {
+  neutral: vtColors.mute,
+  success: vtColors.success,
+  warning: vtColors.warning,
+  danger: vtColors.danger,
+  info: vtColors.cool,
+};
 
 type Props = NativeStackScreenProps<AppStackParamList, 'Dashboard'>;
 
@@ -24,14 +42,9 @@ function StatusStatCard({
 }) {
   return (
     <View style={styles.statCardWrapper}>
-      <TouchableOpacity
-        onPress={onPress}
-        style={[styles.statBadge, { backgroundColor: STATUS_COLORS[status] }]}
-      >
-        <Text style={[styles.statLabel, { color: 'white' }]}>
-          {STATUS_LABELS[status]} {count}
-        </Text>
-      </TouchableOpacity>
+      <Pressable onPress={onPress}>
+        <Badge tone={STATUS_TONES[status]}>{`${STATUS_LABELS[status]} ${count}`}</Badge>
+      </Pressable>
     </View>
   );
 }
@@ -43,18 +56,24 @@ function RecentTicketsCard({
   tickets: Ticket[];
   onPressTicket: (id: string) => void;
 }) {
+  const { colors } = useTheme();
   const recent = tickets.slice(0, 3);
   if (recent.length === 0) return null;
   return (
-    <Card title="Chamados Recentes">
+    <Card padding="md">
+      <Text style={[styles.cardTitle, { color: colors.textHeading }]}>Chamados Recentes</Text>
       {recent.map((t, i) => (
         <Pressable
           key={t.id}
           onPress={() => onPressTicket(t.id)}
-          style={[styles.recentItem, i === recent.length - 1 && { borderBottomWidth: 0 }]}
+          style={[
+            styles.recentItem,
+            { borderBottomColor: colors.lineHairline },
+            i === recent.length - 1 && { borderBottomWidth: 0 },
+          ]}
         >
-          <Text style={styles.recentTitle}>{t.title}</Text>
-          <Text style={styles.recentMeta}>
+          <Text style={[styles.recentTitle, { color: colors.textHeading }]}>{t.title}</Text>
+          <Text style={[styles.recentMeta, { color: colors.textSecondary }]}>
             Criado por: {t.creatorName} · {formatDate(t.createdAt)}
           </Text>
         </Pressable>
@@ -64,7 +83,15 @@ function RecentTicketsCard({
 }
 
 export function Dashboard({ navigation }: Props) {
+  const { colors } = useTheme();
+  const toast = useToast();
   const { tickets, loading, error, clearError } = useTicketList();
+
+  useEffect(() => {
+    if (!error) return;
+    toast.show({ tone: 'danger', title: error });
+    clearError();
+  }, [error, toast, clearError]);
 
   if (loading) {
     return (
@@ -76,30 +103,27 @@ export function Dashboard({ navigation }: Props) {
 
   if (tickets.length === 0) {
     return (
-      <View style={styles.container}>
+      <View style={[styles.container, { backgroundColor: colors.bgCanvas }]}>
         <View style={styles.emptyState}>
-          <MaterialIcons name="inbox" size={64} color={`${colors.neutral[300]}`} />
-          <Text style={styles.emptyTitle}>Nenhum chamado ainda</Text>
-          <Text style={styles.emptySubtitle}>Crie o primeiro chamado usando o botão abaixo</Text>
+          <Icon name="Inbox" size={64} color={colors.textTertiary} />
+          <Text style={[styles.emptyTitle, { color: colors.textPrimary }]}>
+            Nenhum chamado ainda
+          </Text>
+          <Text style={[styles.emptySubtitle, { color: colors.textTertiary }]}>
+            Crie o primeiro chamado usando o botão abaixo
+          </Text>
         </View>
         <FAB
           onPress={() => navigation.navigate('NewTicket')}
           style={styles.fab}
-          accessibilityLabel="New ticket"
-        />
-        <Snackbar
-          visible={error !== null}
-          onDismiss={clearError}
-          message={error ?? ''}
-          variant="error"
-          position="top"
+          label="New ticket"
         />
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.bgCanvas }]}>
       {tickets.length > 0 && (
         <View>
           <FlatList
@@ -120,16 +144,15 @@ export function Dashboard({ navigation }: Props) {
         </View>
       )}
       {tickets.length > 0 && (
-        <View style={styles.sectionPad}>
+        <Pressable style={styles.sectionPad} onPress={() => navigation.navigate('TicketList', {})}>
           <PieChart
             slices={ALL_STATUSES.map((s) => ({
               label: STATUS_LABELS[s],
               value: tickets.filter((t) => t.status === s).length,
-              color: STATUS_COLORS[s],
+              color: TONE_COLOR[STATUS_TONES[s]],
             }))}
-            onPress={() => navigation.navigate('TicketList', {})}
           />
-        </View>
+        </Pressable>
       )}
       <View style={styles.sectionPad}>
         <RecentTicketsCard
@@ -137,18 +160,7 @@ export function Dashboard({ navigation }: Props) {
           onPressTicket={(id) => navigation.navigate('TicketDetails', { ticketId: id })}
         />
       </View>
-      <FAB
-        onPress={() => navigation.navigate('NewTicket')}
-        style={styles.fab}
-        accessibilityLabel="New ticket"
-      />
-      <Snackbar
-        visible={error !== null}
-        onDismiss={clearError}
-        message={error ?? ''}
-        variant="error"
-        position="top"
-      />
+      <FAB onPress={() => navigation.navigate('NewTicket')} style={styles.fab} label="New ticket" />
     </View>
   );
 }

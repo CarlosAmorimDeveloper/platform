@@ -3,7 +3,6 @@ const path = require('path');
 // Route all react imports to the single React installed in this app's node_modules
 // to avoid "invalid hook call" errors from multiple React instances.
 const sharedReact = path.resolve(__dirname, 'node_modules/react');
-const sharedReactNativePaper = path.resolve(__dirname, 'node_modules/react-native-paper');
 
 /** @type {import('jest').Config} */
 module.exports = {
@@ -11,7 +10,7 @@ module.exports = {
   testMatch: ['**/*.test.{ts,tsx}'],
   testPathIgnorePatterns: ['/node_modules/', 'firestore\\.rules\\.test'],
   transform: {
-    '^.+\\.(js|ts|tsx)$': [
+    '^.+\\.(js|mjs|ts|tsx)$': [
       'babel-jest',
       {
         configFile: false,
@@ -21,12 +20,11 @@ module.exports = {
   },
   // Transform RN, navigation, and expo packages (they ship JSX/Flow/TS source)
   transformIgnorePatterns: [
-    'node_modules/(?!(react-native|@react-native|react-native-paper|react-native-reanimated|react-native-worklets|react-native-safe-area-context|react-native-screens|react-native-svg|react-native-chart-kit|@react-navigation|expo|expo-status-bar|@expo)/)',
+    'node_modules/(?!(react-native|@react-native|react-native-reanimated|react-native-worklets|react-native-safe-area-context|react-native-screens|react-native-svg|lucide-react-native|@react-navigation|expo|expo-status-bar|@expo)/)',
   ],
   moduleNameMapper: {
     '^react$': sharedReact,
     '^react/(.*)$': `${sharedReact}/$1`,
-    '^react-native-paper$': sharedReactNativePaper,
     '^react-native-safe-area-context$': '<rootDir>/__mocks__/react-native-safe-area-context.js',
     '^react-native/Libraries/Animated/Animated$': '<rootDir>/__mocks__/react-native-animated.js',
     '^react-native/Libraries/Animated/nodes/AnimatedProps$':

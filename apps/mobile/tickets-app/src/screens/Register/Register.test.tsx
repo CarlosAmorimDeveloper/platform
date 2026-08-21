@@ -43,6 +43,7 @@ const mockUser: User = {
 describe('Register', () => {
   afterEach(() => {
     jest.clearAllMocks();
+    mockedGetItem.mockImplementation(() => Promise.resolve(null));
   });
 
   it('renders name, email and password fields', async () => {
@@ -71,7 +72,6 @@ describe('Register', () => {
   });
 
   it('shows admin notice for first user', async () => {
-    mockedGetItem.mockResolvedValueOnce(null);
     render(<Register navigation={mockNavigation} route={mockRoute} />);
 
     await waitFor(() => {
@@ -82,16 +82,20 @@ describe('Register', () => {
   });
 
   it('does not show admin notice when a user is already registered', async () => {
-    mockedGetItem.mockResolvedValueOnce('true');
+    mockedGetItem.mockImplementation((key: string) =>
+      Promise.resolve(key === 'first_user_registered' ? 'true' : null),
+    );
     render(<Register navigation={mockNavigation} route={mockRoute} />);
 
     await waitFor(() => {
       expect(mockedGetItem).toHaveBeenCalledWith('first_user_registered');
     });
 
-    expect(
-      screen.queryByText('Esta será a primeira conta criada e terá perfil de Administrador.'),
-    ).toBeNull();
+    await waitFor(() => {
+      expect(
+        screen.queryByText('Esta será a primeira conta criada e terá perfil de Administrador.'),
+      ).toBeNull();
+    });
   });
 
   it('disables submit button when fields are invalid', async () => {

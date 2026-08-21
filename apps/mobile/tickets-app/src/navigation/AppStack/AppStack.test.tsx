@@ -6,7 +6,6 @@ import { AppStack } from './AppStack';
 jest.mock('../../services/ticketService');
 jest.mock('../../services/authService');
 jest.mock('../../services/firebase', () => ({ auth: {}, db: {} }));
-jest.mock('@expo/vector-icons', () => ({ MaterialIcons: () => null }));
 
 const mockLogout = jest.fn();
 let mockCurrentUser: User | null = null;
@@ -87,7 +86,7 @@ describe('AppStack', () => {
     mockCurrentUser = adminUser;
     const { safeUnmount } = renderAppStack();
 
-    expect(screen.UNSAFE_getByProps({ name: 'person-add' })).toBeTruthy();
+    expect(screen.getByLabelText('Criar usuário')).toBeTruthy();
 
     safeUnmount();
   });
@@ -96,7 +95,7 @@ describe('AppStack', () => {
     mockCurrentUser = standardUser;
     const { safeUnmount } = renderAppStack();
 
-    expect(screen.UNSAFE_queryByProps({ name: 'person-add' })).toBeNull();
+    expect(screen.queryByLabelText('Criar usuário')).toBeNull();
 
     safeUnmount();
   });

@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
-import { Dialog, Button } from '@ds/mobile';
+import { Button, Dialog, IconButton, useTheme } from '@vuotto/mobile';
+import { vtColors } from '@vuotto/tokens';
 import { Dashboard } from '../../screens/Dashboard';
 import { NewTicket } from '../../screens/NewTicket';
 import { TicketDetails } from '../../screens/TicketDetails';
@@ -11,38 +12,37 @@ import { CreateUser } from '../../screens/CreateUser';
 import { useAuthStore } from '../../store/useAuthStore';
 import { STATUS_LABELS } from '../../constants/ticketStatus';
 import type { AppStackParamList } from '../types';
-import { Text, Pressable, View } from 'react-native';
-import { MaterialIcons } from '@expo/vector-icons';
-import { colors } from '@ds/tokens';
+import { View } from 'react-native';
 import { styles } from './AppStack.styles';
 
 const Stack = createNativeStackNavigator<AppStackParamList>();
 
 function LogoutButton() {
   const logout = useAuthStore((s) => s.logout);
-  const [visible, setVisible] = useState(false);
+  const [open, setOpen] = useState(false);
 
   return (
     <>
-      <Button variant="ghost" size="sm" onPress={() => setVisible(true)}>
+      <Button variant="ghost" size="sm" onPress={() => setOpen(true)}>
         Sair
       </Button>
 
       <Dialog
-        visible={visible}
-        onDismiss={() => setVisible(false)}
+        open={open}
+        onClose={() => setOpen(false)}
         title="Sair da conta"
-        actions={[
-          <Button key="cancel" variant="ghost" onPress={() => setVisible(false)}>
-            Cancelar
-          </Button>,
-          <Button key="confirm" variant="danger" onPress={logout}>
-            Sair
-          </Button>,
-        ]}
-      >
-        <Text>Tem certeza que deseja sair?</Text>
-      </Dialog>
+        description="Tem certeza que deseja sair?"
+        footer={
+          <>
+            <Button key="cancel" variant="ghost" onPress={() => setOpen(false)}>
+              Cancelar
+            </Button>
+            <Button key="confirm" variant="danger" onPress={logout}>
+              Sair
+            </Button>
+          </>
+        }
+      />
     </>
   );
 }
@@ -54,9 +54,11 @@ function DashboardHeaderRight() {
   return (
     <View style={styles.headerRight}>
       {user?.role === 'admin' && (
-        <Pressable style={styles.headerIcon} onPress={() => navigation.navigate('CreateUser')}>
-          <MaterialIcons name="person-add" size={24} color={colors.neutral[600]} />
-        </Pressable>
+        <IconButton
+          icon="UserPlus"
+          label="Criar usuário"
+          onPress={() => navigation.navigate('CreateUser')}
+        />
       )}
       <LogoutButton />
     </View>
@@ -64,12 +66,13 @@ function DashboardHeaderRight() {
 }
 
 export function AppStack() {
+  const { colors } = useTheme();
   return (
     <Stack.Navigator
       screenOptions={{
-        headerStyle: { backgroundColor: colors.neutral[0] },
-        headerTitleStyle: { color: colors.neutral[900], fontWeight: '600' },
-        headerTintColor: colors.primary[600],
+        headerStyle: { backgroundColor: colors.surfaceSolid },
+        headerTitleStyle: { color: colors.textHeading, fontWeight: '600' },
+        headerTintColor: vtColors.cool,
       }}
     >
       <Stack.Screen

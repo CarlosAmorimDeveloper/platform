@@ -1,36 +1,31 @@
 import { StyleSheet } from 'react-native';
-import { colors, fontSizes, spacing } from '@ds/tokens';
+import { fontSize, space } from '@vuotto/tokens';
 
 export const styles = StyleSheet.create({
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   keyboardView: { flex: 1 },
-  headerIcons: { flexDirection: 'row' },
-  headerIcon: { paddingHorizontal: spacing[2] },
-  container: { paddingTop: spacing[6], gap: spacing[3], flexGrow: 1, paddingBottom: spacing[10] },
-  paddedRow: { paddingHorizontal: spacing[6] },
+  headerIcons: { flexDirection: 'row', gap: space[2] },
+  container: { paddingTop: space[6], gap: space[3], flexGrow: 1, paddingBottom: space[10] },
+  paddedRow: { paddingHorizontal: space[6] },
   title: {
-    fontSize: fontSizes['2xl'],
+    fontSize: fontSize['2xl'],
     fontWeight: 'bold',
-    color: colors.neutral[900],
-    paddingHorizontal: spacing[6],
+    paddingHorizontal: space[6],
   },
   description: {
-    fontSize: fontSizes.base,
-    color: colors.neutral[500],
+    fontSize: fontSize.md,
     lineHeight: 24,
-    paddingHorizontal: spacing[6],
+    paddingHorizontal: space[6],
   },
   sectionLabel: {
-    fontSize: fontSizes.sm,
+    fontSize: fontSize.sm,
     fontWeight: '600',
-    color: colors.neutral[700],
-    marginTop: spacing[2],
-    paddingHorizontal: spacing[6],
+    marginTop: space[2],
+    paddingHorizontal: space[6],
   },
   emptyComments: {
-    fontSize: fontSizes.sm,
-    color: colors.neutral[400],
-    paddingHorizontal: spacing[6],
+    fontSize: fontSize.sm,
+    paddingHorizontal: space[6],
   },
   bold: { fontWeight: 'bold' as const },
 });
