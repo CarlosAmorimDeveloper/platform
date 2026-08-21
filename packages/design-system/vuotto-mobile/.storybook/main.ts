@@ -1,5 +1,12 @@
 import type { StorybookConfig } from '@storybook/react-vite';
 import type { Plugin } from 'vite';
+import type { PluginBuild } from 'esbuild';
+
+const CODEGEN_STUB_SOURCE = `export default function codegenNativeComponent(name) {
+  function NativeComponent(props) { return props.children ?? null; }
+  NativeComponent.displayName = name;
+  return NativeComponent;
+}`;
 
 // react-native-svg's Fabric components import 'codegenNativeComponent' from
 // react-native — Vite's alias rewrites that to react-native-web, which
@@ -7,6 +14,16 @@ import type { Plugin } from 'vite';
 // react-native-safe-area-context hitting the same gap). Same stub, same
 // reason: this is a Fabric-only codegen helper with no runtime behavior
 // react-native-web needs, so a component that forwards children is enough.
+//
+// This needs BOTH a Vite plugin (for Rollup's production build) and an
+// esbuild plugin (for the dev server's dependency pre-bundling) — esbuild
+// doesn't run Vite's resolveId/load hooks. Intercepting the import this way,
+// rather than excluding react-native-svg from optimizeDeps entirely, matters:
+// excluding the whole package also skips esbuild's CJS→ESM conversion for
+// every other file inside it, including transform.js (a PEG.js-generated
+// `module.exports = { parse }` file) — importers doing `import { parse }`
+// against that raw CommonJS then fail in the browser with "does not provide
+// an export named 'parse'".
 const codegenStubPlugin: Plugin = {
   name: 'react-native-codegen-stub',
   resolveId(id) {
@@ -16,12 +33,65 @@ const codegenStubPlugin: Plugin = {
   },
   load(id) {
     if (id === '\0react-native-codegen-stub') {
-      return `export default function codegenNativeComponent(name) {
-  function NativeComponent(props) { return props.children ?? null; }
-  NativeComponent.displayName = name;
-  return NativeComponent;
-}`;
+      return CODEGEN_STUB_SOURCE;
     }
+  },
+};
+
+const codegenStubEsbuildPlugin = {
+  name: 'react-native-codegen-stub-esbuild',
+  setup(build: PluginBuild) {
+    build.onResolve({ filter: /\/codegenNativeComponent$/ }, () => ({
+      path: 'react-native-codegen-stub',
+      namespace: 'react-native-codegen-stub',
+    }));
+    build.onLoad({ filter: /.*/, namespace: 'react-native-codegen-stub' }, () => ({
+      contents: CODEGEN_STUB_SOURCE,
+      loader: 'js' as const,
+    }));
+  },
+};
+
+// react-native-svg/lib/module/fabric/NativeSvg{Renderable,View}Module.js call
+// `TurboModuleRegistry.getEnforcing(...)` — react-native-web has no
+// TurboModuleRegistry export at all. Both files are only reached via
+// `require()` inside rarely-used geometry-introspection methods (getBBox,
+// getCTM, toDataURL, ...) that lucide-react-native's icon rendering never
+// calls, so a no-op stub is safe: it only needs to satisfy the static
+// resolution these `require()` calls still trigger during bundling, not
+// behave like the real native module.
+const FABRIC_SVG_MODULE_STUB_SOURCE = `const noop = () => null;
+export default {
+  toDataURL: noop, getBBox: noop, getCTM: noop, getScreenCTM: noop,
+  isPointInFill: noop, isPointInStroke: noop, getTotalLength: noop, getPointAtLength: noop,
+};`;
+const FABRIC_SVG_MODULE_FILTER = /\/fabric\/NativeSvg(Renderable|View)Module(\.js)?$/;
+
+const fabricSvgModuleStubPlugin: Plugin = {
+  name: 'react-native-svg-fabric-module-stub',
+  resolveId(id) {
+    if (FABRIC_SVG_MODULE_FILTER.test(id)) {
+      return '\0react-native-svg-fabric-module-stub';
+    }
+  },
+  load(id) {
+    if (id === '\0react-native-svg-fabric-module-stub') {
+      return FABRIC_SVG_MODULE_STUB_SOURCE;
+    }
+  },
+};
+
+const fabricSvgModuleStubEsbuildPlugin = {
+  name: 'react-native-svg-fabric-module-stub-esbuild',
+  setup(build: PluginBuild) {
+    build.onResolve({ filter: FABRIC_SVG_MODULE_FILTER }, () => ({
+      path: 'react-native-svg-fabric-module-stub',
+      namespace: 'react-native-svg-fabric-module-stub',
+    }));
+    build.onLoad({ filter: /.*/, namespace: 'react-native-svg-fabric-module-stub' }, () => ({
+      contents: FABRIC_SVG_MODULE_STUB_SOURCE,
+      loader: 'js' as const,
+    }));
   },
 };
 
@@ -34,7 +104,7 @@ const config: StorybookConfig = {
   async viteFinal(config) {
     const { mergeConfig } = await import('vite');
     return mergeConfig(config, {
-      plugins: [codegenStubPlugin],
+      plugins: [codegenStubPlugin, fabricSvgModuleStubPlugin],
       resolve: {
         alias: {
           'react-native': 'react-native-web',
@@ -42,10 +112,16 @@ const config: StorybookConfig = {
       },
       optimizeDeps: {
         include: ['react-native-web'],
-        // esbuild's dependency pre-bundler doesn't run Vite plugins, so
-        // `codegenStubPlugin` never fires for these unless they're excluded
-        // from it and left to Vite's normal (plugin-aware) resolution.
-        exclude: ['react-native-svg', 'react-native-safe-area-context'],
+        // react-native-safe-area-context has no esbuild-side interception
+        // set up for it (only the codegenNativeComponent import matters
+        // there, and it's low-traffic enough to just skip pre-bundling
+        // entirely rather than plumb an esbuild plugin for it too).
+        // react-native-svg stays pre-bundled (not excluded) — see the two
+        // esbuild plugins below for why.
+        exclude: ['react-native-safe-area-context'],
+        esbuildOptions: {
+          plugins: [codegenStubEsbuildPlugin, fabricSvgModuleStubEsbuildPlugin],
+        },
       },
     });
   },
