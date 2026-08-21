@@ -13,6 +13,9 @@ export type { EmptyStateProps } from './EmptyState';
 export { Skeleton } from './Skeleton';
 export type { SkeletonProps } from './Skeleton';
 
+export { LoadingIndicator } from './LoadingIndicator';
+export type { LoadingIndicatorProps } from './LoadingIndicator';
+
 export { LineChart } from './LineChart';
 export type { LineChartProps, ChartSeries, ChartDatum } from './LineChart';
 
