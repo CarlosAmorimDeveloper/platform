@@ -1,6 +1,6 @@
-import { useEffect, useRef } from 'react';
-import type { HTMLAttributes, CSSProperties, KeyboardEvent, ReactNode } from 'react';
+import type { HTMLAttributes, CSSProperties, ReactNode } from 'react';
 import { zIndex } from '@vuotto/tokens';
+import { useFocusTrap } from '../../hooks/useFocusTrap';
 import { Icon } from '../core/Icon';
 import { useMediaQuery } from './useMediaQuery';
 
@@ -15,9 +15,6 @@ export interface SideNavGroup {
   label?: string;
   items: SideNavItem[];
 }
-
-const FOCUSABLE =
-  'a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
 export interface SideNavProps extends Omit<HTMLAttributes<HTMLElement>, 'style' | 'onChange'> {
   groups?: SideNavGroup[];
@@ -37,9 +34,8 @@ export interface SideNavProps extends Omit<HTMLAttributes<HTMLElement>, 'style' 
 
 /**
  * Primary console navigation: mono group labels, glass active row. Below
- * 900px it becomes a drawer with a scrim and a hand-rolled focus trap — the
- * standalone `Dialog` component (which will formalize this pattern) doesn't
- * exist yet, it's REB-30 in the Feedback epic.
+ * 900px it becomes a drawer with a scrim, using the same `useFocusTrap`
+ * hook `Dialog` is built on.
  */
 export function SideNav({
   groups = [],
@@ -55,52 +51,15 @@ export function SideNav({
   ...rest
 }: SideNavProps) {
   const isNarrow = useMediaQuery('(max-width: 899px)');
-  const navRef = useRef<HTMLElement>(null);
-  const triggerRef = useRef<Element | null>(null);
   const drawerOpen = isNarrow && open;
-
-  useEffect(() => {
-    if (!drawerOpen) return;
-    triggerRef.current = document.activeElement;
-    const container = navRef.current;
-    const focusables = container?.querySelectorAll<HTMLElement>(FOCUSABLE);
-    focusables?.[0]?.focus();
-
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-
-    return () => {
-      document.body.style.overflow = previousOverflow;
-      if (triggerRef.current instanceof HTMLElement) triggerRef.current.focus();
-    };
-  }, [drawerOpen]);
-
-  function handleKeyDown(e: KeyboardEvent<HTMLElement>) {
-    if (!drawerOpen) return;
-    if (e.key === 'Escape') {
-      onOpenChange?.(false);
-      return;
-    }
-    if (e.key !== 'Tab') return;
-    const container = navRef.current;
-    if (!container) return;
-    const focusables = Array.from(container.querySelectorAll<HTMLElement>(FOCUSABLE));
-    if (focusables.length === 0) return;
-    const first = focusables[0]!;
-    const last = focusables[focusables.length - 1]!;
-    if (e.shiftKey && document.activeElement === first) {
-      e.preventDefault();
-      last.focus();
-    } else if (!e.shiftKey && document.activeElement === last) {
-      e.preventDefault();
-      first.focus();
-    }
-  }
+  const { containerRef, onKeyDown } = useFocusTrap<HTMLElement>(drawerOpen, () =>
+    onOpenChange?.(false),
+  );
 
   const content = (
     <nav
-      ref={navRef}
-      onKeyDown={handleKeyDown}
+      ref={containerRef}
+      onKeyDown={onKeyDown}
       style={{
         display: 'flex',
         flexDirection: 'column',
