@@ -33,6 +33,14 @@ yarn workspace @vuotto/mobile dev  # tsup --watch
 
 `@vuotto/tokens` só define os _nomes_ das famílias (`fontFamily.sans` = `"Manrope"`, etc.) — vincular os arquivos de fonte no projeto nativo (via `expo-font`, ou `react-native.config.js` + `npx react-native-asset` num app bare) é responsabilidade do app consumidor, não deste pacote.
 
-## Escopo (REB-15, REB-16 / VT-4, VT-5 — estendidos pra cobrir mobile)
+## Limitação conhecida: ícones e SVG não renderizam no Storybook
 
-Só `Icon` e `useTheme`. Os 30 componentes e os 4 UI kits do backlog são as próximas fases (REB-2 em diante) — vão precisar de uma versão RN de cada um, junto da versão web já existente.
+`Icon`, `IconButton` e qualquer componente que desenha via `react-native-svg` (`LineChart`, `BarChart`) não aparecem visualmente no preview do Storybook — o componente monta sem erro no console, mas nenhum elemento `<svg>` chega a existir no DOM.
+
+**Causa**: o Storybook simula RN no navegador via `react-native-web`, e a versão atual (`0.19.x`) [ainda não suporta React 19](https://github.com/necolas/react-native-web/issues/2686) (o monorepo inteiro usa React 19). Não é um bug deste pacote nem da configuração do Storybook — é uma incompatibilidade upstream ativa, sem correção oficial lançada ainda.
+
+**Isso não afeta o app real**: um app React Native de verdade, compilado via Metro (iOS/Android), nunca passa pelo `react-native-web` — usa a implementação nativa (Fabric) do `react-native-svg` diretamente. A limitação é só do preview do Storybook no navegador. Ícones/gráficos precisam ser conferidos visualmente no app/simulador até essa incompatibilidade ser resolvida upstream.
+
+## Escopo
+
+Biblioteca de componentes completa (REB-2 a REB-6): `Icon`, `Button`, `IconButton`, `Card`, `Badge`, `Tag`, `Lockup` (Core); `Field`, `Input`, `Textarea`, `Select`, `Checkbox`, `RadioGroup`, `Switch`, `SegmentedControl`, `FileDrop` (Forms); `Table`, `Stat`, `ProgressBar`, `EmptyState`, `Skeleton`, `LineChart`, `BarChart` (Data); `Tabs`, `Breadcrumbs`, `Stepper`, `SideNav`, `TabBar` (Navigation); `Banner`, `Tooltip`, `Dialog`, `Toast`/`ToastProvider`/`useToast` (Feedback); `useTheme`.
