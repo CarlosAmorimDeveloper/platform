@@ -1,3 +1,6 @@
+export { AppBar } from './AppBar';
+export type { AppBarProps, AppBarAction } from './AppBar';
+
 export { Tabs } from './Tabs';
 export type { TabsProps, TabItem } from './Tabs';
 
