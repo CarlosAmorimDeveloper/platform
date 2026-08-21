@@ -24,7 +24,8 @@ cpSync(join(srcDir, 'assets', 'fonts'), join(distDir, 'assets', 'fonts'), { recu
 // token file has to become `./assets/fonts/...` to still point at
 // dist/assets/fonts/ from the new location.
 const entry = readFileSync(join(srcDir, 'styles.css'), 'utf8');
-const importPattern = /@import\s+"tokens\/([^"]+)";/g;
+// Prettier normalizes these to single quotes on commit — match either.
+const importPattern = /@import\s+['"]tokens\/([^'"]+)['"];/g;
 let flattened = '';
 let match;
 while ((match = importPattern.exec(entry))) {

@@ -1,5 +1,5 @@
 {
-  "name": "@vuotto/ds",
+  "name": "@vuotto/web",
   "version": "0.0.0",
   "private": true,
   "main": "./dist/index.js",
@@ -10,20 +10,19 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
       "require": "./dist/index.js"
-    },
-    "./styles.css": "./dist/styles.css",
-    "./tokens/*": "./dist/tokens/*"
+    }
   },
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "tsup && node scripts/build-css.mjs",
+    "build": "tsup",
     "dev": "tsup --watch",
     "check-types": "tsc --noEmit",
     "lint": "eslint . --max-warnings 0"
   },
   "dependencies": {
+    "@vuotto/tokens": "*",
     "lucide-react": "^1.33.0"
   },
   "peerDependencies": {
