@@ -1,11 +1,5 @@
 import { vtColors } from './colors.generated';
-
-function hexToRgba(hex: string, alphaPercent: number): string {
-  const r = parseInt(hex.slice(1, 3), 16);
-  const g = parseInt(hex.slice(3, 5), 16);
-  const b = parseInt(hex.slice(5, 7), 16);
-  return `rgba(${r}, ${g}, ${b}, ${(alphaPercent / 100).toFixed(2)})`;
-}
+import { alpha } from './color-utils';
 
 export interface DropShadow {
   shadowColor: string;
@@ -59,7 +53,7 @@ export const glow: DropShadow = {
 // than a shadow, and RN's shadow* props can't render a spread-only ring
 // reliably. Render it as `borderWidth: 3, borderColor: focusRingColor`
 // instead of trying to force it through shadow props.
-export const focusRingColor = hexToRgba(vtColors.white, 22);
+export const focusRingColor = alpha(vtColors.white, 22);
 
 // `--shadow-inset-top` has no RN equivalent at all — RN's shadow props are
 // always cast outward, never inset. The signature "glass edge" highlight

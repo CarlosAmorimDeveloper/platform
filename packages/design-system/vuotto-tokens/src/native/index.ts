@@ -1,5 +1,6 @@
 export { vtColors, semanticColors, shadowColor } from './colors.generated';
 export type { ThemeMode, SemanticColors } from './colors.generated';
+export { alpha } from './color-utils';
 
 export { space, layout, controlHeight } from './spacing';
 export { radii } from './radii';
