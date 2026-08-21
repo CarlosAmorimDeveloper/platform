@@ -1,0 +1,20 @@
+/* Rules inline styles can't express (keyframes, @supports) for components
+   that otherwise style entirely via the `style` prop + @vuotto/tokens vars. */
+
+@keyframes vt-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.vt-spin {
+  animation: vt-spin 0.6s linear infinite;
+}
+
+/* Card.prompt.md: "backdrop-filter com fallback sólido onde não há suporte" */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  [data-vt-glass] {
+    background: var(--surface-solid) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+}
