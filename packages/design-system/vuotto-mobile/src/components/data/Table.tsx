@@ -12,11 +12,7 @@ export interface TableColumn {
   key: string;
   label: string;
   align?: 'left' | 'right' | 'center';
-  /**
-   * Fixed column width in px. RN flexbox has no CSS `<table>` auto-layout
-   * equivalent — a column without `width` gets `flex: 1` and shares the
-   * remaining space evenly with other flexible columns.
-   */
+  /** Fixed column width in px; omit for `flex: 1`. */
   width?: number;
   /** Mono type — use for IDs, counts, dates. */
   mono?: boolean;

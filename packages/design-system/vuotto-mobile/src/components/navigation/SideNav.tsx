@@ -32,20 +32,11 @@ export interface SideNavProps {
   header?: ReactNode;
   footer?: ReactNode;
   width?: number;
-  /** Drawer open state — phones are always "narrow", so this is the only render mode. */
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
   style?: StyleProp<ViewStyle>;
 }
 
-/**
- * Primary console navigation, reimplemented as an always-drawer for mobile
- * (there's no "wide viewport" static-sidebar case the way there is on web).
- * RN's `Modal` already isolates the accessibility tree and handles the
- * back-button/gesture dismissal, so it substitutes for a hand-rolled focus
- * trap — no need to reimplement what `SideNav.tsx` (web) has to build by
- * hand for the same reason `Select`/mobile already uses `Modal` here.
- */
 export function SideNav({
   groups = [],
   value,

@@ -109,6 +109,31 @@ const config: StorybookConfig = {
         alias: {
           'react-native': 'react-native-web',
         },
+        // Metro resolves a `.web.js`/`.web.tsx` sibling over the default
+        // file automatically (platform-extension resolution) — Vite has no
+        // such behavior built in, so without this, react-native-svg and
+        // react-native-safe-area-context both silently fall back to their
+        // native (Fabric/TurboModule) entry points instead of the real,
+        // DOM-based web implementations they ship alongside them. That's
+        // why icons/SVG shapes were rendering as nothing: the native entry
+        // point's leaf components got replaced by the codegen stub below,
+        // which renders empty since the native `<Path>`/`<Circle>` etc.
+        // have no children — the stub was never meant to be the thing
+        // actually drawing shapes, it's a fallback for code the .web
+        // files were supposed to make unreachable.
+        extensions: [
+          '.web.js',
+          '.web.ts',
+          '.web.tsx',
+          '.web.jsx',
+          '.mjs',
+          '.js',
+          '.mts',
+          '.ts',
+          '.jsx',
+          '.tsx',
+          '.json',
+        ],
       },
       optimizeDeps: {
         include: ['react-native-web'],

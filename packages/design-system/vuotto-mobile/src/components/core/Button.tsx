@@ -128,8 +128,6 @@ function buttonSkin(
     };
   }
   if (variant === 'secondary') {
-    // No backdrop-filter equivalent in RN without expo-blur — the glass fill
-    // renders as a flat translucent color, no blur behind it.
     return {
       backgroundColor: pressed ? colors.glass3 : colors.glass2,
       borderColor: pressed ? colors.lineStrong : colors.lineHairline,

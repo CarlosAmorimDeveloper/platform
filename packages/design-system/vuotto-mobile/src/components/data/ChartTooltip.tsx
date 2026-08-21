@@ -13,17 +13,6 @@ export interface ChartTooltipProps {
   children: ReactNode;
 }
 
-/**
- * REB-26 AC: "Tooltip reaproveita a superfície de Tooltip" — the standalone
- * `Tooltip` component doesn't exist yet (it belongs to the not-yet-built
- * Feedback epic, REB-6), so this reuses the same glass-panel tokens `Card`
- * is already built from (`surfaceCard`, `lineHairline`, `shadow.md`) rather
- * than depending on a component that isn't there.
- *
- * RN transforms have no CSS `translate(-50%, -100%)` percentage-of-self
- * equivalent — centering requires measuring the tooltip's own rendered size
- * first (`onLayout`) and offsetting by that, hence the two-pass render.
- */
 export function ChartTooltip({
   leftPct,
   topPct,

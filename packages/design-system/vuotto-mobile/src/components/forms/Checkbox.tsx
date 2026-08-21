@@ -16,12 +16,6 @@ export interface CheckboxProps {
   /** Secondary line under the label. */
   description?: string;
   checked?: boolean;
-  /**
-   * RN's `accessibilityState.checked` accepts `'mixed'` natively — that's
-   * the real indeterminate state VoiceOver/TalkBack announce, not just a
-   * visual stand-in (mirrors the DOM `indeterminate` property the web
-   * `Checkbox` sets via ref).
-   */
   indeterminate?: boolean;
   disabled?: boolean;
   onChange?: (checked: boolean, e: GestureResponderEvent) => void;

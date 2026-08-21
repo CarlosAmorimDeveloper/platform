@@ -16,13 +16,6 @@ export interface DialogProps {
   style?: StyleProp<ViewStyle>;
 }
 
-/**
- * Modal for decisions and short forms. RN's `Modal` (same primitive
- * `Select`/`SideNav` already use) is a native overlay — it isolates the
- * accessibility tree and blocks background interaction on its own, so
- * there's no mobile equivalent of the web version's hand-rolled focus trap
- * or scroll lock to build here.
- */
 export function Dialog({
   open = true,
   title,

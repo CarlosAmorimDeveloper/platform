@@ -134,7 +134,6 @@ export function BarChart({
           })}
         </Svg>
 
-        {/* Transparent Pressable overlay per bar — react-native-svg shapes don't fire touch events reliably on Android, so hit-testing happens in plain RN view space instead. */}
         <View style={{ position: 'absolute', inset: 0, flexDirection: 'row' }}>
           {data.map((d, di) => (
             <View

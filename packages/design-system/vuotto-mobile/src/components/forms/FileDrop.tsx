@@ -16,12 +16,6 @@ export interface FileDropProps {
   /** Mono constraint line, e.g. "PNG, JPG ou PDF até 10 MB". */
   hint?: string;
   icon?: IconName;
-  /**
-   * There's no OS-level drag-and-drop or clipboard file paste on a
-   * touchscreen — this component is presentational; `onPress` is where the
-   * app wires up its own picker (camera roll, document picker, etc.),
-   * whichever library that ends up being isn't this design system's call.
-   */
   onPress?: (e: GestureResponderEvent) => void;
   disabled?: boolean;
   style?: StyleProp<ViewStyle>;

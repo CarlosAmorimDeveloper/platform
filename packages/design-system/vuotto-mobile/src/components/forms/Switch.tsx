@@ -21,11 +21,6 @@ export interface SwitchProps extends Omit<
   style?: StyleProp<ViewStyle>;
 }
 
-/**
- * Instant-effect toggle. Uses RN's native `Switch` — role="switch" and
- * Space/Enter-equivalent activation are the platform's own accessibility
- * behaviour here, not something to hand-roll like the web version does.
- */
 export const Switch = forwardRef<RNSwitch, SwitchProps>(function Switch(
   { checked = false, onChange, label, description, disabled = false, style, ...rest },
   ref,

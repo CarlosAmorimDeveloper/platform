@@ -54,11 +54,6 @@ function ShimmerBar({
   );
 }
 
-/**
- * RN has no CSS `prefers-reduced-motion` media query — `AccessibilityInfo`
- * is the platform's equivalent, read once and subscribed to for live
- * changes (mirrors the async-load pattern in `useTheme`).
- */
 export function Skeleton({
   width = '100%',
   height = 12,

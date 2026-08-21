@@ -37,17 +37,7 @@ export function useToast(): ToastContextValue {
   return ctx;
 }
 
-/**
- * Mount once near the app root, wrapping the whole tree — same practical
- * requirement as `SafeAreaProvider`. RN has no portal, so the toast stack
- * renders as an absolutely-positioned `View` layered on top of `children`
- * rather than escaping to a separate root the way the web version's
- * `createPortal` does. Stacked at the top of the screen (not the bottom,
- * unlike web) since that's clear of the thumb and any bottom `TabBar`.
- * Pausing on hover has no touch equivalent — press-and-hold
- * (`onPressIn`/`onPressOut`) substitutes, same pattern as `Tooltip`'s
- * long-press.
- */
+/** Mount once near the app root, wrapping the whole tree. */
 export function ToastProvider({ children }: { children: ReactNode }) {
   const [visible, setVisible] = useState<QueuedToast[]>([]);
   const [queue, setQueue] = useState<QueuedToast[]>([]);
