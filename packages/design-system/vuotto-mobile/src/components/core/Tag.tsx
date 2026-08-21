@@ -8,8 +8,7 @@ export interface TagProps {
   children?: ReactNode;
   /** Selected filter state. */
   active?: boolean;
-  /** Renders a trailing remove affordance — a nested Pressable, which RN's
-   * responder system routes independently of the parent's onPress. */
+  /** Renders a trailing remove affordance. */
   onRemove?: (e: GestureResponderEvent) => void;
   onPress?: (e: GestureResponderEvent) => void;
 }

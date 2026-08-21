@@ -14,12 +14,6 @@ export interface FieldProps {
   children?: ReactNode;
 }
 
-/**
- * RN has no `htmlFor`/`id`/`aria-describedby` — there's no DOM to wire those
- * attributes into. This wires `accessibilityLabel` onto the child instead
- * (when the child doesn't already set its own), which is the RN-native way
- * a screen reader learns what a control is for.
- */
 export function Field({ label, hint, error, required = false, children }: FieldProps) {
   const { colors } = useTheme();
   const hasMessage = Boolean(error || hint);

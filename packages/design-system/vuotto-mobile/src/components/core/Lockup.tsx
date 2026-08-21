@@ -11,14 +11,10 @@ export interface LockupProps {
   size?: LockupSize;
   /** Stacks "TECH" under "Vuotto" instead of beside it. */
   stacked?: boolean;
-  /**
-   * No logo symbol exists yet (readme.md: "Envie um SVG e ele substitui esse
-   * lockup"). When given, this replaces the type lockup entirely.
-   */
+  /** Replaces the type lockup entirely. */
   logo?: ReactElement;
 }
 
-/** Vuotto Tech wordmark. No logo symbol exists — the lockup is type only. */
 export function Lockup({ size = 'md', stacked = false, logo }: LockupProps) {
   const { colors } = useTheme();
 

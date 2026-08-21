@@ -1,11 +1,5 @@
 import { vtColors } from '@vuotto/tokens';
 
-/**
- * REB-26 acceptance criteria caps the series palette at 4 colours before it
- * repeats ("no máximo 4 séries antes de repetir com padrão") — `danger` is
- * deliberately excluded since that colour means "error" everywhere else in
- * the system, so a 5th series would misread as a failure state.
- */
 const SERIES_COLORS = [vtColors.cool, vtColors.violet, vtColors.success, vtColors.warning] as const;
 
 export interface SeriesStyle {

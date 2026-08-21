@@ -13,12 +13,6 @@ const OPPOSITE: Record<TooltipSide, TooltipSide> = {
   right: 'left',
 };
 
-// RN's `transform` only accepts numeric translate values, not CSS-style
-// percentage strings — there's no equivalent to `translate(-50%, -50%)` for
-// centering an absolutely-positioned element of unknown size against its
-// anchor. The tooltip aligns to the trigger's near edge instead of centering
-// on the cross-axis, which is close enough for the short, single-line labels
-// this component is meant for.
 function positionFor(resolvedSide: TooltipSide): ViewStyle {
   switch (resolvedSide) {
     case 'top':
@@ -40,15 +34,6 @@ export interface TooltipProps {
   style?: StyleProp<ViewStyle>;
 }
 
-/**
- * RN has no hover or Escape key — long-press substitutes for hover (the
- * touch equivalent of "reveal on sustained contact"), and releasing the
- * press closes it immediately, which already covers the dismiss behavior
- * Escape provides on web. Repositioning is approximate: it measures the
- * *trigger's* position (the tooltip itself hasn't rendered yet at that
- * point) against the window edges with a fixed margin, rather than a true
- * two-pass measure-then-flip like the web version does.
- */
 export function Tooltip({ label, side = 'top', children, style }: TooltipProps) {
   const { colors } = useTheme();
   const [open, setOpen] = useState(false);

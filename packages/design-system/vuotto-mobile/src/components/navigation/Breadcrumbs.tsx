@@ -4,7 +4,6 @@ import { useTheme } from '../../theme';
 
 export interface Crumb {
   label: string;
-  /** RN has no anchor/`href` semantics — navigation is handled imperatively. */
   onPress?: () => void;
 }
 

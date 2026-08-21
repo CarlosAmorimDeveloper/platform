@@ -30,11 +30,6 @@ export interface SelectProps {
   style?: StyleProp<ViewStyle>;
 }
 
-/**
- * RN has no native `<select>` — this opens a modal sheet listing the
- * options instead. Use for 4+ options; below that use `RadioGroup` or
- * `SegmentedControl`, same guidance as the web version.
- */
 export const Select = forwardRef<View, SelectProps>(function Select(
   {
     options = [],

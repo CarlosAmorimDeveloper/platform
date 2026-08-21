@@ -18,11 +18,6 @@ export interface TabsProps {
   style?: StyleProp<ViewStyle>;
 }
 
-/**
- * RN has no `overflow-x: auto` on a plain `View` — a horizontal
- * `ScrollView` is the platform's equivalent for "collapses with
- * scroll instead of wrapping" on a narrow screen.
- */
 export const Tabs = forwardRef<ScrollView, TabsProps>(function Tabs(
   { tabs = [], value, onChange, style },
   ref,

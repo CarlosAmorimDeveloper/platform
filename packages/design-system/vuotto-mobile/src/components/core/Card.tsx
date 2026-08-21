@@ -29,11 +29,6 @@ export interface CardProps {
   testID?: string;
 }
 
-/**
- * `glow` (the web Card's atmospheric radial tint) is deliberately not a prop
- * here — CSS gradients have no `StyleSheet` equivalent, and a prop that
- * silently does nothing on this platform is worse than not having it.
- */
 export function Card({
   children,
   padding = 'md',

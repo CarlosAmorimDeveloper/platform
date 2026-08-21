@@ -28,11 +28,6 @@ export interface TextareaProps extends Omit<
   style?: StyleProp<ViewStyle>;
 }
 
-/**
- * Multi-line text. RN has no user-draggable resize handle at all (not even
- * a horizontal one to disable) — `rows` sets a fixed starting height instead
- * of the web version's CSS `resize: vertical`.
- */
 export const Textarea = forwardRef<TextInput, TextareaProps>(function Textarea(
   { rows = 4, invalid = false, counter, editable = true, style, onFocus, onBlur, ...rest },
   ref,
