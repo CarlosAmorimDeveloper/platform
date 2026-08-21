@@ -12,3 +12,9 @@ export type { EmptyStateProps } from './EmptyState';
 
 export { Skeleton } from './Skeleton';
 export type { SkeletonProps } from './Skeleton';
+
+export { LineChart } from './LineChart';
+export type { LineChartProps, ChartSeries, ChartDatum } from './LineChart';
+
+export { BarChart } from './BarChart';
+export type { BarChartProps } from './BarChart';
