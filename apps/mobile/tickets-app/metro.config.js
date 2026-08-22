@@ -53,25 +53,31 @@ config.resolver.nodeModulesPaths = [
 //   registering the RNCSafeAreaProvider native view, producing "Invariant
 //   Violation: Tried to register two views with the same name
 //   RNCSafeAreaProvider" at runtime.
+//
+// WHY react-native-svg is also pinned:
+//   lucide-react-native (root-only, not nohoisted) and @vuotto/mobile's own
+//   chart components require('react-native-svg') from directories whose
+//   upward node_modules walk lands on the ROOT copy, while
+//   react-native-svg is nohoisted app-local (apps/mobile/tickets-app's own
+//   package.json + nohoist) for native autolinking to see it — so the JS
+//   bundle and the natively-linked copy are two different module instances
+//   at the same version. Same-version does not mean same file: without this
+//   branch, icons/charts mount with no thrown error but render nothing,
+//   because the JS-side Fabric registration doesn't match what's compiled
+//   into the native binary.
+const PINNED_MODULES = [
+  'react',
+  'react-native',
+  'react-native-safe-area-context',
+  'react-native-svg',
+];
 const appLocalNodeModules = path.resolve(projectRoot, 'node_modules');
 const _originalResolveRequest = config.resolver.resolveRequest;
 config.resolver.resolveRequest = (context, moduleName, platform) => {
-  if (moduleName === 'react' || moduleName.startsWith('react/')) {
-    return {
-      type: 'sourceFile',
-      filePath: require.resolve(moduleName, { paths: [appLocalNodeModules] }),
-    };
-  }
-  if (moduleName === 'react-native' || moduleName.startsWith('react-native/')) {
-    return {
-      type: 'sourceFile',
-      filePath: require.resolve(moduleName, { paths: [appLocalNodeModules] }),
-    };
-  }
-  if (
-    moduleName === 'react-native-safe-area-context' ||
-    moduleName.startsWith('react-native-safe-area-context/')
-  ) {
+  const isPinned = PINNED_MODULES.some(
+    (name) => moduleName === name || moduleName.startsWith(`${name}/`),
+  );
+  if (isPinned) {
     return {
       type: 'sourceFile',
       filePath: require.resolve(moduleName, { paths: [appLocalNodeModules] }),
