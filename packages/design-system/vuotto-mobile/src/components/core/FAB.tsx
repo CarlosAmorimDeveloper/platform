@@ -1,6 +1,5 @@
 import { Pressable, type PressableProps, type StyleProp, type ViewStyle } from 'react-native';
 import { radii, shadow, vtColors } from '@vuotto/tokens';
-import { useTheme } from '../../theme';
 import { Icon, type IconName } from './Icon';
 
 export type FABSize = 'md' | 'lg';
@@ -24,7 +23,6 @@ export function FAB({
   style,
   ...rest
 }: FABProps) {
-  const { colors } = useTheme();
   const box = BOX[size];
 
   return (
@@ -47,7 +45,7 @@ export function FAB({
       ]}
       {...rest}
     >
-      <Icon name={icon} size={size === 'lg' ? 'md' : 'sm'} color={colors.textInverse} />
+      <Icon name={icon} size={size === 'lg' ? 'md' : 'sm'} color={vtColors.black} />
     </Pressable>
   );
 }

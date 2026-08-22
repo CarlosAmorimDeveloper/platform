@@ -111,7 +111,7 @@ function textColorFor(
   variant: ButtonVariant,
   colors: ReturnType<typeof useTheme>['colors'],
 ): string {
-  if (variant === 'primary') return colors.textInverse;
+  if (variant === 'primary') return vtColors.black;
   if (variant === 'danger') return vtColors.danger;
   return colors.textHeading;
 }

@@ -76,7 +76,7 @@ function CellCheckbox({
         borderColor: colors.lineStrong,
       }}
     >
-      {checked && <Icon name="Check" size="xs" color={colors.textInverse} />}
+      {checked && <Icon name="Check" size="xs" color={vtColors.black} />}
     </Pressable>
   );
 }

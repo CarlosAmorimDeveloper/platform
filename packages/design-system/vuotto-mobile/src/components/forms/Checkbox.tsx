@@ -61,9 +61,7 @@ export const Checkbox = forwardRef<View, CheckboxProps>(function Checkbox(
           borderColor: colors.lineStrong,
         }}
       >
-        {on && (
-          <Icon name={indeterminate ? 'Minus' : 'Check'} size="xs" color={colors.textInverse} />
-        )}
+        {on && <Icon name={indeterminate ? 'Minus' : 'Check'} size="xs" color={vtColors.black} />}
       </View>
       <View style={{ gap: 2 }}>
         <Text
