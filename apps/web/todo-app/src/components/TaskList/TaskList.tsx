@@ -2,26 +2,21 @@
 
 import { useSelector } from 'react-redux';
 import type { RootState } from '@/redux/store';
-import List from '@mui/material/List';
-import Typography from '@mui/material/Typography';
+import { EmptyState } from '@vuotto/web';
 import { TaskItem } from '../TaskItem/TaskItem';
 
 export function TaskList() {
   const tasks = useSelector((state: RootState) => state.tasks.tasks);
 
   if (tasks.length === 0) {
-    return (
-      <Typography variant="body2" color="text.secondary" align="center">
-        Nenhuma tarefa ainda. Adicione uma acima!
-      </Typography>
-    );
+    return <EmptyState title="Nenhuma tarefa ainda" body="Adicione uma acima!" />;
   }
 
   return (
-    <List disablePadding sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+    <ul style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)', padding: 0 }}>
       {tasks.map((task) => (
         <TaskItem key={task.id} task={task} />
       ))}
-    </List>
+    </ul>
   );
 }

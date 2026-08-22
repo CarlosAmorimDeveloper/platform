@@ -23,6 +23,9 @@ jobs:
       - name: Install dependencies
         run: npx yarn install
 
+      - name: Build @vuotto/tokens and @vuotto/web
+        run: yarn workspace @vuotto/tokens build && yarn workspace @vuotto/web build
+
       - name: Identify changed source files
         id: changed
         run: |
