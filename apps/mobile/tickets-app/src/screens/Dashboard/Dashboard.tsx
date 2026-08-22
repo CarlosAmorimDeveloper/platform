@@ -1,18 +1,24 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { View, Text, Pressable, FlatList } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import {
+  AppBar,
   Badge,
+  Button,
   Card,
+  Dialog,
   FAB,
   Icon,
   LoadingIndicator,
   PieChart,
   useTheme,
   useToast,
+  type AppBarAction,
   type BadgeTone,
 } from '@vuotto/mobile';
 import { vtColors } from '@vuotto/tokens';
 import { useTicketList } from '../../hooks/useTicketList';
+import { useAuthStore } from '../../store/useAuthStore';
 import { formatDate } from '../../domain/ticket';
 import type { Ticket } from '../../domain/ticket';
 import type { TicketStatus } from '../../constants/ticketStatus';
@@ -85,7 +91,10 @@ function RecentTicketsCard({
 export function Dashboard({ navigation }: Props) {
   const { colors } = useTheme();
   const toast = useToast();
+  const user = useAuthStore((s) => s.user);
+  const logout = useAuthStore((s) => s.logout);
   const { tickets, loading, error, clearError } = useTicketList();
+  const [logoutOpen, setLogoutOpen] = useState(false);
 
   useEffect(() => {
     if (!error) return;
@@ -93,25 +102,116 @@ export function Dashboard({ navigation }: Props) {
     clearError();
   }, [error, toast, clearError]);
 
+  const actions: AppBarAction[] = [];
+  if (user?.role === 'admin') {
+    actions.push({
+      icon: 'UserPlus',
+      label: 'Criar usuário',
+      onPress: () => navigation.navigate('CreateUser'),
+    });
+  }
+  actions.push({ icon: 'LogOut', label: 'Sair', onPress: () => setLogoutOpen(true) });
+
+  const appBar = <AppBar title="Painel" actions={actions} />;
+
+  const logoutDialog = (
+    <Dialog
+      open={logoutOpen}
+      onClose={() => setLogoutOpen(false)}
+      title="Sair da conta"
+      description="Tem certeza que deseja sair?"
+      footer={
+        <>
+          <Button key="cancel" variant="ghost" onPress={() => setLogoutOpen(false)}>
+            Cancelar
+          </Button>
+          <Button key="confirm" variant="danger" onPress={logout}>
+            Sair
+          </Button>
+        </>
+      }
+    />
+  );
+
   if (loading) {
     return (
-      <View style={styles.center}>
-        <LoadingIndicator />
-      </View>
+      <SafeAreaView edges={['top']} style={styles.flex}>
+        {appBar}
+        <View style={styles.center}>
+          <LoadingIndicator />
+        </View>
+        {logoutDialog}
+      </SafeAreaView>
     );
   }
 
   if (tickets.length === 0) {
     return (
+      <SafeAreaView edges={['top']} style={styles.flex}>
+        {appBar}
+        <View style={[styles.container, { backgroundColor: colors.bgCanvas }]}>
+          <View style={styles.emptyState}>
+            <Icon name="Inbox" size={64} color={colors.textTertiary} />
+            <Text style={[styles.emptyTitle, { color: colors.textPrimary }]}>
+              Nenhum chamado ainda
+            </Text>
+            <Text style={[styles.emptySubtitle, { color: colors.textTertiary }]}>
+              Crie o primeiro chamado usando o botão abaixo
+            </Text>
+          </View>
+          <FAB
+            onPress={() => navigation.navigate('NewTicket')}
+            style={styles.fab}
+            label="New ticket"
+          />
+        </View>
+        {logoutDialog}
+      </SafeAreaView>
+    );
+  }
+
+  return (
+    <SafeAreaView edges={['top']} style={styles.flex}>
+      {appBar}
       <View style={[styles.container, { backgroundColor: colors.bgCanvas }]}>
-        <View style={styles.emptyState}>
-          <Icon name="Inbox" size={64} color={colors.textTertiary} />
-          <Text style={[styles.emptyTitle, { color: colors.textPrimary }]}>
-            Nenhum chamado ainda
-          </Text>
-          <Text style={[styles.emptySubtitle, { color: colors.textTertiary }]}>
-            Crie o primeiro chamado usando o botão abaixo
-          </Text>
+        {tickets.length > 0 && (
+          <View>
+            <FlatList
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              data={ALL_STATUSES}
+              renderItem={({ item: s }) => (
+                <StatusStatCard
+                  key={s}
+                  status={s}
+                  count={tickets.filter((t) => t.status === s).length}
+                  onPress={() => navigation.navigate('TicketList', { status: s })}
+                />
+              )}
+              ListHeaderComponent={<View style={styles.listHeaderSpacer} />}
+              ListFooterComponent={<View style={styles.listFooterSpacer} />}
+            />
+          </View>
+        )}
+        {tickets.length > 0 && (
+          <Pressable
+            style={styles.sectionPad}
+            onPress={() => navigation.navigate('TicketList', {})}
+          >
+            <PieChart
+              slices={ALL_STATUSES.map((s) => ({
+                label: STATUS_LABELS[s],
+                value: tickets.filter((t) => t.status === s).length,
+                color: TONE_COLOR[STATUS_TONES[s]],
+              }))}
+            />
+          </Pressable>
+        )}
+        <View style={styles.sectionPad}>
+          <RecentTicketsCard
+            tickets={tickets}
+            onPressTicket={(id) => navigation.navigate('TicketDetails', { ticketId: id })}
+          />
         </View>
         <FAB
           onPress={() => navigation.navigate('NewTicket')}
@@ -119,48 +219,7 @@ export function Dashboard({ navigation }: Props) {
           label="New ticket"
         />
       </View>
-    );
-  }
-
-  return (
-    <View style={[styles.container, { backgroundColor: colors.bgCanvas }]}>
-      {tickets.length > 0 && (
-        <View>
-          <FlatList
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            data={ALL_STATUSES}
-            renderItem={({ item: s }) => (
-              <StatusStatCard
-                key={s}
-                status={s}
-                count={tickets.filter((t) => t.status === s).length}
-                onPress={() => navigation.navigate('TicketList', { status: s })}
-              />
-            )}
-            ListHeaderComponent={<View style={styles.listHeaderSpacer} />}
-            ListFooterComponent={<View style={styles.listFooterSpacer} />}
-          />
-        </View>
-      )}
-      {tickets.length > 0 && (
-        <Pressable style={styles.sectionPad} onPress={() => navigation.navigate('TicketList', {})}>
-          <PieChart
-            slices={ALL_STATUSES.map((s) => ({
-              label: STATUS_LABELS[s],
-              value: tickets.filter((t) => t.status === s).length,
-              color: TONE_COLOR[STATUS_TONES[s]],
-            }))}
-          />
-        </Pressable>
-      )}
-      <View style={styles.sectionPad}>
-        <RecentTicketsCard
-          tickets={tickets}
-          onPressTicket={(id) => navigation.navigate('TicketDetails', { ticketId: id })}
-        />
-      </View>
-      <FAB onPress={() => navigation.navigate('NewTicket')} style={styles.fab} label="New ticket" />
-    </View>
+      {logoutDialog}
+    </SafeAreaView>
   );
 }

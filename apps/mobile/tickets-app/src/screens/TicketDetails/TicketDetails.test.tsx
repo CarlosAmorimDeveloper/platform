@@ -1,8 +1,7 @@
 import React from 'react';
-import type { ReactElement } from 'react';
 import { beforeEach, describe, expect, it } from '@jest/globals';
 import { ActivityIndicator } from 'react-native';
-import { act, render, screen, fireEvent, waitFor } from '../../test-utils';
+import { render, screen, fireEvent, waitFor } from '../../test-utils';
 import { useTicketDetails } from '../../hooks/useTicketDetails';
 import { useUserList } from '../../hooks/useUserList';
 import { useAuthStore } from '../../store/useAuthStore';
@@ -39,7 +38,6 @@ type Props = NativeStackScreenProps<AppStackParamList, 'TicketDetails'>;
 const mockNavigation = {
   navigate: jest.fn(),
   goBack: jest.fn(),
-  setOptions: jest.fn(),
 } as unknown as Props['navigation'];
 
 function makeRoute(ticketId: string): Props['route'] {
@@ -108,24 +106,6 @@ function setUser(user: User) {
   mockUseAuthStore.mockImplementation((selector: (s: { user: User }) => unknown) =>
     selector({ user }),
   );
-}
-
-interface PressableElement {
-  props: { onPress: () => void };
-}
-
-interface HeaderIconsElement {
-  props: { children: PressableElement[] };
-}
-
-function getHeaderIcons(): HeaderIconsElement {
-  const setOptionsMock = mockNavigation.setOptions as jest.Mock;
-  const calls = setOptionsMock.mock.calls as unknown as Array<
-    [{ headerRight: () => ReactElement }]
-  >;
-  const lastCall = calls[calls.length - 1];
-  if (!lastCall) throw new Error('navigation.setOptions was never called');
-  return lastCall[0].headerRight() as unknown as HeaderIconsElement;
 }
 
 describe('TicketDetails', () => {
@@ -213,10 +193,7 @@ describe('TicketDetails', () => {
 
     expect(screen.queryByText('Responsável')).toBeNull();
 
-    const headerIcons = getHeaderIcons();
-    act(() => {
-      headerIcons.props.children[0]?.props.onPress();
-    });
+    fireEvent.press(screen.getByLabelText('Editar chamado'));
 
     expect(screen.getByText('Responsável')).toBeTruthy();
   });
@@ -229,12 +206,9 @@ describe('TicketDetails', () => {
 
     render(<TicketDetails navigation={mockNavigation} route={makeRoute('t1')} />);
 
-    const headerIcons = getHeaderIcons();
     expect(mockDeleteTicket).not.toHaveBeenCalled();
 
-    act(() => {
-      headerIcons.props.children[1]?.props.onPress();
-    });
+    fireEvent.press(screen.getByLabelText('Apagar chamado'));
 
     expect(screen.getByText('Apagar ticket')).toBeTruthy();
     expect(mockDeleteTicket).not.toHaveBeenCalled();
@@ -255,7 +229,8 @@ describe('TicketDetails', () => {
 
     render(<TicketDetails navigation={mockNavigation} route={makeRoute('t1')} />);
 
-    expect(mockNavigation.setOptions).not.toHaveBeenCalled();
+    expect(screen.queryByLabelText('Editar chamado')).toBeNull();
+    expect(screen.queryByLabelText('Apagar chamado')).toBeNull();
   });
 
   it('user can add a comment', async () => {

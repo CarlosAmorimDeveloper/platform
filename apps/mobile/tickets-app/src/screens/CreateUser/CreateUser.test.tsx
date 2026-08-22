@@ -74,7 +74,7 @@ describe('CreateUser', () => {
     expect(screen.getByPlaceholderText('email@exemplo.com')).toBeTruthy();
     expect(screen.getByPlaceholderText('Mínimo 6 caracteres')).toBeTruthy();
     expect(screen.getByText('Perfil')).toBeTruthy();
-    expect(screen.getByText('Criar Usuário')).toBeTruthy();
+    expect(screen.getAllByText('Criar Usuário')).toHaveLength(2);
   });
 
   it('shows password validation error for short password', () => {
@@ -90,7 +90,7 @@ describe('CreateUser', () => {
     mockCurrentUser = adminUser;
     renderCreateUser();
 
-    fireEvent.press(screen.getByText('Criar Usuário'));
+    fireEvent.press(screen.getAllByText('Criar Usuário').at(-1)!);
 
     expect(mockCreateUser).not.toHaveBeenCalled();
   });
@@ -106,7 +106,7 @@ describe('CreateUser', () => {
     fireEvent.changeText(screen.getByPlaceholderText('Mínimo 6 caracteres'), 'secret1');
 
     await act(async () => {
-      fireEvent.press(screen.getByText('Criar Usuário'));
+      fireEvent.press(screen.getAllByText('Criar Usuário').at(-1)!);
     });
 
     expect(mockCreateUser).toHaveBeenCalledWith(

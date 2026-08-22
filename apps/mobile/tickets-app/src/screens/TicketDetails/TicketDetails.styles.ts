@@ -2,9 +2,9 @@ import { StyleSheet } from 'react-native';
 import { fontSize, space } from '@vuotto/tokens';
 
 export const styles = StyleSheet.create({
+  flex: { flex: 1 },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   keyboardView: { flex: 1 },
-  headerIcons: { flexDirection: 'row', gap: space[2] },
   container: { paddingTop: space[6], gap: space[3], flexGrow: 1, paddingBottom: space[10] },
   paddedRow: { paddingHorizontal: space[6] },
   title: {
