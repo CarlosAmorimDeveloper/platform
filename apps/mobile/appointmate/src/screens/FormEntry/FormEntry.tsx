@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { KeyboardAvoidingView, ScrollView, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Controller, useFieldArray, useForm, type Control } from 'react-hook-form';
 import {
   AppBar,
@@ -151,15 +152,15 @@ export function FormEntry({ navigation, route }: Props) {
 
   if (loadingForm) {
     return (
-      <View style={styles.screen}>
+      <SafeAreaView edges={['top']} style={styles.screen}>
         {appBar}
         <LoadingView testID="form-entry-loading" />
-      </View>
+      </SafeAreaView>
     );
   }
 
   return (
-    <View style={styles.screen}>
+    <SafeAreaView edges={['top']} style={styles.screen}>
       {appBar}
       <KeyboardAvoidingView style={styles.keyboardView} behavior="padding">
         <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
@@ -406,6 +407,6 @@ export function FormEntry({ navigation, route }: Props) {
           </Button>
         </ScrollView>
       </KeyboardAvoidingView>
-    </View>
+    </SafeAreaView>
   );
 }
