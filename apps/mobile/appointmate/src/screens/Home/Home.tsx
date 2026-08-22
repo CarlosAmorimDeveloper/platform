@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { FlatList, RefreshControl, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   AppBar,
   Button,
@@ -105,26 +106,26 @@ export function Home({ navigation }: Props) {
 
   if (loading) {
     return (
-      <View style={styles.screen}>
+      <SafeAreaView edges={['top']} style={styles.screen}>
         {appBar}
         <LoadingView testID="home-loading" />
-      </View>
+      </SafeAreaView>
     );
   }
 
   if (errorMessage && forms.length === 0) {
     return (
-      <View style={styles.screen}>
+      <SafeAreaView edges={['top']} style={styles.screen}>
         {appBar}
         <ErrorView description={errorMessage} onAction={() => loadForms()} testID="home-error" />
-      </View>
+      </SafeAreaView>
     );
   }
 
   const filteredForms = forms.filter((form) => isWithinTimeFilter(form.createdAt, filter));
 
   return (
-    <View style={styles.screen}>
+    <SafeAreaView edges={['top']} style={styles.screen}>
       {appBar}
       <FlatList
         testID="home-list"
@@ -193,6 +194,6 @@ export function Home({ navigation }: Props) {
           )
         }
       />
-    </View>
+    </SafeAreaView>
   );
 }

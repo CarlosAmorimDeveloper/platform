@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { KeyboardAvoidingView, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { AppBar, Button, Field, Input, LoadingIndicator, useTheme, useToast } from '@vuotto/mobile';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { AuthStackParamList } from '../../navigation/types';
@@ -37,7 +38,7 @@ export function ForgotPassword({ navigation }: Props) {
   }
 
   return (
-    <View style={styles.screen}>
+    <SafeAreaView edges={['top']} style={styles.screen}>
       <AppBar
         title="Esqueci minha senha"
         onBackPress={() => navigation.goBack()}
@@ -77,6 +78,6 @@ export function ForgotPassword({ navigation }: Props) {
           </View>
         </View>
       </KeyboardAvoidingView>
-    </View>
+    </SafeAreaView>
   );
 }

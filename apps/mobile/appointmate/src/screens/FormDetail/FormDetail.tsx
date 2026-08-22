@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ScrollView, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import {
@@ -163,32 +164,32 @@ export function FormDetail({ navigation, route }: Props) {
 
   if (loading) {
     return (
-      <View style={styles.screen}>
+      <SafeAreaView edges={['top']} style={styles.screen}>
         {appBar}
         <LoadingView testID="form-detail-loading" />
-      </View>
+      </SafeAreaView>
     );
   }
 
   if (errorMessage) {
     return (
-      <View style={styles.screen}>
+      <SafeAreaView edges={['top']} style={styles.screen}>
         {appBar}
         <ErrorView description={errorMessage} testID="form-detail-error" />
-      </View>
+      </SafeAreaView>
     );
   }
 
   if (!record) {
     return (
-      <View style={styles.screen}>
+      <SafeAreaView edges={['top']} style={styles.screen}>
         {appBar}
         <EmptyState
           title="Formulário não encontrado"
           body="Este formulário pode ter sido removido."
           testID="form-detail-not-found"
         />
-      </View>
+      </SafeAreaView>
     );
   }
 
@@ -197,7 +198,7 @@ export function FormDetail({ navigation, route }: Props) {
   const moodLabel = MOOD_OPTIONS.find((option) => option.value === values.overallMood)?.label;
 
   return (
-    <View style={styles.screen}>
+    <SafeAreaView edges={['top']} style={styles.screen}>
       {appBar}
       <ScrollView contentContainerStyle={styles.container}>
         {updatedAtLabel && (
@@ -333,6 +334,6 @@ export function FormDetail({ navigation, route }: Props) {
           </Text>
         </Dialog>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 }
