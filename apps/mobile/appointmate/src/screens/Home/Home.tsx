@@ -8,8 +8,8 @@ import {
   IconButton,
   LoadingView,
   Menu,
-  Snackbar,
-} from '@ds/mobile';
+  useToast,
+} from '@vuotto/mobile';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { AppStackParamList } from '../../navigation/types';
 import { useAuth } from '../../context/AuthContext';
@@ -32,6 +32,7 @@ const SELECTABLE_PRESETS = TIME_FILTER_PRESETS.filter((preset) => preset.value !
 
 export function Home({ navigation }: Props) {
   const { user, logout } = useAuth();
+  const toast = useToast();
 
   const [forms, setForms] = useState<FormSummary[]>([]);
   const [loading, setLoading] = useState(true);
@@ -50,14 +51,16 @@ export function Home({ navigation }: Props) {
           setErrorMessage(null);
         })
         .catch((err) => {
-          setErrorMessage(mapFirestoreError(err, 'Não foi possível carregar seus formulários.'));
+          const message = mapFirestoreError(err, 'Não foi possível carregar seus formulários.');
+          setErrorMessage(message);
+          if (options?.silent) toast.show({ tone: 'danger', title: message });
         })
         .finally(() => {
           setLoading(false);
           setRefreshing(false);
         });
     },
-    [user],
+    [user, toast],
   );
 
   useEffect(() => {
@@ -80,9 +83,9 @@ export function Home({ navigation }: Props) {
       title="Meus formulários"
       actions={[
         {
-          icon: 'logout',
+          icon: 'LogOut',
           onPress: logout,
-          accessibilityLabel: 'Sair',
+          label: 'Sair',
           testID: 'home-logout-button',
         },
       ]}
@@ -155,9 +158,9 @@ export function Home({ navigation }: Props) {
                 onDismiss={closeFilterMenu}
                 anchor={
                   <IconButton
-                    icon="filter-variant"
-                    variant="primary"
-                    accessibilityLabel="Filtrar por período"
+                    icon="ListFilter"
+                    variant="solid"
+                    label="Filtrar por período"
                     onPress={() => setFilterMenuVisible(true)}
                     testID="home-filter-icon-button"
                   />
@@ -178,25 +181,17 @@ export function Home({ navigation }: Props) {
           forms.length === 0 ? (
             <EmptyState
               title="Nenhum formulário ainda"
-              description="Crie seu primeiro formulário de preparação para o retorno."
+              body="Crie seu primeiro formulário de preparação para o retorno."
               testID="home-empty-state"
             />
           ) : (
             <EmptyState
               title="Nenhum formulário neste período"
-              description="Tente outro filtro de tempo."
+              body="Tente outro filtro de tempo."
               testID="home-empty-filtered-state"
             />
           )
         }
-      />
-      <Snackbar
-        visible={errorMessage !== null && forms.length > 0}
-        onDismiss={() => setErrorMessage(null)}
-        message={errorMessage ?? ''}
-        position="top"
-        variant="error"
-        testID="home-error-snackbar"
       />
     </View>
   );

@@ -1,33 +1,30 @@
 import { StyleSheet } from 'react-native';
-import { colors, fontSizes, radii, spacing } from '@ds/tokens';
+import { fontSize, radii, space } from '@vuotto/tokens';
 
 export const styles = StyleSheet.create({
   screen: { flex: 1 },
   keyboardView: { flex: 1 },
   container: {
-    padding: spacing[6],
-    paddingBottom: spacing[16],
-    gap: spacing[4],
+    padding: space[6],
+    paddingBottom: space[16],
+    gap: space[4],
   },
   sectionTitle: {
-    fontSize: fontSizes.lg,
+    fontSize: fontSize.lg,
     fontWeight: 'bold',
-    color: colors.neutral[900],
-    marginTop: spacing[4],
+    marginTop: space[4],
   },
   chipRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: spacing[2],
+    gap: space[2],
   },
   errorText: {
-    fontSize: fontSizes.sm,
-    color: colors.error[500],
+    fontSize: fontSize.sm,
   },
   dynamicRow: {
-    gap: spacing[2],
-    padding: spacing[3],
+    gap: space[2],
+    padding: space[3],
     borderRadius: radii.lg,
-    backgroundColor: colors.neutral[50],
   },
 });

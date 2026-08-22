@@ -1,4 +1,12 @@
-import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { View } from 'react-native';
 import type { ReactNode } from 'react';
 import { space, zIndex } from '@vuotto/tokens';
@@ -87,6 +95,14 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     setQueue((prev) => [...prev, { ...options, id }]);
   }, []);
 
+  // Keeps `useToast()`'s return value referentially stable across
+  // ToastProvider re-renders (which happen on every show/dismiss) — without
+  // this, any consumer effect that lists `toast` in its dependency array
+  // (e.g. to call `toast.show` on a fetch failure) re-fires every time a
+  // toast is shown, since the raw `{ show }` object literal is a new
+  // reference on every render.
+  const contextValue = useMemo(() => ({ show }), [show]);
+
   function pause(id: string) {
     const timer = timers.current.get(id);
     if (!timer) return;
@@ -101,7 +117,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <ToastContext.Provider value={{ show }}>
+    <ToastContext.Provider value={contextValue}>
       <View style={{ flex: 1 }}>{children}</View>
       <View
         pointerEvents="box-none"

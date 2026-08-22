@@ -272,11 +272,10 @@ describe('Home', () => {
 
       fireEvent.press(screen.getByTestId('home-filter-icon-button'));
       mockedListForms.mockClear();
-      // Paper's Menu dismisses via a tap on its backdrop overlay, not a
-      // plain testID'd node — same interaction a real user would perform.
-      // `getByLabelText` doesn't match this host node in this RNTL version,
-      // so match the prop directly instead.
-      fireEvent.press(screen.UNSAFE_getByProps({ accessibilityLabel: 'Close menu' }));
+      // The Menu dismisses via a tap on its backdrop overlay — same
+      // interaction a real user would perform to close it without picking
+      // an item.
+      fireEvent.press(screen.getByTestId('home-filter-menu-backdrop'));
 
       await waitFor(() => {
         expect(mockedListForms).toHaveBeenCalledWith('user-abc');

@@ -44,22 +44,42 @@ config.resolver.nodeModulesPaths = [
 //   reads a different Map and never finds the entry, producing "View config
 //   getter callback must be a function (received undefined)". Pinning both to
 //   app-local makes registration and lookup use the same Map.
+//
+// WHY react-native-safe-area-context is also pinned:
+//   @vuotto/mobile's TabBar imports react-native-safe-area-context directly,
+//   and its own package.json (needed to run its Storybook) pulls in a private
+//   copy under packages/design-system/vuotto-mobile/node_modules — yarn does
+//   not reliably dedupe it against the app-local install even when the
+//   version ranges overlap. Without this branch, Metro resolves two separate
+//   copies (root/app-local vs. the one nested in vuotto-mobile), each
+//   registering the RNCSafeAreaProvider native view, producing "Invariant
+//   Violation: Tried to register two views with the same name
+//   RNCSafeAreaProvider" at runtime.
+//
+// WHY react-native-svg is also pinned:
+//   lucide-react-native (root-only, not nohoisted) and @vuotto/mobile's own
+//   chart components require('react-native-svg') from directories whose
+//   upward node_modules walk lands on the ROOT copy, while
+//   react-native-svg is nohoisted app-local (apps/mobile/appointmate's own
+//   package.json + nohoist) for native autolinking to see it — so the JS
+//   bundle and the natively-linked copy are two different module instances
+//   at the same version. Same-version does not mean same file: without this
+//   branch, icons/charts mount with no thrown error but render nothing,
+//   because the JS-side Fabric registration doesn't match what's compiled
+//   into the native binary.
+const PINNED_MODULES = [
+  'react',
+  'react-native',
+  'react-native-safe-area-context',
+  'react-native-svg',
+];
 const appLocalNodeModules = path.resolve(projectRoot, 'node_modules');
 const _originalResolveRequest = config.resolver.resolveRequest;
 config.resolver.resolveRequest = (context, moduleName, platform) => {
-  if (moduleName === 'react' || moduleName.startsWith('react/')) {
-    return {
-      type: 'sourceFile',
-      filePath: require.resolve(moduleName, { paths: [appLocalNodeModules] }),
-    };
-  }
-  if (moduleName === 'react-native' || moduleName.startsWith('react-native/')) {
-    return {
-      type: 'sourceFile',
-      filePath: require.resolve(moduleName, { paths: [appLocalNodeModules] }),
-    };
-  }
-  if (moduleName === 'react-native-paper' || moduleName.startsWith('react-native-paper/')) {
+  const isPinned = PINNED_MODULES.some(
+    (name) => moduleName === name || moduleName.startsWith(`${name}/`),
+  );
+  if (isPinned) {
     return {
       type: 'sourceFile',
       filePath: require.resolve(moduleName, { paths: [appLocalNodeModules] }),

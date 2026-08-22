@@ -12,12 +12,21 @@ export interface EmptyStateProps {
   /** Usually a <Button>. */
   action?: ReactNode;
   style?: StyleProp<ViewStyle>;
+  testID?: string;
 }
 
-export function EmptyState({ icon = 'Inbox', title, body, action, style }: EmptyStateProps) {
+export function EmptyState({
+  icon = 'Inbox',
+  title,
+  body,
+  action,
+  style,
+  testID,
+}: EmptyStateProps) {
   const { colors } = useTheme();
   return (
     <View
+      testID={testID}
       style={[
         {
           alignItems: 'center',

@@ -19,5 +19,8 @@ export type { BadgeProps, BadgeTone } from './Badge';
 export { Tag } from './Tag';
 export type { TagProps } from './Tag';
 
+export { Chip } from './Chip';
+export type { ChipProps } from './Chip';
+
 export { Lockup } from './Lockup';
 export type { LockupProps, LockupSize } from './Lockup';

@@ -6,6 +6,7 @@ export interface LoadingIndicatorProps {
   size?: 'small' | 'large';
   color?: string;
   style?: StyleProp<ViewStyle>;
+  testID?: string;
 }
 
 export function LoadingIndicator({
@@ -13,11 +14,13 @@ export function LoadingIndicator({
   size = 'large',
   color,
   style,
+  testID,
 }: LoadingIndicatorProps) {
   const { colors } = useTheme();
   if (!visible) return null;
   return (
     <ActivityIndicator
+      testID={testID}
       animating
       size={size}
       color={color ?? colors.textSecondary}
