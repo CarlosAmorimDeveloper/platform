@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { colors, fontSizes, spacing } from '@ds/tokens';
+import { fontSize, space } from '@vuotto/tokens';
 
 export const styles = StyleSheet.create({
   screen: { flex: 1 },
@@ -7,14 +7,13 @@ export const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    padding: spacing[6],
-    gap: spacing[6],
+    padding: space[6],
+    gap: space[6],
   },
   description: {
-    fontSize: fontSizes.base,
-    color: colors.neutral[500],
+    fontSize: fontSize.md,
     textAlign: 'center',
     lineHeight: 24,
   },
-  form: { gap: spacing[3] },
+  form: { gap: space[3] },
 });

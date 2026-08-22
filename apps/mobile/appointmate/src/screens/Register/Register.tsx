@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { KeyboardAvoidingView, Text, View } from 'react-native';
-import { AppBar, Button, Input, LoadingIndicator, Snackbar } from '@ds/mobile';
+import { AppBar, Button, Field, Input, LoadingIndicator, useTheme, useToast } from '@vuotto/mobile';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { AuthStackParamList } from '../../navigation/types';
 import { register } from '../../services/authService';
@@ -11,11 +11,12 @@ import { styles } from './Register.styles';
 type Props = NativeStackScreenProps<AuthStackParamList, 'Register'>;
 
 export function Register({ navigation }: Props) {
+  const { colors } = useTheme();
+  const toast = useToast();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const emailError = emailFormatError(email);
   const passwordError = passwordMinLengthError(password);
@@ -28,7 +29,7 @@ export function Register({ navigation }: Props) {
       await register(name, email, password);
       // Sucesso: o onAuthStateChanged global (App.tsx) detecta a sessão e troca de stack sozinho.
     } catch (err: unknown) {
-      setErrorMessage(mapFirebaseAuthError(err));
+      toast.show({ tone: 'danger', title: mapFirebaseAuthError(err) });
     } finally {
       setLoading(false);
     }
@@ -42,39 +43,42 @@ export function Register({ navigation }: Props) {
         testID="register-app-bar"
       />
       <KeyboardAvoidingView style={styles.keyboardView} behavior="padding">
-        <View style={styles.container}>
+        <View style={[styles.container, { backgroundColor: colors.bgCanvas }]}>
           <View style={styles.header}>
-            <Text style={styles.title}>Criar conta</Text>
-            <Text style={styles.subtitle}>Preencha os dados para começar</Text>
+            <Text style={[styles.title, { color: colors.textHeading }]}>Criar conta</Text>
+            <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
+              Preencha os dados para começar
+            </Text>
           </View>
           <View style={styles.form}>
-            <Input
-              label="Nome"
-              placeholder="Seu nome completo"
-              value={name}
-              onChangeText={setName}
-              testID="register-name-input"
-            />
-            <Input
-              label="E-mail"
-              placeholder="email@exemplo.com"
-              value={email}
-              onChangeText={setEmail}
-              keyboardType="email-address"
-              autoCapitalize="none"
-              error={emailError}
-              testID="register-email-input"
-            />
-            <Input
-              label="Senha"
-              placeholder="Mínimo 6 caracteres"
-              secureTextEntry
-              showPasswordToggle
-              value={password}
-              onChangeText={setPassword}
-              error={passwordError}
-              testID="register-password-input"
-            />
+            <Field label="Nome">
+              <Input
+                placeholder="Seu nome completo"
+                value={name}
+                onChangeText={setName}
+                testID="register-name-input"
+              />
+            </Field>
+            <Field label="E-mail" error={emailError}>
+              <Input
+                placeholder="email@exemplo.com"
+                value={email}
+                onChangeText={setEmail}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                testID="register-email-input"
+              />
+            </Field>
+            <Field label="Senha" error={passwordError}>
+              <Input
+                placeholder="Mínimo 6 caracteres"
+                secureTextEntry
+                secureToggle
+                value={password}
+                onChangeText={setPassword}
+                testID="register-password-input"
+              />
+            </Field>
             <LoadingIndicator visible={loading} testID="register-loading-indicator" />
             <Button
               onPress={handleRegister}
@@ -91,14 +95,6 @@ export function Register({ navigation }: Props) {
               Voltar para o login
             </Button>
           </View>
-          <Snackbar
-            visible={errorMessage !== null}
-            onDismiss={() => setErrorMessage(null)}
-            message={errorMessage ?? ''}
-            position="top"
-            variant="error"
-            testID="register-error-snackbar"
-          />
         </View>
       </KeyboardAvoidingView>
     </View>

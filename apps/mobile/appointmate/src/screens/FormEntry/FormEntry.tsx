@@ -5,12 +5,15 @@ import {
   AppBar,
   Button,
   Chip,
+  Field,
   Input,
   LoadingIndicator,
   LoadingView,
-  Snackbar,
   Textarea,
-} from '@ds/mobile';
+  useTheme,
+  useToast,
+} from '@vuotto/mobile';
+import { vtColors } from '@vuotto/tokens';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { AppStackParamList } from '../../navigation/types';
 import { useAuth } from '../../context/AuthContext';
@@ -61,13 +64,9 @@ function TextareaField({
       name={name}
       rules={{ required: REQUIRED_MESSAGE }}
       render={({ field, fieldState }) => (
-        <Textarea
-          label={label}
-          value={field.value}
-          onChangeText={field.onChange}
-          error={fieldState.error?.message}
-          testID={testID}
-        />
+        <Field label={label} error={fieldState.error?.message}>
+          <Textarea value={field.value} onChangeText={field.onChange} testID={testID} />
+        </Field>
       )}
     />
   );
@@ -76,10 +75,11 @@ function TextareaField({
 export function FormEntry({ navigation, route }: Props) {
   const formId = route.params?.formId;
   const { user } = useAuth();
+  const { colors } = useTheme();
+  const toast = useToast();
 
   const [loadingForm, setLoadingForm] = useState(Boolean(formId));
   const [saving, setSaving] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const { control, handleSubmit, reset, getValues } = useForm<FormValues>({
     defaultValues: EMPTY_FORM_VALUES,
@@ -99,14 +99,17 @@ export function FormEntry({ navigation, route }: Props) {
       })
       .catch((err) => {
         if (cancelled) return;
-        setErrorMessage(mapFirestoreError(err, 'Não foi possível carregar o formulário.'));
+        toast.show({
+          tone: 'danger',
+          title: mapFirestoreError(err, 'Não foi possível carregar o formulário.'),
+        });
         setLoadingForm(false);
       });
 
     return () => {
       cancelled = true;
     };
-  }, [formId, reset]);
+  }, [formId, reset, toast]);
 
   const appBar = (
     <AppBar
@@ -130,9 +133,10 @@ export function FormEntry({ navigation, route }: Props) {
       // values just saved, instead of the stale data it fetched on its first mount.
       navigation.replace('FormDetail', { formId: savedFormId! });
     } catch (err) {
-      setErrorMessage(
-        mapFirestoreError(err, 'Não foi possível salvar o formulário. Tente novamente.'),
-      );
+      toast.show({
+        tone: 'danger',
+        title: mapFirestoreError(err, 'Não foi possível salvar o formulário. Tente novamente.'),
+      });
     } finally {
       setSaving(false);
     }
@@ -159,7 +163,7 @@ export function FormEntry({ navigation, route }: Props) {
       {appBar}
       <KeyboardAvoidingView style={styles.keyboardView} behavior="padding">
         <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-          <Text style={styles.sectionTitle}>Cabeçalho</Text>
+          <Text style={[styles.sectionTitle, { color: colors.textHeading }]}>Cabeçalho</Text>
           <Controller
             control={control}
             name="appointmentDate"
@@ -169,14 +173,14 @@ export function FormEntry({ navigation, route }: Props) {
                 isDateOnOrAfterToday(value) || 'A data não pode ser anterior a hoje',
             }}
             render={({ field, fieldState }) => (
-              <Input
-                label="Data desta consulta"
-                placeholder="dd/mm/aaaa"
-                value={field.value}
-                onChangeText={(text) => field.onChange(formatDateInput(text))}
-                error={fieldState.error?.message}
-                testID="form-entry-appointment-date-input"
-              />
+              <Field label="Data desta consulta" error={fieldState.error?.message}>
+                <Input
+                  placeholder="dd/mm/aaaa"
+                  value={field.value}
+                  onChangeText={(text) => field.onChange(formatDateInput(text))}
+                  testID="form-entry-appointment-date-input"
+                />
+              </Field>
             )}
           />
           <Controller
@@ -184,18 +188,18 @@ export function FormEntry({ navigation, route }: Props) {
             name="lastAppointmentDate"
             rules={{ required: REQUIRED_MESSAGE }}
             render={({ field, fieldState }) => (
-              <Input
-                label="Última consulta foi em"
-                placeholder="dd/mm/aaaa"
-                value={field.value}
-                onChangeText={(text) => field.onChange(formatDateInput(text))}
-                error={fieldState.error?.message}
-                testID="form-entry-last-appointment-date-input"
-              />
+              <Field label="Última consulta foi em" error={fieldState.error?.message}>
+                <Input
+                  placeholder="dd/mm/aaaa"
+                  value={field.value}
+                  onChangeText={(text) => field.onChange(formatDateInput(text))}
+                  testID="form-entry-last-appointment-date-input"
+                />
+              </Field>
             )}
           />
 
-          <Text style={styles.sectionTitle}>Panorama geral</Text>
+          <Text style={[styles.sectionTitle, { color: colors.textHeading }]}>Panorama geral</Text>
           <Controller
             control={control}
             name="overallMood"
@@ -215,7 +219,10 @@ export function FormEntry({ navigation, route }: Props) {
                   ))}
                 </View>
                 {fieldState.error && (
-                  <Text style={styles.errorText} testID="form-entry-overall-mood-error">
+                  <Text
+                    style={[styles.errorText, { color: vtColors.danger }]}
+                    testID="form-entry-overall-mood-error"
+                  >
                     {fieldState.error.message}
                   </Text>
                 )}
@@ -229,7 +236,7 @@ export function FormEntry({ navigation, route }: Props) {
             testID="form-entry-overall-summary-input"
           />
 
-          <Text style={styles.sectionTitle}>No dia a dia</Text>
+          <Text style={[styles.sectionTitle, { color: colors.textHeading }]}>No dia a dia</Text>
           <TextareaField
             control={control}
             name="sleep"
@@ -255,21 +262,21 @@ export function FormEntry({ navigation, route }: Props) {
             testID="form-entry-concentration-input"
           />
 
-          <Text style={styles.sectionTitle}>Medicação</Text>
+          <Text style={[styles.sectionTitle, { color: colors.textHeading }]}>Medicação</Text>
           {medicationsArray.fields.map((field, index) => (
-            <View key={field.id} style={styles.dynamicRow}>
+            <View key={field.id} style={[styles.dynamicRow, { backgroundColor: colors.glass1 }]}>
               <Controller
                 control={control}
                 name={`medications.${index}.text`}
                 rules={{ required: REQUIRED_MESSAGE }}
                 render={({ field: f, fieldState }) => (
-                  <Input
-                    label="Medicamento e dose"
-                    value={f.value}
-                    onChangeText={f.onChange}
-                    error={fieldState.error?.message}
-                    testID={`form-entry-medication-${index}-input`}
-                  />
+                  <Field label="Medicamento e dose" error={fieldState.error?.message}>
+                    <Input
+                      value={f.value}
+                      onChangeText={f.onChange}
+                      testID={`form-entry-medication-${index}-input`}
+                    />
+                  </Field>
                 )}
               />
               <Button
@@ -301,7 +308,9 @@ export function FormEntry({ navigation, route }: Props) {
             testID="form-entry-medication-effects-input"
           />
 
-          <Text style={styles.sectionTitle}>O que foi bem ou melhorou</Text>
+          <Text style={[styles.sectionTitle, { color: colors.textHeading }]}>
+            O que foi bem ou melhorou
+          </Text>
           <TextareaField
             control={control}
             name="whatWentWell"
@@ -309,7 +318,9 @@ export function FormEntry({ navigation, route }: Props) {
             testID="form-entry-what-went-well-input"
           />
 
-          <Text style={styles.sectionTitle}>O que tem sido difícil</Text>
+          <Text style={[styles.sectionTitle, { color: colors.textHeading }]}>
+            O que tem sido difícil
+          </Text>
           <TextareaField
             control={control}
             name="whatHasBeenHard"
@@ -317,7 +328,7 @@ export function FormEntry({ navigation, route }: Props) {
             testID="form-entry-what-has-been-hard-input"
           />
 
-          <Text style={styles.sectionTitle}>Contexto</Text>
+          <Text style={[styles.sectionTitle, { color: colors.textHeading }]}>Contexto</Text>
           <TextareaField
             control={control}
             name="context"
@@ -325,21 +336,21 @@ export function FormEntry({ navigation, route }: Props) {
             testID="form-entry-context-input"
           />
 
-          <Text style={styles.sectionTitle}>Minhas perguntas</Text>
+          <Text style={[styles.sectionTitle, { color: colors.textHeading }]}>Minhas perguntas</Text>
           {questionsArray.fields.map((field, index) => (
-            <View key={field.id} style={styles.dynamicRow}>
+            <View key={field.id} style={[styles.dynamicRow, { backgroundColor: colors.glass1 }]}>
               <Controller
                 control={control}
                 name={`questions.${index}.text`}
                 rules={{ required: REQUIRED_MESSAGE }}
                 render={({ field: f, fieldState }) => (
-                  <Input
-                    label="Pergunta"
-                    value={f.value}
-                    onChangeText={f.onChange}
-                    error={fieldState.error?.message}
-                    testID={`form-entry-question-${index}-input`}
-                  />
+                  <Field label="Pergunta" error={fieldState.error?.message}>
+                    <Input
+                      value={f.value}
+                      onChangeText={f.onChange}
+                      testID={`form-entry-question-${index}-input`}
+                    />
+                  </Field>
                 )}
               />
               <Button
@@ -359,7 +370,7 @@ export function FormEntry({ navigation, route }: Props) {
             Adicionar pergunta
           </Button>
 
-          <Text style={styles.sectionTitle}>Foco do dia</Text>
+          <Text style={[styles.sectionTitle, { color: colors.textHeading }]}>Foco do dia</Text>
           <TextareaField
             control={control}
             name="todayFocus"
@@ -367,7 +378,9 @@ export function FormEntry({ navigation, route }: Props) {
             testID="form-entry-today-focus-input"
           />
 
-          <Text style={styles.sectionTitle}>Durante a consulta</Text>
+          <Text style={[styles.sectionTitle, { color: colors.textHeading }]}>
+            Durante a consulta
+          </Text>
           <TextareaField
             control={control}
             name="consultationNotes"
@@ -392,14 +405,6 @@ export function FormEntry({ navigation, route }: Props) {
             Enviar
           </Button>
         </ScrollView>
-        <Snackbar
-          visible={errorMessage !== null}
-          onDismiss={() => setErrorMessage(null)}
-          message={errorMessage ?? ''}
-          position="top"
-          variant="error"
-          testID="form-entry-error-snackbar"
-        />
       </KeyboardAvoidingView>
     </View>
   );

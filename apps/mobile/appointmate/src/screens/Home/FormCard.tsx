@@ -1,5 +1,5 @@
 import { Text, View } from 'react-native';
-import { Card } from '@ds/mobile';
+import { Badge, Card, useTheme } from '@vuotto/mobile';
 import type { FormSummary } from '../../services/formsService';
 import { styles } from './Home.styles';
 
@@ -9,12 +9,14 @@ const STATUS_LABELS: Record<FormSummary['status'], string> = {
 };
 
 export function FormCard({ form, onPress }: { form: FormSummary; onPress: () => void }) {
+  const { colors } = useTheme();
   const isSubmitted = form.status === 'submitted';
   const dateLabel = form.appointmentDate || 'sem data';
   const accessibilityLabel = `Formulário de consulta em ${dateLabel}, ${STATUS_LABELS[form.status].toLowerCase()}`;
 
   return (
     <Card
+      interactive
       onPress={onPress}
       style={styles.card}
       testID={`home-form-card-${form.id}`}
@@ -22,30 +24,16 @@ export function FormCard({ form, onPress }: { form: FormSummary; onPress: () => 
     >
       <View style={styles.cardHeader}>
         <View>
-          <Text>Data da consulta:</Text>
-          <Text style={styles.cardDate} numberOfLines={1}>
+          <Text style={{ color: colors.textSecondary }}>Data da consulta:</Text>
+          <Text style={[styles.cardDate, { color: colors.textHeading }]} numberOfLines={1}>
             {form.appointmentDate || 'Sem data'}
           </Text>
         </View>
 
-        <View
-          style={[
-            styles.statusBadge,
-            isSubmitted ? styles.statusBadgeSubmitted : styles.statusBadgeDraft,
-          ]}
-        >
-          <Text
-            style={[
-              styles.statusText,
-              isSubmitted ? styles.statusTextSubmitted : styles.statusTextDraft,
-            ]}
-          >
-            {STATUS_LABELS[form.status]}
-          </Text>
-        </View>
+        <Badge tone={isSubmitted ? 'success' : 'neutral'}>{STATUS_LABELS[form.status]}</Badge>
       </View>
       {form.overallSummary ? (
-        <Text style={styles.cardSummary} numberOfLines={2}>
+        <Text style={[styles.cardSummary, { color: colors.textSecondary }]} numberOfLines={2}>
           {form.overallSummary}
         </Text>
       ) : null}

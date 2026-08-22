@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { KeyboardAvoidingView, Text, View } from 'react-native';
-import { Button, Input, LoadingIndicator, Snackbar } from '@ds/mobile';
+import { Button, Field, Input, LoadingIndicator, useTheme, useToast } from '@vuotto/mobile';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { AuthStackParamList } from '../../navigation/types';
 import { login } from '../../services/authService';
@@ -10,10 +10,11 @@ import { styles } from './Login.styles';
 type Props = NativeStackScreenProps<AuthStackParamList, 'Login'>;
 
 export function Login({ navigation }: Props) {
+  const { colors } = useTheme();
+  const toast = useToast();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   async function handleLogin() {
     if (!email || !password) return;
@@ -22,7 +23,7 @@ export function Login({ navigation }: Props) {
       await login(email, password);
       // Sucesso: o onAuthStateChanged global (App.tsx) detecta a sessão e troca de stack sozinho.
     } catch (err: unknown) {
-      setErrorMessage(mapFirebaseAuthError(err));
+      toast.show({ tone: 'danger', title: mapFirebaseAuthError(err) });
     } finally {
       setLoading(false);
     }
@@ -30,30 +31,34 @@ export function Login({ navigation }: Props) {
 
   return (
     <KeyboardAvoidingView style={styles.keyboardView} behavior="padding">
-      <View style={styles.container}>
+      <View style={[styles.container, { backgroundColor: colors.bgCanvas }]}>
         <View style={styles.header}>
-          <Text style={styles.appTitle}>AppointMate</Text>
-          <Text style={styles.appSubtitle}>Acompanhe seu bem-estar</Text>
+          <Text style={[styles.appTitle, { color: colors.textHeading }]}>AppointMate</Text>
+          <Text style={[styles.appSubtitle, { color: colors.textSecondary }]}>
+            Acompanhe seu bem-estar
+          </Text>
         </View>
         <View style={styles.form}>
-          <Input
-            label="E-mail"
-            placeholder="email@exemplo.com"
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-            autoCapitalize="none"
-            testID="login-email-input"
-          />
-          <Input
-            label="Senha"
-            placeholder="Sua senha"
-            secureTextEntry
-            showPasswordToggle
-            value={password}
-            onChangeText={setPassword}
-            testID="login-password-input"
-          />
+          <Field label="E-mail">
+            <Input
+              placeholder="email@exemplo.com"
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              testID="login-email-input"
+            />
+          </Field>
+          <Field label="Senha">
+            <Input
+              placeholder="Sua senha"
+              secureTextEntry
+              secureToggle
+              value={password}
+              onChangeText={setPassword}
+              testID="login-password-input"
+            />
+          </Field>
           <LoadingIndicator visible={loading} testID="login-loading-indicator" />
           <Button onPress={handleLogin} disabled={loading} testID="login-submit-button">
             Entrar
@@ -73,14 +78,6 @@ export function Login({ navigation }: Props) {
             Criar conta
           </Button>
         </View>
-        <Snackbar
-          visible={errorMessage !== null}
-          onDismiss={() => setErrorMessage(null)}
-          message={errorMessage ?? ''}
-          position="top"
-          variant="error"
-          testID="login-error-snackbar"
-        />
       </View>
     </KeyboardAvoidingView>
   );
