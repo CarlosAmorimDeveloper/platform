@@ -42,6 +42,17 @@ config.resolver.nodeModulesPaths = [
 //   reads a different Map and never finds the entry, producing "View config
 //   getter callback must be a function (received undefined)". Pinning both to
 //   app-local makes registration and lookup use the same Map.
+//
+// WHY react-native-safe-area-context is also pinned:
+//   @vuotto/mobile's TabBar imports react-native-safe-area-context directly,
+//   and its own package.json (needed to run its Storybook) pulls in a private
+//   copy under packages/design-system/vuotto-mobile/node_modules — yarn does
+//   not reliably dedupe it against the app-local install even when the
+//   version ranges overlap. Without this branch, Metro resolves two separate
+//   copies (root/app-local vs. the one nested in vuotto-mobile), each
+//   registering the RNCSafeAreaProvider native view, producing "Invariant
+//   Violation: Tried to register two views with the same name
+//   RNCSafeAreaProvider" at runtime.
 const appLocalNodeModules = path.resolve(projectRoot, 'node_modules');
 const _originalResolveRequest = config.resolver.resolveRequest;
 config.resolver.resolveRequest = (context, moduleName, platform) => {
@@ -52,6 +63,15 @@ config.resolver.resolveRequest = (context, moduleName, platform) => {
     };
   }
   if (moduleName === 'react-native' || moduleName.startsWith('react-native/')) {
+    return {
+      type: 'sourceFile',
+      filePath: require.resolve(moduleName, { paths: [appLocalNodeModules] }),
+    };
+  }
+  if (
+    moduleName === 'react-native-safe-area-context' ||
+    moduleName.startsWith('react-native-safe-area-context/')
+  ) {
     return {
       type: 'sourceFile',
       filePath: require.resolve(moduleName, { paths: [appLocalNodeModules] }),
