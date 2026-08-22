@@ -30,6 +30,7 @@ type RegisterProps = NativeStackScreenProps<AuthStackParamList, 'Register'>;
 const mockNavigation = {
   navigate: jest.fn(),
   reset: jest.fn(),
+  goBack: jest.fn(),
 } as unknown as RegisterProps['navigation'];
 const mockRoute = { key: 'Register', name: 'Register' } as unknown as RegisterProps['route'];
 

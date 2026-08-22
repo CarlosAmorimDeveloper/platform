@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Alert, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { LoadingIndicator, ToastProvider } from '@vuotto/mobile';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import { auth, db } from './src/services/firebase';
@@ -54,8 +55,10 @@ export default function App() {
   }
 
   return (
-    <ToastProvider>
-      <NavigationContainer>{isAuthenticated ? <AppStack /> : <AuthStack />}</NavigationContainer>
-    </ToastProvider>
+    <SafeAreaProvider>
+      <ToastProvider>
+        <NavigationContainer>{isAuthenticated ? <AppStack /> : <AuthStack />}</NavigationContainer>
+      </ToastProvider>
+    </SafeAreaProvider>
   );
 }

@@ -68,14 +68,11 @@ describe('AppStack', () => {
   it('logout button triggers signOut', () => {
     const { safeUnmount } = renderAppStack();
 
-    const openDialogButton = screen.getByText('Sair');
-    fireEvent.press(openDialogButton);
+    fireEvent.press(screen.getByLabelText('Sair'));
 
     expect(screen.getByText('Tem certeza que deseja sair?')).toBeTruthy();
 
-    const confirmButton = screen.getAllByText('Sair').find((el) => el !== openDialogButton);
-    expect(confirmButton).toBeTruthy();
-    fireEvent.press(confirmButton!);
+    fireEvent.press(screen.getByText('Sair'));
 
     expect(mockLogout).toHaveBeenCalledTimes(1);
 
