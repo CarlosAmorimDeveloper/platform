@@ -12,11 +12,8 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.11.2",
-    "@ds/tokens": "*",
-    "@ds/web": "*",
-    "@emotion/cache": "^11",
-    "@mui/material": "^6",
-    "@mui/material-nextjs": "^6",
+    "@vuotto/tokens": "*",
+    "@vuotto/web": "*",
     "next": "16.2.4",
     "react": "19.2.4",
     "react-dom": "19.2.4",
