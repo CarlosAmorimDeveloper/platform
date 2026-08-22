@@ -1,20 +1,31 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import type { CSSProperties } from 'react';
 import { useDispatch } from 'react-redux';
 import { toggleTask, editTask, removeTask } from '@/redux/taskSlice';
 import type { Task } from '@/redux/taskSlice';
 import type { AppDispatch } from '@/redux/store';
-import ListItem from '@mui/material/ListItem';
-import Paper from '@mui/material/Paper';
-import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
-import { Button } from '@ds/web/components/Button';
-import { Input } from '@ds/web/components/Input';
+import { Button, Card, Checkbox, Input } from '@vuotto/web';
 
 interface TaskItemProps {
   task: Task;
 }
+
+// The checkbox's label is required by `Checkbox`, but the task title is
+// already shown as its own element next to it — visually hide the label
+// text instead of duplicating it, while keeping it in the accessibility tree.
+const srOnlyStyle: CSSProperties = {
+  position: 'absolute',
+  width: 1,
+  height: 1,
+  padding: 0,
+  margin: -1,
+  overflow: 'hidden',
+  clip: 'rect(0, 0, 0, 0)',
+  whiteSpace: 'nowrap',
+  border: 0,
+};
 
 export function TaskItem({ task }: TaskItemProps) {
   const dispatch = useDispatch<AppDispatch>();
@@ -59,45 +70,36 @@ export function TaskItem({ task }: TaskItemProps) {
   }
 
   return (
-    <ListItem disablePadding>
-      <Paper
-        variant="outlined"
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 1.5,
-          py: 1.5,
-          px: 2,
-          width: '100%',
-          borderRadius: 1,
-        }}
-      >
-        <Input
-          type="checkbox"
+    <li style={{ listStyle: 'none' }}>
+      <Card padding="sm" style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
+        <Checkbox
+          label={
+            <span style={srOnlyStyle}>
+              {`Marcar "${task.title}" como ${task.completed ? 'incompleta' : 'completa'}`}
+            </span>
+          }
           checked={task.completed}
           onChange={handleToggle}
-          aria-label={`Marcar "${task.title}" como ${task.completed ? 'incompleta' : 'completa'}`}
         />
 
         {isEditing ? (
           <Input
             type="text"
-            variant="inline"
+            size="sm"
             value={editValue}
             onChange={(e) => setEditValue(e.target.value)}
             onBlur={handleEditSubmit}
             onKeyDown={handleKeyDown}
             autoFocus
             aria-label={`Editar: ${task.title}`}
-            className="flex-1"
+            style={{ flex: 1 }}
           />
         ) : (
-          <Typography
-            component="span"
-            variant="body2"
-            sx={{
+          <span
+            style={{
               flex: 1,
-              color: task.completed ? 'text.disabled' : 'text.primary',
+              font: 'var(--weight-regular) var(--text-md)/1.4 var(--font-sans)',
+              color: task.completed ? 'var(--text-tertiary)' : 'var(--text-primary)',
               textDecoration: task.completed ? 'line-through' : 'none',
               cursor: task.completed ? 'default' : 'pointer',
             }}
@@ -108,10 +110,10 @@ export function TaskItem({ task }: TaskItemProps) {
             aria-label={task.completed ? task.title : `${task.title} — pressione Enter para editar`}
           >
             {task.title}
-          </Typography>
+          </span>
         )}
 
-        <Stack direction="row" spacing={1} alignItems="center">
+        <div style={{ display: 'flex', gap: 'var(--space-2)', alignItems: 'center' }}>
           {!task.completed && !isEditing && (
             <Button
               variant="ghost"
@@ -125,8 +127,8 @@ export function TaskItem({ task }: TaskItemProps) {
           <Button variant="danger" size="sm" onClick={handleRemove} aria-label="Remover tarefa">
             Remover
           </Button>
-        </Stack>
-      </Paper>
-    </ListItem>
+        </div>
+      </Card>
+    </li>
   );
 }

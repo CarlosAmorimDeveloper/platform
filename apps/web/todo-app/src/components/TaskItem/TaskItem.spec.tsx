@@ -1,97 +1,144 @@
-import { render, screen, fireEvent } from '@testing-library/react';
-import { Provider } from 'react-redux';
-import { configureStore } from '@reduxjs/toolkit';
-import { taskReducer } from '@/redux/taskSlice';
+import { fireEvent, renderWithStore, screen } from '@/test-utils';
 import type { Task } from '@/redux/taskSlice';
 import { TaskItem } from './TaskItem';
 
-function makeStore(tasks: Task[] = []) {
-  return configureStore({ reducer: { tasks: taskReducer }, preloadedState: { tasks: { tasks } } });
-}
-
-const task = { id: '1', title: 'Buy milk', completed: false, createdAt: new Date().toISOString() };
-const completedTask = { ...task, completed: true };
-
-function renderItem(t = task) {
-  const store = makeStore([t]);
-  return render(
-    <Provider store={store}>
-      <TaskItem task={t} />
-    </Provider>,
-  );
-}
+const task: Task = {
+  id: 'task-1',
+  title: 'Buy milk',
+  completed: false,
+  createdAt: '2024-01-01T00:00:00.000Z',
+};
 
 describe('TaskItem', () => {
-  it('renders task title', () => {
-    renderItem();
-    expect(screen.getByText('Buy milk')).toBeInTheDocument();
+  it('toggles completed when the checkbox is clicked', () => {
+    const { store } = renderWithStore(<TaskItem task={task} />, {
+      preloadedState: { tasks: [task] },
+    });
+
+    fireEvent.click(screen.getByLabelText(`Marcar "Buy milk" como completa`));
+
+    expect(store.getState().tasks.tasks[0]?.completed).toBe(true);
   });
 
-  it('checkbox reflects completed state', () => {
-    renderItem(completedTask);
-    expect(screen.getByRole('checkbox')).toBeChecked();
+  it('shows the title struck through when completed', () => {
+    const completed = { ...task, completed: true };
+    renderWithStore(<TaskItem task={completed} />, { preloadedState: { tasks: [completed] } });
+
+    expect(screen.getByText('Buy milk')).toHaveStyle({ textDecoration: 'line-through' });
   });
 
-  it('dispatches toggleTask on checkbox change', () => {
-    renderItem();
-    fireEvent.click(screen.getByRole('checkbox'));
+  it('does not render the "Editar" button when completed', () => {
+    const completed = { ...task, completed: true };
+    renderWithStore(<TaskItem task={completed} />, { preloadedState: { tasks: [completed] } });
+
+    expect(screen.queryByText('Editar')).not.toBeInTheDocument();
   });
 
-  it('enters edit mode on edit button click', () => {
-    renderItem();
-    fireEvent.click(screen.getByRole('button', { name: /editar tarefa/i }));
-    expect(screen.getByRole('textbox', { name: /editar:/i })).toBeInTheDocument();
-  });
+  it('enters edit mode on double-click and saves on Enter', () => {
+    const { store } = renderWithStore(<TaskItem task={task} />, {
+      preloadedState: { tasks: [task] },
+    });
 
-  it('submits edit on Enter key', () => {
-    renderItem();
-    fireEvent.click(screen.getByRole('button', { name: /editar tarefa/i }));
-    const input = screen.getByRole('textbox', { name: /editar:/i });
-    fireEvent.change(input, { target: { value: 'Buy eggs' } });
+    fireEvent.doubleClick(screen.getByText('Buy milk'));
+    const input = screen.getByLabelText('Editar: Buy milk');
+    fireEvent.change(input, { target: { value: 'Buy oat milk' } });
     fireEvent.keyDown(input, { key: 'Enter' });
-    expect(screen.queryByRole('textbox', { name: /editar:/i })).not.toBeInTheDocument();
+
+    expect(store.getState().tasks.tasks[0]?.title).toBe('Buy oat milk');
   });
 
-  it('cancels edit on Escape key', () => {
-    renderItem();
-    fireEvent.click(screen.getByRole('button', { name: /editar tarefa/i }));
-    const input = screen.getByRole('textbox', { name: /editar:/i });
-    fireEvent.change(input, { target: { value: 'Changed' } });
+  it('enters edit mode via the "Editar" button', () => {
+    renderWithStore(<TaskItem task={task} />, { preloadedState: { tasks: [task] } });
+
+    fireEvent.click(screen.getByText('Editar'));
+
+    expect(screen.getByLabelText('Editar: Buy milk')).toBeInTheDocument();
+  });
+
+  it('cancels edit mode on Escape without saving', () => {
+    const { store } = renderWithStore(<TaskItem task={task} />, {
+      preloadedState: { tasks: [task] },
+    });
+
+    fireEvent.doubleClick(screen.getByText('Buy milk'));
+    const input = screen.getByLabelText('Editar: Buy milk');
+    fireEvent.change(input, { target: { value: 'Something else' } });
     fireEvent.keyDown(input, { key: 'Escape' });
-    expect(screen.queryByRole('textbox', { name: /editar:/i })).not.toBeInTheDocument();
-    expect(screen.getByText('Buy milk')).toBeInTheDocument();
+
+    expect(screen.queryByLabelText('Editar: Buy milk')).not.toBeInTheDocument();
+    expect(store.getState().tasks.tasks[0]?.title).toBe('Buy milk');
   });
 
-  it('dispatches removeTask on remove button click', () => {
-    renderItem();
-    fireEvent.click(screen.getByRole('button', { name: /remover tarefa/i }));
+  it('saves on blur', () => {
+    const { store } = renderWithStore(<TaskItem task={task} />, {
+      preloadedState: { tasks: [task] },
+    });
+
+    fireEvent.doubleClick(screen.getByText('Buy milk'));
+    const input = screen.getByLabelText('Editar: Buy milk');
+    fireEvent.change(input, { target: { value: 'Buy oat milk' } });
+    fireEvent.blur(input);
+
+    expect(store.getState().tasks.tasks[0]?.title).toBe('Buy oat milk');
   });
 
-  it('hides edit button when task is completed', () => {
-    renderItem(completedTask);
-    expect(screen.queryByRole('button', { name: /editar tarefa/i })).not.toBeInTheDocument();
+  it('closes edit mode without dispatching when the title is unchanged', () => {
+    const { store } = renderWithStore(<TaskItem task={task} />, {
+      preloadedState: { tasks: [task] },
+    });
+    const dispatchSpy = jest.spyOn(store, 'dispatch');
+
+    fireEvent.doubleClick(screen.getByText('Buy milk'));
+    fireEvent.keyDown(screen.getByLabelText('Editar: Buy milk'), { key: 'Enter' });
+
+    expect(screen.queryByLabelText('Editar: Buy milk')).not.toBeInTheDocument();
+    expect(dispatchSpy).not.toHaveBeenCalled();
   });
 
-  it('closes edit mode without dispatching when title is unchanged', () => {
-    renderItem();
-    fireEvent.click(screen.getByRole('button', { name: /editar tarefa/i }));
-    const input = screen.getByRole('textbox', { name: /editar:/i });
-    fireEvent.keyDown(input, { key: 'Enter' });
-    expect(screen.queryByRole('textbox', { name: /editar:/i })).not.toBeInTheDocument();
-    expect(screen.getByText('Buy milk')).toBeInTheDocument();
+  it('does not save an empty title', () => {
+    const { store } = renderWithStore(<TaskItem task={task} />, {
+      preloadedState: { tasks: [task] },
+    });
+
+    fireEvent.doubleClick(screen.getByText('Buy milk'));
+    const input = screen.getByLabelText('Editar: Buy milk');
+    fireEvent.change(input, { target: { value: '   ' } });
+    fireEvent.blur(input);
+
+    expect(store.getState().tasks.tasks[0]?.title).toBe('Buy milk');
   });
 
-  it('enters edit mode on Space key press on title span', () => {
-    renderItem();
-    const span = screen.getByRole('button', { name: /pressione enter para editar/i });
-    fireEvent.keyDown(span, { key: ' ' });
-    expect(screen.getByRole('textbox', { name: /editar:/i })).toBeInTheDocument();
+  it('enters edit mode via keyboard (Enter) on the title', () => {
+    renderWithStore(<TaskItem task={task} />, { preloadedState: { tasks: [task] } });
+
+    fireEvent.keyDown(screen.getByText('Buy milk'), { key: 'Enter' });
+
+    expect(screen.getByLabelText('Editar: Buy milk')).toBeInTheDocument();
   });
 
-  it('enters edit mode on double click on title span', () => {
-    renderItem();
-    const span = screen.getByRole('button', { name: /pressione enter para editar/i });
-    fireEvent.doubleClick(span);
-    expect(screen.getByRole('textbox', { name: /editar:/i })).toBeInTheDocument();
+  it('enters edit mode via keyboard (Space) on the title', () => {
+    renderWithStore(<TaskItem task={task} />, { preloadedState: { tasks: [task] } });
+
+    fireEvent.keyDown(screen.getByText('Buy milk'), { key: ' ' });
+
+    expect(screen.getByLabelText('Editar: Buy milk')).toBeInTheDocument();
+  });
+
+  it('ignores unrelated keys on the title', () => {
+    renderWithStore(<TaskItem task={task} />, { preloadedState: { tasks: [task] } });
+
+    fireEvent.keyDown(screen.getByText('Buy milk'), { key: 'a' });
+
+    expect(screen.queryByLabelText('Editar: Buy milk')).not.toBeInTheDocument();
+  });
+
+  it('removes the task when "Remover" is clicked', () => {
+    const { store } = renderWithStore(<TaskItem task={task} />, {
+      preloadedState: { tasks: [task] },
+    });
+
+    fireEvent.click(screen.getByText('Remover'));
+
+    expect(store.getState().tasks.tasks).toHaveLength(0);
   });
 });

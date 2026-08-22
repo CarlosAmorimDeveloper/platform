@@ -2,6 +2,7 @@ import { StyleSheet } from 'react-native';
 import { fontSize, space } from '@vuotto/tokens';
 
 export const styles = StyleSheet.create({
+  flex: { flex: 1 },
   container: {
     flex: 1,
     padding: space[4],
