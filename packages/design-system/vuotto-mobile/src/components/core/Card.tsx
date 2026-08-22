@@ -27,6 +27,7 @@ export interface CardProps {
   onPress?: (e: GestureResponderEvent) => void;
   style?: StyleProp<ViewStyle>;
   testID?: string;
+  accessibilityLabel?: string;
 }
 
 export function Card({
@@ -39,6 +40,7 @@ export function Card({
   onPress,
   style,
   testID,
+  accessibilityLabel,
 }: CardProps) {
   const { colors } = useTheme();
 
@@ -56,6 +58,7 @@ export function Card({
       <Pressable
         onPress={onPress}
         testID={testID}
+        accessibilityLabel={accessibilityLabel}
         style={({ pressed }) => [baseStyle(selected || pressed), style]}
       >
         {children}

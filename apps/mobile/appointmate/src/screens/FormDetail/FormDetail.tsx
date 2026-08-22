@@ -10,8 +10,9 @@ import {
   ErrorView,
   LoadingIndicator,
   LoadingView,
-  Snackbar,
-} from '@ds/mobile';
+  useTheme,
+  useToast,
+} from '@vuotto/mobile';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { AppStackParamList } from '../../navigation/types';
 import { deleteForm, getFormRecord, type FormRecord } from '../../services/formsService';
@@ -23,23 +24,28 @@ import { styles } from './FormDetail.styles';
 type Props = NativeStackScreenProps<AppStackParamList, 'FormDetail'>;
 
 function Field({ label, value }: { label: string; value: string }) {
+  const { colors } = useTheme();
   if (!value.trim()) return null;
   return (
     <View style={styles.field}>
-      <Text style={styles.fieldLabel}>{label}</Text>
-      <Text style={styles.fieldValue}>{value}</Text>
+      <Text style={[styles.fieldLabel, { color: colors.textSecondary }]}>{label}</Text>
+      <Text style={[styles.fieldValue, { color: colors.textHeading }]}>{value}</Text>
     </View>
   );
 }
 
 function ListField({ label, items }: { label: string; items: { text: string }[] }) {
+  const { colors } = useTheme();
   const filled = items.filter((item) => item.text.trim());
   if (filled.length === 0) return null;
   return (
     <View style={styles.field}>
-      <Text style={styles.fieldLabel}>{label}</Text>
+      <Text style={[styles.fieldLabel, { color: colors.textSecondary }]}>{label}</Text>
       {filled.map((item, index) => (
-        <Text key={`${index}-${item.text}`} style={styles.listItem}>
+        <Text
+          key={`${index}-${item.text}`}
+          style={[styles.listItem, { color: colors.textHeading }]}
+        >
           • {item.text}
         </Text>
       ))}
@@ -82,6 +88,8 @@ function isRecordEmpty(record: FormRecord) {
 
 export function FormDetail({ navigation, route }: Props) {
   const { formId } = route.params;
+  const { colors } = useTheme();
+  const toast = useToast();
 
   const [record, setRecord] = useState<FormRecord | null>(null);
   const [loading, setLoading] = useState(true);
@@ -89,7 +97,6 @@ export function FormDetail({ navigation, route }: Props) {
   const [exporting, setExporting] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
-  const [actionError, setActionError] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -123,7 +130,7 @@ export function FormDetail({ navigation, route }: Props) {
       const { uri } = await Print.printToFileAsync({ html });
       await Sharing.shareAsync(uri, { mimeType: 'application/pdf', UTI: 'com.adobe.pdf' });
     } catch {
-      setActionError('Não foi possível exportar o PDF. Tente novamente.');
+      toast.show({ tone: 'danger', title: 'Não foi possível exportar o PDF. Tente novamente.' });
     } finally {
       setExporting(false);
     }
@@ -136,9 +143,10 @@ export function FormDetail({ navigation, route }: Props) {
       setDeleteDialogVisible(false);
       navigation.goBack();
     } catch (err) {
-      setActionError(
-        mapFirestoreError(err, 'Não foi possível excluir o formulário. Tente novamente.'),
-      );
+      toast.show({
+        tone: 'danger',
+        title: mapFirestoreError(err, 'Não foi possível excluir o formulário. Tente novamente.'),
+      });
       setDeleteDialogVisible(false);
     } finally {
       setDeleting(false);
@@ -177,7 +185,7 @@ export function FormDetail({ navigation, route }: Props) {
         {appBar}
         <EmptyState
           title="Formulário não encontrado"
-          description="Este formulário pode ter sido removido."
+          body="Este formulário pode ter sido removido."
           testID="form-detail-not-found"
         />
       </View>
@@ -193,7 +201,10 @@ export function FormDetail({ navigation, route }: Props) {
       {appBar}
       <ScrollView contentContainerStyle={styles.container}>
         {updatedAtLabel && (
-          <Text style={styles.updatedAt} testID="form-detail-updated-at">
+          <Text
+            style={[styles.updatedAt, { color: colors.textSecondary }]}
+            testID="form-detail-updated-at"
+          >
             Última atualização em {updatedAtLabel}
           </Text>
         )}
@@ -201,33 +212,38 @@ export function FormDetail({ navigation, route }: Props) {
         {isRecordEmpty(record) ? (
           <EmptyState
             title="Nenhuma resposta registrada"
-            description="Este formulário ainda não tem respostas preenchidas."
+            body="Este formulário ainda não tem respostas preenchidas."
             testID="form-detail-empty-state"
           />
         ) : (
           <>
-            <Text style={styles.sectionTitle}>Cabeçalho</Text>
+            <Text style={[styles.sectionTitle, { color: colors.textHeading }]}>Cabeçalho</Text>
             <Field label="Data desta consulta" value={values.appointmentDate} />
             <Field label="Última consulta foi em" value={values.lastAppointmentDate} />
 
-            <Text style={styles.sectionTitle}>Panorama geral</Text>
+            <Text style={[styles.sectionTitle, { color: colors.textHeading }]}>Panorama geral</Text>
             {moodLabel && (
               <View style={styles.field}>
-                <Text style={styles.fieldLabel}>Como você tem estado</Text>
-                <Text style={styles.fieldValue} testID="form-detail-overall-mood">
+                <Text style={[styles.fieldLabel, { color: colors.textSecondary }]}>
+                  Como você tem estado
+                </Text>
+                <Text
+                  style={[styles.fieldValue, { color: colors.textHeading }]}
+                  testID="form-detail-overall-mood"
+                >
                   {moodLabel}
                 </Text>
               </View>
             )}
             <Field label="Em poucas palavras" value={values.overallSummary} />
 
-            <Text style={styles.sectionTitle}>No dia a dia</Text>
+            <Text style={[styles.sectionTitle, { color: colors.textHeading }]}>No dia a dia</Text>
             <Field label="Sono" value={values.sleep} />
             <Field label="Energia e disposição" value={values.energy} />
             <Field label="Apetite e alimentação" value={values.appetite} />
             <Field label="Concentração e memória" value={values.concentration} />
 
-            <Text style={styles.sectionTitle}>Medicação</Text>
+            <Text style={[styles.sectionTitle, { color: colors.textHeading }]}>Medicação</Text>
             <ListField label="Medicamentos e doses" items={values.medications} />
             <Field
               label="Tenho conseguido tomar como combinado?"
@@ -235,22 +251,30 @@ export function FormDetail({ navigation, route }: Props) {
             />
             <Field label="Efeitos que percebi (bons e ruins)" value={values.medicationEffects} />
 
-            <Text style={styles.sectionTitle}>O que foi bem ou melhorou</Text>
+            <Text style={[styles.sectionTitle, { color: colors.textHeading }]}>
+              O que foi bem ou melhorou
+            </Text>
             <Field label="O que foi bem ou melhorou" value={values.whatWentWell} />
 
-            <Text style={styles.sectionTitle}>O que tem sido difícil</Text>
+            <Text style={[styles.sectionTitle, { color: colors.textHeading }]}>
+              O que tem sido difícil
+            </Text>
             <Field label="O que tem sido difícil" value={values.whatHasBeenHard} />
 
-            <Text style={styles.sectionTitle}>Contexto</Text>
+            <Text style={[styles.sectionTitle, { color: colors.textHeading }]}>Contexto</Text>
             <Field label="Situações importantes desde a última consulta" value={values.context} />
 
-            <Text style={styles.sectionTitle}>Minhas perguntas</Text>
+            <Text style={[styles.sectionTitle, { color: colors.textHeading }]}>
+              Minhas perguntas
+            </Text>
             <ListField label="Perguntas" items={values.questions} />
 
-            <Text style={styles.sectionTitle}>Foco do dia</Text>
+            <Text style={[styles.sectionTitle, { color: colors.textHeading }]}>Foco do dia</Text>
             <Field label="O que quero desta consulta" value={values.todayFocus} />
 
-            <Text style={styles.sectionTitle}>Durante a consulta</Text>
+            <Text style={[styles.sectionTitle, { color: colors.textHeading }]}>
+              Durante a consulta
+            </Text>
             <Field label="Anotações e orientações" value={values.consultationNotes} />
           </>
         )}
@@ -280,43 +304,34 @@ export function FormDetail({ navigation, route }: Props) {
         </Button>
 
         <Dialog
-          visible={deleteDialogVisible}
-          onDismiss={() => setDeleteDialogVisible(false)}
+          open={deleteDialogVisible}
+          onClose={() => setDeleteDialogVisible(false)}
           title="Excluir formulário"
           testID="form-detail-delete-dialog"
-          actions={[
-            <Button
-              key="cancel"
-              variant="ghost"
-              onPress={() => setDeleteDialogVisible(false)}
-              testID="form-detail-delete-cancel-button"
-            >
-              Cancelar
-            </Button>,
-            <Button
-              key="confirm"
-              variant="danger"
-              onPress={onConfirmDelete}
-              disabled={deleting}
-              testID="form-detail-delete-confirm-button"
-            >
-              Excluir
-            </Button>,
-          ]}
+          footer={
+            <>
+              <Button
+                variant="ghost"
+                onPress={() => setDeleteDialogVisible(false)}
+                testID="form-detail-delete-cancel-button"
+              >
+                Cancelar
+              </Button>
+              <Button
+                variant="danger"
+                onPress={onConfirmDelete}
+                disabled={deleting}
+                testID="form-detail-delete-confirm-button"
+              >
+                Excluir
+              </Button>
+            </>
+          }
         >
-          <Text>
+          <Text style={{ color: colors.textPrimary }}>
             Tem certeza que deseja excluir este formulário? Essa ação não pode ser desfeita.
           </Text>
         </Dialog>
-
-        <Snackbar
-          visible={actionError !== null}
-          onDismiss={() => setActionError(null)}
-          message={actionError ?? ''}
-          position="top"
-          variant="error"
-          testID="form-detail-action-error-snackbar"
-        />
       </ScrollView>
     </View>
   );

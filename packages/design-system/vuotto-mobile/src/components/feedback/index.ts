@@ -7,6 +7,9 @@ export type { TooltipProps, TooltipSide } from './Tooltip';
 export { Dialog } from './Dialog';
 export type { DialogProps } from './Dialog';
 
+export { Menu } from './Menu';
+export type { MenuProps, MenuItemOption } from './Menu';
+
 export { Toast } from './Toast';
 export type { ToastProps, ToastTone } from './Toast';
 

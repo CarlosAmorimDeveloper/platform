@@ -14,6 +14,7 @@ export interface DialogProps {
   onClose?: () => void;
   width?: number;
   style?: StyleProp<ViewStyle>;
+  testID?: string;
 }
 
 export function Dialog({
@@ -25,6 +26,7 @@ export function Dialog({
   onClose,
   width = 460,
   style,
+  testID,
 }: DialogProps) {
   const { colors } = useTheme();
 
@@ -41,6 +43,7 @@ export function Dialog({
         }}
       >
         <Pressable
+          testID={testID}
           onPress={(e) => e.stopPropagation()}
           style={[
             {

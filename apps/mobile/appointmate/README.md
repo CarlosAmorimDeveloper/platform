@@ -130,7 +130,7 @@ apps/mobile/appointmate/
 | Camada       | Tecnologia                                        |
 | ------------ | ------------------------------------------------- |
 | Framework    | Expo SDK 54 (React Native 0.81, New Architecture) |
-| UI           | React 19 + React Native Paper (via `@ds/mobile`)  |
+| UI           | React 19 + `@vuotto/mobile` / `@vuotto/tokens`    |
 | Navegação    | React Navigation (native-stack)                   |
 | Formulários  | React Hook Form                                   |
 | Backend      | Firebase Auth + Firestore                         |

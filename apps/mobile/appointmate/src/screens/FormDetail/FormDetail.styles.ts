@@ -1,40 +1,35 @@
 import { StyleSheet } from 'react-native';
-import { colors, fontSizes, spacing } from '@ds/tokens';
+import { fontSize, space } from '@vuotto/tokens';
 
 export const styles = StyleSheet.create({
   screen: { flex: 1 },
   container: {
-    padding: spacing[6],
-    gap: spacing[4],
+    padding: space[6],
+    gap: space[4],
   },
   updatedAt: {
-    fontSize: fontSizes.sm,
-    color: colors.neutral[500],
+    fontSize: fontSize.sm,
   },
   sectionTitle: {
-    fontSize: fontSizes.lg,
+    fontSize: fontSize.lg,
     fontWeight: 'bold',
-    color: colors.neutral[900],
-    marginTop: spacing[4],
+    marginTop: space[4],
   },
   fieldLabel: {
-    fontSize: fontSizes.sm,
+    fontSize: fontSize.sm,
     fontWeight: '600',
-    color: colors.neutral[600],
   },
   fieldValue: {
-    fontSize: fontSizes.base,
-    color: colors.neutral[900],
+    fontSize: fontSize.md,
   },
   field: {
-    gap: spacing[1],
+    gap: space[1],
   },
   listItem: {
-    fontSize: fontSizes.base,
-    color: colors.neutral[900],
-    marginLeft: spacing[2],
+    fontSize: fontSize.md,
+    marginLeft: space[2],
   },
   editButton: {
-    marginTop: spacing[6],
+    marginTop: space[6],
   },
 });
