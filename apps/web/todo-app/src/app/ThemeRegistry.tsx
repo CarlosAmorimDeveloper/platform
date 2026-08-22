@@ -1,14 +1,12 @@
 'use client';
 
-import { ThemeProvider } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
-import { theme } from '@ds/web/theme';
+import { useTheme } from '@vuotto/web';
 
 export function ThemeRegistry({ children }: { children: React.ReactNode }) {
-  return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      {children}
-    </ThemeProvider>
-  );
+  // Activates system/stored theme detection — applies `data-theme` on
+  // `<html>` as a side effect. @vuotto/web has no ThemeProvider; colors come
+  // from CSS custom properties loaded globally in globals.css.
+  useTheme();
+
+  return <>{children}</>;
 }

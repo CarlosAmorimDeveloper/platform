@@ -1,18 +1,21 @@
-import Container from '@mui/material/Container';
-import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
 import { TaskForm, TaskList } from '@/components';
 
 export default function Home() {
   return (
-    <Container maxWidth="sm" sx={{ py: 6 }}>
-      <Typography variant="h5" fontWeight="bold" color="text.primary" sx={{ mb: 4 }}>
+    <main className="mx-auto max-w-lg px-4 py-12">
+      <h1
+        style={{
+          font: 'var(--weight-bold) var(--display-sm)/1.2 var(--font-display)',
+          color: 'var(--text-heading)',
+          marginBottom: 'var(--space-8)',
+        }}
+      >
         Minhas Tarefas
-      </Typography>
-      <Box sx={{ mb: 3 }}>
+      </h1>
+      <div style={{ marginBottom: 'var(--space-6)' }}>
         <TaskForm />
-      </Box>
+      </div>
       <TaskList />
-    </Container>
+    </main>
   );
 }

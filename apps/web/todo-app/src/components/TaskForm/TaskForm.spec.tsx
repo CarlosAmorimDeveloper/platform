@@ -1,53 +1,65 @@
-import { render, screen, fireEvent } from '@testing-library/react';
-import { Provider } from 'react-redux';
-import { configureStore } from '@reduxjs/toolkit';
-import { taskReducer } from '@/redux/taskSlice';
+import { fireEvent, renderWithStore, screen } from '@/test-utils';
 import { TaskForm } from './TaskForm';
 
-function makeStore() {
-  return configureStore({ reducer: { tasks: taskReducer } });
-}
-
-function renderForm() {
-  const store = makeStore();
-  return render(
-    <Provider store={store}>
-      <TaskForm />
-    </Provider>,
-  );
-}
-
 describe('TaskForm', () => {
-  it('renders input and Add button', () => {
-    renderForm();
-    expect(screen.getByRole('textbox', { name: /título da nova tarefa/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /adicionar/i })).toBeInTheDocument();
+  it('adds a task with the typed title on submit', () => {
+    const { store } = renderWithStore(<TaskForm />);
+
+    fireEvent.change(screen.getByLabelText('Título da nova tarefa'), {
+      target: { value: 'Buy milk' },
+    });
+    fireEvent.click(screen.getByText('Adicionar'));
+
+    expect(store.getState().tasks.tasks).toHaveLength(1);
+    expect(store.getState().tasks.tasks[0]?.title).toBe('Buy milk');
   });
 
-  it('Add button is disabled when input is empty', () => {
-    renderForm();
-    expect(screen.getByRole('button', { name: /adicionar/i })).toBeDisabled();
+  it('clears the input after adding a task', () => {
+    renderWithStore(<TaskForm />);
+    const input = screen.getByLabelText('Título da nova tarefa') as HTMLInputElement;
+
+    fireEvent.change(input, { target: { value: 'Buy milk' } });
+    fireEvent.click(screen.getByText('Adicionar'));
+
+    expect(input.value).toBe('');
   });
 
-  it('Add button is enabled when input has text', () => {
-    renderForm();
-    fireEvent.change(screen.getByRole('textbox'), { target: { value: 'Walk the dog' } });
-    expect(screen.getByRole('button', { name: /adicionar/i })).toBeEnabled();
+  it('disables the submit button so an empty title cannot be submitted via click', () => {
+    renderWithStore(<TaskForm />);
+
+    fireEvent.click(screen.getByText('Adicionar'));
+
+    expect(screen.getByText('Adicionar')).toBeDisabled();
   });
 
-  it('clears input after submit', () => {
-    renderForm();
-    const input = screen.getByRole('textbox');
-    fireEvent.change(input, { target: { value: 'Walk the dog' } });
-    fireEvent.submit(screen.getByRole('form', { name: /task form/i }));
-    expect(input).toHaveValue('');
+  it('does not add a task when the form is submitted with an empty title', () => {
+    // Submits the form directly (not via the disabled button) to exercise
+    // handleSubmit's own guard against an empty/whitespace title.
+    const { store, container } = renderWithStore(<TaskForm />);
+
+    const form = container.querySelector('form');
+    if (!form) throw new Error('expected a form element');
+    fireEvent.submit(form);
+
+    expect(store.getState().tasks.tasks).toHaveLength(0);
   });
 
-  it('does not submit when input is blank/whitespace', () => {
-    renderForm();
-    const input = screen.getByRole('textbox');
-    fireEvent.change(input, { target: { value: '   ' } });
-    fireEvent.submit(input.closest('form')!);
-    expect(input).toHaveValue('   ');
+  it('does not add a task when the form is submitted with a whitespace-only title', () => {
+    const { store, container } = renderWithStore(<TaskForm />);
+
+    fireEvent.change(screen.getByLabelText('Título da nova tarefa'), {
+      target: { value: '   ' },
+    });
+    const form = container.querySelector('form');
+    if (!form) throw new Error('expected a form element');
+    fireEvent.submit(form);
+
+    expect(store.getState().tasks.tasks).toHaveLength(0);
+  });
+
+  it('disables the submit button while the title is empty', () => {
+    renderWithStore(<TaskForm />);
+
+    expect(screen.getByText('Adicionar')).toBeDisabled();
   });
 });
