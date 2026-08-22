@@ -27,7 +27,10 @@ const mockedGetItem = AsyncStorage.getItem as jest.Mock;
 
 type RegisterProps = NativeStackScreenProps<AuthStackParamList, 'Register'>;
 
-const mockNavigation = { navigate: jest.fn() } as unknown as RegisterProps['navigation'];
+const mockNavigation = {
+  navigate: jest.fn(),
+  reset: jest.fn(),
+} as unknown as RegisterProps['navigation'];
 const mockRoute = { key: 'Register', name: 'Register' } as unknown as RegisterProps['route'];
 
 const ASYNC_TIMEOUT = { timeout: 30000 };
@@ -171,12 +174,15 @@ describe('Register', () => {
     }, ASYNC_TIMEOUT);
   }, 40000);
 
-  it('navigates back to Login on button press', async () => {
+  it('resets the navigation stack to Login on button press', async () => {
     render(<Register navigation={mockNavigation} route={mockRoute} />);
 
     fireEvent.press(screen.getByText('Voltar para o login'));
 
-    expect(mockNavigation.navigate).toHaveBeenCalledWith('Login');
+    expect(mockNavigation.reset).toHaveBeenCalledWith({
+      index: 0,
+      routes: [{ name: 'Login' }],
+    });
 
     await waitFor(() => {
       expect(mockedGetItem).toHaveBeenCalledWith('first_user_registered');

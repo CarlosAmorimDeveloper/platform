@@ -88,7 +88,10 @@ export function Register({ navigation }: Props) {
           >
             Cadastrar
           </Button>
-          <Button variant="secondary" onPress={() => navigation.navigate('Login')}>
+          <Button
+            variant="secondary"
+            onPress={() => navigation.reset({ index: 0, routes: [{ name: 'Login' }] })}
+          >
             Voltar para o login
           </Button>
         </View>

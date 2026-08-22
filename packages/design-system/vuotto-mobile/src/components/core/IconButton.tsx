@@ -61,7 +61,7 @@ export function IconButton({
     >
       {({ pressed }: { pressed: boolean }) => {
         const on = active || (pressed && !disabled);
-        const color = solid ? colors.textInverse : on ? colors.textHeading : colors.textSecondary;
+        const color = solid ? vtColors.black : on ? colors.textHeading : colors.textSecondary;
         return <Icon name={icon} size={size === 'sm' ? 'sm' : 'md'} color={color} />;
       }}
     </Pressable>

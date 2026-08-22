@@ -27,6 +27,7 @@ type ForgotPasswordProps = NativeStackScreenProps<AuthStackParamList, 'ForgotPas
 const mockNavigation = {
   navigate: jest.fn(),
   goBack: jest.fn(),
+  reset: jest.fn(),
 } as unknown as ForgotPasswordProps['navigation'];
 const mockRoute = {
   key: 'ForgotPassword',
@@ -137,7 +138,21 @@ describe('ForgotPassword', () => {
       jest.advanceTimersByTime(2000);
     });
 
-    expect(mockNavigation.goBack).toHaveBeenCalled();
+    expect(mockNavigation.reset).toHaveBeenCalledWith({
+      index: 0,
+      routes: [{ name: 'Login' }],
+    });
     jest.useRealTimers();
+  });
+
+  it('resets the navigation stack to Login on "Voltar ao login" press', () => {
+    render(<ForgotPassword navigation={mockNavigation} route={mockRoute} />);
+
+    fireEvent.press(screen.getByText('Voltar ao login'));
+
+    expect(mockNavigation.reset).toHaveBeenCalledWith({
+      index: 0,
+      routes: [{ name: 'Login' }],
+    });
   });
 });

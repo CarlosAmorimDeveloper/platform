@@ -8,6 +8,10 @@ import { styles } from './ForgotPassword.styles';
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'ForgotPassword'>;
 
+function backToLogin(navigation: Props['navigation']) {
+  navigation.reset({ index: 0, routes: [{ name: 'Login' }] });
+}
+
 export function ForgotPassword({ navigation }: Props) {
   const { colors } = useTheme();
   const toast = useToast();
@@ -23,7 +27,7 @@ export function ForgotPassword({ navigation }: Props) {
         tone: 'success',
         title: 'Se este e-mail estiver cadastrado, você receberá um link em instantes.',
       });
-      setTimeout(() => navigation.goBack(), 2000);
+      setTimeout(() => backToLogin(navigation), 2000);
     } catch (err: unknown) {
       toast.show({ tone: 'danger', title: mapFirebaseAuthError(err) });
     } finally {
@@ -54,7 +58,7 @@ export function ForgotPassword({ navigation }: Props) {
           <Button onPress={handleResetPassword} disabled={!email || loading}>
             Enviar link
           </Button>
-          <Button variant="ghost" onPress={() => navigation.goBack()}>
+          <Button variant="ghost" onPress={() => backToLogin(navigation)}>
             Voltar ao login
           </Button>
         </View>

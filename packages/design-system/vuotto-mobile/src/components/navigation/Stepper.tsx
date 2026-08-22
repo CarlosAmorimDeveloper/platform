@@ -58,7 +58,7 @@ export function Stepper({
                 }}
               >
                 {done ? (
-                  <Icon name="Check" size="xs" color={colors.textInverse} />
+                  <Icon name="Check" size="xs" color={vtColors.black} />
                 ) : (
                   <Text
                     style={{

@@ -76,9 +76,9 @@ export function Button({
             width: fullWidth ? '100%' : undefined,
             borderRadius: radii.sm,
             opacity: disabled ? 0.42 : 1,
-            transform: on ? [{ scale: 0.985 }] : undefined,
             borderWidth: 1,
             ...skin,
+            ...(on ? { transform: [{ scale: 0.985 }] } : null),
           },
           style,
         ];
@@ -111,7 +111,7 @@ function textColorFor(
   variant: ButtonVariant,
   colors: ReturnType<typeof useTheme>['colors'],
 ): string {
-  if (variant === 'primary') return colors.textInverse;
+  if (variant === 'primary') return vtColors.black;
   if (variant === 'danger') return vtColors.danger;
   return colors.textHeading;
 }
