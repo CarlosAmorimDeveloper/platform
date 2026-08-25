@@ -13,11 +13,13 @@ function Corner({ position }: { position: CornerPosition }) {
   return (
     <i
       data-frame-corner={position}
+      aria-hidden="true"
       style={{
         position: 'absolute',
         width: 11,
         height: 11,
         color: 'color-mix(in srgb, var(--color-text) 55%, transparent)',
+        pointerEvents: 'none',
         ...CORNER_POSITIONS[position],
       }}
     >

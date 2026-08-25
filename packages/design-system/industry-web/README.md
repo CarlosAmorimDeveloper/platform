@@ -23,4 +23,4 @@ yarn workspace @industry/web build-storybook        # build estático (usado pel
 
 ## Escopo
 
-Este pacote nasce com um único componente, `Frame` (REB-62). `Icon` (REB-64), o wrapper `.duotone` (REB-63) e os controles/layout/navegação/feedback/dados (REB-67 a REB-71) chegam em PRs seguintes — a taxonomia de pastas (`src/components/{core,data,feedback,forms,navigation}`) já espelha `@vuotto/web` para receber esses componentes sem reestruturação.
+Este pacote nasce com um único componente, `Frame` (REB-62). `Icon` (REB-64), o wrapper `.duotone` (REB-63) e os controles/layout/navegação/feedback/dados (REB-67 a REB-71) chegam em PRs seguintes — a taxonomia de pastas (`src/components/{core,data,feedback,forms,navigation}`) vai espelhar `@vuotto/web` para receber esses componentes sem reestruturação.

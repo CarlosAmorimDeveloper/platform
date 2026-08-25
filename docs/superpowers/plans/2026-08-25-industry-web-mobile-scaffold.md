@@ -35,7 +35,8 @@ packages/design-system/industry-web/
 ├── eslint.config.mjs
 ├── README.md
 ├── .storybook/
-│   └── main.ts
+│   ├── main.ts
+│   └── preview.tsx
 └── src/
     ├── index.ts
     └── components/
