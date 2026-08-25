@@ -19,3 +19,5 @@ export {
   fontFamilyMono,
 } from './typography';
 export { resolveLineHeight, resolveLetterSpacing } from './typography-adapter';
+export { space, control } from './spacing';
+export { radii } from './radii';
