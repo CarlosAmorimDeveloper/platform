@@ -3,3 +3,6 @@ export type { FrameProps } from './Frame';
 
 export { Icon } from './Icon';
 export type { IconProps, IconSize } from './Icon';
+
+export { Duotone } from './Duotone';
+export type { DuotoneProps } from './Duotone';
