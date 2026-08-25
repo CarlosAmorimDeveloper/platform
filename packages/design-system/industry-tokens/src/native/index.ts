@@ -21,3 +21,5 @@ export {
 export { resolveLineHeight, resolveLetterSpacing } from './typography-adapter';
 export { space, control } from './spacing';
 export { radii } from './radii';
+export { shadow } from './shadows';
+export type { DropShadow } from './shadows';
