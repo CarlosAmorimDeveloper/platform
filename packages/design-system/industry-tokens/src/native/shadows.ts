@@ -8,10 +8,10 @@ export interface DropShadow {
   elevation: number;
 }
 
-// Resolved from tokens/effects.css. RN's shadow* props support one layer —
-// the hairline ring each web shadow carries alongside it
-// (`0 0 0 1px color-mix(... var(--color-text) N%, transparent)`) has no RN
-// equivalent; approximate it separately with `borderWidth: 1` and
+// Resolved from tokens/effects.css. RN's legacy shadow* props support one
+// layer — the hairline ring each web shadow carries alongside it
+// (`0 0 0 1px color-mix(... var(--color-text) N%, transparent)`) has no
+// equivalent there; approximate it separately with `borderWidth: 1` and
 // `borderColor: color.divider` (or `color.dividerStrong`) on the same element.
 export const shadow: Record<'sm' | 'md' | 'lg', DropShadow> = {
   sm: {

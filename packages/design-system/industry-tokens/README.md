@@ -47,7 +47,7 @@ Nas três rampas completas (`neutral`, `accentRamp`, `accent2Ramp`):
 
 - **100–200 é tinta sobre esses preenchimentos tingidos.**
 
-As rampas semânticas (`success`, `warning`, `danger`) são um subconjunto de cinco passos (`200`, `300`, `400`, `700`, `900`) — não têm `100`, nem os passos intermediários `500` e `600`. Use os passos disponíveis com a mesma lógica (300 legível, 400 preenchimento, 900 superfície tingida).
+As rampas semânticas (`success`, `warning`, `danger`) são um subconjunto de cinco passos (`200`, `300`, `400`, `700`, `900`) — falta só o `100` (além dos passos intermediários `500` e `600`). O `200` existe e cumpre o mesmo papel do `100` nas rampas completas: tinta sobre esses preenchimentos tingidos. Use os passos disponíveis com a mesma lógica (300 legível, 400 preenchimento, 900 superfície tingida).
 
 Prefira um passo da rampa a montar uma cor translúcida ad-hoc; `alpha(hex, percent)` existe só para os casos que a rampa não cobre.
 
@@ -57,7 +57,7 @@ Seis séries de dado-viz vivem em `viz['1']`…`viz['6']`, em uma luminosidade e
 
 - **`--font-mono`** é uma pilha de sistema (`ui-monospace, 'SF Mono', Menlo, monospace`), não uma fonte para linkar — exportado como `fontFamilyMono.ios`/`fontFamilyMono.android` em vez de um único `fontFamily.mono`.
 - **`--safe-b` / `--safe-t`** (`env(safe-area-inset-*)`) são um conceito de CSS — no mobile, use `useSafeAreaInsets()` de `react-native-safe-area-context` (já é o padrão nos apps deste monorepo), não um token estático.
-- **O anel hairline dos shadows** (`0 0 0 1px color-mix(...)` que acompanha cada `--shadow-*`) não existe nas props `shadow*` do RN — aproxime com `borderWidth: 1` e `borderColor: color.divider`/`dividerStrong` no mesmo elemento.
+- **O anel hairline dos shadows** (`0 0 0 1px color-mix(...)` que acompanha cada `--shadow-*`) não existe nas props `shadow*` legadas do RN — aproxime com `borderWidth: 1` e `borderColor: color.divider`/`dividerStrong` no mesmo elemento.
 - **Cor do `elevation` no Android**: `elevation` não aceita cor customizada — `shadow.md`/`.lg` etc. têm um `elevation` numérico aproximado (monocromático) ao lado dos campos `shadow*` de verdade (que só valem no iOS).
 - **`--radius-sm/md/lg`** existem no token sheet (`radii.sm/md/lg`) mas a camada de componentes do Industry usa cantos retos (`radius: 0`) — só recorra a eles se estiver deliberadamente saindo do vocabulário blueprint (ver `~/Documents/ds/readme.md`).
 
