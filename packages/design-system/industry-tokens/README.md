@@ -37,12 +37,17 @@ Nesta base não existe papel para inverter — **não** troque tinta para `--col
 
 ## Como ler as rampas
 
-A leitura inverte em relação a um tema claro. Para `neutral`, `accentRamp`, `accent2Ramp` e as rampas semânticas (`success`, `warning`, `danger`):
+A leitura inverte em relação a um tema claro. As rampas `neutral`, `accentRamp`, `accent2Ramp` (nove passos cada uma) e as semânticas `success`, `warning`, `danger` (cinco passos cada uma) compartilham a mesma estrutura conceitual:
 
 - **300 é o passo legível** — tipo e ícones coloridos sobre o grafite.
 - **400 é o preenchimento** — botões, barras de progresso, pontos, trilhos ativos. É o valor por trás dos aliases `color.accent` / `semanticColor.success` / etc.
 - **900 é a superfície tingida** — fundo de tag, campo tênue.
+
+Nas três rampas completas (`neutral`, `accentRamp`, `accent2Ramp`):
+
 - **100–200 é tinta sobre esses preenchimentos tingidos.**
+
+As rampas semânticas (`success`, `warning`, `danger`) são um subconjunto de cinco passos (`200`, `300`, `400`, `700`, `900`) — não têm `100`, nem os passos intermediários `500` e `600`. Use os passos disponíveis com a mesma lógica (300 legível, 400 preenchimento, 900 superfície tingida).
 
 Prefira um passo da rampa a montar uma cor translúcida ad-hoc; `alpha(hex, percent)` existe só para os casos que a rampa não cobre.
 
