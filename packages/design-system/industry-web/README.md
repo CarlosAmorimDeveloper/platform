@@ -13,6 +13,10 @@ import '@industry/tokens/styles.css'; // tokens são globais, via CSS custom pro
 
 **`Frame`** — o objeto blueprint genérico: borda hairline reta (`--color-divider`) mais quatro marcas de registro `+` de 11px nos cantos, deslocadas 6px para fora. `props`: `as` (tag, padrão `div`), `marks` (padrão `true` — nunca remova as marcas de um elemento emoldurado, é regra do sistema), `children`, `style`, `className`, mais os demais atributos do elemento. Estilizado inteiramente via `style` inline + variáveis CSS de `@industry/tokens` (`--color-divider`, `--color-text`), sem folha de estilo própria — as marcas de canto são elementos filhos reais, não pseudo-elementos.
 
+**`Icon`** — wrapper fino sobre `lucide-react/dynamic` (`DynamicIcon`): um `import()` por glifo, cada ícone vira seu próprio chunk (sem bundle único de todos os ícones). `props`: `name` (kebab-case, ex. `"arrow-right"`), `size` (`xs`|`sm`|`md`|`lg`|número — 14/16/20/24px, padrão `sm`), `color` (padrão `currentColor`), `strokeWidth` (padrão **1.5, sempre** — o sistema não tem variação por tamanho como no `@vuotto/web`), `className`, `style`, `aria-label` (decorativo por padrão, `aria-hidden` a menos que um label seja passado).
+
+**`Duotone`** — wrapper de imagem: aplica o acento via `mix-blend-mode: color` (efeito de serigrafia), a mesma leitura que `~/Documents/ds/foundations/image.html` documenta. `props`: `children`, `style`, `className`. Compõe com `Frame` por aninhamento (`<Frame><Duotone><img /></Duotone></Frame>`), não é uma variante fundida.
+
 ## Build
 
 ```sh
@@ -23,4 +27,4 @@ yarn workspace @industry/web build-storybook        # build estático (usado pel
 
 ## Escopo
 
-Este pacote nasce com um único componente, `Frame` (REB-62). `Icon` (REB-64), o wrapper `.duotone` (REB-63) e os controles/layout/navegação/feedback/dados (REB-67 a REB-71) chegam em PRs seguintes — a taxonomia de pastas (`src/components/{core,data,feedback,forms,navigation}`) vai espelhar `@vuotto/web` para receber esses componentes sem reestruturação.
+Este pacote nasce com um único componente, `Frame` (REB-62). `Icon` e `Duotone` (REB-64, REB-63) estão prontos. As páginas de fundação no Storybook (REB-65) e os controles/layout/navegação/feedback/dados (REB-67 a REB-71) chegam em PRs seguintes — a taxonomia de pastas (`src/components/{core,data,feedback,forms,navigation}`) vai espelhar `@vuotto/web` para receber esses componentes sem reestruturação.
