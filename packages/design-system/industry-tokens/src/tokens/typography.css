@@ -1,0 +1,19 @@
+:root {
+  --font-heading: 'Barlow Condensed', system-ui, sans-serif;
+  --font-heading-weight: 600;
+  --font-body: 'Barlow', system-ui, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', Menlo, monospace;
+
+  --text-h1: 46px;
+  --text-h2: 34px;
+  --text-h3: 26px;
+  --text-h4: 21px;
+  --text-h5: 17px;
+  --text-h6: 13px;
+  --text-body: 16px;
+
+  --leading-heading: 1.12;
+  --leading-body: 1.55;
+  --tracking-heading: -0.015em;
+  --tracking-h6: 0.08em;
+}

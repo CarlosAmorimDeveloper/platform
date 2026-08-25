@@ -10,3 +10,12 @@ export {
   viz,
 } from './colors.generated';
 export { alpha } from './color-utils';
+export {
+  fontSize,
+  fontWeight,
+  lineHeight,
+  letterSpacing,
+  fontFamily,
+  fontFamilyMono,
+} from './typography';
+export { resolveLineHeight, resolveLetterSpacing } from './typography-adapter';
