@@ -25,7 +25,8 @@
     "chromatic": "chromatic --exit-zero-on-changes"
   },
   "dependencies": {
-    "@industry/tokens": "*"
+    "@industry/tokens": "*",
+    "lucide-react": "^1.33.0"
   },
   "peerDependencies": {
     "react": ">=18",
