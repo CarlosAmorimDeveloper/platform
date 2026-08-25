@@ -109,6 +109,18 @@ const config: StorybookConfig = {
         alias: {
           'react-native': 'react-native-web',
         },
+        // Metro resolves a `.web.js`/`.web.tsx` sibling over the default
+        // file automatically (platform-extension resolution) — Vite has no
+        // such behavior built in, so without this, react-native-svg and
+        // react-native-safe-area-context both silently fall back to their
+        // native (Fabric/TurboModule) entry points instead of the real,
+        // DOM-based web implementations they ship alongside them. That's
+        // why icons/SVG shapes were rendering as nothing: the native entry
+        // point's leaf components got replaced by the codegen stub below,
+        // which renders empty since the native `<Path>`/`<Circle>` etc.
+        // have no children — the stub was never meant to be the thing
+        // actually drawing shapes, it's a fallback for code the .web
+        // files were supposed to make unreachable.
         extensions: [
           '.web.js',
           '.web.ts',
@@ -125,6 +137,12 @@ const config: StorybookConfig = {
       },
       optimizeDeps: {
         include: ['react-native-web'],
+        // react-native-safe-area-context has no esbuild-side interception
+        // set up for it (only the codegenNativeComponent import matters
+        // there, and it's low-traffic enough to just skip pre-bundling
+        // entirely rather than plumb an esbuild plugin for it too).
+        // react-native-svg stays pre-bundled (not excluded) — see the two
+        // esbuild plugins below for why.
         exclude: ['react-native-safe-area-context'],
         esbuildOptions: {
           plugins: [codegenStubEsbuildPlugin, fabricSvgModuleStubEsbuildPlugin],
