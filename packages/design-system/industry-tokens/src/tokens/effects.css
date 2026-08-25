@@ -1,5 +1,4 @@
 :root {
-  /* Elevation on a dark ground: a hairline edge plus ambient darkness. */
   --shadow-sm:
     0 1px 2px rgb(0 0 0 / 0.4), 0 0 0 1px color-mix(in srgb, var(--color-text) 8%, transparent);
   --shadow-md:

@@ -10,10 +10,6 @@
   --color-divider: color-mix(in srgb, #e6e9ec 16%, transparent);
   --color-divider-strong: color-mix(in srgb, #e6e9ec 30%, transparent);
 
-  /* Tonal ramps — one shared OKLCH lightness/chroma scale, hue per role, so the same
-     step of any role carries the same visual weight. On this dark ground the 300–400
-     steps are the readable "base", 100–200 are for type on tinted fills,
-     700–900 for fills, hovers and hairlines. */
   --color-neutral-100: oklch(0.95 0.006 250);
   --color-neutral-200: oklch(0.88 0.006 250);
   --color-neutral-300: oklch(0.8 0.006 250);
@@ -34,7 +30,6 @@
   --color-accent-800: oklch(0.34 0.045 250);
   --color-accent-900: oklch(0.24 0.03 250);
 
-  /* accent-2 is the same steel voice one hue-step over — kept so both sets resolve. */
   --color-accent-2-100: oklch(0.95 0.02 235);
   --color-accent-2-200: oklch(0.88 0.035 235);
   --color-accent-2-300: oklch(0.8 0.05 235);
@@ -45,7 +40,6 @@
   --color-accent-2-800: oklch(0.34 0.045 235);
   --color-accent-2-900: oklch(0.24 0.03 235);
 
-  /* Semantics — same scale, hue rotated off the steel. Contained on purpose. */
   --color-success-200: oklch(0.88 0.035 158);
   --color-success-300: oklch(0.8 0.055 158);
   --color-success-400: oklch(0.72 0.07 158);
@@ -66,7 +60,6 @@
   --color-danger: var(--color-danger-400);
   --color-info: var(--color-accent-2-400);
 
-  /* Data-viz — six series at one lightness and chroma, hue-spread. Use in order. */
   --viz-1: oklch(0.72 0.08 250);
   --viz-2: oklch(0.72 0.08 205);
   --viz-3: oklch(0.72 0.08 160);

@@ -8,13 +8,10 @@ const distDir = join(root, 'dist');
 
 mkdirSync(join(distDir, 'tokens'), { recursive: true });
 
-// Token files ship individually too (package.json `./tokens/*` export).
 for (const file of readdirSync(join(srcDir, 'tokens'))) {
   cpSync(join(srcDir, 'tokens', file), join(distDir, 'tokens', file));
 }
 
-// Flattened entry point (`./styles.css` export): resolve the `@import`
-// chain in src/styles.css into one file.
 const entry = readFileSync(join(srcDir, 'styles.css'), 'utf8');
 const importPattern = /@import\s+['"]tokens\/([^'"]+)['"];/g;
 let flattened = '';

@@ -3,16 +3,9 @@ export interface DropShadow {
   shadowOffset: { width: number; height: number };
   shadowRadius: number;
   shadowOpacity: number;
-  /** Approximate — Android's `elevation` has no color/blur control, this is
-   * a rough monochrome stand-in, not a faithful port of the web shadow. */
   elevation: number;
 }
 
-// Resolved from tokens/effects.css. RN's legacy shadow* props support one
-// layer — the hairline ring each web shadow carries alongside it
-// (`0 0 0 1px color-mix(... var(--color-text) N%, transparent)`) has no
-// equivalent there; approximate it separately with `borderWidth: 1` and
-// `borderColor: color.divider` (or `color.dividerStrong`) on the same element.
 export const shadow: Record<'sm' | 'md' | 'lg', DropShadow> = {
   sm: {
     shadowColor: '#000000',

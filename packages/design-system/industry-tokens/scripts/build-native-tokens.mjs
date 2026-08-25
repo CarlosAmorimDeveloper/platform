@@ -3,13 +3,6 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { formatHex, oklch } from 'culori';
 
-// React Native's StyleSheet has no CSS engine — it can't resolve oklch() or
-// color-mix() at runtime, so every color has to be a concrete hex/rgba value
-// computed ahead of time. This script mirrors tokens/colors.css value-for-value
-// and resolves it with culori, so the two token sources can't silently drift
-// without someone noticing (this file regenerates from source on every build,
-// it's never hand-edited).
-
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const outDir = join(root, 'src', 'native');
 mkdirSync(outDir, { recursive: true });
@@ -18,9 +11,6 @@ function hex(l, c, h) {
   return formatHex(oklch({ mode: 'oklch', l, c, h }));
 }
 
-// color-mix(in srgb, COLOR X%, transparent) — with fully transparent as the
-// other side, premultiplied-alpha interpolation reduces to "COLOR at X%
-// alpha", regardless of the interpolation color space.
 function alpha(hexColor, percent) {
   const r = parseInt(hexColor.slice(1, 3), 16);
   const g = parseInt(hexColor.slice(3, 5), 16);
@@ -28,7 +18,6 @@ function alpha(hexColor, percent) {
   return `rgba(${r}, ${g}, ${b}, ${(percent / 100).toFixed(2)})`;
 }
 
-// ── Base colors (tokens/colors.css :root, first block) ──
 const text = '#e6e9ec';
 const color = {
   bg: '#14161a',
@@ -41,7 +30,6 @@ const color = {
   dividerStrong: alpha(text, 30),
 };
 
-// ── Tonal ramps: one shared L/C scale, hue per role ──
 const steps = [100, 200, 300, 400, 500, 600, 700, 800, 900];
 const rampL = {
   100: 0.95,
@@ -70,7 +58,6 @@ const neutral = Object.fromEntries(steps.map((s) => [s, hex(rampL[s], 0.006, 250
 const accentRamp = Object.fromEntries(steps.map((s) => [s, hex(rampL[s], accentC[s], 250)]));
 const accent2Ramp = Object.fromEntries(steps.map((s) => [s, hex(rampL[s], accentC[s], 235)]));
 
-// ── Semantics: same scale, hue rotated off the steel ──
 const success = {
   200: hex(0.88, 0.035, 158),
   300: hex(0.8, 0.055, 158),
@@ -100,7 +87,6 @@ const semanticColor = {
   info: accent2Ramp[400],
 };
 
-// ── Data-viz: six series, one L/C, hue-spread. Assign in order. ──
 const viz = {
   1: hex(0.72, 0.08, 250),
   2: hex(0.72, 0.08, 205),
