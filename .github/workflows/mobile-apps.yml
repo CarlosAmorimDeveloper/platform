@@ -6,7 +6,8 @@ on:
       - main
     paths:
       - 'apps/mobile/**'
-      - 'packages/design-system/**'
+      - 'packages/design-system/vuotto-mobile/**'
+      - 'packages/design-system/vuotto-tokens/**'
       - 'packages/eslint-config/**'
       - 'packages/typescript-config/**'
 

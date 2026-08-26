@@ -4,6 +4,10 @@ on:
   pull_request:
     branches:
       - main
+    paths:
+      - "apps/web/todo-app/**"
+      - "packages/design-system/vuotto-web/**"
+      - "packages/design-system/vuotto-tokens/**"
 
 jobs:
   coverage:
