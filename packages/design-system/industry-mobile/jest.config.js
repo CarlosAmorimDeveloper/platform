@@ -7,13 +7,13 @@ module.exports = {
   preset: '@react-native/jest-preset',
   testMatch: ['**/*.test.{ts,tsx}'],
   transform: {
-    '^.+\\.(js|ts|tsx)$': [
+    '^.+\\.(js|mjs|ts|tsx)$': [
       'babel-jest',
       { configFile: false, presets: ['@react-native/babel-preset'] },
     ],
   },
   transformIgnorePatterns: [
-    'node_modules/(?!(react-native|@react-native|react-native-safe-area-context)/)',
+    'node_modules/(?!(react-native|@react-native|react-native-safe-area-context|lucide-react-native)/)',
   ],
   moduleNameMapper: {
     '^react$': sharedReact,
