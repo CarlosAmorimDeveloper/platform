@@ -36,13 +36,13 @@ export const Default: Story = {
   args: { label: 'Framework', placeholder: 'Escolha um framework' },
 };
 
+function SelectComValorInicial() {
+  const [value, setValue] = useState('rn');
+  return <Select value={value} onChange={setValue} options={frameworkOptions} label="Framework" />;
+}
+
 export const ComValorInicial: Story = {
-  render: () => {
-    const [value, setValue] = useState('rn');
-    return (
-      <Select value={value} onChange={setValue} options={frameworkOptions} label="Framework" />
-    );
-  },
+  render: () => <SelectComValorInicial />,
 };
 
 export const Desabilitado: Story = {
