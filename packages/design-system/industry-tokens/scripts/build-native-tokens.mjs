@@ -1,3 +1,5 @@
+// These color values mirror src/tokens/colors.css by hand — this script does not
+// parse the CSS. Keep the two in sync manually whenever one changes.
 import { writeFileSync, mkdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
