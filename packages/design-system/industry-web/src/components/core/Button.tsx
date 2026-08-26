@@ -53,7 +53,7 @@ function skin(variant: ButtonVariant, hovered: boolean, pressed: boolean): CSSPr
   }
   return {
     color: 'var(--color-text)',
-    borderColor: 'var(--color-divider)',
+    borderColor: hovered || pressed ? 'var(--color-divider-strong)' : 'var(--color-divider)',
     background: pressed
       ? 'color-mix(in srgb, var(--color-text) 14%, transparent)'
       : hovered
