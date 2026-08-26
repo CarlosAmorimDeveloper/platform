@@ -14,13 +14,30 @@ import {
   type Timestamp,
 } from 'firebase/firestore';
 import { db } from '../firebase';
-import { toTicket, type Ticket, type Comment } from '../../domain/ticket';
+import type { Ticket, Comment } from '../../domain/ticket';
 import type { TicketStatus } from '../../constants/ticketStatus';
+import type { TicketPriority } from '../../constants/ticketPriority';
 import type { User } from '../../domain/user';
 
 function assertWorkspaceId(workspaceId: string): void {
   if (!workspaceId)
     throw new Error('workspaceId ausente — usuário não está vinculado a um workspace.');
+}
+
+function toTicket(doc: QueryDocumentSnapshot): Ticket {
+  const data = doc.data();
+  return {
+    id: doc.id,
+    title: (data.title ?? '') as string,
+    description: (data.description ?? '') as string,
+    status: (data.status ?? 'open') as TicketStatus,
+    priority: (data.priority ?? 'medium') as TicketPriority,
+    creatorId: (data.creator_id ?? '') as string,
+    creatorName: (data.creator_name ?? '') as string,
+    createdAt: (data.createdAt as Timestamp | undefined)?.toDate() ?? null,
+    assigneeId: (data.assignee_id as string) ?? null,
+    assigneeName: (data.assignee_name as string) ?? null,
+  };
 }
 
 function ticketsCol(workspaceId: string) {
@@ -40,7 +57,7 @@ function sortByCreatedAtDesc(tickets: Ticket[]): Ticket[] {
   return [...tickets].sort((a, b) => {
     if (!a.createdAt) return 1;
     if (!b.createdAt) return -1;
-    return b.createdAt.toMillis() - a.createdAt.toMillis();
+    return b.createdAt.getTime() - a.createdAt.getTime();
   });
 }
 
@@ -133,13 +150,13 @@ export function subscribeToComments(
             text: data.text as string,
             authorId: data.author_id as string,
             authorName: data.author_name as string,
-            createdAt: (data.createdAt as Timestamp) ?? null,
+            createdAt: (data.createdAt as Timestamp | undefined)?.toDate() ?? null,
           } satisfies Comment;
         })
         .sort((a, b) => {
           if (!a.createdAt) return 1;
           if (!b.createdAt) return -1;
-          return a.createdAt.toMillis() - b.createdAt.toMillis();
+          return a.createdAt.getTime() - b.createdAt.getTime();
         });
       onData(comments);
     },

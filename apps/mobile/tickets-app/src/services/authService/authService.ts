@@ -59,7 +59,7 @@ export async function createUser(
   email: string,
   password: string,
   role: UserRole,
-  workspaceId: string,
+  creator: User,
 ): Promise<void> {
   const disposableApp = initializeApp(firebaseConfig, `disposable-${Date.now()}`);
   const disposableAuth = getAuth(disposableApp);
@@ -70,7 +70,7 @@ export async function createUser(
       email: trimmedEmail,
       name: name.trim(),
       role,
-      workspace_id: workspaceId,
+      workspace_id: creator.workspaceId,
     });
     await signOut(disposableAuth);
   } catch (err: unknown) {

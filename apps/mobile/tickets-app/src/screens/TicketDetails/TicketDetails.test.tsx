@@ -94,8 +94,6 @@ function mockTicketDetailsReturn(overrides: Partial<ReturnType<typeof useTicketD
     loading: false,
     error: null,
     clearError: jest.fn(),
-    updateTicket: jest.fn().mockResolvedValue(undefined),
-    deleteTicket: jest.fn().mockResolvedValue(undefined),
     addComment: jest.fn().mockResolvedValue(undefined),
     deleteComment: jest.fn().mockResolvedValue(undefined),
     ...overrides,

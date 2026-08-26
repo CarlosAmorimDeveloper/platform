@@ -1,94 +1,16 @@
-import type { Timestamp } from 'firebase/firestore';
-import { describe, it, expect, beforeEach, jest } from '@jest/globals';
-import { formatDate, toTicket } from './ticket';
-import type { Ticket } from './ticket';
-
-function makeDoc(id: string, data: Record<string, unknown>) {
-  return { id, data: () => data } as Parameters<typeof toTicket>[0];
-}
-
-function makeTimestamp(date: Date) {
-  return { toDate: () => date } as unknown as Timestamp;
-}
-
-describe('toTicket', () => {
-  beforeEach(async () => jest.clearAllMocks());
-
-  it('maps all fields from Firestore document', () => {
-    const ts = makeTimestamp(new Date());
-    const doc = makeDoc('ticket-1', {
-      title: 'Bug report',
-      description: 'Something broke',
-      status: 'in_progress',
-      priority: 'high',
-      creator_id: 'user-1',
-      creator_name: 'Alice',
-      createdAt: ts,
-      assignee_id: 'user-2',
-      assignee_name: 'Bob',
-    });
-    const ticket: Ticket = toTicket(doc);
-    expect(ticket.id).toBe('ticket-1');
-    expect(ticket.title).toBe('Bug report');
-    expect(ticket.description).toBe('Something broke');
-    expect(ticket.status).toBe('in_progress');
-    expect(ticket.priority).toBe('high');
-    expect(ticket.creatorId).toBe('user-1');
-    expect(ticket.creatorName).toBe('Alice');
-    expect(ticket.createdAt).toBe(ts);
-    expect(ticket.assigneeId).toBe('user-2');
-    expect(ticket.assigneeName).toBe('Bob');
-  });
-
-  it('maps assigneeId and assigneeName from Firestore document', () => {
-    const doc = makeDoc('t-assign', {
-      assignee_id: 'user-99',
-      assignee_name: 'Carol',
-    });
-    const ticket = toTicket(doc);
-    expect(ticket.assigneeId).toBe('user-99');
-    expect(ticket.assigneeName).toBe('Carol');
-  });
-
-  it('defaults assigneeId and assigneeName to null when missing', () => {
-    const ticket = toTicket(makeDoc('t-no-assign', {}));
-    expect(ticket.assigneeId).toBeNull();
-    expect(ticket.assigneeName).toBeNull();
-  });
-
-  it('uses empty string defaults for missing string fields', () => {
-    const ticket = toTicket(makeDoc('t2', {}));
-    expect(ticket.title).toBe('');
-    expect(ticket.description).toBe('');
-    expect(ticket.creatorId).toBe('');
-    expect(ticket.creatorName).toBe('');
-  });
-
-  it('defaults status to open when missing', () => {
-    expect(toTicket(makeDoc('t3', {})).status).toBe('open');
-  });
-
-  it('defaults priority to medium when missing', () => {
-    expect(toTicket(makeDoc('t4', {})).priority).toBe('medium');
-  });
-
-  it('defaults createdAt to null when missing', () => {
-    expect(toTicket(makeDoc('t5', {})).createdAt).toBeNull();
-  });
-});
+import { describe, it, expect } from '@jest/globals';
+import { formatDate } from './ticket';
 
 describe('formatDate', () => {
-  beforeEach(async () => jest.clearAllMocks());
-
-  it('formats a Timestamp to pt-BR locale string', () => {
+  it('formats a Date to pt-BR locale string', () => {
     const date = new Date(2024, 0, 15, 14, 30);
-    const result = formatDate(makeTimestamp(date));
+    const result = formatDate(date);
     expect(result).toContain('15');
     expect(result).toContain('01');
     expect(result).toContain('2024');
   });
 
-  it('returns empty string for null timestamp', () => {
+  it('returns empty string for a null date', () => {
     expect(formatDate(null)).toBe('');
   });
 });

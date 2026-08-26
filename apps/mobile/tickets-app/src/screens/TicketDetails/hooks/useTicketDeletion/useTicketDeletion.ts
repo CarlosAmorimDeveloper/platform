@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { deleteTicket } from '../../../../services/ticketService';
+import { useAuthStore } from '../../../../store/useAuthStore';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { AppStackParamList } from '../../../../navigation/types';
 
 interface UseTicketDeletionParams {
   ticketId: string;
-  workspaceId: string;
   navigation: NativeStackNavigationProp<AppStackParamList, 'TicketDetails'>;
   deleteComment: (id: string) => Promise<void>;
 }
@@ -25,10 +25,10 @@ interface UseTicketDeletionResult {
 
 export function useTicketDeletion({
   ticketId,
-  workspaceId,
   navigation,
   deleteComment,
 }: UseTicketDeletionParams): UseTicketDeletionResult {
+  const workspaceId = useAuthStore((s) => s.user?.workspaceId ?? '');
   const [deleteVisible, setDeleteVisible] = useState(false);
   const [deleteCommentVisible, setDeleteCommentVisible] = useState(false);
   const [pendingCommentId, setPendingCommentId] = useState<string | null>(null);

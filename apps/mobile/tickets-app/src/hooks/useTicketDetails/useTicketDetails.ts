@@ -2,22 +2,11 @@ import { useEffect, useState } from 'react';
 import {
   subscribeToTicketById,
   subscribeToComments,
-  updateTicket,
-  deleteTicket,
   addComment,
   deleteComment,
 } from '../../services/ticketService';
 import { useAuthStore } from '../../store/useAuthStore';
 import type { Ticket, Comment } from '../../domain/ticket';
-import type { TicketStatus } from '../../constants/ticketStatus';
-import type { TicketPriority } from '../../constants/ticketPriority';
-
-interface UpdateTicketParams {
-  status: TicketStatus;
-  priority: TicketPriority;
-  assigneeId?: string | null;
-  assigneeName?: string | null;
-}
 
 export function useTicketDetails(ticketId: string) {
   const user = useAuthStore((s) => s.user);
@@ -55,33 +44,6 @@ export function useTicketDetails(ticketId: string) {
     return unsubscribe;
   }, [ticketId, user]);
 
-  async function handleUpdateTicket({
-    status,
-    priority,
-    assigneeId,
-    assigneeName,
-  }: UpdateTicketParams) {
-    if (!user) return;
-    try {
-      await updateTicket(
-        ticketId,
-        { status, priority, assigneeId, assigneeName },
-        user.workspaceId,
-      );
-    } catch (err: unknown) {
-      setErrorFrom(err, 'Falha ao atualizar o chamado.');
-    }
-  }
-
-  async function handleDeleteTicket() {
-    if (!user) return;
-    try {
-      await deleteTicket(ticketId, user.workspaceId);
-    } catch (err: unknown) {
-      setErrorFrom(err, 'Falha ao apagar o chamado.');
-    }
-  }
-
   async function handleAddComment(text: string) {
     if (!user) return;
     try {
@@ -106,8 +68,6 @@ export function useTicketDetails(ticketId: string) {
     loading,
     error,
     clearError: () => setError(null),
-    updateTicket: handleUpdateTicket,
-    deleteTicket: handleDeleteTicket,
     addComment: handleAddComment,
     deleteComment: handleDeleteComment,
   };

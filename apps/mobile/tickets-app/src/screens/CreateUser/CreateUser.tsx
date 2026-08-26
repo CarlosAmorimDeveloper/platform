@@ -3,7 +3,7 @@ import { View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AppBar, Button, Field, Input, LoadingIndicator, Select, useToast } from '@vuotto/mobile';
 import { createUser } from '../../services/authService';
-import { passwordMinLengthError } from '../../utils/validation';
+import { passwordMinLengthError } from '../../domain/validation';
 import { useAuthStore } from '../../store/useAuthStore';
 import type { UserRole } from '../../domain/user';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -39,7 +39,7 @@ export function CreateUser({ navigation }: Props) {
     if (!isValid) return;
     setLoading(true);
     try {
-      await createUser(name, email, password, role, currentUser!.workspaceId);
+      await createUser(name, email, password, role, currentUser!);
       toast.show({ tone: 'success', title: 'Usuário criado com sucesso!' });
       setTimeout(() => navigation.goBack(), 1500);
     } catch (err: unknown) {

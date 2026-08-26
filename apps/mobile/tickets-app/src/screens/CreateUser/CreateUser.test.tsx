@@ -114,7 +114,7 @@ describe('CreateUser', () => {
       'alice@test.com',
       'secret1',
       'standard',
-      adminUser.workspaceId,
+      adminUser,
     );
     expect(screen.getByText('Usuário criado com sucesso!')).toBeTruthy();
 
