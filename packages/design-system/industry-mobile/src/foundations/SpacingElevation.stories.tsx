@@ -41,7 +41,7 @@ export const TouchTargets: Story = {
             justifyContent: 'center',
           }}
         >
-          <Text style={{ fontSize: 12, color: color.text }}>44px</Text>
+          <Text style={{ fontSize: 12, color: color.text }}>{control.height}px</Text>
         </View>
         <Text style={{ fontSize: 10, opacity: 0.5, marginTop: 6, color: color.text }}>
           control.height · control.tap
@@ -58,7 +58,7 @@ export const TouchTargets: Story = {
             justifyContent: 'center',
           }}
         >
-          <Text style={{ fontSize: 12, color: color.text }}>36px</Text>
+          <Text style={{ fontSize: 12, color: color.text }}>{control.heightSm}px</Text>
         </View>
         <Text style={{ fontSize: 10, opacity: 0.5, marginTop: 6, color: color.text }}>
           control.heightSm · chrome de tabela

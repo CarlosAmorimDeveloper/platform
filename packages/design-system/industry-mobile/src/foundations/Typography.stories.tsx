@@ -16,24 +16,19 @@ const meta: Meta = {
 export default meta;
 type Story = StoryObj;
 
-const HEADINGS: { key: keyof typeof fontSize; label: string }[] = [
-  { key: 'h1', label: 'H1 · 46' },
-  { key: 'h2', label: 'H2 · 34' },
-  { key: 'h3', label: 'H3 · 26' },
-  { key: 'h4', label: 'H4 · 21' },
-  { key: 'h5', label: 'H5 · 17' },
-  { key: 'h6', label: 'H6 · 13' },
-];
+const HEADING_KEYS = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'] as const;
 
 export const Headings: Story = {
   render: () => (
     <View>
-      {HEADINGS.map(({ key, label }) => (
+      {HEADING_KEYS.map((key) => (
         <View
           key={key}
           style={{ flexDirection: 'row', alignItems: 'baseline', gap: 12, marginVertical: 4 }}
         >
-          <Text style={{ width: 64, fontSize: 10, opacity: 0.45, color: color.text }}>{label}</Text>
+          <Text style={{ width: 64, fontSize: 10, opacity: 0.45, color: color.text }}>
+            {key.toUpperCase()} · {fontSize[key]}
+          </Text>
           <Text
             style={{
               fontFamily: fontFamily.heading,

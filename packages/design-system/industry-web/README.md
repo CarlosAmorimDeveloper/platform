@@ -19,7 +19,7 @@ import '@industry/tokens/styles.css'; // tokens são globais, via CSS custom pro
 
 ## Documentação de fundação (Storybook)
 
-Seis páginas em `Foundations/*` no Storybook, cada uma renderizando os tokens reais de `@industry/tokens` (nunca um valor fixo): `Foundations/Color` (papéis de cor + rampas tonais), `Foundations/Typography` (escala h1-h6 e corpo), `Foundations/Semantics` (rampas semânticas + data-viz), `Foundations/Spacing & Elevation` (escala de 4px, alvos de toque, raio, sombras), `Foundations/Icons` (o conjunto Lucide via `Icon`), `Foundations/Image` (o tratamento `Duotone`).
+Seis páginas em `Foundations/*` no Storybook, cada uma renderizando os tokens reais de `@industry/tokens` (nunca um valor de token fixo): `Foundations/Color` (papéis de cor + rampas tonais), `Foundations/Typography` (escala h1-h6 e corpo), `Foundations/Semantics` (rampas semânticas + data-viz), `Foundations/Spacing & Elevation` (escala de 4px, alvos de toque, raio, sombras), `Foundations/Icons` (o conjunto Lucide via `Icon`), `Foundations/Image` (o tratamento `Duotone`).
 
 ## Build
 
@@ -31,4 +31,4 @@ yarn workspace @industry/web build-storybook        # build estático (usado pel
 
 ## Escopo
 
-Este pacote tem três componentes prontos: `Frame` (REB-62), `Icon` (REB-64) e `Duotone` (REB-63). As páginas de fundação no Storybook (REB-65) estão prontas — fecha o épico REB-49. Os controles/layout/navegação/feedback/dados (REB-67 a REB-71) chegam em PRs seguintes.
+Este pacote tem três componentes prontos: `Frame` (REB-62), `Icon` (REB-64) e `Duotone` (REB-63). As páginas de fundação no Storybook (REB-65) estão prontas — fecha o épico REB-49. A taxonomia de pastas (`src/components/{core,data,feedback,forms,navigation}`) já espelha `@vuotto/web` para receber esses componentes sem reestruturação. Os controles/layout/navegação/feedback/dados (REB-67 a REB-71) chegam em PRs seguintes.
