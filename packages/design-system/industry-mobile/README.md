@@ -1,6 +1,6 @@
 # @industry/mobile
 
-Componentes React Native do **Industry** — consumindo tokens de [`@industry/tokens`](../industry-tokens/README.md). Espelha a estrutura e o tooling de [`@vuotto/mobile`](../vuotto-mobile/README.md): export único `"."`, `dist/` construído com `tsup`, Storybook via `react-native-web`. Diferente de `@vuotto/mobile`, tem um setup de Jest (porta do de [`@ds/mobile`](../mobile/README.md), sem a entrada de `react-native-paper` — este pacote não depende dele).
+Componentes React Native do **Industry** — consumindo tokens de [`@industry/tokens`](../industry-tokens/README.md). Espelha a estrutura e o tooling de [`@vuotto/mobile`](../vuotto-mobile/README.md): export único `"."`, `dist/` construído com `tsup`, Storybook via `react-native-web`. Diferente de `@vuotto/mobile`, tem um setup de Jest (porta do que o extinto `@ds/mobile` usava), sem a entrada de `react-native-paper` — este pacote não depende dele).
 
 ## Instalação
 

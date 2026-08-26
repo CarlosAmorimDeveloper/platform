@@ -20,12 +20,12 @@ Configurações TypeScript compartilhadas do monorepo `platform`. Fornece preset
 
 ## Configurações disponíveis
 
-| Arquivo              | Uso recomendado                                                           |
-| -------------------- | ------------------------------------------------------------------------- |
-| `base.json`          | Qualquer pacote TypeScript (tokens, eslint-config)                        |
-| `nextjs.json`        | Aplicações Next.js (`apps/web/todo-app`)                                  |
-| `react-library.json` | Pacotes React com JSX (`@ds/web`, `@vuotto/web`, `@industry/web`)         |
-| `react-native.json`  | Pacotes React Native (`@ds/mobile`, `@vuotto/mobile`, `@industry/mobile`) |
+| Arquivo              | Uso recomendado                                             |
+| -------------------- | ----------------------------------------------------------- |
+| `base.json`          | Qualquer pacote TypeScript (tokens, eslint-config)          |
+| `nextjs.json`        | Aplicações Next.js (`apps/web/todo-app`)                    |
+| `react-library.json` | Pacotes React com JSX (`@vuotto/web`, `@industry/web`)      |
+| `react-native.json`  | Pacotes React Native (`@vuotto/mobile`, `@industry/mobile`) |
 
 ## Uso
 
