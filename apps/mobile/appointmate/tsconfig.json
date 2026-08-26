@@ -2,6 +2,7 @@
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
     "strict": true,
+    "noUncheckedIndexedAccess": true,
     "types": ["jest", "node"],
     "paths": {
       // Required for `getReactNativePersistence` type resolution (not exported
