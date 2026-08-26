@@ -16,6 +16,10 @@ import { Frame } from '@industry/mobile';
 
 **`Duotone`** — wrapper de imagem. **Aproximação documentada**, não um `mix-blend-mode` real: React Native não tem essa propriedade (não faz parte de `ViewStyle` no RN 0.81, e este monorepo não depende de `react-native-skia`, que teria blend modes de verdade). O que existe aqui é uma sobreposição plana com opacidade do acento (`alpha(color.accent, 55)`) — visualmente diferente de um blend real (tinge uniformemente em vez de preservar a luminância da foto por baixo), mas é o fallback que o REB-63 explicitamente permite. `props`: `children`, `style`.
 
+## Documentação de fundação (Storybook)
+
+Seis páginas em `Foundations/*` no Storybook, cada uma renderizando os tokens reais de `@industry/tokens` (nunca um valor fixo): `Foundations/Color`, `Foundations/Typography`, `Foundations/Semantics`, `Foundations/Spacing & Elevation`, `Foundations/Icons` (sujeita à mesma limitação de SVG invisível no preview documentada em "Limitação conhecida do Storybook"), `Foundations/Image` (o tratamento `Duotone`, aproximação documentada).
+
 ## Build e testes
 
 ```sh
@@ -35,4 +39,4 @@ Herdada de `@vuotto/mobile`: `react-native-web@0.19.x` ainda não suporta React 
 
 ## Escopo
 
-Este pacote tem três componentes prontos: `Frame` (REB-62), `Icon` (REB-64) e `Duotone` (REB-63). As páginas de fundação no Storybook (REB-65) e os controles/layout/navegação/feedback/dados (REB-73 a REB-77) chegam em PRs seguintes.
+Este pacote tem três componentes prontos: `Frame` (REB-62), `Icon` (REB-64) e `Duotone` (REB-63). As páginas de fundação no Storybook (REB-65) estão prontas — fecha o épico REB-49. Os controles/layout/navegação/feedback/dados (REB-73 a REB-77) chegam em PRs seguintes.
