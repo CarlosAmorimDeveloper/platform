@@ -3,8 +3,10 @@ import {
   EMPTY_MEDICATION,
   EMPTY_QUESTION,
   MOOD_OPTIONS,
+  formatDate,
   formatDateInput,
   isDateOnOrAfterToday,
+  isFormValuesEmpty,
 } from './form';
 
 describe('MOOD_OPTIONS', () => {
@@ -105,5 +107,43 @@ describe('isDateOnOrAfterToday', () => {
   it('does not flag an empty or incomplete date — that is the "required" rule\'s job', () => {
     expect(isDateOnOrAfterToday('', now)).toBe(true);
     expect(isDateOnOrAfterToday('15/03', now)).toBe(true);
+  });
+});
+
+describe('formatDate', () => {
+  it('returns null for a null date', () => {
+    expect(formatDate(null)).toBeNull();
+  });
+
+  it('formats a date as dd/mm/aaaa, hh:mm in pt-BR', () => {
+    const date = new Date(2026, 2, 15, 9, 5);
+    expect(formatDate(date)).toBe('15/03/2026, 09:05');
+  });
+});
+
+describe('isFormValuesEmpty', () => {
+  it('is true for EMPTY_FORM_VALUES', () => {
+    expect(isFormValuesEmpty(EMPTY_FORM_VALUES)).toBe(true);
+  });
+
+  it('is false when any text field is filled', () => {
+    expect(isFormValuesEmpty({ ...EMPTY_FORM_VALUES, sleep: 'Dormi bem' })).toBe(false);
+  });
+
+  it('is false when a mood is selected, even with no text filled', () => {
+    expect(isFormValuesEmpty({ ...EMPTY_FORM_VALUES, overallMood: 'bem' })).toBe(false);
+  });
+
+  it('is false when a medication or question row has text', () => {
+    expect(isFormValuesEmpty({ ...EMPTY_FORM_VALUES, medications: [{ text: 'Sertralina' }] })).toBe(
+      false,
+    );
+    expect(
+      isFormValuesEmpty({ ...EMPTY_FORM_VALUES, questions: [{ text: 'Posso reduzir a dose?' }] }),
+    ).toBe(false);
+  });
+
+  it('ignores whitespace-only text as still empty', () => {
+    expect(isFormValuesEmpty({ ...EMPTY_FORM_VALUES, sleep: '   ' })).toBe(true);
   });
 });
