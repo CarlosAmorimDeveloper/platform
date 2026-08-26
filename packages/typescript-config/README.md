@@ -2,7 +2,7 @@
 
 [![TypeScript][typescript-shield]][typescript-url]
 
-Configurações TypeScript compartilhadas do monorepo `platform`. Fornece três presets prontos para uso, cobrindo projetos genéricos, aplicações Next.js e pacotes React.
+Configurações TypeScript compartilhadas do monorepo `platform`. Fornece presets prontos para uso, cobrindo projetos genéricos, aplicações Next.js, pacotes React e pacotes React Native.
 
 ## Índice
 
@@ -10,6 +10,7 @@ Configurações TypeScript compartilhadas do monorepo `platform`. Fornece três 
 - [Configurações disponíveis](#configurações-disponíveis)
 - [Uso](#uso)
 - [Opções de compilação](#opções-de-compilação)
+- [Exceção: apps Expo](#exceção-apps-expo)
 - [Contribuindo](#contribuindo)
 - [Licença](#licença)
 
@@ -19,11 +20,12 @@ Configurações TypeScript compartilhadas do monorepo `platform`. Fornece três 
 
 ## Configurações disponíveis
 
-| Arquivo              | Uso recomendado                                    |
-| -------------------- | -------------------------------------------------- |
-| `base.json`          | Qualquer pacote TypeScript (tokens, eslint-config) |
-| `nextjs.json`        | Aplicações Next.js (`apps/web/todo-app`)           |
-| `react-library.json` | Pacotes React com JSX (`@ds/web`, `@ds/mobile`)    |
+| Arquivo              | Uso recomendado                                                           |
+| -------------------- | ------------------------------------------------------------------------- |
+| `base.json`          | Qualquer pacote TypeScript (tokens, eslint-config)                        |
+| `nextjs.json`        | Aplicações Next.js (`apps/web/todo-app`)                                  |
+| `react-library.json` | Pacotes React com JSX (`@ds/web`, `@vuotto/web`, `@industry/web`)         |
+| `react-native.json`  | Pacotes React Native (`@ds/mobile`, `@vuotto/mobile`, `@industry/mobile`) |
 
 ## Uso
 
@@ -70,6 +72,19 @@ Estenda a config desejada no `tsconfig.json` do seu pacote:
 }
 ```
 
+### Pacote React Native
+
+```json
+{
+  "extends": "@repo/typescript-config/react-native.json",
+  "compilerOptions": {
+    "outDir": "dist"
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
+}
+```
+
 ## Opções de compilação
 
 As opções abaixo são definidas em `base.json` e herdadas por todas as configurações:
@@ -102,6 +117,17 @@ As opções abaixo são definidas em `base.json` e herdadas por todas as configu
 | Opção | Valor       | Descrição                                 |
 | ----- | ----------- | ----------------------------------------- |
 | `jsx` | `react-jsx` | Transforma JSX com o runtime do React 17+ |
+
+### Adições de `react-native.json`
+
+| Opção   | Valor              | Descrição                                      |
+| ------- | ------------------ | ---------------------------------------------- |
+| `lib`   | `ES2022`           | Remove os tipos de DOM herdados de `base.json` |
+| `types` | `["react-native"]` | Inclui os tipos globais do React Native        |
+
+## Exceção: apps Expo
+
+`apps/mobile/appointmate` e `apps/mobile/tickets-app` **não** estendem nenhum preset deste pacote — eles estendem `expo/tsconfig.base` diretamente, porque o Metro bundler do Expo exige opções de módulo/resolução próprias que conflitam com `base.json` (`module`/`moduleResolution: NodeNext`). Para não perder as verificações estritas do restante do monorepo, cada um replica manualmente `strict: true` e `noUncheckedIndexedAccess: true` no próprio `tsconfig.json`. Se `base.json` ganhar novas opções de strictness no futuro, replique-as manualmente nesses dois apps também.
 
 ## Contribuindo
 
