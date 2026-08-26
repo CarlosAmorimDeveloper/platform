@@ -28,6 +28,7 @@ export function TextField({
   multiline,
   rows = 3,
   id,
+  disabled,
   style,
   onFocus,
   onBlur,
@@ -36,8 +37,17 @@ export function TextField({
   const generatedId = useId();
   const fid = id ?? generatedId;
   const [focused, setFocused] = useState(false);
+  const [hovered, setHovered] = useState(false);
   const hintId = `${fid}-hint`;
   const describedBy = error || hint ? hintId : undefined;
+
+  const borderColor = error
+    ? 'var(--color-danger)'
+    : focused
+      ? 'var(--color-accent)'
+      : hovered
+        ? 'var(--color-divider-strong)'
+        : 'var(--color-divider)';
 
   const fieldStyle: CSSProperties = {
     width: '100%',
@@ -48,9 +58,11 @@ export function TextField({
     color: 'var(--color-text)',
     caretColor: 'var(--color-accent)',
     background: 'var(--color-surface)',
-    border: `1px solid ${error ? 'var(--color-danger)' : focused ? 'var(--color-accent)' : 'var(--color-divider)'}`,
+    border: `1px solid ${borderColor}`,
     borderRadius: 0,
     resize: multiline ? 'vertical' : undefined,
+    opacity: disabled ? 0.45 : 1,
+    cursor: disabled ? 'not-allowed' : undefined,
   };
 
   const handleFocus = (e: FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -76,20 +88,26 @@ export function TextField({
         <textarea
           id={fid}
           rows={rows}
+          disabled={disabled}
           aria-invalid={error ? 'true' : undefined}
           aria-describedby={describedBy}
           onFocus={handleFocus}
           onBlur={handleBlur}
+          onMouseEnter={() => setHovered(true)}
+          onMouseLeave={() => setHovered(false)}
           style={fieldStyle}
           {...(rest as TextareaHTMLAttributes<HTMLTextAreaElement>)}
         />
       ) : (
         <input
           id={fid}
+          disabled={disabled}
           aria-invalid={error ? 'true' : undefined}
           aria-describedby={describedBy}
           onFocus={handleFocus}
           onBlur={handleBlur}
+          onMouseEnter={() => setHovered(true)}
+          onMouseLeave={() => setHovered(false)}
           style={fieldStyle}
           {...rest}
         />

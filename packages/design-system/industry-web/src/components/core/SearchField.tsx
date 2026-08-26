@@ -13,18 +13,27 @@ export interface SearchFieldProps extends Omit<
 
 export function SearchField({
   placeholder = 'Search',
+  disabled,
   style,
   onFocus,
   onBlur,
   ...rest
 }: SearchFieldProps) {
   const [focused, setFocused] = useState(false);
+  const [hovered, setHovered] = useState(false);
+
+  const borderColor = focused
+    ? 'var(--color-accent)'
+    : hovered
+      ? 'var(--color-divider-strong)'
+      : 'var(--color-divider)';
 
   return (
     <div style={{ position: 'relative', ...style }}>
       <input
         type="search"
         placeholder={placeholder}
+        disabled={disabled}
         onFocus={(e) => {
           setFocused(true);
           onFocus?.(e);
@@ -33,6 +42,8 @@ export function SearchField({
           setFocused(false);
           onBlur?.(e);
         }}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
         style={{
           width: '100%',
           minHeight: 'var(--control-h)',
@@ -42,8 +53,10 @@ export function SearchField({
           color: 'var(--color-text)',
           caretColor: 'var(--color-accent)',
           background: 'var(--color-surface)',
-          border: `1px solid ${focused ? 'var(--color-accent)' : 'var(--color-divider)'}`,
+          border: `1px solid ${borderColor}`,
           borderRadius: 0,
+          opacity: disabled ? 0.45 : 1,
+          cursor: disabled ? 'not-allowed' : undefined,
         }}
         {...rest}
       />
