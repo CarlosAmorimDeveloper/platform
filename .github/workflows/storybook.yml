@@ -6,11 +6,13 @@ on:
       - main
     paths:
       - "packages/design-system/web/**"
+      - "packages/design-system/tokens/**"
   pull_request:
     branches:
       - main
     paths:
       - "packages/design-system/web/**"
+      - "packages/design-system/tokens/**"
 
 jobs:
   chromatic:

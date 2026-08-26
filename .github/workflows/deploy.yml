@@ -6,11 +6,15 @@ on:
       - main
     paths:
       - "apps/web/todo-app/**"
+      - "packages/design-system/vuotto-web/**"
+      - "packages/design-system/vuotto-tokens/**"
   pull_request:
     branches:
       - main
     paths:
       - "apps/web/todo-app/**"
+      - "packages/design-system/vuotto-web/**"
+      - "packages/design-system/vuotto-tokens/**"
 
 env:
   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
