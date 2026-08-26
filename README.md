@@ -28,13 +28,13 @@ Monorepo pessoal reunindo uma aplicação web, dois apps mobile publicados na Go
 
 Cada app tem seu próprio README com detalhes de arquitetura, funcionalidades e scripts.
 
-| App                                              | Plataforma                | O que é                                                                                             | Stack principal                         |
-| ------------------------------------------------ | ------------------------- | --------------------------------------------------------------------------------------------------- | --------------------------------------- |
-| [Todo App](apps/web/todo-app/README.md)          | Web (Next.js 16)          | Gerenciador de tarefas com persistência local                                                       | Redux Toolkit, Tailwind CSS, `@ds/web`  |
-| [AppointMate](apps/mobile/appointmate/README.md) | Mobile (Expo/Android/iOS) | Registro estruturado de humor/sono/medicação entre consultas de saúde mental, com exportação em PDF | Firebase, React Hook Form, `@ds/mobile` |
-| [Tickets App](apps/mobile/tickets-app/README.md) | Mobile (Expo/Android/iOS) | Sistema de tickets multi-tenant por workspace, publicado na Play Store                              | Firebase, Zustand, `@ds/mobile`         |
+| App                                              | Plataforma                | O que é                                                                                             | Stack principal                             |
+| ------------------------------------------------ | ------------------------- | --------------------------------------------------------------------------------------------------- | ------------------------------------------- |
+| [Todo App](apps/web/todo-app/README.md)          | Web (Next.js 16)          | Gerenciador de tarefas com persistência local                                                       | Redux Toolkit, Tailwind CSS, `@vuotto/web`  |
+| [AppointMate](apps/mobile/appointmate/README.md) | Mobile (Expo/Android/iOS) | Registro estruturado de humor/sono/medicação entre consultas de saúde mental, com exportação em PDF | Firebase, React Hook Form, `@vuotto/mobile` |
+| [Tickets App](apps/mobile/tickets-app/README.md) | Mobile (Expo/Android/iOS) | Sistema de tickets multi-tenant por workspace, publicado na Play Store                              | Firebase, Zustand, `@vuotto/mobile`         |
 
-As três consomem o mesmo Design System (`@ds/web` na web, `@ds/mobile` nos apps nativos), temado a partir de `@ds/tokens`.
+As três consomem o mesmo Design System Vuotto Tech (`@vuotto/web` na web, `@vuotto/mobile` nos apps nativos), temado a partir de `@vuotto/tokens`. Um segundo design system, Industry (`@industry/web`/`@industry/mobile`/`@industry/tokens`), está em desenvolvimento em paralelo e ainda não foi adotado por nenhum app.
 
 ## Construído com
 
@@ -73,9 +73,12 @@ platform/
 │       └── tickets-app/        # Expo — tickets multi-tenant (Play Store)
 ├── packages/
 │   ├── design-system/
-│   │   ├── web/                # Componentes React (@ds/web)
-│   │   ├── mobile/              # Componentes React Native (@ds/mobile)
-│   │   └── tokens/               # Tokens de design (@ds/tokens)
+│   │   ├── vuotto-web/          # Componentes React (@vuotto/web)
+│   │   ├── vuotto-mobile/       # Componentes React Native (@vuotto/mobile)
+│   │   ├── vuotto-tokens/       # Tokens de design (@vuotto/tokens)
+│   │   ├── industry-web/        # Componentes React (@industry/web, em desenvolvimento)
+│   │   ├── industry-mobile/     # Componentes React Native (@industry/mobile, em desenvolvimento)
+│   │   └── industry-tokens/     # Tokens de design (@industry/tokens, em desenvolvimento)
 │   ├── eslint-config/          # Configuração ESLint compartilhada
 │   └── typescript-config/      # tsconfig base compartilhado
 ├── turbo.json
@@ -95,9 +98,9 @@ O Yarn Workspaces instala as dependências de todos os pacotes em uma única eta
 ## Desenvolvimento
 
 ```sh
-yarn dev                                # Todo App + Storybook em paralelo (recomendado)
+yarn dev                                # Roda o dev script persistente de cada workspace em paralelo
 yarn dev --filter=todo-app              # Só a Todo App -> http://localhost:3000
-yarn workspace @ds/web storybook        # Só o Storybook -> http://localhost:6006
+yarn workspace @vuotto/web storybook    # Storybook do design system web -> http://localhost:6008
 yarn workspace @app/appointmate start   # Um app mobile (ou @app/tickets)
 ```
 
@@ -121,34 +124,36 @@ Scripts específicos de cada app/pacote (`test`, `build:android`, `storybook` et
 
 ## Design System
 
-Três pacotes, todos temados a partir de `@ds/tokens`:
+O design system adotado pelos três apps é o **Vuotto Tech**, três pacotes temados a partir de `@vuotto/tokens`:
 
-- **[`@ds/web`](packages/design-system/web/README.md)** — componentes React, wrappers finos sobre MUI v6. Documentado no Storybook, com regressão visual via Chromatic.
-- **[`@ds/mobile`](packages/design-system/mobile/README.md)** — componentes React Native, wrappers finos sobre React Native Paper.
-- **[`@ds/tokens`](packages/design-system/tokens/README.md)** — cores, espaçamentos, tamanhos de fonte e raios, como constantes TypeScript e variáveis CSS.
+- **[`@vuotto/web`](packages/design-system/vuotto-web/README.md)** — componentes React, próprios (sem MUI/Emotion), estilizados via CSS custom properties. Documentado no Storybook, com regressão visual via Chromatic.
+- **[`@vuotto/mobile`](packages/design-system/vuotto-mobile/README.md)** — componentes React Native, próprios (sem React Native Paper).
+- **[`@vuotto/tokens`](packages/design-system/vuotto-tokens/README.md)** — cores, espaçamentos, tamanhos de fonte e raios, como constantes TypeScript e variáveis CSS.
+
+Um segundo design system, **Industry** (`@industry/web`/`@industry/mobile`/`@industry/tokens` em `packages/design-system/industry-*`), está em desenvolvimento em paralelo e ainda não foi adotado por nenhum app.
 
 ## Tecnologias
 
-| Camada                | Tecnologia                                        |
-| --------------------- | ------------------------------------------------- |
-| Monorepo              | Turborepo + Yarn Workspaces v1                    |
-| Framework (web)       | Next.js 16 (App Router)                           |
-| Framework (mobile)    | Expo SDK 54 (React Native 0.81, New Architecture) |
-| Estado (web)          | Redux Toolkit                                     |
-| Estado (mobile)       | Zustand (Tickets App) / Context API (AppointMate) |
-| Backend (mobile)      | Firebase Auth + Firestore                         |
-| Design System         | `@ds/web` / `@ds/mobile` + `@ds/tokens`           |
-| Testes                | Jest + Testing Library                            |
-| Testes visuais        | Chromatic (Storybook)                             |
-| Build/Deploy (mobile) | EAS Build + EAS Submit                            |
-| Tipos                 | TypeScript 5.9 (strict)                           |
-| Lint / Formato        | ESLint + Prettier                                 |
+| Camada                | Tecnologia                                          |
+| --------------------- | --------------------------------------------------- |
+| Monorepo              | Turborepo + Yarn Workspaces v1                      |
+| Framework (web)       | Next.js 16 (App Router)                             |
+| Framework (mobile)    | Expo SDK 54 (React Native 0.81, New Architecture)   |
+| Estado (web)          | Redux Toolkit                                       |
+| Estado (mobile)       | Zustand (Tickets App) / Context API (AppointMate)   |
+| Backend (mobile)      | Firebase Auth + Firestore                           |
+| Design System         | `@vuotto/web` / `@vuotto/mobile` + `@vuotto/tokens` |
+| Testes                | Jest + Testing Library                              |
+| Testes visuais        | Chromatic (Storybook)                               |
+| Build/Deploy (mobile) | EAS Build + EAS Submit                              |
+| Tipos                 | TypeScript 5.9 (strict)                             |
+| Lint / Formato        | ESLint + Prettier                                   |
 
 ## Contribuindo
 
 Pull requests são bem-vindos. Para mudanças maiores, abra uma issue primeiro.
 
-Ao alterar pacotes do design system (`@ds/web`, `@ds/mobile` ou `@ds/tokens`), lembre-se de criar um changeset:
+Ao alterar pacotes do design system (`@vuotto/web`, `@vuotto/mobile`, `@vuotto/tokens`, `@industry/web`, `@industry/mobile` ou `@industry/tokens`), lembre-se de criar um changeset:
 
 ```sh
 yarn changeset
