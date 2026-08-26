@@ -90,3 +90,6 @@ figcaption {
 ::selection {
   background: color-mix(in srgb, var(--color-accent) 32%, transparent);
 }
+::placeholder {
+  color: color-mix(in srgb, var(--color-text) 38%, transparent);
+}
