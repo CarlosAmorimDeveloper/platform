@@ -1,4 +1,4 @@
-import { MOOD_OPTIONS, type FormStatus, type FormValues } from './form';
+import { MOOD_OPTIONS, formatDate, type FormStatus, type FormValues } from './form';
 
 export interface FormMeta {
   status: FormStatus;
@@ -8,17 +8,6 @@ export interface FormMeta {
 
 function escapeHtml(text: string): string {
   return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-}
-
-function formatDate(date: Date | null): string | null {
-  if (!date) return null;
-  return date.toLocaleString('pt-BR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
 }
 
 function fieldHtml(label: string, value: string): string {

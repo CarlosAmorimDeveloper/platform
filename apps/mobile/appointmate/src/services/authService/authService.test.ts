@@ -1,16 +1,20 @@
 import {
   createUserWithEmailAndPassword,
+  onAuthStateChanged,
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
+  signOut,
   updateProfile,
 } from 'firebase/auth';
-import { login, register, sendPasswordReset } from './authService';
+import { login, logout, register, sendPasswordReset, subscribeToAuthChanges } from './authService';
 
 jest.mock('firebase/auth', () => ({
   signInWithEmailAndPassword: jest.fn(),
   createUserWithEmailAndPassword: jest.fn(),
   updateProfile: jest.fn(),
   sendPasswordResetEmail: jest.fn(),
+  onAuthStateChanged: jest.fn(),
+  signOut: jest.fn(),
 }));
 
 jest.mock('../firebase', () => ({
@@ -21,6 +25,8 @@ const mockedSignIn = signInWithEmailAndPassword as jest.Mock;
 const mockedCreateUser = createUserWithEmailAndPassword as jest.Mock;
 const mockedUpdateProfile = updateProfile as jest.Mock;
 const mockedSendPasswordResetEmail = sendPasswordResetEmail as jest.Mock;
+const mockedOnAuthStateChanged = onAuthStateChanged as jest.Mock;
+const mockedSignOut = signOut as jest.Mock;
 
 describe('authService', () => {
   afterEach(() => {
@@ -131,6 +137,70 @@ describe('authService', () => {
       mockedSendPasswordResetEmail.mockRejectedValue(error);
 
       await expect(sendPasswordReset('user@example.com')).rejects.toThrow(error);
+    });
+  });
+
+  describe('subscribeToAuthChanges', () => {
+    it('maps a signed-in firebase user to uid/email', () => {
+      mockedOnAuthStateChanged.mockImplementation((_auth, callback) => {
+        callback({ uid: 'abc123', email: 'user@example.com' });
+        return jest.fn();
+      });
+      const onChange = jest.fn();
+
+      subscribeToAuthChanges(onChange);
+
+      expect(onChange).toHaveBeenCalledWith({ uid: 'abc123', email: 'user@example.com' });
+    });
+
+    it('falls back to a null email when the firebase user has none', () => {
+      mockedOnAuthStateChanged.mockImplementation((_auth, callback) => {
+        callback({ uid: 'abc123', email: null });
+        return jest.fn();
+      });
+      const onChange = jest.fn();
+
+      subscribeToAuthChanges(onChange);
+
+      expect(onChange).toHaveBeenCalledWith({ uid: 'abc123', email: null });
+    });
+
+    it('calls back with null when there is no session', () => {
+      mockedOnAuthStateChanged.mockImplementation((_auth, callback) => {
+        callback(null);
+        return jest.fn();
+      });
+      const onChange = jest.fn();
+
+      subscribeToAuthChanges(onChange);
+
+      expect(onChange).toHaveBeenCalledWith(null);
+    });
+
+    it('returns the unsubscribe function from onAuthStateChanged', () => {
+      const unsubscribe = jest.fn();
+      mockedOnAuthStateChanged.mockImplementation(() => unsubscribe);
+
+      const result = subscribeToAuthChanges(jest.fn());
+
+      expect(result).toBe(unsubscribe);
+    });
+  });
+
+  describe('logout', () => {
+    it('calls signOut with the auth instance', async () => {
+      mockedSignOut.mockResolvedValue(undefined);
+
+      await logout();
+
+      expect(mockedSignOut).toHaveBeenCalledWith(expect.anything());
+    });
+
+    it('propagates errors thrown by signOut', async () => {
+      const error = new Error('network-error');
+      mockedSignOut.mockRejectedValue(error);
+
+      await expect(logout()).rejects.toThrow(error);
     });
   });
 });

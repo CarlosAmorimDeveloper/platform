@@ -93,3 +93,35 @@ export function isDateOnOrAfterToday(text: string, now = new Date()): boolean {
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   return date.getTime() >= today.getTime();
 }
+
+export function formatDate(date: Date | null): string | null {
+  if (!date) return null;
+  return date.toLocaleString('pt-BR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+}
+
+export function isFormValuesEmpty(values: FormValues): boolean {
+  const hasText = [
+    values.appointmentDate,
+    values.lastAppointmentDate,
+    values.overallSummary,
+    values.sleep,
+    values.energy,
+    values.appetite,
+    values.concentration,
+    values.medicationAdherence,
+    values.medicationEffects,
+    values.whatWentWell,
+    values.whatHasBeenHard,
+    values.context,
+    values.todayFocus,
+    values.consultationNotes,
+  ].some((text) => text.trim());
+  const hasLists = [...values.medications, ...values.questions].some((item) => item.text.trim());
+  return !hasText && !hasLists && !values.overallMood;
+}
