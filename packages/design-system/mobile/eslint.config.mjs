@@ -1,4 +1,4 @@
-import { config } from '@repo/eslint-config/base';
+import { config } from '@repo/eslint-config/react-internal';
 import { defineConfig } from 'eslint/config';
 import globals from 'globals';
 
