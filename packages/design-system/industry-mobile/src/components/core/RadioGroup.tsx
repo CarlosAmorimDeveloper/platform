@@ -14,20 +14,31 @@ export interface RadioGroupProps {
   value?: string;
   onValueChange?: (value: string) => void;
   style?: StyleProp<ViewStyle>;
+  testID?: string;
+  accessibilityLabel?: string;
 }
 
 function resolveOption(option: string | RadioOption): RadioOption {
   return typeof option === 'string' ? { value: option, label: option } : option;
 }
 
-export function RadioGroup({ label, options = [], value, onValueChange, style }: RadioGroupProps) {
+export function RadioGroup({
+  label,
+  options = [],
+  value,
+  onValueChange,
+  style,
+  testID,
+  accessibilityLabel,
+}: RadioGroupProps) {
   return (
     <View
+      testID={testID}
       accessibilityRole="radiogroup"
-      accessibilityLabel={typeof label === 'string' ? label : undefined}
+      accessibilityLabel={accessibilityLabel ?? (typeof label === 'string' ? label : undefined)}
       style={[{ gap: space[2] }, style]}
     >
-      {typeof label === 'string' ? (
+      {typeof label === 'string' || typeof label === 'number' ? (
         <Text style={{ fontSize: 13, color: color.text }}>{label}</Text>
       ) : (
         label
@@ -81,7 +92,7 @@ function RadioOptionItem({
           <View style={{ width: 10, height: 10, borderRadius: 5, backgroundColor: color.bg }} />
         ) : null}
       </View>
-      {typeof option.label === 'string' ? (
+      {typeof option.label === 'string' || typeof option.label === 'number' ? (
         <Text style={{ fontSize: 15, color: color.text }}>{option.label}</Text>
       ) : (
         option.label

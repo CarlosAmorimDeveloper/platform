@@ -3,7 +3,7 @@ import type { ChangeEvent, CSSProperties, FocusEvent, InputHTMLAttributes, React
 
 export interface CheckboxProps extends Omit<
   InputHTMLAttributes<HTMLInputElement>,
-  'type' | 'style'
+  'type' | 'style' | 'children'
 > {
   label?: ReactNode;
   style?: CSSProperties;
@@ -54,7 +54,7 @@ export function Checkbox({
     >
       <input
         type="checkbox"
-        checked={checked !== undefined ? checked : undefined}
+        checked={checked}
         defaultChecked={checked === undefined ? defaultChecked : undefined}
         disabled={disabled}
         onChange={handleChange}
@@ -68,7 +68,7 @@ export function Checkbox({
           width: 18,
           height: 18,
           flex: 'none',
-          border: `1.5px solid ${isChecked || hovered ? 'var(--color-accent)' : 'var(--color-divider-strong)'}`,
+          border: `1.5px solid ${isChecked || (hovered && !disabled) ? 'var(--color-accent)' : 'var(--color-divider-strong)'}`,
           background: isChecked ? 'var(--color-accent)' : 'transparent',
           display: 'grid',
           placeItems: 'center',

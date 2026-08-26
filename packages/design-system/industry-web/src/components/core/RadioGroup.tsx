@@ -10,8 +10,8 @@ export interface RadioGroupProps {
   label?: ReactNode;
   name: string;
   options?: (string | RadioOption)[];
-  value?: string;
-  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
+  value: string;
+  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   style?: CSSProperties;
 }
 

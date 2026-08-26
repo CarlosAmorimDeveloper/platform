@@ -14,6 +14,8 @@ export interface SegmentedControlProps {
   value?: string;
   onValueChange?: (value: string) => void;
   style?: StyleProp<ViewStyle>;
+  testID?: string;
+  accessibilityLabel?: string;
 }
 
 function resolveOption(option: string | SegmentOption): SegmentOption {
@@ -25,10 +27,14 @@ export function SegmentedControl({
   value,
   onValueChange,
   style,
+  testID,
+  accessibilityLabel,
 }: SegmentedControlProps) {
   return (
     <View
+      testID={testID}
       accessibilityRole="radiogroup"
+      accessibilityLabel={accessibilityLabel}
       style={[{ flexDirection: 'row', borderWidth: 1, borderColor: color.divider }, style]}
     >
       {options.map((option, index) => {
@@ -54,7 +60,7 @@ export function SegmentedControl({
             }}
           >
             {opt.icon}
-            {typeof opt.label === 'string' ? (
+            {typeof opt.label === 'string' || typeof opt.label === 'number' ? (
               <Text style={{ fontSize: 14, color: checked ? color.bg : color.text }}>
                 {opt.label}
               </Text>

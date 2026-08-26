@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
-import type { StyleProp, ViewStyle } from 'react-native';
+import type { PressableProps, StyleProp, ViewStyle } from 'react-native';
 import type { ReactNode } from 'react';
 import { color, space, control } from '@industry/tokens';
 
-export interface CheckboxProps {
+export interface CheckboxProps extends Omit<PressableProps, 'style' | 'children'> {
   checked?: boolean;
   defaultChecked?: boolean;
   onCheckedChange?: (checked: boolean) => void;
@@ -20,6 +20,8 @@ export function Checkbox({
   label,
   disabled,
   style,
+  testID = 'checkbox-root',
+  ...rest
 }: CheckboxProps) {
   const [internalChecked, setInternalChecked] = useState(Boolean(defaultChecked));
   const isChecked = checked ?? internalChecked;
@@ -33,7 +35,8 @@ export function Checkbox({
 
   return (
     <Pressable
-      testID="checkbox-root"
+      {...rest}
+      testID={testID}
       onPress={toggle}
       disabled={disabled}
       accessibilityRole="checkbox"
@@ -69,7 +72,7 @@ export function Checkbox({
           />
         ) : null}
       </View>
-      {typeof label === 'string' ? (
+      {typeof label === 'string' || typeof label === 'number' ? (
         <Text style={{ fontSize: 15, color: color.text }}>{label}</Text>
       ) : (
         label

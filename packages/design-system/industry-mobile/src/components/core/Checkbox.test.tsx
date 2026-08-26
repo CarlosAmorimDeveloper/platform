@@ -40,4 +40,20 @@ describe('Checkbox', () => {
 
     expect(onCheckedChange).not.toHaveBeenCalled();
   });
+
+  it('applies defaultChecked as the initial visual state without pressing', () => {
+    const { queryByTestId } = render(<Checkbox label="Termos" defaultChecked />);
+
+    expect(queryByTestId('checkbox-mark')).toBeTruthy();
+  });
+
+  it('keeps a controlled checked prop authoritative after a press', () => {
+    const { getByTestId, queryByTestId } = render(
+      <Checkbox label="Termos" checked={false} onCheckedChange={jest.fn()} />,
+    );
+
+    fireEvent(getByTestId('checkbox-root'), 'press');
+
+    expect(queryByTestId('checkbox-mark')).toBeNull();
+  });
 });

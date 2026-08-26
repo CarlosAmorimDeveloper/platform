@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { Pressable, Text } from 'react-native';
-import type { StyleProp, ViewStyle } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
+import type { PressableProps, StyleProp, ViewStyle } from 'react-native';
 import type { ReactNode } from 'react';
 import { color, neutral, alpha, space, control } from '@industry/tokens';
 
-export interface SwitchProps {
+export interface SwitchProps extends Omit<PressableProps, 'style' | 'children'> {
   checked?: boolean;
   defaultChecked?: boolean;
   onCheckedChange?: (checked: boolean) => void;
@@ -20,6 +20,8 @@ export function Switch({
   label,
   disabled,
   style,
+  testID = 'switch-root',
+  ...rest
 }: SwitchProps) {
   const [internalChecked, setInternalChecked] = useState(Boolean(defaultChecked));
   const isChecked = checked ?? internalChecked;
@@ -33,7 +35,8 @@ export function Switch({
 
   return (
     <Pressable
-      testID="switch-root"
+      {...rest}
+      testID={testID}
       onPress={toggle}
       disabled={disabled}
       accessibilityRole="switch"
@@ -44,27 +47,23 @@ export function Switch({
           alignItems: 'center',
           gap: space[3],
           minHeight: control.tap,
-          opacity: disabled ? 0.45 : 1,
         },
         style,
       ]}
     >
-      <Pressable
+      <View
         testID="switch-track"
-        onPress={toggle}
-        disabled={disabled}
         style={{
           width: 44,
           height: 24,
           borderWidth: 1,
           borderColor: isChecked ? color.accent : color.dividerStrong,
           backgroundColor: isChecked ? alpha(color.accent, 28) : color.surface,
+          opacity: disabled ? 0.45 : 1,
         }}
       >
-        <Pressable
+        <View
           testID="switch-thumb"
-          onPress={toggle}
-          disabled={disabled}
           style={{
             position: 'absolute',
             top: 3,
@@ -74,8 +73,8 @@ export function Switch({
             backgroundColor: isChecked ? color.accent : neutral['400'],
           }}
         />
-      </Pressable>
-      {typeof label === 'string' ? (
+      </View>
+      {typeof label === 'string' || typeof label === 'number' ? (
         <Text style={{ fontSize: 15, color: color.text }}>{label}</Text>
       ) : (
         label

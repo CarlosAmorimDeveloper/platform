@@ -10,8 +10,8 @@ export interface SegmentOption {
 export interface SegmentedControlProps {
   name: string;
   options?: (string | SegmentOption)[];
-  value?: string;
-  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
+  value: string;
+  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   style?: CSSProperties;
 }
 

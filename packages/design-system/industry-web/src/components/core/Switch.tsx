@@ -1,7 +1,10 @@
 import { useState } from 'react';
 import type { ChangeEvent, CSSProperties, FocusEvent, InputHTMLAttributes, ReactNode } from 'react';
 
-export interface SwitchProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type' | 'style'> {
+export interface SwitchProps extends Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  'type' | 'style' | 'children'
+> {
   label?: ReactNode;
   style?: CSSProperties;
 }
@@ -48,7 +51,7 @@ export function Switch({
     >
       <input
         type="checkbox"
-        checked={checked !== undefined ? checked : undefined}
+        checked={checked}
         defaultChecked={checked === undefined ? defaultChecked : undefined}
         disabled={disabled}
         onChange={handleChange}

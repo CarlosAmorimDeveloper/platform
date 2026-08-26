@@ -45,4 +45,24 @@ describe('Switch', () => {
       disabled: true,
     });
   });
+
+  it('applies defaultChecked as the initial visual state without pressing', () => {
+    const { getByTestId } = render(<Switch label="Wifi" defaultChecked />);
+
+    expect(getByTestId('switch-thumb').props.style).toMatchObject({
+      backgroundColor: color.accent,
+    });
+  });
+
+  it('keeps a controlled checked prop authoritative after a press', () => {
+    const { getByTestId } = render(
+      <Switch label="Wifi" checked={false} onCheckedChange={jest.fn()} />,
+    );
+
+    fireEvent(getByTestId('switch-root'), 'press');
+
+    expect(getByTestId('switch-thumb').props.style).toMatchObject({
+      backgroundColor: neutral['400'],
+    });
+  });
 });
