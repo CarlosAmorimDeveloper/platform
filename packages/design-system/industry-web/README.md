@@ -23,6 +23,14 @@ import '@industry/tokens/styles.css'; // tokens são globais, via CSS custom pro
 
 **`SearchField`** — mesmos atributos de `<input>`, já traz a lupa (`Icon` `search`) e o padding à esquerda.
 
+**`Switch`** — `label`, mais os atributos de `<input type="checkbox">`. Aceita uso controlado (`checked`/`onChange`) ou não controlado (`defaultChecked`) — o estado de `checked` é espelhado em `useState` internamente porque este pacote não usa folha de estilo, então não há seletor `:checked` de CSS de graça para o track reagir; o `<input>` real continua existindo (escondido visualmente) por trás, então semântica de formulário e teclado funcionam normalmente.
+
+**`Checkbox`** — mesma lógica de `Switch` (controlado ou não controlado), `label`, mais os atributos de `<input type="checkbox">`. Sem tratamento visual de `disabled` — fiel à fonte, que não define um para `.check` (só para `.switch` e campos de texto).
+
+**`RadioGroup`** — `label`, `name` (obrigatório), `options` (strings ou `{value, label}`), `value`, `onChange`, `role="radiogroup"`. Cada opção é sempre controlada pelo `value` do grupo — sem estado interno próprio.
+
+**`SegmentedControl`** — `name`, `options` (com `icon` opcional), `value`, `onChange`, para 2–4 escolhas mutuamente exclusivas. Anel de foco para dentro (`outline-offset: -2px`), diferente dos outros três controles (`outline-offset: 2px`) — mesma assimetria da fonte.
+
 ## Documentação de fundação (Storybook)
 
 Seis páginas em `Foundations/*` no Storybook, cada uma renderizando os tokens reais de `@industry/tokens` (nunca um valor de token fixo): `Foundations/Color` (papéis de cor + rampas tonais), `Foundations/Typography` (escala h1-h6 e corpo), `Foundations/Semantics` (rampas semânticas + data-viz), `Foundations/Spacing & Elevation` (escala de 4px, alvos de toque, raio, sombras), `Foundations/Icons` (o conjunto Lucide via `Icon`), `Foundations/Image` (o tratamento `Duotone`).
@@ -37,4 +45,4 @@ yarn workspace @industry/web build-storybook        # build estático (usado pel
 
 ## Escopo
 
-Este pacote tem seis componentes prontos: `Frame` (REB-62), `Icon` (REB-64), `Duotone` (REB-63), `Button`, `TextField` e `SearchField` (parte do REB-67). As páginas de fundação no Storybook (REB-65) estão prontas — fecha o épico REB-49. A taxonomia de pastas (`src/components/{core,data,feedback,forms,navigation}`) já espelha `@vuotto/web` para receber esses componentes sem reestruturação. Os outros 5 controles (`Select`, `Switch`, `Checkbox`, `RadioGroup`, `SegmentedControl`) e os componentes de layout/navegação/feedback/dados (REB-68 a REB-71) chegam em PRs seguintes.
+Este pacote tem dez componentes prontos: `Frame` (REB-62), `Icon` (REB-64), `Duotone` (REB-63), `Button`, `TextField`, `SearchField`, `Switch`, `Checkbox`, `RadioGroup` e `SegmentedControl` (parte do REB-67). As páginas de fundação no Storybook (REB-65) estão prontas — fecha o épico REB-49. A taxonomia de pastas (`src/components/{core,data,feedback,forms,navigation}`) já espelha `@vuotto/web` para receber esses componentes sem reestruturação. `Select` (o único controle restante do REB-67) chega em um PR próprio — precisa de uma decisão de arquitetura diferente dos outros. Os componentes de layout/navegação/feedback/dados (REB-68 a REB-71) chegam em PRs seguintes.
