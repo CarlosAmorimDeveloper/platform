@@ -17,6 +17,12 @@ import '@industry/tokens/styles.css'; // tokens são globais, via CSS custom pro
 
 **`Duotone`** — wrapper de imagem: aplica o acento via `mix-blend-mode: color` (efeito de serigrafia), a mesma leitura que `~/Documents/ds/foundations/image.html` documenta. `props`: `children`, `style`, `className`. Compõe com `Frame` por aninhamento (`<Frame><Duotone><img /></Duotone></Frame>`), não é uma variante fundida.
 
+**`Button`** — `variant` (`primary`|`secondary`|`ghost`|`danger`, padrão `secondary` — o primário é o único preenchimento sólido, use um por tela), `size` (`md`|`sm`), `block`, `framed` (usa `BlueprintMarks`, o mesmo módulo interno do `Frame`), `iconOnly`, mais os atributos de `<button>`. Sem prop `icon`/`iconAfter` — para um botão com ícone, componha `<Icon />` diretamente como `children`. Hover/pressed são estado React (`useState`), não uma folha de estilo — o mesmo padrão já usado no `@vuotto/web`.
+
+**`TextField`** — `label`, `hint`, `error` (substitui a dica e marca `aria-invalid`), `multiline`, `rows`, mais os atributos de `<input>`.
+
+**`SearchField`** — mesmos atributos de `<input>`, já traz a lupa (`Icon` `search`) e o padding à esquerda.
+
 ## Documentação de fundação (Storybook)
 
 Seis páginas em `Foundations/*` no Storybook, cada uma renderizando os tokens reais de `@industry/tokens` (nunca um valor de token fixo): `Foundations/Color` (papéis de cor + rampas tonais), `Foundations/Typography` (escala h1-h6 e corpo), `Foundations/Semantics` (rampas semânticas + data-viz), `Foundations/Spacing & Elevation` (escala de 4px, alvos de toque, raio, sombras), `Foundations/Icons` (o conjunto Lucide via `Icon`), `Foundations/Image` (o tratamento `Duotone`).
@@ -31,4 +37,4 @@ yarn workspace @industry/web build-storybook        # build estático (usado pel
 
 ## Escopo
 
-Este pacote tem três componentes prontos: `Frame` (REB-62), `Icon` (REB-64) e `Duotone` (REB-63). As páginas de fundação no Storybook (REB-65) estão prontas — fecha o épico REB-49. A taxonomia de pastas (`src/components/{core,data,feedback,forms,navigation}`) já espelha `@vuotto/web` para receber esses componentes sem reestruturação. Os controles/layout/navegação/feedback/dados (REB-67 a REB-71) chegam em PRs seguintes.
+Este pacote tem seis componentes prontos: `Frame` (REB-62), `Icon` (REB-64), `Duotone` (REB-63), `Button`, `TextField` e `SearchField` (parte do REB-67). As páginas de fundação no Storybook (REB-65) estão prontas — fecha o épico REB-49. A taxonomia de pastas (`src/components/{core,data,feedback,forms,navigation}`) já espelha `@vuotto/web` para receber esses componentes sem reestruturação. Os outros 5 controles (`Select`, `Switch`, `Checkbox`, `RadioGroup`, `SegmentedControl`) e os componentes de layout/navegação/feedback/dados (REB-68 a REB-71) chegam em PRs seguintes.

@@ -16,6 +16,12 @@ import { Frame } from '@industry/mobile';
 
 **`Duotone`** — wrapper de imagem. **Aproximação documentada**, não um `mix-blend-mode` real: React Native não tem essa propriedade (não faz parte de `ViewStyle` no RN 0.81, e este monorepo não depende de `react-native-skia`, que teria blend modes de verdade). O que existe aqui é uma sobreposição plana com opacidade do acento (`alpha(color.accent, 55)`) — visualmente diferente de um blend real (tinge uniformemente em vez de preservar a luminância da foto por baixo), mas é o fallback que o REB-63 explicitamente permite. `props`: `children`, `style`.
 
+**`Button`** — mesma API de props do `@industry/web` (`variant`, `size`, `block`, `framed`, `iconOnly`), sem `icon`/`iconAfter`. Diferença de plataforma: só tem estado padrão/pressionado (`Pressable` `onPressIn`/`onPressOut`) — sem `:hover`, que não existe em touch.
+
+**`TextField`** — `label`, `hint`, `error`, mais os atributos de `TextInput` (inclui `multiline` nativamente).
+
+**`SearchField`** — mesmos atributos de `TextInput`, com a lupa (`Icon` `Search`) e padding à esquerda.
+
 ## Documentação de fundação (Storybook)
 
 Seis páginas em `Foundations/*` no Storybook, cada uma renderizando os tokens reais de `@industry/tokens` (nunca um valor fixo): `Foundations/Color`, `Foundations/Typography`, `Foundations/Semantics`, `Foundations/Spacing & Elevation`, `Foundations/Icons` (sujeita à mesma limitação de SVG invisível no preview documentada em "Limitação conhecida do Storybook"), `Foundations/Image` (o tratamento `Duotone`, aproximação documentada).
@@ -39,4 +45,4 @@ Herdada de `@vuotto/mobile`: `react-native-web@0.19.x` ainda não suporta React 
 
 ## Escopo
 
-Este pacote tem três componentes prontos: `Frame` (REB-62), `Icon` (REB-64) e `Duotone` (REB-63). As páginas de fundação no Storybook (REB-65) estão prontas — fecha o épico REB-49. Os controles/layout/navegação/feedback/dados (REB-73 a REB-77) chegam em PRs seguintes.
+Este pacote tem seis componentes prontos: `Frame` (REB-62), `Icon` (REB-64), `Duotone` (REB-63), `Button`, `TextField` e `SearchField` (parte do REB-73). As páginas de fundação no Storybook (REB-65) estão prontas — fecha o épico REB-49. Os outros 5 controles (`Select`, `Switch`, `Checkbox`, `RadioGroup`, `SegmentedControl`) e os componentes de layout/navegação/feedback/dados (REB-74 a REB-77) chegam em PRs seguintes.

@@ -1,0 +1,43 @@
+import { fireEvent, render } from '@testing-library/react-native';
+import { Text, View } from 'react-native';
+import { accentRamp, color } from '@industry/tokens';
+import { Button } from './Button';
+
+describe('Button', () => {
+  it('renders string children wrapped in Text', () => {
+    const { getByText } = render(<Button>Save</Button>);
+    expect(getByText('Save')).toBeTruthy();
+  });
+
+  it('renders non-string children without wrapping them in Text', () => {
+    const { getByTestId, UNSAFE_queryAllByType } = render(
+      <Button>
+        <View testID="icon-child" />
+      </Button>,
+    );
+    expect(getByTestId('icon-child')).toBeTruthy();
+    expect(UNSAFE_queryAllByType(Text)).toHaveLength(0);
+  });
+
+  it('sets accessibilityState.disabled when disabled', () => {
+    const { getByTestId } = render(<Button disabled>Save</Button>);
+    expect(getByTestId('button-root').props.accessibilityState).toMatchObject({
+      disabled: true,
+    });
+  });
+
+  it('applies the pressed skin for the primary variant on press', () => {
+    const { getByTestId } = render(<Button variant="primary">Save</Button>);
+    const root = getByTestId('button-root');
+
+    expect(root.props.style).toContainEqual(
+      expect.objectContaining({ backgroundColor: color.accent }),
+    );
+
+    fireEvent(root, 'pressIn');
+
+    expect(getByTestId('button-root').props.style).toContainEqual(
+      expect.objectContaining({ backgroundColor: accentRamp['500'] }),
+    );
+  });
+});
