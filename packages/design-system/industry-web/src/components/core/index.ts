@@ -14,3 +14,12 @@ export { TextField } from './TextField';
 export type { TextFieldProps } from './TextField';
 export { SearchField } from './SearchField';
 export type { SearchFieldProps } from './SearchField';
+
+export { Switch } from './Switch';
+export type { SwitchProps } from './Switch';
+export { Checkbox } from './Checkbox';
+export type { CheckboxProps } from './Checkbox';
+export { RadioGroup } from './RadioGroup';
+export type { RadioGroupProps, RadioOption } from './RadioGroup';
+export { SegmentedControl } from './SegmentedControl';
+export type { SegmentedControlProps, SegmentOption } from './SegmentedControl';

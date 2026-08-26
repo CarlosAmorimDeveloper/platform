@@ -22,6 +22,14 @@ import { Frame } from '@industry/mobile';
 
 **`SearchField`** — mesmos atributos de `TextInput`, com a lupa (`Icon` `Search`) e padding à esquerda.
 
+**`Switch`** — `checked`/`defaultChecked`/`onCheckedChange` (não `value`/`onValueChange` do `Switch` nativo do RN — nome escolhido para não colidir com o `value` de string de `RadioGroup`/`SegmentedControl` abaixo), `label`, `disabled`. Sem componente nativo do RN por baixo (o `Switch` do RN não dá controle sobre as dimensões quadradas deste sistema) — é `Pressable` com o track e o thumb desenhados à mão, mesma abordagem do `Button`.
+
+**`Checkbox`** — mesma lógica de estado controlado/não controlado de `Switch` (`checked`/`defaultChecked`/`onCheckedChange`), `label`, `disabled`. Sem tratamento visual de `disabled` — fiel à fonte web, que só define esse tratamento para `Switch`.
+
+**`RadioGroup`** — `label`, `options` (strings ou `{value, label}`), `value`, `onValueChange`. Sem prop `name` — é uma amarração de formulário HTML sem equivalente em RN; o agrupamento aqui é implícito (uma instância do componente, um conjunto de opções). O anel "donut" do estado marcado (`box-shadow: inset` na web) não existe em RN — aproximado com um círculo sólido `color.bg` centralizado dentro do círculo de acento.
+
+**`SegmentedControl`** — `options` (com `icon` opcional), `value`, `onValueChange`. Sem `name` (mesma razão do `RadioGroup`) nem `:hover` (não existe em toque).
+
 ## Documentação de fundação (Storybook)
 
 Seis páginas em `Foundations/*` no Storybook, cada uma renderizando os tokens reais de `@industry/tokens` (nunca um valor fixo): `Foundations/Color`, `Foundations/Typography`, `Foundations/Semantics`, `Foundations/Spacing & Elevation`, `Foundations/Icons` (sujeita à mesma limitação de SVG invisível no preview documentada em "Limitação conhecida do Storybook"), `Foundations/Image` (o tratamento `Duotone`, aproximação documentada).
@@ -42,7 +50,9 @@ Herdada de `@vuotto/mobile`: `react-native-web@0.19.x` ainda não suporta React 
 ## O que não traduz 1:1 pra mobile
 
 - **`mix-blend-mode: color`** (o efeito duotone de verdade) não existe no RN — `Duotone` usa uma sobreposição translúcida do acento como aproximação, não um blend real. Ver "Componentes" acima.
+- **O anel "donut" do `RadioGroup` marcado** (`box-shadow: inset 0 0 0 4px` na web) não existe em RN — `View` não suporta sombra interna. Aproximado com um círculo sólido centralizado, ver "Componentes" acima.
+- **`:hover` em `Checkbox`/`RadioGroup`/`SegmentedControl`** não existe — toque não tem estado de passar o mouse.
 
 ## Escopo
 
-Este pacote tem seis componentes prontos: `Frame` (REB-62), `Icon` (REB-64), `Duotone` (REB-63), `Button`, `TextField` e `SearchField` (parte do REB-73). As páginas de fundação no Storybook (REB-65) estão prontas — fecha o épico REB-49. Os outros 5 controles (`Select`, `Switch`, `Checkbox`, `RadioGroup`, `SegmentedControl`) e os componentes de layout/navegação/feedback/dados (REB-74 a REB-77) chegam em PRs seguintes.
+Este pacote tem dez componentes prontos: `Frame` (REB-62), `Icon` (REB-64), `Duotone` (REB-63), `Button`, `TextField`, `SearchField`, `Switch`, `Checkbox`, `RadioGroup` e `SegmentedControl` (parte do REB-73). As páginas de fundação no Storybook (REB-65) estão prontas — fecha o épico REB-49. `Select` (o único controle restante do REB-73) chega em um PR próprio — precisa de bottom sheet/action sheet nativo, não um `<select>` HTML equivalente. Os componentes de layout/navegação/feedback/dados (REB-74 a REB-77) chegam em PRs seguintes.
