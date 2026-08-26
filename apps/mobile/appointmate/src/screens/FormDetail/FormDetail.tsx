@@ -18,7 +18,7 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { AppStackParamList } from '../../navigation/types';
 import { deleteForm, getFormRecord, type FormRecord } from '../../services/formsService';
 import { mapFirestoreError } from '../../utils/firebaseErrors';
-import { MOOD_OPTIONS } from '../../domain/form';
+import { MOOD_OPTIONS, formatDate, isFormValuesEmpty } from '../../domain/form';
 import { buildFormHtml } from '../../domain/pdf';
 import { styles } from './FormDetail.styles';
 
@@ -52,39 +52,6 @@ function ListField({ label, items }: { label: string; items: { text: string }[] 
       ))}
     </View>
   );
-}
-
-function formatDate(date: Date | null) {
-  if (!date) return null;
-  return date.toLocaleString('pt-BR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-}
-
-function isRecordEmpty(record: FormRecord) {
-  const { values } = record;
-  const hasText = [
-    values.appointmentDate,
-    values.lastAppointmentDate,
-    values.overallSummary,
-    values.sleep,
-    values.energy,
-    values.appetite,
-    values.concentration,
-    values.medicationAdherence,
-    values.medicationEffects,
-    values.whatWentWell,
-    values.whatHasBeenHard,
-    values.context,
-    values.todayFocus,
-    values.consultationNotes,
-  ].some((text) => text.trim());
-  const hasLists = [...values.medications, ...values.questions].some((item) => item.text.trim());
-  return !hasText && !hasLists && !values.overallMood;
 }
 
 export function FormDetail({ navigation, route }: Props) {
@@ -210,7 +177,7 @@ export function FormDetail({ navigation, route }: Props) {
           </Text>
         )}
 
-        {isRecordEmpty(record) ? (
+        {isFormValuesEmpty(values) ? (
           <EmptyState
             title="Nenhuma resposta registrada"
             body="Este formulário ainda não tem respostas preenchidas."
