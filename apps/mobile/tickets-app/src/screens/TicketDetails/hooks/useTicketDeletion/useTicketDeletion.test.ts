@@ -4,6 +4,10 @@ import { useTicketDeletion } from './useTicketDeletion';
 
 jest.mock('../../../../services/ticketService');
 jest.mock('../../../../services/firebase', () => ({ auth: {}, db: {} }));
+jest.mock('../../../../store/useAuthStore', () => ({
+  useAuthStore: (selector: (s: { user: { workspaceId: string } | null }) => unknown) =>
+    selector({ user: { workspaceId: 'ws-1' } }),
+}));
 
 const mockDeleteTicket = deleteTicket as jest.Mock;
 
@@ -21,7 +25,6 @@ describe('useTicketDeletion', () => {
     const { result } = renderHook(() =>
       useTicketDeletion({
         ticketId: 't1',
-        workspaceId: 'ws-1',
         navigation: navigation as never,
         deleteComment,
       }),
@@ -36,7 +39,6 @@ describe('useTicketDeletion', () => {
     const { result } = renderHook(() =>
       useTicketDeletion({
         ticketId: 't1',
-        workspaceId: 'ws-1',
         navigation: navigation as never,
         deleteComment,
       }),
@@ -52,7 +54,6 @@ describe('useTicketDeletion', () => {
     const { result } = renderHook(() =>
       useTicketDeletion({
         ticketId: 't1',
-        workspaceId: 'ws-1',
         navigation: navigation as never,
         deleteComment,
       }),
@@ -69,7 +70,6 @@ describe('useTicketDeletion', () => {
     const { result } = renderHook(() =>
       useTicketDeletion({
         ticketId: 't1',
-        workspaceId: 'ws-1',
         navigation: navigation as never,
         deleteComment,
       }),
@@ -89,7 +89,6 @@ describe('useTicketDeletion', () => {
     const { result } = renderHook(() =>
       useTicketDeletion({
         ticketId: 't1',
-        workspaceId: 'ws-1',
         navigation: navigation as never,
         deleteComment,
       }),
@@ -109,7 +108,6 @@ describe('useTicketDeletion', () => {
     const { result } = renderHook(() =>
       useTicketDeletion({
         ticketId: 't1',
-        workspaceId: 'ws-1',
         navigation: navigation as never,
         deleteComment,
       }),
@@ -129,7 +127,6 @@ describe('useTicketDeletion', () => {
     const { result } = renderHook(() =>
       useTicketDeletion({
         ticketId: 't1',
-        workspaceId: 'ws-1',
         navigation: navigation as never,
         deleteComment,
       }),

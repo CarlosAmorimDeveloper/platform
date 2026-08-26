@@ -1,5 +1,4 @@
 import { Text } from 'react-native';
-import type { Timestamp } from 'firebase/firestore';
 import { Badge, Card, useTheme } from '@vuotto/mobile';
 import { space } from '@vuotto/tokens';
 import { formatDate } from '../../../../domain/ticket';
@@ -16,7 +15,7 @@ interface Props {
   status: TicketStatus;
   priority: TicketPriority;
   creatorName: string;
-  createdAt: Timestamp | null;
+  createdAt: Date | null;
   assigneeName?: string | null;
   onPress: () => void;
 }

@@ -17,6 +17,7 @@ import {
   subscribeToUsers,
   mapFirebaseAuthError,
 } from './authService';
+import type { User } from '../../domain/user';
 
 jest.mock('../firebase', () => ({
   auth: { __type: 'auth' },
@@ -174,6 +175,13 @@ describe('register', () => {
 describe('createUser', () => {
   const disposableApp = { __type: 'disposableApp' };
   const disposableAuth = { __type: 'disposableAuth' };
+  const creator: User = {
+    uid: 'admin-1',
+    email: 'admin@test.com',
+    name: 'Admin',
+    role: 'admin',
+    workspaceId: 'ws-1',
+  };
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -187,7 +195,7 @@ describe('createUser', () => {
     mockSignOut.mockResolvedValue(undefined);
     mockDeleteApp.mockResolvedValue(undefined);
 
-    await createUser('Bob', ' bob@test.com ', 'secret', 'standard', 'ws-1');
+    await createUser('Bob', ' bob@test.com ', 'secret', 'standard', creator);
 
     expect(mockInitializeApp).toHaveBeenCalledWith(
       firebaseConfigMock,
@@ -215,7 +223,7 @@ describe('createUser', () => {
     );
     mockDeleteApp.mockResolvedValue(undefined);
 
-    await expect(createUser('Bob', 'bob@test.com', 'secret', 'standard', 'ws-1')).rejects.toThrow(
+    await expect(createUser('Bob', 'bob@test.com', 'secret', 'standard', creator)).rejects.toThrow(
       'Não foi possível criar o usuário.',
     );
 
@@ -228,7 +236,7 @@ describe('createUser', () => {
     mockCreateUserWithEmailAndPassword.mockRejectedValue(new Error('network down'));
     mockDeleteApp.mockResolvedValue(undefined);
 
-    await expect(createUser('Bob', 'bob@test.com', 'secret', 'standard', 'ws-1')).rejects.toThrow(
+    await expect(createUser('Bob', 'bob@test.com', 'secret', 'standard', creator)).rejects.toThrow(
       'network down',
     );
 
@@ -239,7 +247,7 @@ describe('createUser', () => {
     mockCreateUserWithEmailAndPassword.mockRejectedValue('unexpected string rejection');
     mockDeleteApp.mockResolvedValue(undefined);
 
-    await expect(createUser('Bob', 'bob@test.com', 'secret', 'standard', 'ws-1')).rejects.toThrow(
+    await expect(createUser('Bob', 'bob@test.com', 'secret', 'standard', creator)).rejects.toThrow(
       'Falha ao criar usuário',
     );
 
@@ -250,7 +258,7 @@ describe('createUser', () => {
     mockCreateUserWithEmailAndPassword.mockRejectedValue(new Error('network down'));
     mockDeleteApp.mockRejectedValue(new Error('delete also failed'));
 
-    await expect(createUser('Bob', 'bob@test.com', 'secret', 'standard', 'ws-1')).rejects.toThrow(
+    await expect(createUser('Bob', 'bob@test.com', 'secret', 'standard', creator)).rejects.toThrow(
       'network down',
     );
   });

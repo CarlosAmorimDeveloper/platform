@@ -1,10 +1,5 @@
-import type { Timestamp } from 'firebase/firestore';
 import { render, screen } from '../../../../test-utils';
 import { TicketMetaRow } from './TicketMetaRow';
-
-function makeTimestamp(date: Date): Timestamp {
-  return { toDate: () => date } as unknown as Timestamp;
-}
 
 describe('TicketMetaRow', () => {
   it('renders creator name', () => {
@@ -17,12 +12,7 @@ describe('TicketMetaRow', () => {
   it('renders formatted date when createdAt is provided', () => {
     const date = new Date(2024, 0, 15, 14, 30);
     render(
-      <TicketMetaRow
-        creatorName="Alice"
-        createdAt={makeTimestamp(date)}
-        assigneeName={null}
-        editing={false}
-      />,
+      <TicketMetaRow creatorName="Alice" createdAt={date} assigneeName={null} editing={false} />,
     );
     const dateEl = screen.getByText(/Em:/);
     expect(dateEl).toBeTruthy();

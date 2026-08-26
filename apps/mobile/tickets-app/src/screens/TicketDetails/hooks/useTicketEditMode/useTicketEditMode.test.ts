@@ -6,6 +6,10 @@ import { useTicketEditMode } from './useTicketEditMode';
 
 jest.mock('../../../../services/ticketService');
 jest.mock('../../../../services/firebase', () => ({ auth: {}, db: {} }));
+jest.mock('../../../../store/useAuthStore', () => ({
+  useAuthStore: (selector: (s: { user: { workspaceId: string } | null }) => unknown) =>
+    selector({ user: { workspaceId: 'ws-1' } }),
+}));
 
 const mockUpdateTicket = updateTicket as jest.Mock;
 
@@ -37,7 +41,6 @@ describe('useTicketEditMode', () => {
     const { result } = renderHook(() =>
       useTicketEditMode({
         ticketId: 't1',
-        workspaceId: 'ws-1',
         users: mockUsers,
         ticket: mockTicket,
       }),
@@ -51,7 +54,6 @@ describe('useTicketEditMode', () => {
     const { result } = renderHook(() =>
       useTicketEditMode({
         ticketId: 't1',
-        workspaceId: 'ws-1',
         users: mockUsers,
         ticket: mockTicket,
       }),
@@ -69,7 +71,6 @@ describe('useTicketEditMode', () => {
     const { result } = renderHook(() =>
       useTicketEditMode({
         ticketId: 't1',
-        workspaceId: 'ws-1',
         users: mockUsers,
         ticket: mockTicket,
       }),
@@ -88,7 +89,6 @@ describe('useTicketEditMode', () => {
     const { result } = renderHook(() =>
       useTicketEditMode({
         ticketId: 't1',
-        workspaceId: 'ws-1',
         users: mockUsers,
         ticket: mockTicket,
       }),
@@ -118,7 +118,6 @@ describe('useTicketEditMode', () => {
     const { result } = renderHook(() =>
       useTicketEditMode({
         ticketId: 't1',
-        workspaceId: 'ws-1',
         users: mockUsers,
         ticket: mockTicket,
       }),
@@ -137,7 +136,6 @@ describe('useTicketEditMode', () => {
     const { result } = renderHook(() =>
       useTicketEditMode({
         ticketId: 't1',
-        workspaceId: 'ws-1',
         users: mockUsers,
         ticket: mockTicket,
       }),
@@ -160,7 +158,6 @@ describe('useTicketEditMode', () => {
     const { result } = renderHook(() =>
       useTicketEditMode({
         ticketId: 't1',
-        workspaceId: 'ws-1',
         users: mockUsers,
         ticket: mockTicket,
       }),

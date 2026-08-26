@@ -2,10 +2,8 @@ import { act, renderHook } from '@testing-library/react-native';
 import {
   addComment,
   deleteComment,
-  deleteTicket,
   subscribeToComments,
   subscribeToTicketById,
-  updateTicket,
 } from '../../services/ticketService';
 import { useAuthStore } from '../../store/useAuthStore';
 import type { Comment, Ticket } from '../../domain/ticket';
@@ -18,8 +16,6 @@ jest.mock('../../services/firebase', () => ({ auth: {}, db: {} }));
 const mockUseAuthStore = useAuthStore as unknown as jest.Mock;
 const mockSubscribeToTicket = subscribeToTicketById as jest.Mock;
 const mockSubscribeToComments = subscribeToComments as jest.Mock;
-const mockUpdateTicket = updateTicket as jest.Mock;
-const mockDeleteTicket = deleteTicket as jest.Mock;
 const mockAddComment = addComment as jest.Mock;
 const mockDeleteComment = deleteComment as jest.Mock;
 
@@ -60,8 +56,6 @@ describe('useTicketDetails', () => {
     );
     mockSubscribeToTicket.mockReturnValue(jest.fn());
     mockSubscribeToComments.mockReturnValue(jest.fn());
-    mockUpdateTicket.mockResolvedValue(undefined);
-    mockDeleteTicket.mockResolvedValue(undefined);
     mockAddComment.mockResolvedValue(undefined);
     mockDeleteComment.mockResolvedValue(undefined);
   });
@@ -96,49 +90,6 @@ describe('useTicketDetails', () => {
     expect(result.current.comments[0]?.id).toBe('c1');
   });
 
-  it('updateTicket calls the service with correct args', async () => {
-    const { result } = renderHook(() => useTicketDetails('t1'));
-    await act(() => result.current.updateTicket({ status: 'done', priority: 'low' }));
-    expect(mockUpdateTicket).toHaveBeenCalledWith(
-      't1',
-      {
-        status: 'done',
-        priority: 'low',
-        assigneeId: undefined,
-        assigneeName: undefined,
-      },
-      'ws-1',
-    );
-  });
-
-  it('updateTicket passes assignee fields to the service', async () => {
-    const { result } = renderHook(() => useTicketDetails('t1'));
-    await act(() =>
-      result.current.updateTicket({
-        status: 'in_progress',
-        priority: 'high',
-        assigneeId: 'u2',
-        assigneeName: 'Bob',
-      }),
-    );
-    expect(mockUpdateTicket).toHaveBeenCalledWith(
-      't1',
-      {
-        status: 'in_progress',
-        priority: 'high',
-        assigneeId: 'u2',
-        assigneeName: 'Bob',
-      },
-      'ws-1',
-    );
-  });
-
-  it('deleteTicket calls the service with the ticket id', async () => {
-    const { result } = renderHook(() => useTicketDetails('t1'));
-    await act(() => result.current.deleteTicket());
-    expect(mockDeleteTicket).toHaveBeenCalledWith('t1', 'ws-1');
-  });
-
   it('addComment calls the service with text and current user', async () => {
     const { result } = renderHook(() => useTicketDetails('t1'));
     await act(() => result.current.addComment('Hello'));
@@ -151,17 +102,17 @@ describe('useTicketDetails', () => {
     expect(mockDeleteComment).toHaveBeenCalledWith('t1', 'c1', 'ws-1');
   });
 
-  it('sets error when updateTicket rejects', async () => {
-    mockUpdateTicket.mockRejectedValue(new Error('network error'));
+  it('sets error when addComment rejects', async () => {
+    mockAddComment.mockRejectedValue(new Error('network error'));
     const { result } = renderHook(() => useTicketDetails('t1'));
-    await act(() => result.current.updateTicket({ status: 'done', priority: 'low' }));
+    await act(() => result.current.addComment('Hello'));
     expect(result.current.error).toBeTruthy();
   });
 
   it('clearError resets error to null after a failed mutation', async () => {
-    mockUpdateTicket.mockRejectedValue(new Error('fail'));
+    mockAddComment.mockRejectedValue(new Error('fail'));
     const { result } = renderHook(() => useTicketDetails('t1'));
-    await act(() => result.current.updateTicket({ status: 'done', priority: 'low' }));
+    await act(() => result.current.addComment('Hello'));
     act(() => result.current.clearError());
     expect(result.current.error).toBeNull();
   });

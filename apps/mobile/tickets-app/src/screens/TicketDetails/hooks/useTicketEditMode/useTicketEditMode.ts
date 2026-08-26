@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { updateTicket } from '../../../../services/ticketService';
+import { useAuthStore } from '../../../../store/useAuthStore';
 import type { Ticket } from '../../../../domain/ticket';
 import type { User } from '../../../../domain/user';
 import type { TicketStatus } from '../../../../constants/ticketStatus';
@@ -7,7 +8,6 @@ import type { TicketPriority } from '../../../../constants/ticketPriority';
 
 interface UseTicketEditModeParams {
   ticketId: string;
-  workspaceId: string;
   users: User[];
   ticket: Ticket | null;
 }
@@ -31,10 +31,10 @@ interface UseTicketEditModeResult {
 
 export function useTicketEditMode({
   ticketId,
-  workspaceId,
   users,
   ticket,
 }: UseTicketEditModeParams): UseTicketEditModeResult {
+  const workspaceId = useAuthStore((s) => s.user?.workspaceId ?? '');
   const [editing, setEditing] = useState(false);
   const [draftStatus, setDraftStatus] = useState<TicketStatus>('open');
   const [draftPriority, setDraftPriority] = useState<TicketPriority>('medium');

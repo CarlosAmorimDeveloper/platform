@@ -1,12 +1,7 @@
 import React from 'react';
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
-import type { Timestamp } from 'firebase/firestore';
 import { fireEvent, render, screen } from '../../../../test-utils';
 import { TicketCard } from './TicketCard';
-
-function makeTimestamp(date: Date): Timestamp {
-  return { toDate: () => date } as unknown as Timestamp;
-}
 
 const onPress = jest.fn();
 
@@ -15,7 +10,7 @@ const baseProps = {
   status: 'open' as const,
   priority: 'high' as const,
   creatorName: 'Alice',
-  createdAt: makeTimestamp(new Date(2024, 0, 15, 14, 30)),
+  createdAt: new Date(2024, 0, 15, 14, 30),
   onPress,
 };
 

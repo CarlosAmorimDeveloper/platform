@@ -12,6 +12,7 @@ import {
 } from 'firebase/firestore';
 import {
   subscribeToTicketList,
+  subscribeToTicketById,
   createTicket,
   updateTicket,
   deleteTicket,
@@ -75,7 +76,7 @@ function fakeTicketDoc(id: string, creatorId: string, assigneeId: string | null,
       creator_name: 'Someone',
       assignee_id: assigneeId,
       assignee_name: assigneeId ? 'Bob' : null,
-      createdAt: { toMillis: () => millis },
+      createdAt: { toDate: () => new Date(millis) },
     }),
   };
 }
@@ -142,6 +143,83 @@ describe('subscribeToTicketList', () => {
 
     expect(unsubscribeCreated).toHaveBeenCalledTimes(1);
     expect(unsubscribeAssigned).toHaveBeenCalledTimes(1);
+  });
+});
+
+function fakeTicketSnapshot(id: string, data: Record<string, unknown>, exists = true) {
+  return { id, exists: () => exists, data: () => data };
+}
+
+describe('subscribeToTicketById (ticket field mapping)', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('maps all fields from the Firestore document', () => {
+    const onData = jest.fn();
+    const created = { toDate: () => new Date(2024, 0, 15) };
+    subscribeToTicketById('ticket-1', 'ws-1', onData, jest.fn());
+    const snapshotCallback = mockOnSnapshot.mock.calls[0][1];
+
+    snapshotCallback(
+      fakeTicketSnapshot('ticket-1', {
+        title: 'Bug report',
+        description: 'Something broke',
+        status: 'in_progress',
+        priority: 'high',
+        creator_id: 'user-1',
+        creator_name: 'Alice',
+        createdAt: created,
+        assignee_id: 'user-2',
+        assignee_name: 'Bob',
+      }),
+    );
+
+    expect(onData).toHaveBeenCalledWith({
+      id: 'ticket-1',
+      title: 'Bug report',
+      description: 'Something broke',
+      status: 'in_progress',
+      priority: 'high',
+      creatorId: 'user-1',
+      creatorName: 'Alice',
+      createdAt: created.toDate(),
+      assigneeId: 'user-2',
+      assigneeName: 'Bob',
+    });
+  });
+
+  it('defaults missing fields — empty strings, status open, priority medium, null assignee/createdAt', () => {
+    const onData = jest.fn();
+    subscribeToTicketById('ticket-2', 'ws-1', onData, jest.fn());
+    const snapshotCallback = mockOnSnapshot.mock.calls[0][1];
+
+    snapshotCallback(fakeTicketSnapshot('ticket-2', {}));
+
+    expect(onData).toHaveBeenCalledWith({
+      id: 'ticket-2',
+      title: '',
+      description: '',
+      status: 'open',
+      priority: 'medium',
+      creatorId: '',
+      creatorName: '',
+      createdAt: null,
+      assigneeId: null,
+      assigneeName: null,
+    });
+  });
+
+  it('calls onError when the document does not exist', () => {
+    const onData = jest.fn();
+    const onError = jest.fn();
+    subscribeToTicketById('ticket-3', 'ws-1', onData, onError);
+    const snapshotCallback = mockOnSnapshot.mock.calls[0][1];
+
+    snapshotCallback(fakeTicketSnapshot('ticket-3', {}, false));
+
+    expect(onData).not.toHaveBeenCalled();
+    expect(onError).toHaveBeenCalledTimes(1);
   });
 });
 

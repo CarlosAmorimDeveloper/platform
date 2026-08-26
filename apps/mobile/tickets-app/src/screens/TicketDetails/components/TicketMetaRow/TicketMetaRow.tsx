@@ -1,12 +1,11 @@
 import { View, Text } from 'react-native';
-import type { Timestamp } from 'firebase/firestore';
 import { useTheme } from '@vuotto/mobile';
 import { formatDate } from '../../../../domain/ticket';
 import { styles } from './TicketMetaRow.styles';
 
 interface Props {
   creatorName: string;
-  createdAt: Timestamp | null;
+  createdAt: Date | null;
   assigneeName: string | null;
   editing: boolean;
 }

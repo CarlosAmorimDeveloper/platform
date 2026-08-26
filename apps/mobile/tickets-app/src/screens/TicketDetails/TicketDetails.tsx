@@ -41,14 +41,12 @@ export function TicketDetails({ route, navigation }: Props) {
 
   const editMode = useTicketEditMode({
     ticketId,
-    workspaceId: user?.workspaceId ?? '',
     users,
     ticket,
   });
   const commentForm = useCommentForm({ addComment });
   const deletion = useTicketDeletion({
     ticketId,
-    workspaceId: user?.workspaceId ?? '',
     navigation,
     deleteComment,
   });

@@ -1,20 +1,15 @@
 import React from 'react';
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
-import type { Timestamp } from 'firebase/firestore';
 import { fireEvent, render, screen } from '../../../../test-utils';
 import type { Comment } from '../../../../domain/ticket';
 import { CommentItem } from './CommentItem';
-
-function makeTimestamp(date: Date): Timestamp {
-  return { toDate: () => date } as unknown as Timestamp;
-}
 
 const mockComment: Comment = {
   id: 'c1',
   text: 'Test comment',
   authorId: 'u1',
   authorName: 'Alice',
-  createdAt: makeTimestamp(new Date(2024, 0, 15, 14, 30)),
+  createdAt: new Date(2024, 0, 15, 14, 30),
 };
 
 const onDeletePress = jest.fn();
