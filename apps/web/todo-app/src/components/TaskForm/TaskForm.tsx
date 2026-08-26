@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { addTask } from '@/redux/taskSlice';
 import type { AppDispatch } from '@/redux/store';
+import { isValidTaskTitle, sanitizeTaskTitle } from '@/domain/task';
 import { Button, Input } from '@vuotto/web';
 
 export function TaskForm() {
@@ -12,10 +13,9 @@ export function TaskForm() {
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const trimmed = value.trim();
-    if (!trimmed) return;
+    if (!isValidTaskTitle(value)) return;
 
-    dispatch(addTask({ title: trimmed }));
+    dispatch(addTask({ title: sanitizeTaskTitle(value) }));
     setValue('');
   }
 
@@ -33,7 +33,7 @@ export function TaskForm() {
         aria-label="Título da nova tarefa"
         style={{ flex: 1 }}
       />
-      <Button type="submit" disabled={!value.trim()}>
+      <Button type="submit" disabled={!isValidTaskTitle(value)}>
         Adicionar
       </Button>
     </form>

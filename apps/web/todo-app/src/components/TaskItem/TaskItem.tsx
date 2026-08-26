@@ -6,6 +6,7 @@ import { useDispatch } from 'react-redux';
 import { toggleTask, editTask, removeTask } from '@/redux/taskSlice';
 import type { Task } from '@/redux/taskSlice';
 import type { AppDispatch } from '@/redux/store';
+import { isValidTaskTitle, sanitizeTaskTitle } from '@/domain/task';
 import { Button, Card, Checkbox, Input } from '@vuotto/web';
 
 interface TaskItemProps {
@@ -45,8 +46,8 @@ export function TaskItem({ task }: TaskItemProps) {
   }
 
   function handleEditSubmit() {
-    const trimmed = editValue.trim();
-    if (trimmed && trimmed !== task.title) {
+    const trimmed = sanitizeTaskTitle(editValue);
+    if (isValidTaskTitle(editValue) && trimmed !== task.title) {
       dispatch(editTask({ id: task.id, title: trimmed }));
     } else {
       setEditValue(task.title);
