@@ -8,7 +8,10 @@ export interface DuotoneProps {
 
 export function Duotone({ children, style, className }: DuotoneProps) {
   return (
-    <div className={className} style={{ position: 'relative', overflow: 'hidden', ...style }}>
+    <div
+      className={className}
+      style={{ position: 'relative', overflow: 'hidden', isolation: 'isolate', ...style }}
+    >
       {children}
       <div
         aria-hidden="true"

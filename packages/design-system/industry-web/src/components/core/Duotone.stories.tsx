@@ -16,7 +16,13 @@ export const OverColor: Story = {
 export const WithImage: Story = {
   render: () => (
     <Duotone style={{ width: 320 }}>
-      <img src="https://picsum.photos/320/220" alt="" style={{ display: 'block', width: '100%' }} />
+      <div
+        style={{
+          width: '100%',
+          height: 220,
+          background: 'linear-gradient(135deg, #4a6fa5 0%, #e8b04b 50%, #a53f3f 100%)',
+        }}
+      />
     </Duotone>
   ),
 };

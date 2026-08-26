@@ -27,4 +27,4 @@ yarn workspace @industry/web build-storybook        # build estático (usado pel
 
 ## Escopo
 
-Este pacote nasce com um único componente, `Frame` (REB-62). `Icon` e `Duotone` (REB-64, REB-63) estão prontos. As páginas de fundação no Storybook (REB-65) e os controles/layout/navegação/feedback/dados (REB-67 a REB-71) chegam em PRs seguintes — a taxonomia de pastas (`src/components/{core,data,feedback,forms,navigation}`) vai espelhar `@vuotto/web` para receber esses componentes sem reestruturação.
+Este pacote tem três componentes prontos: `Frame` (REB-62), `Icon` (REB-64) e `Duotone` (REB-63). As páginas de fundação no Storybook (REB-65) e os controles/layout/navegação/feedback/dados (REB-67 a REB-71) chegam em PRs seguintes — a taxonomia de pastas (`src/components/{core,data,feedback,forms,navigation}`) vai espelhar `@vuotto/web` para receber esses componentes sem reestruturação.

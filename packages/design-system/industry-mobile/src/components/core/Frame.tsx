@@ -19,7 +19,10 @@ function Corner({ position }: { position: CornerPosition }) {
     <View
       testID={`frame-corner-${position}`}
       pointerEvents="none"
-      style={[{ position: 'absolute', width: 11, height: 11 }, CORNER_POSITIONS[position]]}
+      style={[
+        { position: 'absolute', width: 11, height: 11, zIndex: 1 },
+        CORNER_POSITIONS[position],
+      ]}
     >
       <View
         style={{
