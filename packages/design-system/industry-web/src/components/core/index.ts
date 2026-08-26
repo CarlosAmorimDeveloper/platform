@@ -9,3 +9,8 @@ export type { DuotoneProps } from './Duotone';
 
 export { Button } from './Button';
 export type { ButtonProps, ButtonVariant, ButtonSize } from './Button';
+
+export { TextField } from './TextField';
+export type { TextFieldProps } from './TextField';
+export { SearchField } from './SearchField';
+export type { SearchFieldProps } from './SearchField';

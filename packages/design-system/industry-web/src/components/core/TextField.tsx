@@ -1,0 +1,104 @@
+import { useId, useState } from 'react';
+import type {
+  CSSProperties,
+  FocusEvent,
+  InputHTMLAttributes,
+  ReactNode,
+  TextareaHTMLAttributes,
+} from 'react';
+
+export interface TextFieldProps extends Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  'style' | 'children' | 'onFocus' | 'onBlur'
+> {
+  label?: ReactNode;
+  hint?: ReactNode;
+  error?: ReactNode;
+  multiline?: boolean;
+  rows?: number;
+  style?: CSSProperties;
+  onFocus?: (e: FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  onBlur?: (e: FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+}
+
+export function TextField({
+  label,
+  hint,
+  error,
+  multiline,
+  rows = 3,
+  id,
+  style,
+  onFocus,
+  onBlur,
+  ...rest
+}: TextFieldProps) {
+  const generatedId = useId();
+  const fid = id ?? generatedId;
+  const [focused, setFocused] = useState(false);
+
+  const fieldStyle: CSSProperties = {
+    width: '100%',
+    minHeight: multiline ? 104 : 'var(--control-h)',
+    padding: multiline ? 'var(--space-2) var(--space-3)' : '0 var(--space-3)',
+    font: 'inherit',
+    fontSize: 15,
+    color: 'var(--color-text)',
+    caretColor: 'var(--color-accent)',
+    background: 'var(--color-surface)',
+    border: `1px solid ${error ? 'var(--color-danger)' : focused ? 'var(--color-accent)' : 'var(--color-divider)'}`,
+    borderRadius: 0,
+    resize: multiline ? 'vertical' : undefined,
+  };
+
+  const handleFocus = (e: FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setFocused(true);
+    onFocus?.(e);
+  };
+  const handleBlur = (e: FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setFocused(false);
+    onBlur?.(e);
+  };
+
+  return (
+    <div style={{ display: 'grid', gap: 6, ...style }}>
+      {label ? (
+        <label
+          htmlFor={fid}
+          style={{ fontSize: 13, color: 'color-mix(in srgb, var(--color-text) 70%, transparent)' }}
+        >
+          {label}
+        </label>
+      ) : null}
+      {multiline ? (
+        <textarea
+          id={fid}
+          rows={rows}
+          aria-invalid={error ? 'true' : undefined}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+          style={fieldStyle}
+          {...(rest as TextareaHTMLAttributes<HTMLTextAreaElement>)}
+        />
+      ) : (
+        <input
+          id={fid}
+          aria-invalid={error ? 'true' : undefined}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+          style={fieldStyle}
+          {...rest}
+        />
+      )}
+      {error ? (
+        <span style={{ fontSize: 12, color: 'var(--color-danger-300)' }}>{error}</span>
+      ) : hint ? (
+        <span
+          style={{ fontSize: 12, color: 'color-mix(in srgb, var(--color-text) 50%, transparent)' }}
+        >
+          {hint}
+        </span>
+      ) : null}
+    </div>
+  );
+}
