@@ -36,6 +36,8 @@ export function TextField({
   const generatedId = useId();
   const fid = id ?? generatedId;
   const [focused, setFocused] = useState(false);
+  const hintId = `${fid}-hint`;
+  const describedBy = error || hint ? hintId : undefined;
 
   const fieldStyle: CSSProperties = {
     width: '100%',
@@ -75,6 +77,7 @@ export function TextField({
           id={fid}
           rows={rows}
           aria-invalid={error ? 'true' : undefined}
+          aria-describedby={describedBy}
           onFocus={handleFocus}
           onBlur={handleBlur}
           style={fieldStyle}
@@ -84,6 +87,7 @@ export function TextField({
         <input
           id={fid}
           aria-invalid={error ? 'true' : undefined}
+          aria-describedby={describedBy}
           onFocus={handleFocus}
           onBlur={handleBlur}
           style={fieldStyle}
@@ -91,9 +95,12 @@ export function TextField({
         />
       )}
       {error ? (
-        <span style={{ fontSize: 12, color: 'var(--color-danger-300)' }}>{error}</span>
+        <span id={hintId} style={{ fontSize: 12, color: 'var(--color-danger-300)' }}>
+          {error}
+        </span>
       ) : hint ? (
         <span
+          id={hintId}
           style={{ fontSize: 12, color: 'color-mix(in srgb, var(--color-text) 50%, transparent)' }}
         >
           {hint}

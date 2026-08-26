@@ -45,4 +45,4 @@ Herdada de `@vuotto/mobile`: `react-native-web@0.19.x` ainda não suporta React 
 
 ## Escopo
 
-`Button`, `TextField` e `SearchField` (parte do REB-73) estão prontos. Os outros 5 controles (`Select`, `Switch`, `Checkbox`, `RadioGroup`, `SegmentedControl`) e os componentes de layout/navegação/feedback/dados (REB-74 a REB-77) chegam em PRs seguintes.
+Este pacote tem seis componentes prontos: `Frame` (REB-62), `Icon` (REB-64), `Duotone` (REB-63), `Button`, `TextField` e `SearchField` (parte do REB-73). As páginas de fundação no Storybook (REB-65) estão prontas — fecha o épico REB-49. Os outros 5 controles (`Select`, `Switch`, `Checkbox`, `RadioGroup`, `SegmentedControl`) e os componentes de layout/navegação/feedback/dados (REB-74 a REB-77) chegam em PRs seguintes.

@@ -16,6 +16,7 @@ import {
   control,
   fontFamily,
   fontWeight,
+  space,
 } from '@industry/tokens';
 import { BlueprintMarks } from './BlueprintMarks';
 
@@ -88,7 +89,10 @@ export function Button({
 
   return (
     <Pressable
+      testID="button-root"
       disabled={disabled}
+      accessibilityRole="button"
+      accessibilityState={{ disabled: Boolean(disabled) }}
       onPressIn={(e: GestureResponderEvent) => {
         setPressed(true);
         onPressIn?.(e);
@@ -103,10 +107,10 @@ export function Button({
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'center',
-          gap: 8,
+          gap: space[2],
           minHeight: height,
           width: iconOnly ? height : block ? '100%' : undefined,
-          paddingHorizontal: iconOnly ? 0 : size === 'sm' ? 12 : 16,
+          paddingHorizontal: iconOnly ? 0 : size === 'sm' ? space[3] : space[4],
           borderWidth: 1,
           borderRadius: 0,
           opacity: disabled ? 0.45 : 1,

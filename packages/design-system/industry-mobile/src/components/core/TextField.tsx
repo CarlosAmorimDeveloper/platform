@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Text, TextInput, View } from 'react-native';
 import type { BlurEvent, FocusEvent, StyleProp, TextInputProps, ViewStyle } from 'react-native';
 import type { ReactNode } from 'react';
-import { color, control, semanticColor, danger, alpha } from '@industry/tokens';
+import { color, control, semanticColor, danger, alpha, space } from '@industry/tokens';
 
 export interface TextFieldProps extends Omit<TextInputProps, 'style'> {
   label?: ReactNode;
@@ -37,12 +37,13 @@ export function TextField({
           setFocused(false);
           onBlur?.(e);
         }}
+        accessibilityLabel={typeof label === 'string' ? label : undefined}
         placeholderTextColor={alpha(color.text, 38)}
         selectionColor={color.accent}
         style={{
           minHeight: multiline ? 104 : control.height,
-          paddingHorizontal: 12,
-          paddingVertical: multiline ? 8 : 0,
+          paddingHorizontal: space[3],
+          paddingVertical: multiline ? space[2] : 0,
           fontSize: 15,
           color: color.text,
           backgroundColor: color.surface,

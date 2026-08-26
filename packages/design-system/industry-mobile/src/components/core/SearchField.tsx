@@ -1,33 +1,50 @@
+import { useState } from 'react';
 import { TextInput, View } from 'react-native';
-import type { StyleProp, TextInputProps, ViewStyle } from 'react-native';
-import { color, control, alpha } from '@industry/tokens';
+import type { BlurEvent, FocusEvent, StyleProp, TextInputProps, ViewStyle } from 'react-native';
+import { color, control, alpha, space } from '@industry/tokens';
 import { Icon } from './Icon';
 
 export interface SearchFieldProps extends Omit<TextInputProps, 'style'> {
   style?: StyleProp<ViewStyle>;
 }
 
-export function SearchField({ placeholder = 'Search', style, ...rest }: SearchFieldProps) {
+export function SearchField({
+  placeholder = 'Search',
+  onFocus,
+  onBlur,
+  style,
+  ...rest
+}: SearchFieldProps) {
+  const [focused, setFocused] = useState(false);
+
   return (
     <View style={[{ position: 'relative', justifyContent: 'center' }, style]}>
       <TextInput
         placeholder={placeholder}
+        onFocus={(e: FocusEvent) => {
+          setFocused(true);
+          onFocus?.(e);
+        }}
+        onBlur={(e: BlurEvent) => {
+          setFocused(false);
+          onBlur?.(e);
+        }}
         placeholderTextColor={alpha(color.text, 38)}
         selectionColor={color.accent}
         style={{
           minHeight: control.height,
-          paddingLeft: 40,
-          paddingRight: 12,
+          paddingLeft: space[8],
+          paddingRight: space[3],
           fontSize: 15,
           color: color.text,
           backgroundColor: color.surface,
           borderWidth: 1,
-          borderColor: color.divider,
+          borderColor: focused ? color.accent : color.divider,
           borderRadius: 0,
         }}
         {...rest}
       />
-      <View style={{ position: 'absolute', left: 12, opacity: 0.5 }} pointerEvents="none">
+      <View style={{ position: 'absolute', left: space[3], opacity: 0.5 }} pointerEvents="none">
         <Icon name="Search" size="sm" color={color.text} />
       </View>
     </View>
