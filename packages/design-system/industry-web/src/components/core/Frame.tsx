@@ -18,6 +18,7 @@ function Corner({ position }: { position: CornerPosition }) {
         position: 'absolute',
         width: 11,
         height: 11,
+        zIndex: 1,
         color: 'color-mix(in srgb, var(--color-text) 55%, transparent)',
         pointerEvents: 'none',
         ...CORNER_POSITIONS[position],
