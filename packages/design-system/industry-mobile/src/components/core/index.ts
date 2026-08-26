@@ -4,3 +4,5 @@ export { Icon } from './Icon';
 export type { IconProps, IconSize, IconName } from './Icon';
 export { Duotone } from './Duotone';
 export type { DuotoneProps } from './Duotone';
+export { Button } from './Button';
+export type { ButtonProps, ButtonVariant, ButtonSize } from './Button';
