@@ -22,6 +22,7 @@ import type { AppStackParamList } from '../../navigation/types';
 import { useTicketEditMode } from './hooks/useTicketEditMode';
 import { useCommentForm } from './hooks/useCommentForm';
 import { useTicketDeletion } from './hooks/useTicketDeletion';
+import { useCommentDeletion } from './hooks/useCommentDeletion';
 import { TicketMetaRow } from './components/TicketMetaRow';
 import { TicketOptionField } from './components/TicketOptionField';
 import { CommentItem } from './components/CommentItem';
@@ -45,13 +46,11 @@ export function TicketDetails({ route, navigation }: Props) {
     ticket,
   });
   const commentForm = useCommentForm({ addComment });
-  const deletion = useTicketDeletion({
-    ticketId,
-    navigation,
-    deleteComment,
-  });
+  const deletion = useTicketDeletion({ ticketId, navigation });
+  const commentDeletion = useCommentDeletion({ deleteComment });
 
-  const displayError = error ?? editMode.mutationError ?? deletion.mutationError;
+  const displayError =
+    error ?? editMode.mutationError ?? deletion.mutationError ?? commentDeletion.mutationError;
 
   const dismissError = useRef(() => {});
   dismissError.current = () => {
@@ -59,6 +58,7 @@ export function TicketDetails({ route, navigation }: Props) {
     clearError();
     editMode.clearMutationError();
     deletion.clearMutationError();
+    commentDeletion.clearMutationError();
   };
 
   useEffect(() => {
@@ -182,7 +182,7 @@ export function TicketDetails({ route, navigation }: Props) {
               <CommentItem
                 comment={c}
                 canDelete={user?.uid === c.authorId || user?.role === 'admin'}
-                onDeletePress={() => deletion.handleRequestDeleteComment(c.id)}
+                onDeletePress={() => commentDeletion.handleRequestDeleteComment(c.id)}
               />
             </View>
           ))}
@@ -242,16 +242,24 @@ export function TicketDetails({ route, navigation }: Props) {
           />
 
           <Dialog
-            open={deletion.deleteCommentVisible}
-            onClose={deletion.handleCancelDeleteComment}
+            open={commentDeletion.deleteCommentVisible}
+            onClose={commentDeletion.handleCancelDeleteComment}
             title="Apagar comentário"
             description="Esta ação não pode ser desfeita."
             footer={
               <>
-                <Button key="cancel" variant="ghost" onPress={deletion.handleCancelDeleteComment}>
+                <Button
+                  key="cancel"
+                  variant="ghost"
+                  onPress={commentDeletion.handleCancelDeleteComment}
+                >
                   Cancelar
                 </Button>
-                <Button key="confirm" variant="danger" onPress={deletion.handleDeleteComment}>
+                <Button
+                  key="confirm"
+                  variant="danger"
+                  onPress={commentDeletion.handleDeleteComment}
+                >
                   Apagar
                 </Button>
               </>
