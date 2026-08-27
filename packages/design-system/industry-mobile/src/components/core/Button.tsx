@@ -33,7 +33,10 @@ export interface ButtonProps extends Omit<PressableProps, 'style' | 'children'> 
   style?: StyleProp<ViewStyle>;
 }
 
-function skin(variant: ButtonVariant, pressed: boolean): { container: ViewStyle; text: TextStyle } {
+function resolveVariantStyle(
+  variant: ButtonVariant,
+  pressed: boolean,
+): { container: ViewStyle; text: TextStyle } {
   if (variant === 'primary') {
     return {
       container: {
@@ -85,7 +88,7 @@ export function Button({
 }: ButtonProps) {
   const [pressed, setPressed] = useState(false);
   const height = size === 'sm' ? control.heightSm : control.height;
-  const { container, text } = skin(variant, pressed && !disabled);
+  const { container, text } = resolveVariantStyle(variant, pressed && !disabled);
 
   return (
     <Pressable

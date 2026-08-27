@@ -4,9 +4,10 @@ import { DynamicIcon, type IconName } from 'lucide-react/dynamic';
 const SIZES = { xs: 14, sm: 16, md: 20, lg: 24 } as const;
 
 export type IconSize = keyof typeof SIZES | number;
+export type { IconName };
 
 export interface IconProps {
-  name: string;
+  name: IconName;
   size?: IconSize;
   color?: string;
   strokeWidth?: number;
@@ -28,7 +29,7 @@ export function Icon({
 
   return (
     <DynamicIcon
-      name={name as IconName}
+      name={name}
       size={px}
       color={color}
       strokeWidth={strokeWidth}

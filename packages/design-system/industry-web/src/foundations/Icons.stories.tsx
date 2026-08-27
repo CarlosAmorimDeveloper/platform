@@ -21,7 +21,7 @@ const NAMES = [
   'calendar',
   'image',
   'folder',
-];
+] as const;
 
 export const LucideSet: Story = {
   render: () => (
