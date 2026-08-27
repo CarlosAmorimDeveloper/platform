@@ -10,7 +10,7 @@ module.exports = {
     '^.+\\.(js|mjs)$': ['babel-jest', { presets: ['@babel/preset-env'] }],
   },
   transformIgnorePatterns: ['node_modules/(?!(lucide-react)/)'],
-  setupFilesAfterEnv: ['@testing-library/jest-dom'],
+  setupFilesAfterEnv: ['@testing-library/jest-dom', '<rootDir>/jest.setup.ts'],
   // lucide-react ships its own nested react copy in node_modules/lucide-react/node_modules
   // (version drift vs. the hoisted root copy). Without this, DynamicIcon renders against
   // a second React instance with a null hook dispatcher — force everything onto one copy.

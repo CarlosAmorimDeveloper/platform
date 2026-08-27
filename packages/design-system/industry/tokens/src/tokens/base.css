@@ -93,3 +93,17 @@ figcaption {
 ::placeholder {
   color: color-mix(in srgb, var(--color-text) 38%, transparent);
 }
+
+@keyframes ind-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes ind-shimmer {
+  0% {
+    background-position: 150% 0;
+  }
+  100% {
+    background-position: -50% 0;
+  }
+}

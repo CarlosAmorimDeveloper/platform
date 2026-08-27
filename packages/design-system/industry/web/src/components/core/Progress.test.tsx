@@ -1,0 +1,45 @@
+import { render, screen } from '@testing-library/react';
+import { Progress, Spinner } from './Progress';
+
+describe('Progress', () => {
+  it('exposes the current value via progressbar attributes', () => {
+    render(<Progress value={40} max={80} />);
+
+    const bar = screen.getByRole('progressbar');
+    expect(bar).toHaveAttribute('aria-valuenow', '40');
+    expect(bar).toHaveAttribute('aria-valuemin', '0');
+    expect(bar).toHaveAttribute('aria-valuemax', '80');
+  });
+
+  it('renders the rounded percentage by default', () => {
+    render(<Progress value={33} max={100} />);
+
+    expect(screen.getByText('33%')).toBeInTheDocument();
+  });
+
+  it('hides the percentage when showValue is false', () => {
+    render(<Progress value={33} showValue={false} />);
+
+    expect(screen.queryByText('33%')).not.toBeInTheDocument();
+  });
+
+  it('renders the label', () => {
+    render(<Progress value={10} label="Enviando" />);
+
+    expect(screen.getByText('Enviando')).toBeInTheDocument();
+  });
+
+  it('clamps the value between 0 and 100 percent', () => {
+    render(<Progress value={999} max={100} />);
+
+    expect(screen.getByText('100%')).toBeInTheDocument();
+  });
+});
+
+describe('Spinner', () => {
+  it('renders as an accessible status indicator', () => {
+    render(<Spinner />);
+
+    expect(screen.getByRole('status', { name: 'Carregando' })).toBeInTheDocument();
+  });
+});
