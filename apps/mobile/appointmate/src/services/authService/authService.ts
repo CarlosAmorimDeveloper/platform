@@ -8,7 +8,7 @@ import {
 } from 'firebase/auth';
 import { auth } from '../firebase';
 
-export interface AuthenticatedUser {
+interface AuthenticatedUser {
   uid: string;
   email: string;
 }

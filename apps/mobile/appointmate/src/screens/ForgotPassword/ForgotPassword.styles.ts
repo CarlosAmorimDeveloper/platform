@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { fontSize, space } from '@vuotto/tokens';
+import { fontSize, lineHeight, resolveLineHeight, space } from '@vuotto/tokens';
 
 export const styles = StyleSheet.create({
   screen: { flex: 1 },
@@ -13,7 +13,7 @@ export const styles = StyleSheet.create({
   description: {
     fontSize: fontSize.md,
     textAlign: 'center',
-    lineHeight: 24,
+    lineHeight: resolveLineHeight(fontSize.md, lineHeight.normal),
   },
   form: { gap: space[3] },
 });

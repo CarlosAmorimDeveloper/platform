@@ -35,6 +35,11 @@ function Field({ label, value }: { label: string; value: string }) {
   );
 }
 
+function SectionTitle({ children }: { children: string }) {
+  const { colors } = useTheme();
+  return <Text style={[styles.sectionTitle, { color: colors.textHeading }]}>{children}</Text>;
+}
+
 function ListField({ label, items }: { label: string; items: { text: string }[] }) {
   const { colors } = useTheme();
   const filled = items.filter((item) => item.text.trim());
@@ -185,11 +190,11 @@ export function FormDetail({ navigation, route }: Props) {
           />
         ) : (
           <>
-            <Text style={[styles.sectionTitle, { color: colors.textHeading }]}>Cabeçalho</Text>
+            <SectionTitle>Cabeçalho</SectionTitle>
             <Field label="Data desta consulta" value={values.appointmentDate} />
             <Field label="Última consulta foi em" value={values.lastAppointmentDate} />
 
-            <Text style={[styles.sectionTitle, { color: colors.textHeading }]}>Panorama geral</Text>
+            <SectionTitle>Panorama geral</SectionTitle>
             {moodLabel && (
               <View style={styles.field}>
                 <Text style={[styles.fieldLabel, { color: colors.textSecondary }]}>
@@ -205,13 +210,13 @@ export function FormDetail({ navigation, route }: Props) {
             )}
             <Field label="Em poucas palavras" value={values.overallSummary} />
 
-            <Text style={[styles.sectionTitle, { color: colors.textHeading }]}>No dia a dia</Text>
+            <SectionTitle>No dia a dia</SectionTitle>
             <Field label="Sono" value={values.sleep} />
             <Field label="Energia e disposição" value={values.energy} />
             <Field label="Apetite e alimentação" value={values.appetite} />
             <Field label="Concentração e memória" value={values.concentration} />
 
-            <Text style={[styles.sectionTitle, { color: colors.textHeading }]}>Medicação</Text>
+            <SectionTitle>Medicação</SectionTitle>
             <ListField label="Medicamentos e doses" items={values.medications} />
             <Field
               label="Tenho conseguido tomar como combinado?"
@@ -219,30 +224,22 @@ export function FormDetail({ navigation, route }: Props) {
             />
             <Field label="Efeitos que percebi (bons e ruins)" value={values.medicationEffects} />
 
-            <Text style={[styles.sectionTitle, { color: colors.textHeading }]}>
-              O que foi bem ou melhorou
-            </Text>
+            <SectionTitle>O que foi bem ou melhorou</SectionTitle>
             <Field label="O que foi bem ou melhorou" value={values.whatWentWell} />
 
-            <Text style={[styles.sectionTitle, { color: colors.textHeading }]}>
-              O que tem sido difícil
-            </Text>
+            <SectionTitle>O que tem sido difícil</SectionTitle>
             <Field label="O que tem sido difícil" value={values.whatHasBeenHard} />
 
-            <Text style={[styles.sectionTitle, { color: colors.textHeading }]}>Contexto</Text>
+            <SectionTitle>Contexto</SectionTitle>
             <Field label="Situações importantes desde a última consulta" value={values.context} />
 
-            <Text style={[styles.sectionTitle, { color: colors.textHeading }]}>
-              Minhas perguntas
-            </Text>
+            <SectionTitle>Minhas perguntas</SectionTitle>
             <ListField label="Perguntas" items={values.questions} />
 
-            <Text style={[styles.sectionTitle, { color: colors.textHeading }]}>Foco do dia</Text>
+            <SectionTitle>Foco do dia</SectionTitle>
             <Field label="O que quero desta consulta" value={values.todayFocus} />
 
-            <Text style={[styles.sectionTitle, { color: colors.textHeading }]}>
-              Durante a consulta
-            </Text>
+            <SectionTitle>Durante a consulta</SectionTitle>
             <Field label="Anotações e orientações" value={values.consultationNotes} />
           </>
         )}

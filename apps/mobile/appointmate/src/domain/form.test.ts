@@ -1,7 +1,5 @@
 import {
   EMPTY_FORM_VALUES,
-  EMPTY_MEDICATION,
-  EMPTY_QUESTION,
   MOOD_OPTIONS,
   formatDate,
   formatDateInput,
@@ -55,13 +53,6 @@ describe('EMPTY_FORM_VALUES', () => {
     expect(EMPTY_FORM_VALUES.context).toBe('');
     expect(EMPTY_FORM_VALUES.todayFocus).toBe('');
     expect(EMPTY_FORM_VALUES.consultationNotes).toBe('');
-  });
-});
-
-describe('EMPTY_MEDICATION / EMPTY_QUESTION', () => {
-  it('provide blank rows for dynamic list fields', () => {
-    expect(EMPTY_MEDICATION).toEqual({ text: '' });
-    expect(EMPTY_QUESTION).toEqual({ text: '' });
   });
 });
 

@@ -29,10 +29,10 @@ import {
   type FormValues,
 } from '../../domain/form';
 import { styles } from './FormEntry.styles';
+import { DynamicListField } from './DynamicListField';
+import { REQUIRED_MESSAGE } from './constants';
 
 type Props = NativeStackScreenProps<AppStackParamList, 'FormEntry'>;
-
-const REQUIRED_MESSAGE = 'Campo obrigatório';
 
 type TextareaFieldName =
   | 'overallSummary'
@@ -264,38 +264,14 @@ export function FormEntry({ navigation, route }: Props) {
           />
 
           <Text style={[styles.sectionTitle, { color: colors.textHeading }]}>Medicação</Text>
-          {medicationsArray.fields.map((field, index) => (
-            <View key={field.id} style={[styles.dynamicRow, { backgroundColor: colors.glass1 }]}>
-              <Controller
-                control={control}
-                name={`medications.${index}.text`}
-                rules={{ required: REQUIRED_MESSAGE }}
-                render={({ field: f, fieldState }) => (
-                  <Field label="Medicamento e dose" error={fieldState.error?.message}>
-                    <Input
-                      value={f.value}
-                      onChangeText={f.onChange}
-                      testID={`form-entry-medication-${index}-input`}
-                    />
-                  </Field>
-                )}
-              />
-              <Button
-                variant="ghost"
-                onPress={() => medicationsArray.remove(index)}
-                testID={`form-entry-remove-medication-${index}-button`}
-              >
-                Remover
-              </Button>
-            </View>
-          ))}
-          <Button
-            variant="secondary"
-            onPress={() => medicationsArray.append({ text: '' })}
-            testID="form-entry-add-medication-button"
-          >
-            Adicionar medicamento
-          </Button>
+          <DynamicListField
+            control={control}
+            name="medications"
+            fieldArray={medicationsArray}
+            itemLabel="Medicamento e dose"
+            addLabel="Adicionar medicamento"
+            testIdKind="medication"
+          />
           <TextareaField
             control={control}
             name="medicationAdherence"
@@ -338,38 +314,14 @@ export function FormEntry({ navigation, route }: Props) {
           />
 
           <Text style={[styles.sectionTitle, { color: colors.textHeading }]}>Minhas perguntas</Text>
-          {questionsArray.fields.map((field, index) => (
-            <View key={field.id} style={[styles.dynamicRow, { backgroundColor: colors.glass1 }]}>
-              <Controller
-                control={control}
-                name={`questions.${index}.text`}
-                rules={{ required: REQUIRED_MESSAGE }}
-                render={({ field: f, fieldState }) => (
-                  <Field label="Pergunta" error={fieldState.error?.message}>
-                    <Input
-                      value={f.value}
-                      onChangeText={f.onChange}
-                      testID={`form-entry-question-${index}-input`}
-                    />
-                  </Field>
-                )}
-              />
-              <Button
-                variant="ghost"
-                onPress={() => questionsArray.remove(index)}
-                testID={`form-entry-remove-question-${index}-button`}
-              >
-                Remover
-              </Button>
-            </View>
-          ))}
-          <Button
-            variant="secondary"
-            onPress={() => questionsArray.append({ text: '' })}
-            testID="form-entry-add-question-button"
-          >
-            Adicionar pergunta
-          </Button>
+          <DynamicListField
+            control={control}
+            name="questions"
+            fieldArray={questionsArray}
+            itemLabel="Pergunta"
+            addLabel="Adicionar pergunta"
+            testIdKind="question"
+          />
 
           <Text style={[styles.sectionTitle, { color: colors.textHeading }]}>Foco do dia</Text>
           <TextareaField
