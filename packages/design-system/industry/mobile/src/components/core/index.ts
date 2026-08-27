@@ -32,3 +32,8 @@ export { Tabs } from './Tabs';
 export type { TabsProps, TabItem } from './Tabs';
 export { Stepper } from './Stepper';
 export type { StepperProps, Step } from './Stepper';
+
+export { ListRow } from './ListRow';
+export type { ListRowProps } from './ListRow';
+export { DataTable } from './DataTable';
+export type { DataTableProps, Column } from './DataTable';
