@@ -63,3 +63,6 @@ export type { TooltipProps, TooltipSide } from './Tooltip';
 
 export { Popover } from './Popover';
 export type { PopoverProps, PopoverSide, PopoverAlign } from './Popover';
+
+export { Menu } from './Menu';
+export type { MenuProps, MenuItem } from './Menu';
