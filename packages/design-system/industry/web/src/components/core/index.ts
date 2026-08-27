@@ -14,6 +14,8 @@ export { TextField } from './TextField';
 export type { TextFieldProps } from './TextField';
 export { SearchField } from './SearchField';
 export type { SearchFieldProps } from './SearchField';
+export { Select } from './Select';
+export type { SelectProps, SelectSize, SelectOption } from './Select';
 
 export { Switch } from './Switch';
 export type { SwitchProps } from './Switch';
