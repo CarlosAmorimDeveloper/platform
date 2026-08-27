@@ -34,27 +34,27 @@ Configurações ESLint compartilhadas do monorepo `platform`. Fornece três conf
 
 ```js
 // eslint.config.mjs
-import { nextConfig } from '@repo/eslint-config/next-js';
+import { nextJsConfig } from '@repo/eslint-config/next-js';
 
-export default nextConfig;
+export default nextJsConfig;
 ```
 
-### Pacote React interno (`packages/design-system/web`)
+### Pacote React interno (`packages/design-system/vuotto-web`)
 
 ```js
 // eslint.config.mjs
-import { reactInternalConfig } from '@repo/eslint-config/react-internal';
+import { config } from '@repo/eslint-config/react-internal';
 
-export default reactInternalConfig;
+export default config;
 ```
 
 ### Pacote TypeScript genérico
 
 ```js
 // eslint.config.mjs
-import { baseConfig } from '@repo/eslint-config/base';
+import { config } from '@repo/eslint-config/base';
 
-export default baseConfig;
+export default config;
 ```
 
 ## Plugins incluídos
