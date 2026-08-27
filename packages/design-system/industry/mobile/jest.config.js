@@ -1,6 +1,6 @@
 const path = require('path');
 
-const sharedReact = path.resolve(__dirname, '../../../node_modules/react');
+const sharedReact = path.resolve(__dirname, '../../../../node_modules/react');
 
 /** @type {import('jest').Config} */
 module.exports = {

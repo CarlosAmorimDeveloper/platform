@@ -76,9 +76,10 @@ platform/
 │   │   ├── vuotto-web/          # Componentes React (@vuotto/web)
 │   │   ├── vuotto-mobile/       # Componentes React Native (@vuotto/mobile)
 │   │   ├── vuotto-tokens/       # Tokens de design (@vuotto/tokens)
-│   │   ├── industry-web/        # Componentes React (@industry/web, em desenvolvimento)
-│   │   ├── industry-mobile/     # Componentes React Native (@industry/mobile, em desenvolvimento)
-│   │   └── industry-tokens/     # Tokens de design (@industry/tokens, em desenvolvimento)
+│   │   └── industry/
+│   │       ├── web/             # Componentes React (@industry/web, em desenvolvimento)
+│   │       ├── mobile/          # Componentes React Native (@industry/mobile, em desenvolvimento)
+│   │       └── tokens/          # Tokens de design (@industry/tokens, em desenvolvimento)
 │   ├── eslint-config/          # Configuração ESLint compartilhada
 │   └── typescript-config/      # tsconfig base compartilhado
 ├── turbo.json
@@ -130,7 +131,7 @@ O design system adotado pelos três apps é o **Vuotto Tech**, três pacotes tem
 - **[`@vuotto/mobile`](packages/design-system/vuotto-mobile/README.md)** — componentes React Native, próprios (sem React Native Paper).
 - **[`@vuotto/tokens`](packages/design-system/vuotto-tokens/README.md)** — cores, espaçamentos, tamanhos de fonte e raios, como constantes TypeScript e variáveis CSS.
 
-Um segundo design system, **Industry** (`@industry/web`/`@industry/mobile`/`@industry/tokens` em `packages/design-system/industry-*`), está em desenvolvimento em paralelo e ainda não foi adotado por nenhum app.
+Um segundo design system, **Industry** (`@industry/web`/`@industry/mobile`/`@industry/tokens` em `packages/design-system/industry/*`), está em desenvolvimento em paralelo e ainda não foi adotado por nenhum app.
 
 ## Tecnologias
 
