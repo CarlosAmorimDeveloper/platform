@@ -16,6 +16,8 @@ on:
 
 jobs:
   chromatic:
+    permissions:
+      pull-requests: write
     uses: ./.github/workflows/storybook-chromatic.yml
     with:
       package_path: packages/design-system/vuotto-web
