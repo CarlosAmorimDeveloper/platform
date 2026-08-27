@@ -31,3 +31,4 @@ Por padrão o ícone é decorativo (`aria-hidden`); passe `aria-label` quando el
 ## Escopo desta primeira fase (REB-12 a REB-16 / VT-1 a VT-5)
 
 Só a fundação: pacote + build, tema, ícone (tokens/fontes ficaram em `@vuotto/tokens`). Os 30 componentes do protótipo (Button, Card, Table, Dialog, etc.) e os 4 UI kits (portfolio, console, mobile, docs) são as próximas fases do backlog (REB-2 em diante).
+
