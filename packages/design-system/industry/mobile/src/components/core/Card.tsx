@@ -1,0 +1,83 @@
+import { Text, View } from 'react-native';
+import type { StyleProp, ViewStyle } from 'react-native';
+import type { ReactNode } from 'react';
+import { accentRamp, alpha, color, fontFamily, fontWeight, shadow, space } from '@industry/tokens';
+import { BlueprintMarks } from './BlueprintMarks';
+
+export type CardElevation = 'sm' | 'md' | 'lg';
+
+export interface CardProps {
+  kicker?: ReactNode;
+  title?: ReactNode;
+  body?: ReactNode;
+  meta?: ReactNode;
+  elevation?: CardElevation;
+  framed?: boolean;
+  children?: ReactNode;
+  style?: StyleProp<ViewStyle>;
+  testID?: string;
+}
+
+export function Card({
+  kicker,
+  title,
+  body,
+  meta,
+  elevation,
+  framed,
+  children,
+  style,
+  testID,
+}: CardProps) {
+  return (
+    <View
+      testID={testID}
+      style={[
+        {
+          position: framed ? 'relative' : undefined,
+          gap: space[2],
+          padding: space[4],
+          borderRadius: 0,
+          backgroundColor: 'transparent',
+          borderWidth: 1,
+          borderColor: color.divider,
+        },
+        elevation ? shadow[elevation] : null,
+        style,
+      ]}
+    >
+      {framed ? <BlueprintMarks /> : null}
+      {kicker ? (
+        <Text
+          style={{
+            fontSize: 11,
+            letterSpacing: 1.1,
+            textTransform: 'uppercase',
+            color: accentRamp['300'],
+          }}
+        >
+          {kicker}
+        </Text>
+      ) : null}
+      {title ? (
+        <Text
+          style={{
+            fontFamily: fontFamily.heading,
+            fontWeight: fontWeight.heading,
+            fontSize: 19,
+            lineHeight: 23,
+          }}
+        >
+          {title}
+        </Text>
+      ) : null}
+      {body ? <Text style={{ fontSize: 14, color: alpha(color.text, 80) }}>{body}</Text> : null}
+      {children}
+      {meta ? (
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: space[2] }}>
+          <Text style={{ fontSize: 12, color: alpha(color.text, 50) }}>{meta}</Text>
+        </View>
+      ) : null}
+    </View>
+  );
+}

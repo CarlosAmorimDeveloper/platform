@@ -1,0 +1,40 @@
+import type { Meta, StoryObj } from '@storybook/react';
+import { View } from 'react-native';
+import { Card } from './Card';
+
+const meta: Meta<typeof Card> = {
+  title: 'Core/Card',
+  component: Card,
+};
+
+export default meta;
+type Story = StoryObj<typeof Card>;
+
+export const Default: Story = {
+  render: () => (
+    <View style={{ width: 320 }}>
+      <Card
+        kicker="Projeto"
+        title="Migração de dados"
+        body="Movendo os registros legados para o novo schema."
+        meta="Atualizado há 2h"
+      />
+    </View>
+  ),
+};
+
+export const Elevated: Story = {
+  render: () => (
+    <View style={{ width: 320 }}>
+      <Card title="Card com sombra" elevation="md" body="Usa shadow.md do token." />
+    </View>
+  ),
+};
+
+export const Framed: Story = {
+  render: () => (
+    <View style={{ width: 320 }}>
+      <Card title="Card com marcas blueprint" framed body="Marcas de canto no estilo Frame." />
+    </View>
+  ),
+};

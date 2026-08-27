@@ -1,0 +1,60 @@
+import { render } from '@testing-library/react-native';
+import { Text } from 'react-native';
+import { Card } from './Card';
+
+describe('Card', () => {
+  it('renders kicker, title, body and meta', () => {
+    const { getByText } = render(
+      <Card kicker="Projeto" title="Título" body="Corpo do card" meta="há 2h" />,
+    );
+
+    expect(getByText('Projeto')).toBeTruthy();
+    expect(getByText('Título')).toBeTruthy();
+    expect(getByText('Corpo do card')).toBeTruthy();
+    expect(getByText('há 2h')).toBeTruthy();
+  });
+
+  it('renders children alongside the structured slots', () => {
+    const { getByText } = render(
+      <Card title="Título">
+        <Text>Conteúdo extra</Text>
+      </Card>,
+    );
+
+    expect(getByText('Conteúdo extra')).toBeTruthy();
+  });
+
+  it('omits optional slots that are not provided', () => {
+    const { getByText, queryByText } = render(<Card title="Só título" />);
+
+    expect(getByText('Só título')).toBeTruthy();
+    expect(queryByText('há 2h')).toBeNull();
+  });
+
+  it('renders blueprint corner marks when framed', () => {
+    const { getByTestId } = render(<Card title="Framed" framed />);
+
+    expect(getByTestId('frame-corner-tl')).toBeTruthy();
+    expect(getByTestId('frame-corner-br')).toBeTruthy();
+  });
+
+  it('does not render corner marks by default', () => {
+    const { queryByTestId } = render(<Card title="Sem marcas" />);
+
+    expect(queryByTestId('frame-corner-tl')).toBeNull();
+  });
+
+  it('applies the elevation shadow when given', () => {
+    const { getByTestId } = render(<Card testID="elevated-card" elevation="md" />);
+
+    expect(getByTestId('elevated-card').props.style).toEqual(
+      expect.arrayContaining([expect.objectContaining({ shadowOpacity: 0.45 })]),
+    );
+  });
+
+  it('omits the title slot when not provided', () => {
+    const { queryByText } = render(<Card body="Só corpo" />);
+
+    expect(queryByText('Só corpo')).toBeTruthy();
+  });
+});
