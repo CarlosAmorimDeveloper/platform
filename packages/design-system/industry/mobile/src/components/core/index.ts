@@ -20,3 +20,10 @@ export { RadioGroup } from './RadioGroup';
 export type { RadioGroupProps, RadioOption } from './RadioGroup';
 export { SegmentedControl } from './SegmentedControl';
 export type { SegmentedControlProps, SegmentOption } from './SegmentedControl';
+
+export { Card } from './Card';
+export type { CardProps, CardElevation } from './Card';
+export { TabBar } from './TabBar';
+export type { TabBarProps, TabBarItem } from './TabBar';
+export { Sheet } from './Sheet';
+export type { SheetProps } from './Sheet';
