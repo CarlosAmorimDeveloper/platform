@@ -62,10 +62,17 @@ jobs:
           WORKSPACE_PATH: ${{ matrix.path }}
           EXCLUDE_PATTERN: ${{ matrix.exclude_pattern }}
         run: |
+          # -M100% + --diff-filter=ACM: a byte-identical file that only moved
+          # (e.g. a package folder rename) is reported as a pure rename (R)
+          # and excluded, instead of inflating this list with every
+          # untouched file in the new path. Any file with real content
+          # changes falls below the 100% similarity threshold and is
+          # reported as Added, so it's still included.
+          #
           # Exclude test files (and, for todo-app, Next.js infrastructure).
           # || true prevents grep's exit code 1 (no match) from failing the
           # step when pipefail is active (GitHub Actions default shell)
-          FILES=$(git diff --name-only ${{ github.event.pull_request.base.sha }}...HEAD \
+          FILES=$(git diff --name-only -M100% --diff-filter=ACM ${{ github.event.pull_request.base.sha }}...HEAD \
             | grep -E "^${WORKSPACE_PATH}/.*\.(ts|tsx)$" \
             | grep -Ev '\.(spec|test)\.' \
             || true)
