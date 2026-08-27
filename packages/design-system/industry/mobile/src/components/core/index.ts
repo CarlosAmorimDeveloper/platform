@@ -57,3 +57,6 @@ export type { MenuProps, MenuItem } from './Menu';
 
 export { DatePicker } from './DatePicker';
 export type { DatePickerProps } from './DatePicker';
+
+export { FileDrop } from './FileDrop';
+export type { FileDropProps } from './FileDrop';
