@@ -60,3 +60,6 @@ export type { DataTableProps, Column } from './DataTable';
 
 export { Tooltip } from './Tooltip';
 export type { TooltipProps, TooltipSide } from './Tooltip';
+
+export { Popover } from './Popover';
+export type { PopoverProps, PopoverSide, PopoverAlign } from './Popover';
