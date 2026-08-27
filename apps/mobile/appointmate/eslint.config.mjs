@@ -1,9 +1,19 @@
 import { config } from '@repo/eslint-config/react-internal';
+import {
+  domainServicesBoundaries,
+  noCrossGenerationImports,
+} from '@repo/eslint-config/architecture-boundaries';
 import { defineConfig } from 'eslint/config';
 import globals from 'globals';
 
 export default defineConfig([
   ...config,
+  // Order matters: domainServicesBoundaries must come after
+  // noCrossGenerationImports so its more specific (files-scoped) rule wins
+  // for domain/services files instead of being silently overwritten by the
+  // unscoped one — see the comment on domainServicesBoundaries.
+  ...noCrossGenerationImports('@industry'),
+  ...domainServicesBoundaries('src', '@industry'),
   {
     ignores: ['node_modules/**', 'android/**', 'ios/**', '.expo/**'],
   },
