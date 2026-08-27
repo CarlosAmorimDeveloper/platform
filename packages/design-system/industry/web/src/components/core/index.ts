@@ -57,3 +57,6 @@ export { ListRow } from './ListRow';
 export type { ListRowProps } from './ListRow';
 export { DataTable } from './DataTable';
 export type { DataTableProps, Column } from './DataTable';
+
+export { Tooltip } from './Tooltip';
+export type { TooltipProps, TooltipSide } from './Tooltip';
