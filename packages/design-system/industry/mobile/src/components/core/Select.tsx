@@ -44,6 +44,7 @@ export function Select({
   const normalized = options.map(resolveOption);
   const selected = normalized.find((o) => o.value === value);
   const borderColor = error ? semanticColor.danger : color.divider;
+  const close = () => setOpen(false);
 
   return (
     <View style={[{ gap: 6 }, style]}>
@@ -79,10 +80,10 @@ export function Select({
         <Text style={{ fontSize: 12, color: alpha(color.text, 50) }}>{hint}</Text>
       ) : null}
 
-      <Modal visible={open} transparent animationType="fade" onRequestClose={() => setOpen(false)}>
+      <Modal visible={open} transparent animationType="fade" onRequestClose={close}>
         <Pressable
           testID={testID ? `${testID}-backdrop` : undefined}
-          onPress={() => setOpen(false)}
+          onPress={close}
           style={{ flex: 1, backgroundColor: alpha(color.bg, 70), justifyContent: 'flex-end' }}
         >
           <View

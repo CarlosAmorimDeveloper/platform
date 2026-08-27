@@ -55,6 +55,21 @@ describe('Select', () => {
     expect(queryByTestId('select-option-a')).toBeNull();
   });
 
+  it('highlights the currently selected option in the sheet', () => {
+    const { getByTestId } = render(
+      <Select options={OPTIONS} value="b" testID="status-select" onValueChange={jest.fn()} />,
+    );
+
+    fireEvent.press(getByTestId('status-select'));
+
+    expect(getByTestId('select-option-b').props.accessibilityState).toMatchObject({
+      selected: true,
+    });
+    expect(getByTestId('select-option-a').props.accessibilityState).toMatchObject({
+      selected: false,
+    });
+  });
+
   it('renders object options by their label', () => {
     const { getByTestId, getByText } = render(
       <Select
@@ -83,6 +98,25 @@ describe('Select', () => {
     );
 
     expect(getByText('Escolha um status')).toBeTruthy();
+  });
+
+  it('renders the label above the trigger', () => {
+    const { getByText, getByLabelText } = render(
+      <Select label="Status" options={OPTIONS} onValueChange={jest.fn()} />,
+    );
+
+    expect(getByText('Status')).toBeTruthy();
+    expect(getByLabelText('Status')).toBeTruthy();
+  });
+
+  it('defaults to an empty option list', () => {
+    const { getByText, getByTestId } = render(
+      <Select testID="status-select" onValueChange={jest.fn()} />,
+    );
+
+    fireEvent.press(getByTestId('status-select'));
+
+    expect(getByText('Selecionar')).toBeTruthy();
   });
 
   it('is not pressable when disabled', () => {
