@@ -7,7 +7,8 @@ import { toggleTask, editTask, removeTask } from '@/redux/taskSlice';
 import type { Task } from '@/redux/taskSlice';
 import type { AppDispatch } from '@/redux/store';
 import { isValidTaskTitle, sanitizeTaskTitle } from '@/domain/task';
-import { Button, Card, Checkbox, Input } from '@vuotto/web';
+import { Button, Card, Checkbox } from '@vuotto/web';
+import { EditableTaskTitle } from './EditableTaskTitle';
 
 interface TaskItemProps {
   task: Task;
@@ -55,19 +56,9 @@ export function TaskItem({ task }: TaskItemProps) {
     setIsEditing(false);
   }
 
-  function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
-    if (e.key === 'Enter') handleEditSubmit();
-    if (e.key === 'Escape') {
-      setEditValue(task.title);
-      setIsEditing(false);
-    }
-  }
-
-  function handleSpanKeyDown(e: React.KeyboardEvent<HTMLSpanElement>) {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      setIsEditing(true);
-    }
+  function handleEditCancel() {
+    setEditValue(task.title);
+    setIsEditing(false);
   }
 
   return (
@@ -83,36 +74,15 @@ export function TaskItem({ task }: TaskItemProps) {
           onChange={handleToggle}
         />
 
-        {isEditing ? (
-          <Input
-            type="text"
-            size="sm"
-            value={editValue}
-            onChange={(e) => setEditValue(e.target.value)}
-            onBlur={handleEditSubmit}
-            onKeyDown={handleKeyDown}
-            autoFocus
-            aria-label={`Editar: ${task.title}`}
-            style={{ flex: 1 }}
-          />
-        ) : (
-          <span
-            style={{
-              flex: 1,
-              font: 'var(--weight-regular) var(--text-md)/1.4 var(--font-sans)',
-              color: task.completed ? 'var(--text-tertiary)' : 'var(--text-primary)',
-              textDecoration: task.completed ? 'line-through' : 'none',
-              cursor: task.completed ? 'default' : 'pointer',
-            }}
-            role={task.completed ? undefined : 'button'}
-            tabIndex={task.completed ? undefined : 0}
-            onDoubleClick={() => !task.completed && setIsEditing(true)}
-            onKeyDown={task.completed ? undefined : handleSpanKeyDown}
-            aria-label={task.completed ? task.title : `${task.title} — pressione Enter para editar`}
-          >
-            {task.title}
-          </span>
-        )}
+        <EditableTaskTitle
+          task={task}
+          isEditing={isEditing}
+          editValue={editValue}
+          onEditValueChange={setEditValue}
+          onStartEditing={() => setIsEditing(true)}
+          onSubmit={handleEditSubmit}
+          onCancel={handleEditCancel}
+        />
 
         <div style={{ display: 'flex', gap: 'var(--space-2)', alignItems: 'center' }}>
           {!task.completed && !isEditing && (
