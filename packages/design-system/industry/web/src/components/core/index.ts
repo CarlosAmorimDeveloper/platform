@@ -36,3 +36,8 @@ export { TabBar } from './TabBar';
 export type { TabBarProps, TabBarItem } from './TabBar';
 export { Sheet } from './Sheet';
 export type { SheetProps } from './Sheet';
+
+export { Tabs } from './Tabs';
+export type { TabsProps, TabItem } from './Tabs';
+export { Stepper } from './Stepper';
+export type { StepperProps, Step } from './Stepper';
