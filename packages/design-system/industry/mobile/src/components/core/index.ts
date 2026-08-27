@@ -54,3 +54,6 @@ export type { TooltipProps, TooltipSide } from './Tooltip';
 
 export { Menu } from './Menu';
 export type { MenuProps, MenuItem } from './Menu';
+
+export { DatePicker } from './DatePicker';
+export type { DatePickerProps } from './DatePicker';
