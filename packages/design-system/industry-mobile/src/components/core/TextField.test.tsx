@@ -64,4 +64,29 @@ describe('TextField', () => {
     );
     expect(getByPlaceholderText('x').props.accessibilityLabel).toBeUndefined();
   });
+
+  it('uses a taller, top-aligned style with vertical padding when multiline', () => {
+    const { getByPlaceholderText } = render(<TextField multiline placeholder="x" />);
+    expect(getByPlaceholderText('x').props.style).toMatchObject({
+      minHeight: 104,
+      paddingVertical: 8,
+      textAlignVertical: 'top',
+    });
+  });
+
+  it('uses the default single-line height and center alignment when not multiline', () => {
+    const { getByPlaceholderText } = render(<TextField placeholder="x" />);
+    expect(getByPlaceholderText('x').props.style).toMatchObject({
+      paddingVertical: 0,
+      textAlignVertical: 'center',
+    });
+  });
+
+  it('does not throw when focus/blur fire without onFocus/onBlur handlers', () => {
+    const { getByPlaceholderText } = render(<TextField placeholder="x" />);
+    const input = getByPlaceholderText('x');
+
+    expect(() => fireEvent(input, 'focus', { nativeEvent: {} })).not.toThrow();
+    expect(() => fireEvent(input, 'blur', { nativeEvent: {} })).not.toThrow();
+  });
 });

@@ -6,13 +6,39 @@ on:
       - main
     paths:
       - "apps/web/todo-app/**"
+      - "apps/mobile/tickets-app/**"
+      - "apps/mobile/appointmate/**"
       - "packages/design-system/vuotto-web/**"
+      - "packages/design-system/vuotto-mobile/**"
       - "packages/design-system/vuotto-tokens/**"
+      - "packages/design-system/industry-mobile/**"
+      - "packages/design-system/industry-tokens/**"
 
 jobs:
   coverage:
-    name: Coverage ≥ 95% on changed files
+    name: Coverage ≥ 95% on changed files (${{ matrix.name }})
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: todo-app
+            path: apps/web/todo-app
+            build: yarn workspace @vuotto/tokens build && yarn workspace @vuotto/web build
+            # Next.js infra files (layout, page, theme provider) aren't unit-testable.
+            exclude_pattern: '/(layout|page|ThemeRegistry)\.'
+          - name: tickets-app
+            path: apps/mobile/tickets-app
+            build: yarn workspace @vuotto/tokens build && yarn workspace @vuotto/mobile build
+            exclude_pattern: ""
+          - name: appointmate
+            path: apps/mobile/appointmate
+            build: yarn workspace @vuotto/tokens build && yarn workspace @vuotto/mobile build
+            exclude_pattern: ""
+          - name: industry-mobile
+            path: packages/design-system/industry-mobile
+            build: yarn workspace @industry/tokens build
+            exclude_pattern: ""
 
     steps:
       - uses: actions/checkout@v4
@@ -27,20 +53,26 @@ jobs:
       - name: Install dependencies
         run: npx yarn install
 
-      - name: Build @vuotto/tokens and @vuotto/web
-        run: yarn workspace @vuotto/tokens build && yarn workspace @vuotto/web build
+      - name: Build dependencies
+        run: ${{ matrix.build }}
 
       - name: Identify changed source files
         id: changed
+        env:
+          WORKSPACE_PATH: ${{ matrix.path }}
+          EXCLUDE_PATTERN: ${{ matrix.exclude_pattern }}
         run: |
-          # Exclude test files and Next.js infrastructure (layout, page, providers)
+          # Exclude test files (and, for todo-app, Next.js infrastructure).
           # || true prevents grep's exit code 1 (no match) from failing the
           # step when pipefail is active (GitHub Actions default shell)
           FILES=$(git diff --name-only ${{ github.event.pull_request.base.sha }}...HEAD \
-            | grep -E '^apps/web/todo-app/src/.*\.(ts|tsx)$' \
+            | grep -E "^${WORKSPACE_PATH}/.*\.(ts|tsx)$" \
             | grep -Ev '\.(spec|test)\.' \
-            | grep -Ev '/(layout|page|ThemeRegistry)\.' \
             || true)
+
+          if [ -n "$EXCLUDE_PATTERN" ]; then
+            FILES=$(echo "$FILES" | grep -Ev "$EXCLUDE_PATTERN" || true)
+          fi
 
           if [ -z "$FILES" ]; then
             echo "has_files=false" >> $GITHUB_OUTPUT
@@ -54,18 +86,18 @@ jobs:
 
       - name: Run Jest with coverage on changed files
         if: steps.changed.outputs.has_files == 'true'
-        working-directory: apps/web/todo-app
+        working-directory: ${{ matrix.path }}
         run: |
           # Paths relative to this working directory (strip the repo prefix)
-          CHANGED=$(sed 's|apps/web/todo-app/||' /tmp/changed_files.txt | tr '\n' ' ')
-          COLLECT=$(sed 's|apps/web/todo-app/||' /tmp/changed_files.txt \
+          CHANGED=$(sed "s|${{ matrix.path }}/||" /tmp/changed_files.txt | tr '\n' ' ')
+          COLLECT=$(sed "s|${{ matrix.path }}/||" /tmp/changed_files.txt \
             | awk '{print "--collectCoverageFrom=" $0}' \
             | tr '\n' ' ')
 
           # --findRelatedTests runs only the test suites that import the changed
           # files, instead of the full test suite. --collectCoverageFrom limits
           # the coverage report to those same files.
-          eval "../../../node_modules/.bin/jest \
+          eval "yarn jest \
             --findRelatedTests $CHANGED \
             --coverage \
             --coverageReporters=json-summary \
@@ -73,7 +105,7 @@ jobs:
 
       - name: Enforce 95% threshold
         if: steps.changed.outputs.has_files == 'true'
-        working-directory: apps/web/todo-app
+        working-directory: ${{ matrix.path }}
         run: |
           node -e "
             const fs = require('fs');
