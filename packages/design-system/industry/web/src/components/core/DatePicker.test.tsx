@@ -1,0 +1,148 @@
+import { fireEvent, render, screen } from '@testing-library/react';
+import {
+  DatePicker,
+  buildMonthMatrix,
+  formatDate,
+  isDateDisabled,
+  isSameDay,
+  startOfDay,
+} from './DatePicker';
+
+describe('pure date helpers', () => {
+  it('startOfDay strips the time portion', () => {
+    expect(startOfDay(new Date(2026, 7, 26, 13, 45))).toEqual(new Date(2026, 7, 26, 0, 0, 0, 0));
+  });
+
+  it('isSameDay compares calendar day, ignoring time', () => {
+    expect(isSameDay(new Date(2026, 7, 26, 1), new Date(2026, 7, 26, 23))).toBe(true);
+    expect(isSameDay(new Date(2026, 7, 26), new Date(2026, 7, 27))).toBe(false);
+  });
+
+  it('isDateDisabled rejects dates before min or after max', () => {
+    const min = new Date(2026, 7, 10);
+    const max = new Date(2026, 7, 20);
+    expect(isDateDisabled(new Date(2026, 7, 9), min, max)).toBe(true);
+    expect(isDateDisabled(new Date(2026, 7, 21), min, max)).toBe(true);
+    expect(isDateDisabled(new Date(2026, 7, 15), min, max)).toBe(false);
+    expect(isDateDisabled(new Date(2026, 7, 15))).toBe(false);
+  });
+
+  it('formatDate renders pt-BR dd/mm/yyyy', () => {
+    expect(formatDate(new Date(2026, 7, 26))).toBe('26/08/2026');
+  });
+
+  it('buildMonthMatrix pads leading/trailing cells to full weeks', () => {
+    const cells = buildMonthMatrix(2026, 7);
+    expect(cells.length % 7).toBe(0);
+    const days = cells.filter((c): c is Date => c !== null);
+    expect(days).toHaveLength(31);
+    expect(days[0]?.getDate()).toBe(1);
+    expect(days[days.length - 1]?.getDate()).toBe(31);
+  });
+});
+
+describe('DatePicker', () => {
+  it('shows the placeholder when there is no value', async () => {
+    render(<DatePicker placeholder="Escolha" />);
+    expect(await screen.findByRole('button', { name: /Escolha/ })).toBeInTheDocument();
+  });
+
+  it('shows the formatted value when set', async () => {
+    render(<DatePicker value={new Date(2026, 7, 26)} />);
+    expect(await screen.findByRole('button', { name: /26\/08\/2026/ })).toBeInTheDocument();
+  });
+
+  it('is closed by default and opens when the trigger is clicked', async () => {
+    render(<DatePicker />);
+    const trigger = await screen.findByRole('button', { name: /Selecione uma data/ });
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+
+    fireEvent.click(trigger);
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
+    await screen.findByRole('button', { name: 'Próximo mês' });
+  });
+
+  it('does not open when disabled', async () => {
+    render(<DatePicker disabled />);
+    fireEvent.click(await screen.findByRole('button', { name: /Selecione uma data/ }));
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+  });
+
+  it('selects a day, calls onChange, and closes the panel', async () => {
+    const onChange = jest.fn();
+    render(<DatePicker value={new Date(2026, 7, 26)} onChange={onChange} />);
+
+    fireEvent.click(await screen.findByRole('button', { name: /26\/08\/2026/ }));
+    await screen.findByRole('button', { name: 'Próximo mês' });
+    fireEvent.click(screen.getByRole('button', { name: '15' }));
+
+    expect(onChange).toHaveBeenCalledWith(new Date(2026, 7, 15));
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+  });
+
+  it('navigates to the next and previous month', async () => {
+    render(<DatePicker value={new Date(2026, 7, 26)} />);
+    fireEvent.click(await screen.findByRole('button', { name: /26\/08\/2026/ }));
+
+    expect(screen.getByText('Agosto 2026')).toBeInTheDocument();
+
+    fireEvent.click(await screen.findByRole('button', { name: 'Próximo mês' }));
+    expect(screen.getByText('Setembro 2026')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Mês anterior' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Mês anterior' }));
+    expect(screen.getByText('Julho 2026')).toBeInTheDocument();
+  });
+
+  it('disables days outside the min/max range and ignores clicks on them', async () => {
+    const onChange = jest.fn();
+    render(
+      <DatePicker
+        value={new Date(2026, 7, 15)}
+        onChange={onChange}
+        min={new Date(2026, 7, 10)}
+        max={new Date(2026, 7, 20)}
+      />,
+    );
+
+    fireEvent.click(await screen.findByRole('button', { name: /15\/08\/2026/ }));
+    await screen.findByRole('button', { name: 'Próximo mês' });
+
+    const disabledDay = screen.getByRole('button', { name: '5' });
+    expect(disabledDay).toBeDisabled();
+  });
+
+  it('marks the selected day and today distinctly', async () => {
+    render(<DatePicker value={new Date(2026, 7, 26)} />);
+    fireEvent.click(await screen.findByRole('button', { name: /26\/08\/2026/ }));
+    await screen.findByRole('button', { name: 'Próximo mês' });
+
+    expect(screen.getByRole('button', { name: '26' })).toHaveAttribute('aria-pressed', 'true');
+  });
+
+  it('tints the month-nav buttons and day cells while hovered', async () => {
+    render(<DatePicker value={new Date(2026, 7, 26)} />);
+    fireEvent.click(await screen.findByRole('button', { name: /26\/08\/2026/ }));
+    const nextMonth = await screen.findByRole('button', { name: 'Próximo mês' });
+    const day = screen.getByRole('button', { name: '15' });
+
+    fireEvent.mouseEnter(nextMonth);
+    fireEvent.mouseEnter(day);
+    expect(nextMonth).toHaveStyle({ background: 'var(--color-surface2)' });
+    expect(day).toHaveStyle({ background: 'var(--color-surface2)' });
+
+    fireEvent.mouseLeave(nextMonth);
+    fireEvent.mouseLeave(day);
+    expect(nextMonth).toHaveStyle({ background: 'transparent' });
+    expect(day).toHaveStyle({ background: 'transparent' });
+  });
+
+  it('renders label, hint and error', async () => {
+    const { rerender } = render(<DatePicker label="Data" hint="dd/mm/aaaa" />);
+    expect(await screen.findByText('Data')).toBeInTheDocument();
+    expect(screen.getByText('dd/mm/aaaa')).toBeInTheDocument();
+
+    rerender(<DatePicker label="Data" error="Obrigatório" />);
+    expect(screen.getByText('Obrigatório')).toBeInTheDocument();
+  });
+});

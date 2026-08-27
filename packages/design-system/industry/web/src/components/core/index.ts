@@ -66,3 +66,6 @@ export type { PopoverProps, PopoverSide, PopoverAlign } from './Popover';
 
 export { Menu } from './Menu';
 export type { MenuProps, MenuItem } from './Menu';
+
+export { DatePicker } from './DatePicker';
+export type { DatePickerProps } from './DatePicker';
