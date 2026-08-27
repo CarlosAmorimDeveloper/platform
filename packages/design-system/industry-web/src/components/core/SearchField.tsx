@@ -1,14 +1,9 @@
 import { useState } from 'react';
-import type { CSSProperties, FocusEvent, InputHTMLAttributes } from 'react';
+import type { CSSProperties, InputHTMLAttributes } from 'react';
 import { Icon } from './Icon';
 
-export interface SearchFieldProps extends Omit<
-  InputHTMLAttributes<HTMLInputElement>,
-  'style' | 'onFocus' | 'onBlur'
-> {
+export interface SearchFieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'style'> {
   style?: CSSProperties;
-  onFocus?: (e: FocusEvent<HTMLInputElement>) => void;
-  onBlur?: (e: FocusEvent<HTMLInputElement>) => void;
 }
 
 export function SearchField({
