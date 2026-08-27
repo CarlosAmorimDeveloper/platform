@@ -105,12 +105,14 @@ As opções abaixo são definidas em `base.json` e herdadas por todas as configu
 
 ### Adições de `nextjs.json`
 
-| Opção              | Valor      | Descrição                                          |
-| ------------------ | ---------- | -------------------------------------------------- |
-| `module`           | `ESNext`   | Sobrescreve para ESNext (bundler do Next.js)       |
-| `moduleResolution` | `Bundler`  | Resolução via bundler (sem extensões obrigatórias) |
-| `jsx`              | `preserve` | Preserva JSX para o Next.js transformar            |
-| `noEmit`           | `true`     | Apenas verificação de tipos, sem output            |
+| Opção              | Valor      | Descrição                                                               |
+| ------------------ | ---------- | ----------------------------------------------------------------------- |
+| `module`           | `ESNext`   | Sobrescreve para ESNext (bundler do Next.js)                            |
+| `moduleResolution` | `Bundler`  | Resolução via bundler (sem extensões obrigatórias)                      |
+| `jsx`              | `preserve` | Preserva JSX para o Next.js transformar                                 |
+| `noEmit`           | `true`     | Apenas verificação de tipos, sem output                                 |
+| `declaration`      | `false`    | Sobrescreve o `true` herdado de `base.json` — inútil com `noEmit: true` |
+| `declarationMap`   | `false`    | Mesma razão que `declaration`                                           |
 
 ### Adições de `react-library.json`
 
