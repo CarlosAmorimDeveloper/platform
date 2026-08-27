@@ -5,14 +5,14 @@ on:
     branches:
       - main
     paths:
-      - "packages/design-system/industry-web/**"
-      - "packages/design-system/industry-tokens/**"
+      - "packages/design-system/industry/web/**"
+      - "packages/design-system/industry/tokens/**"
   pull_request:
     branches:
       - main
     paths:
-      - "packages/design-system/industry-web/**"
-      - "packages/design-system/industry-tokens/**"
+      - "packages/design-system/industry/web/**"
+      - "packages/design-system/industry/tokens/**"
 
 jobs:
   chromatic:
@@ -20,8 +20,8 @@ jobs:
       pull-requests: write
     uses: ./.github/workflows/storybook-chromatic.yml
     with:
-      package_path: packages/design-system/industry-web
-      tokens_path: packages/design-system/industry-tokens
+      package_path: packages/design-system/industry/web
+      tokens_path: packages/design-system/industry/tokens
       display_name: Industry Web
       emoji: "📖"
     secrets:

@@ -14,9 +14,10 @@ packages/design-system/
   vuotto-web/               # @vuotto/web — React components (Vuotto Tech), no MUI/Emotion
   vuotto-mobile/            # @vuotto/mobile — React Native components (Vuotto Tech), no React Native Paper
   vuotto-tokens/            # @vuotto/tokens — shared design tokens (TS + CSS vars), adopted by all 3 apps
-  industry-web/             # @industry/web — React components (Industry design system, in development)
-  industry-mobile/          # @industry/mobile — React Native components (Industry design system, in development)
-  industry-tokens/          # @industry/tokens — shared design tokens (Industry design system, in development)
+  industry/
+    web/                    # @industry/web — React components (Industry design system, in development)
+    mobile/                 # @industry/mobile — React Native components (Industry design system, in development)
+    tokens/                 # @industry/tokens — shared design tokens (Industry design system, in development)
 packages/eslint-config/     # @repo/eslint-config — ESLint v9 flat configs
 packages/typescript-config/ # @repo/typescript-config — shared tsconfigs
 ```
@@ -140,7 +141,7 @@ Actions: `addTask`, `toggleTask`, `editTask`, `removeTask`, `hydrateState` (bulk
 - **`@vuotto/web`** — React components, own implementation (no MUI/Emotion), themed from `@vuotto/tokens` via CSS custom properties. Documented in Storybook; visual regression tests run via Chromatic on every push/PR to `main` that touches `packages/design-system/vuotto-web/` or `vuotto-tokens/`.
 - **`@vuotto/mobile`** — React Native components, own implementation (no React Native Paper), themed from `@vuotto/tokens` via `StyleSheet.create`. Tests run in Node env (not jsdom) with a minimal Babel config that bypasses `metro-react-native-babel-preset`.
 
-A separate, not-yet-adopted `@industry/*` generation (`packages/design-system/industry-*`) is under active development in parallel — treat it as a distinct, in-progress system, not an extension of Vuotto Tech.
+A separate, not-yet-adopted `@industry/*` generation (`packages/design-system/industry/*`) is under active development in parallel — treat it as a distinct, in-progress system, not an extension of Vuotto Tech.
 
 ### CI workflows
 
@@ -151,8 +152,8 @@ A separate, not-yet-adopted `@industry/*` generation (`packages/design-system/in
 | `mobile-apps.yml`               | PR → main (mobile apps, vuotto-mobile, vuotto-tokens, eslint-config, typescript-config paths) | Lint/check-types/test for appointmate + tickets-app                            |
 | `storybook-vuotto-web.yml`      | Push/PR → main (vuotto-web, vuotto-tokens paths)                                              | Chromatic publish for `@vuotto/web`                                            |
 | `storybook-vuotto-mobile.yml`   | Push/PR → main (vuotto-mobile, vuotto-tokens paths)                                           | Chromatic publish for `@vuotto/mobile`                                         |
-| `storybook-industry-web.yml`    | Push/PR → main (industry-web, industry-tokens paths)                                          | Chromatic publish for `@industry/web`                                          |
-| `storybook-industry-mobile.yml` | Push/PR → main (industry-mobile, industry-tokens paths)                                       | Chromatic publish for `@industry/mobile`                                       |
+| `storybook-industry-web.yml`    | Push/PR → main (industry/web, industry/tokens paths)                                          | Chromatic publish for `@industry/web`                                          |
+| `storybook-industry-mobile.yml` | Push/PR → main (industry/mobile, industry/tokens paths)                                       | Chromatic publish for `@industry/mobile`                                       |
 | `version.yml`                   | Push → main (`.changeset/**`)                                                                 | Opens/updates the Changesets "Version Packages" PR                             |
 | `copilot-review.yml`            | PR opened/synchronized (any)                                                                  | Requests a Copilot code review                                                 |
 | `auto-update-prs.yml`           | Push → main                                                                                   | Merges `main` into open PRs                                                    |

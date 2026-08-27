@@ -11,8 +11,8 @@ on:
       - "packages/design-system/vuotto-web/**"
       - "packages/design-system/vuotto-mobile/**"
       - "packages/design-system/vuotto-tokens/**"
-      - "packages/design-system/industry-mobile/**"
-      - "packages/design-system/industry-tokens/**"
+      - "packages/design-system/industry/mobile/**"
+      - "packages/design-system/industry/tokens/**"
 
 jobs:
   coverage:
@@ -36,7 +36,7 @@ jobs:
             build: yarn workspace @vuotto/tokens build && yarn workspace @vuotto/mobile build
             exclude_pattern: ""
           - name: industry-mobile
-            path: packages/design-system/industry-mobile
+            path: packages/design-system/industry/mobile
             build: yarn workspace @industry/tokens build
             exclude_pattern: ""
 
