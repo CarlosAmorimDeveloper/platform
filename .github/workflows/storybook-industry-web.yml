@@ -16,49 +16,13 @@ on:
 
 jobs:
   chromatic:
-    name: Publish Industry Web Storybook to Chromatic
-    runs-on: ubuntu-latest
     permissions:
       pull-requests: write
-
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Install dependencies
-        run: npx yarn install
-
-      - name: Build @industry/tokens
-        working-directory: packages/design-system/industry-tokens
-        run: yarn build
-
-      - name: Build Storybook
-        working-directory: packages/design-system/industry-web
-        run: yarn build-storybook
-
-      - name: Publish to Chromatic
-        id: chromatic
-        working-directory: packages/design-system/industry-web
-        run: yarn chromatic --storybook-build-dir=storybook-static
-        env:
-          CHROMATIC_PROJECT_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN_INDUSTRY_WEB }}
-
-      - name: Comment PR with Storybook URL
-        if: github.event_name == 'pull_request' && steps.chromatic.outputs.storybookUrl != ''
-        uses: actions/github-script@v7
-        env:
-          STORYBOOK_URL: ${{ steps.chromatic.outputs.storybookUrl }}
-        with:
-          script: |
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: `📖 Storybook (Industry Web) publicado no Chromatic: ${process.env.STORYBOOK_URL}`
-            })
+    uses: ./.github/workflows/storybook-chromatic.yml
+    with:
+      package_path: packages/design-system/industry-web
+      tokens_path: packages/design-system/industry-tokens
+      display_name: Industry Web
+      emoji: "📖"
+    secrets:
+      chromatic_project_token: ${{ secrets.CHROMATIC_PROJECT_TOKEN_INDUSTRY_WEB }}

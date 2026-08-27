@@ -1,0 +1,75 @@
+name: Storybook — Chromatic Deploy (reusable)
+
+on:
+  workflow_call:
+    inputs:
+      package_path:
+        required: true
+        type: string
+      tokens_path:
+        required: true
+        type: string
+      display_name:
+        required: true
+        type: string
+      emoji:
+        required: true
+        type: string
+    secrets:
+      chromatic_project_token:
+        required: true
+
+jobs:
+  chromatic:
+    name: Publish ${{ inputs.display_name }} Storybook to Chromatic
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npx yarn install
+
+      - name: Build tokens package
+        working-directory: ${{ inputs.tokens_path }}
+        run: yarn build
+
+      - name: Build Storybook
+        working-directory: ${{ inputs.package_path }}
+        run: yarn build-storybook
+
+      - name: Publish to Chromatic
+        id: chromatic
+        working-directory: ${{ inputs.package_path }}
+        run: yarn chromatic --storybook-build-dir=storybook-static
+        env:
+          CHROMATIC_PROJECT_TOKEN: ${{ secrets.chromatic_project_token }}
+
+      - name: Add Storybook URL to job summary
+        if: steps.chromatic.outputs.storybookUrl != ''
+        run: |
+          echo "## ${{ inputs.emoji }} Storybook ${{ inputs.display_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "[Abrir no Chromatic](${{ steps.chromatic.outputs.storybookUrl }})" >> $GITHUB_STEP_SUMMARY
+
+      - name: Comment PR with Storybook URL
+        if: github.event_name == 'pull_request' && steps.chromatic.outputs.storybookUrl != ''
+        uses: actions/github-script@v7
+        env:
+          STORYBOOK_URL: ${{ steps.chromatic.outputs.storybookUrl }}
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `${{ inputs.emoji }} Storybook (${{ inputs.display_name }}) publicado no Chromatic: ${process.env.STORYBOOK_URL}`
+            })
