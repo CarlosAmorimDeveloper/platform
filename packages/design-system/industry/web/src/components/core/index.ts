@@ -52,3 +52,8 @@ export { Skeleton } from './Skeleton';
 export type { SkeletonProps } from './Skeleton';
 export { EmptyState } from './EmptyState';
 export type { EmptyStateProps } from './EmptyState';
+
+export { ListRow } from './ListRow';
+export type { ListRowProps } from './ListRow';
+export { DataTable } from './DataTable';
+export type { DataTableProps, Column } from './DataTable';
