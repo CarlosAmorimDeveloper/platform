@@ -22,6 +22,7 @@ export interface Comment {
   createdAt: Date | null;
 }
 
+
 export function formatDate(date: Date | null): string {
   if (!date) return '';
   return date.toLocaleString('pt-BR', {
