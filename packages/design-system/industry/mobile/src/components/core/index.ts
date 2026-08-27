@@ -51,3 +51,6 @@ export type { DataTableProps, Column } from './DataTable';
 
 export { Tooltip } from './Tooltip';
 export type { TooltipProps, TooltipSide } from './Tooltip';
+
+export { Menu } from './Menu';
+export type { MenuProps, MenuItem } from './Menu';
