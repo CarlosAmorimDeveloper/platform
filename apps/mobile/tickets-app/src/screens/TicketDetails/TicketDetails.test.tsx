@@ -251,6 +251,82 @@ describe('TicketDetails', () => {
     });
   });
 
+  it('cancels ticket deletion without calling deleteTicket', () => {
+    setUser(adminUser);
+    mockUseTicketDetails.mockReturnValue(
+      mockTicketDetailsReturn({ ticket: makeTicket({ id: 't1' }), comments: [] }),
+    );
+
+    render(<TicketDetails navigation={mockNavigation} route={makeRoute('t1')} />);
+
+    fireEvent.press(screen.getByLabelText('Apagar chamado'));
+    expect(screen.getByText('Apagar ticket')).toBeTruthy();
+
+    fireEvent.press(screen.getByText('Cancelar'));
+
+    expect(screen.queryByText('Apagar ticket')).toBeNull();
+    expect(mockDeleteTicket).not.toHaveBeenCalled();
+  });
+
+  it('dismisses the delete-ticket sheet when the backdrop is pressed', () => {
+    setUser(adminUser);
+    mockUseTicketDetails.mockReturnValue(
+      mockTicketDetailsReturn({ ticket: makeTicket({ id: 't1' }), comments: [] }),
+    );
+
+    render(<TicketDetails navigation={mockNavigation} route={makeRoute('t1')} />);
+
+    fireEvent.press(screen.getByLabelText('Apagar chamado'));
+    expect(screen.getByText('Apagar ticket')).toBeTruthy();
+
+    fireEvent.press(screen.getByTestId('delete-ticket-sheet-backdrop'));
+
+    expect(screen.queryByText('Apagar ticket')).toBeNull();
+    expect(mockDeleteTicket).not.toHaveBeenCalled();
+  });
+
+  it('shows a toast and clears mutation errors when the hook reports one', () => {
+    const clearError = jest.fn();
+    mockUseTicketDetails.mockReturnValue(
+      mockTicketDetailsReturn({ error: 'Falha ao carregar chamado', clearError }),
+    );
+
+    render(<TicketDetails navigation={mockNavigation} route={makeRoute('t1')} />);
+
+    expect(screen.getByText('Falha ao carregar chamado')).toBeTruthy();
+    expect(clearError).toHaveBeenCalled();
+  });
+
+  it('updates the draft assignee while editing', async () => {
+    setUser(adminUser);
+    mockUseUserList.mockReturnValue({
+      users: [
+        {
+          uid: 'u2',
+          email: 'alice@test.com',
+          name: 'Alice',
+          role: 'standard',
+          workspaceId: 'ws-1',
+        },
+      ],
+      loading: false,
+      error: null,
+      clearError: jest.fn(),
+    });
+    mockUseTicketDetails.mockReturnValue(
+      mockTicketDetailsReturn({ ticket: makeTicket({ id: 't1' }), comments: [] }),
+    );
+
+    render(<TicketDetails navigation={mockNavigation} route={makeRoute('t1')} />);
+
+    fireEvent.press(screen.getByLabelText('Editar chamado'));
+    fireEvent.press(screen.getByText('Nenhum'));
+    fireEvent.press(await screen.findByText('Alice'));
+
+    expect(screen.getByText('Alice')).toBeTruthy();
+    expect(screen.queryByText('Nenhum')).toBeNull();
+  });
+
   it('user can delete own comment', async () => {
     const mockDeleteComment = jest.fn().mockResolvedValue(undefined);
     setUser(standardUser);

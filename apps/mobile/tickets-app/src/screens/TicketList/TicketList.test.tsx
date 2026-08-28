@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { ActivityIndicator } from 'react-native';
 import { render, screen, fireEvent } from '../../test-utils';
 import { useTicketList } from '../../hooks/useTicketList';
+import { STATUS_LABELS } from '../../constants/ticketStatus';
 import type { Ticket } from '../../domain/ticket';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { AppStackParamList } from '../../navigation/types';
@@ -18,6 +19,7 @@ type Props = NativeStackScreenProps<AppStackParamList, 'TicketList'>;
 const mockNavigation = {
   navigate: jest.fn(),
   replace: jest.fn(),
+  goBack: jest.fn(),
 } as unknown as Props['navigation'];
 
 const mockRoute = {
@@ -88,6 +90,37 @@ describe('TicketList', () => {
     render(<TicketList navigation={mockNavigation} route={mockRoute} />);
 
     expect(screen.getByText('Nenhum ticket encontrado.')).toBeTruthy();
+  });
+
+  it('navigates back when the AppBar back button is pressed', () => {
+    render(<TicketList navigation={mockNavigation} route={mockRoute} />);
+
+    fireEvent.press(screen.getByLabelText('Voltar'));
+
+    expect(mockNavigation.goBack).toHaveBeenCalled();
+  });
+
+  it('shows a toast and clears the error when the hook reports one', () => {
+    const clearError = jest.fn();
+    mockUseTicketList.mockReturnValue(
+      mockTicketListReturn({ error: 'Falha ao carregar chamados', clearError }),
+    );
+
+    render(<TicketList navigation={mockNavigation} route={mockRoute} />);
+
+    expect(screen.getByText('Falha ao carregar chamados')).toBeTruthy();
+    expect(clearError).toHaveBeenCalled();
+  });
+
+  it('shows the status label as the title when filtered by status', () => {
+    render(
+      <TicketList
+        navigation={mockNavigation}
+        route={{ ...mockRoute, params: { status: 'open' } } as Props['route']}
+      />,
+    );
+
+    expect(screen.getByText(STATUS_LABELS.open)).toBeTruthy();
   });
 
   it('navigates to TicketDetails on ticket card press', () => {

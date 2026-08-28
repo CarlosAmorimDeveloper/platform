@@ -5,6 +5,7 @@ import { render, screen, fireEvent } from '../../test-utils';
 import { useTicketList } from '../../hooks/useTicketList';
 import { STATUS_LABELS } from '../../constants/ticketStatus';
 import type { Ticket } from '../../domain/ticket';
+import type { User } from '../../domain/user';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { AppStackParamList } from '../../navigation/types';
 import { Dashboard } from './Dashboard';
@@ -12,7 +13,23 @@ import { Dashboard } from './Dashboard';
 jest.mock('../../hooks/useTicketList');
 jest.mock('../../services/firebase', () => ({ auth: {}, db: {} }));
 
+let mockCurrentUser: User | null = null;
+const mockLogout = jest.fn();
+
+jest.mock('../../store/useAuthStore', () => ({
+  useAuthStore: (selector: (state: { user: User | null; logout: () => void }) => unknown) =>
+    selector({ user: mockCurrentUser, logout: mockLogout }),
+}));
+
 const mockUseTicketList = useTicketList as jest.Mock;
+
+const adminUser: User = {
+  uid: 'admin-1',
+  email: 'admin@test.com',
+  name: 'Admin',
+  role: 'admin',
+  workspaceId: 'ws-1',
+};
 
 type Props = NativeStackScreenProps<AppStackParamList, 'Dashboard'>;
 
@@ -51,6 +68,7 @@ function mockTicketListReturn(overrides: Partial<ReturnType<typeof useTicketList
 describe('Dashboard', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockCurrentUser = null;
     mockUseTicketList.mockReturnValue(mockTicketListReturn());
   });
 
@@ -133,5 +151,99 @@ describe('Dashboard', () => {
     fireEvent.press(screen.UNSAFE_getByProps({ accessibilityLabel: 'New ticket' }));
 
     expect(mockNavigation.navigate).toHaveBeenCalledWith('NewTicket');
+  });
+
+  it('navigates to NewTicket on FAB press from the empty state', () => {
+    mockUseTicketList.mockReturnValue(mockTicketListReturn({ tickets: [] }));
+
+    render(<Dashboard navigation={mockNavigation} route={mockRoute} />);
+
+    fireEvent.press(screen.UNSAFE_getByProps({ accessibilityLabel: 'New ticket' }));
+
+    expect(mockNavigation.navigate).toHaveBeenCalledWith('NewTicket');
+  });
+
+  it('navigates to a recent ticket on press', () => {
+    mockUseTicketList.mockReturnValue(
+      mockTicketListReturn({ tickets: [makeTicket({ id: 't1', title: 'Chamado 1' })] }),
+    );
+
+    render(<Dashboard navigation={mockNavigation} route={mockRoute} />);
+
+    fireEvent.press(screen.getByText('Chamado 1'));
+
+    expect(mockNavigation.navigate).toHaveBeenCalledWith('TicketDetails', { ticketId: 't1' });
+  });
+
+  it('navigates to the unfiltered TicketList on pie chart press', () => {
+    mockUseTicketList.mockReturnValue(
+      mockTicketListReturn({ tickets: [makeTicket({ id: 't1', status: 'open' })] }),
+    );
+
+    render(<Dashboard navigation={mockNavigation} route={mockRoute} />);
+
+    fireEvent.press(screen.getByLabelText('Ver todos os chamados'));
+
+    expect(mockNavigation.navigate).toHaveBeenCalledWith('TicketList', {});
+  });
+
+  it('shows a toast and clears the error when the hook reports one', () => {
+    const clearError = jest.fn();
+    mockUseTicketList.mockReturnValue(
+      mockTicketListReturn({ error: 'Falha ao carregar chamados', clearError }),
+    );
+
+    render(<Dashboard navigation={mockNavigation} route={mockRoute} />);
+
+    expect(screen.getByText('Falha ao carregar chamados')).toBeTruthy();
+    expect(clearError).toHaveBeenCalled();
+  });
+
+  it('does not show a "Criar usuário" action for non-admin users', () => {
+    render(<Dashboard navigation={mockNavigation} route={mockRoute} />);
+
+    expect(screen.queryByLabelText('Criar usuário')).toBeNull();
+  });
+
+  it('navigates to CreateUser when an admin presses "Criar usuário"', () => {
+    mockCurrentUser = adminUser;
+
+    render(<Dashboard navigation={mockNavigation} route={mockRoute} />);
+
+    fireEvent.press(screen.getByLabelText('Criar usuário'));
+
+    expect(mockNavigation.navigate).toHaveBeenCalledWith('CreateUser');
+  });
+
+  it('opens and cancels the logout confirmation sheet', () => {
+    render(<Dashboard navigation={mockNavigation} route={mockRoute} />);
+
+    fireEvent.press(screen.getByLabelText('Sair'));
+    expect(screen.getByText('Tem certeza que deseja sair?')).toBeTruthy();
+
+    fireEvent.press(screen.getByText('Cancelar'));
+    expect(screen.queryByText('Tem certeza que deseja sair?')).toBeNull();
+    expect(mockLogout).not.toHaveBeenCalled();
+  });
+
+  it('dismisses the logout sheet when the backdrop is pressed', () => {
+    render(<Dashboard navigation={mockNavigation} route={mockRoute} />);
+
+    fireEvent.press(screen.getByLabelText('Sair'));
+    expect(screen.getByText('Tem certeza que deseja sair?')).toBeTruthy();
+
+    fireEvent.press(screen.getByTestId('logout-sheet-backdrop'));
+
+    expect(screen.queryByText('Tem certeza que deseja sair?')).toBeNull();
+    expect(mockLogout).not.toHaveBeenCalled();
+  });
+
+  it('logs out when the logout confirmation sheet is confirmed', () => {
+    render(<Dashboard navigation={mockNavigation} route={mockRoute} />);
+
+    fireEvent.press(screen.getByLabelText('Sair'));
+    fireEvent.press(screen.getAllByText('Sair').at(-1)!);
+
+    expect(mockLogout).toHaveBeenCalled();
   });
 });

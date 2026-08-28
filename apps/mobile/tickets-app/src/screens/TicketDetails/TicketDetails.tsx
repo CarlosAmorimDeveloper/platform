@@ -220,6 +220,7 @@ export function TicketDetails({ route, navigation }: Props) {
           </Sheet>
 
           <Sheet
+            testID="delete-ticket-sheet"
             open={deletion.deleteVisible}
             onDismiss={() => deletion.setDeleteVisible(false)}
             title="Apagar ticket"

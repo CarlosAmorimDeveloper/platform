@@ -36,7 +36,6 @@ export function CreateUser({ navigation }: Props) {
   const isValid = name.trim() !== '' && email.trim() !== '' && password.length >= 6;
 
   async function handleCreate() {
-    if (!isValid) return;
     setLoading(true);
     try {
       await createUser(name, email, password, role, currentUser!);

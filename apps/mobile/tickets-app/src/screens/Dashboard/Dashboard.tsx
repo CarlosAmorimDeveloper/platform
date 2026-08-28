@@ -113,6 +113,7 @@ export function Dashboard({ navigation }: Props) {
 
   const logoutSheet = (
     <Sheet
+      testID="logout-sheet"
       open={logoutOpen}
       onDismiss={() => setLogoutOpen(false)}
       title="Sair da conta"
@@ -191,6 +192,7 @@ export function Dashboard({ navigation }: Props) {
         )}
         {tickets.length > 0 && (
           <Pressable
+            accessibilityLabel="Ver todos os chamados"
             style={styles.sectionPad}
             onPress={() => navigation.navigate('TicketList', {})}
           >

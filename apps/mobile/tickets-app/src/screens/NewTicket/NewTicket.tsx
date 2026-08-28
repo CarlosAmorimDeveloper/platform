@@ -29,8 +29,8 @@ export function NewTicket({ navigation }: Props) {
   const isAdmin = user?.role === 'admin';
 
   async function handleSave() {
+    if (!user) return;
     const trimmedTitle = title.trim();
-    if (!trimmedTitle || !user) return;
     setLoading(true);
     try {
       const selectedUser = users.find((u) => u.uid === assigneeId);

@@ -1,4 +1,5 @@
 import { FirebaseError } from 'firebase/app';
+import { Platform } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { fireEvent, render, screen, waitFor } from '../../test-utils';
 import { login } from '../../services/authService';
@@ -123,5 +124,14 @@ describe('Login', () => {
     fireEvent.press(screen.getByText('Esqueceu a senha?'));
 
     expect(mockNavigation.navigate).toHaveBeenCalledWith('ForgotPassword');
+  });
+
+  it('renders on Android without throwing', () => {
+    const originalOS = Platform.OS;
+    Platform.OS = 'android';
+
+    expect(() => render(<Login navigation={mockNavigation} route={mockRoute} />)).not.toThrow();
+
+    Platform.OS = originalOS;
   });
 });

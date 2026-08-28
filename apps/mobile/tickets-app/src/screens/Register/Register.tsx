@@ -32,7 +32,6 @@ export function Register({ navigation }: Props) {
   const passwordError = passwordMinLengthError(password);
 
   async function handleRegister() {
-    if (!name.trim() || !email || !password || password.length < 6) return;
     setLoading(true);
     try {
       const user = await register(name, email, password);

@@ -21,7 +21,6 @@ export function ForgotPassword({ navigation }: Props) {
   const [loading, setLoading] = useState(false);
 
   async function handleResetPassword() {
-    if (!email) return;
     setLoading(true);
     try {
       await sendPasswordReset(email);
