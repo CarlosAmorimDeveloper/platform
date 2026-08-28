@@ -151,6 +151,55 @@ describe('FormDetail', () => {
     expect(screen.queryByText('Anotações e orientações')).toBeNull();
   }, 20000);
 
+  it('hides the medications and questions sections when their lists are empty', async () => {
+    mockedGetFormRecord.mockResolvedValue({
+      ...filledRecord,
+      values: { ...filledRecord.values, medications: [], questions: [] },
+    });
+
+    render(<FormDetail navigation={mockNavigation} route={makeRoute('form-1')} />);
+
+    await waitFor(() => {
+      expect(screen.getByText('20/04/2026')).toBeTruthy();
+    }, ASYNC_TIMEOUT);
+    expect(screen.queryByText('Medicamentos e doses')).toBeNull();
+    expect(screen.queryByText('Perguntas')).toBeNull();
+  }, 20000);
+
+  it('does not update state after unmounting while the load is still pending', async () => {
+    let resolveGetFormRecord: (value: typeof filledRecord) => void = () => {};
+    mockedGetFormRecord.mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          resolveGetFormRecord = resolve;
+        }),
+    );
+
+    const { unmount } = render(
+      <FormDetail navigation={mockNavigation} route={makeRoute('form-1')} />,
+    );
+    unmount();
+
+    expect(() => resolveGetFormRecord(filledRecord)).not.toThrow();
+  });
+
+  it('does not update state after unmounting while the load is still failing', async () => {
+    let rejectGetFormRecord: (err: Error) => void = () => {};
+    mockedGetFormRecord.mockImplementation(
+      () =>
+        new Promise((_resolve, reject) => {
+          rejectGetFormRecord = reject;
+        }),
+    );
+
+    const { unmount } = render(
+      <FormDetail navigation={mockNavigation} route={makeRoute('form-1')} />,
+    );
+    unmount();
+
+    expect(() => rejectGetFormRecord(new Error('network error'))).not.toThrow();
+  });
+
   it('shows the updated-at label derived from the loaded record', async () => {
     mockedGetFormRecord.mockResolvedValue(filledRecord);
 
@@ -171,6 +220,20 @@ describe('FormDetail', () => {
     await waitFor(() => {
       expect(screen.getByTestId('form-detail-empty-state')).toBeTruthy();
     }, ASYNC_TIMEOUT);
+  }, 20000);
+
+  it('navigates back when the AppBar back button is pressed', async () => {
+    mockedGetFormRecord.mockResolvedValue(filledRecord);
+
+    render(<FormDetail navigation={mockNavigation} route={makeRoute('form-1')} />);
+
+    await waitFor(() => {
+      expect(screen.getByLabelText('Voltar')).toBeTruthy();
+    }, ASYNC_TIMEOUT);
+
+    fireEvent.press(screen.getByLabelText('Voltar'));
+
+    expect(mockNavigation.goBack).toHaveBeenCalled();
   }, 20000);
 
   it('navigates to FormEntry in edit mode when "Editar" is pressed', async () => {
@@ -259,8 +322,24 @@ describe('FormDetail', () => {
       fireEvent.press(screen.getByTestId('form-detail-delete-button'));
       fireEvent.press(screen.getByTestId('form-detail-delete-cancel-button'));
 
-      // Paper's Modal plays a closing animation before unmounting the
-      // dialog's content, so it doesn't disappear synchronously.
+      await waitFor(() => {
+        expect(screen.queryByText('Excluir formulário')).toBeNull();
+      }, ASYNC_TIMEOUT);
+      expect(mockedDeleteForm).not.toHaveBeenCalled();
+    }, 20000);
+
+    it('dismisses the dialog without deleting when the backdrop is pressed', async () => {
+      mockedGetFormRecord.mockResolvedValue(filledRecord);
+
+      render(<FormDetail navigation={mockNavigation} route={makeRoute('form-1')} />);
+
+      await waitFor(() => {
+        expect(screen.getByTestId('form-detail-delete-button')).toBeTruthy();
+      }, ASYNC_TIMEOUT);
+
+      fireEvent.press(screen.getByTestId('form-detail-delete-button'));
+      fireEvent.press(screen.getByTestId('form-detail-delete-dialog-backdrop'));
+
       await waitFor(() => {
         expect(screen.queryByText('Excluir formulário')).toBeNull();
       }, ASYNC_TIMEOUT);

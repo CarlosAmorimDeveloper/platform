@@ -3,6 +3,11 @@ import { Text } from 'react-native';
 import { EmptyState } from './EmptyState';
 
 describe('EmptyState', () => {
+  it('forwards testID to the container', () => {
+    const { getByTestId } = render(<EmptyState title="Nenhum projeto" testID="empty-state" />);
+    expect(getByTestId('empty-state')).toBeTruthy();
+  });
+
   it('renders title, body, icon and action', () => {
     const { getByText } = render(
       <EmptyState

@@ -75,6 +75,24 @@ describe('Home', () => {
     }, ASYNC_TIMEOUT);
   }, 20000);
 
+  it('retries the load when the error action is pressed', async () => {
+    mockedListForms.mockRejectedValue(new Error('network error'));
+
+    render(<Home navigation={mockNavigation} route={mockRoute} />);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('home-error')).toBeTruthy();
+    }, ASYNC_TIMEOUT);
+
+    mockedListForms.mockClear();
+    mockedListForms.mockResolvedValue([formA]);
+    fireEvent.press(screen.getByText('Tentar novamente'));
+
+    await waitFor(() => {
+      expect(screen.getByTestId('home-form-card-form-a')).toBeTruthy();
+    }, ASYNC_TIMEOUT);
+  }, 20000);
+
   it('shows a connectivity-specific message when the load fails offline', async () => {
     mockedListForms.mockRejectedValue(new FirebaseError('unavailable', ''));
 
@@ -137,6 +155,31 @@ describe('Home', () => {
 
     expect(mockNavigation.navigate).toHaveBeenCalledWith('FormEntry', undefined);
   }, 20000);
+
+  it('shows a toast when a silent (pull-to-refresh) reload fails', async () => {
+    mockedListForms.mockResolvedValue([formA]);
+
+    render(<Home navigation={mockNavigation} route={mockRoute} />);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('home-list')).toBeTruthy();
+    }, ASYNC_TIMEOUT);
+
+    mockedListForms.mockRejectedValue(new Error('network error'));
+    fireEvent(screen.UNSAFE_getByType(RefreshControl), 'refresh');
+
+    await waitFor(() => {
+      expect(screen.getByText('Não foi possível carregar seus formulários.')).toBeTruthy();
+    }, ASYNC_TIMEOUT);
+  }, 20000);
+
+  it('does not fetch forms when there is no signed-in user', () => {
+    mockedUseAuth.mockReturnValue({ user: null, logout });
+
+    render(<Home navigation={mockNavigation} route={mockRoute} />);
+
+    expect(mockedListForms).not.toHaveBeenCalled();
+  });
 
   it('re-fetches the list on pull-to-refresh', async () => {
     mockedListForms.mockResolvedValue([formA]);
@@ -259,6 +302,25 @@ describe('Home', () => {
       await waitFor(() => {
         expect(mockedListForms).toHaveBeenCalledWith('user-abc');
       }, ASYNC_TIMEOUT);
+    }, 20000);
+
+    it('does not reload the list when the filter menu opens', async () => {
+      mockedListForms.mockResolvedValue([formA]);
+
+      render(<Home navigation={mockNavigation} route={mockRoute} />);
+
+      await waitFor(() => {
+        expect(screen.getByTestId('home-filter-menu')).toBeTruthy();
+      }, ASYNC_TIMEOUT);
+
+      mockedListForms.mockClear();
+      // Menu's own trigger-wrapping Pressable (shares the Menu's testID) is
+      // what actually calls onOpenChange(true) — the nested IconButton has
+      // its own onPress for opening, so this exercises the open path Menu's
+      // API contract still allows.
+      fireEvent.press(screen.getByTestId('home-filter-menu'));
+
+      expect(mockedListForms).not.toHaveBeenCalled();
     }, 20000);
 
     it('reloads the list when the filter menu is dismissed without selecting a period', async () => {

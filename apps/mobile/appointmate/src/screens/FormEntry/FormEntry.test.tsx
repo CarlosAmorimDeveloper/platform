@@ -138,6 +138,14 @@ describe('FormEntry', () => {
       expect(screen.getByTestId('form-entry-submit-button')).toBeTruthy();
     });
 
+    it('navigates back when the AppBar back button is pressed', () => {
+      render(<FormEntry navigation={mockNavigation} route={makeRoute()} />);
+
+      fireEvent.press(screen.getByLabelText('Voltar'));
+
+      expect(mockNavigation.goBack).toHaveBeenCalled();
+    });
+
     it('starts with exactly 1 medication row and 1 question row', () => {
       render(<FormEntry navigation={mockNavigation} route={makeRoute()} />);
 
@@ -322,7 +330,61 @@ describe('FormEntry', () => {
     }, 20000);
   });
 
+  it('does not save when there is no signed-in user', () => {
+    mockedUseAuth.mockReturnValue({ user: null });
+    render(<FormEntry navigation={mockNavigation} route={makeRoute()} />);
+
+    fireEvent.press(screen.getByTestId('form-entry-save-draft-button'));
+
+    expect(mockedCreateForm).not.toHaveBeenCalled();
+  });
+
   describe('editing an existing form', () => {
+    it('does not update state after unmounting while the load is still pending', () => {
+      let resolveGetForm: (value: typeof existingValues) => void = () => {};
+      mockedGetForm.mockImplementation(
+        () =>
+          new Promise((resolve) => {
+            resolveGetForm = resolve;
+          }),
+      );
+
+      const { unmount } = render(
+        <FormEntry navigation={mockNavigation} route={makeRoute('form-1')} />,
+      );
+      unmount();
+
+      expect(() => resolveGetForm(existingValues)).not.toThrow();
+    });
+
+    it('does not update state after unmounting while the load is still failing', () => {
+      let rejectGetForm: (err: Error) => void = () => {};
+      mockedGetForm.mockImplementation(
+        () =>
+          new Promise((_resolve, reject) => {
+            rejectGetForm = reject;
+          }),
+      );
+
+      const { unmount } = render(
+        <FormEntry navigation={mockNavigation} route={makeRoute('form-1')} />,
+      );
+      unmount();
+
+      expect(() => rejectGetForm(new Error('network error'))).not.toThrow();
+    });
+
+    it('stops loading without resetting the form when no values are found', async () => {
+      mockedGetForm.mockResolvedValue(null);
+
+      render(<FormEntry navigation={mockNavigation} route={makeRoute('form-1')} />);
+
+      await waitFor(() => {
+        expect(screen.getByTestId('form-entry-submit-button')).toBeTruthy();
+      }, ASYNC_TIMEOUT);
+      expect(screen.getByTestId('form-entry-appointment-date-input').props.value).toBe('');
+    }, 20000);
+
     it('shows a loading state while the existing form is fetched', () => {
       mockedGetForm.mockReturnValue(new Promise(() => {}));
 

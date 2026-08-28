@@ -1,6 +1,6 @@
 import { View } from 'react-native';
 import { Controller, type Control, type UseFieldArrayReturn } from 'react-hook-form';
-import { Button, Field, Input, useTheme } from '@vuotto/mobile';
+import { Button, TextField, useTheme } from '@industry/mobile';
 import type { FormValues } from '../../domain/form';
 import { REQUIRED_MESSAGE } from './constants';
 import { styles } from './FormEntry.styles';
@@ -29,19 +29,19 @@ export function DynamicListField({
   return (
     <>
       {fieldArray.fields.map((field, index) => (
-        <View key={field.id} style={[styles.dynamicRow, { backgroundColor: colors.glass1 }]}>
+        <View key={field.id} style={[styles.dynamicRow, { backgroundColor: colors.surface2 }]}>
           <Controller
             control={control}
             name={`${name}.${index}.text`}
             rules={{ required: REQUIRED_MESSAGE }}
             render={({ field: f, fieldState }) => (
-              <Field label={itemLabel} error={fieldState.error?.message}>
-                <Input
-                  value={f.value}
-                  onChangeText={f.onChange}
-                  testID={`form-entry-${testIdKind}-${index}-input`}
-                />
-              </Field>
+              <TextField
+                label={itemLabel}
+                error={fieldState.error?.message}
+                value={f.value}
+                onChangeText={f.onChange}
+                testID={`form-entry-${testIdKind}-${index}-input`}
+              />
             )}
           />
           <Button

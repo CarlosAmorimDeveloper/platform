@@ -3,23 +3,16 @@ import { ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
-import {
-  AppBar,
-  Button,
-  Dialog,
-  EmptyState,
-  ErrorView,
-  LoadingIndicator,
-  LoadingView,
-  useTheme,
-  useToast,
-} from '@vuotto/mobile';
+import { AppBar, Button, EmptyState, Sheet, Spinner, useTheme, useToast } from '@industry/mobile';
+import { alpha } from '@industry/tokens';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { AppStackParamList } from '../../navigation/types';
 import { deleteForm, getFormRecord, type FormRecord } from '../../services/formsService';
 import { mapFirestoreError } from '../../utils/firebaseErrors';
 import { MOOD_OPTIONS, formatDate, isFormValuesEmpty } from '../../domain/form';
 import { buildFormHtml } from '../../domain/pdf';
+import { LoadingView } from '../../components/LoadingView';
+import { ErrorView } from '../../components/ErrorView';
 import { styles } from './FormDetail.styles';
 
 type Props = NativeStackScreenProps<AppStackParamList, 'FormDetail'>;
@@ -29,15 +22,15 @@ function Field({ label, value }: { label: string; value: string }) {
   if (!value.trim()) return null;
   return (
     <View style={styles.field}>
-      <Text style={[styles.fieldLabel, { color: colors.textSecondary }]}>{label}</Text>
-      <Text style={[styles.fieldValue, { color: colors.textHeading }]}>{value}</Text>
+      <Text style={[styles.fieldLabel, { color: alpha(colors.text, 70) }]}>{label}</Text>
+      <Text style={[styles.fieldValue, { color: colors.text }]}>{value}</Text>
     </View>
   );
 }
 
 function SectionTitle({ children }: { children: string }) {
   const { colors } = useTheme();
-  return <Text style={[styles.sectionTitle, { color: colors.textHeading }]}>{children}</Text>;
+  return <Text style={[styles.sectionTitle, { color: colors.text }]}>{children}</Text>;
 }
 
 function ListField({ label, items }: { label: string; items: { text: string }[] }) {
@@ -46,12 +39,9 @@ function ListField({ label, items }: { label: string; items: { text: string }[] 
   if (filled.length === 0) return null;
   return (
     <View style={styles.field}>
-      <Text style={[styles.fieldLabel, { color: colors.textSecondary }]}>{label}</Text>
+      <Text style={[styles.fieldLabel, { color: alpha(colors.text, 70) }]}>{label}</Text>
       {filled.map((item, index) => (
-        <Text
-          key={`${index}-${item.text}`}
-          style={[styles.listItem, { color: colors.textHeading }]}
-        >
+        <Text key={`${index}-${item.text}`} style={[styles.listItem, { color: colors.text }]}>
           • {item.text}
         </Text>
       ))}
@@ -92,13 +82,12 @@ export function FormDetail({ navigation, route }: Props) {
   }, [formId]);
 
   async function onExportPdf() {
-    if (!record) return;
     setExporting(true);
     try {
-      const html = buildFormHtml(record.values, {
-        status: record.status,
-        createdAt: record.createdAt,
-        updatedAt: record.updatedAt,
+      const html = buildFormHtml(record!.values, {
+        status: record!.status,
+        createdAt: record!.createdAt,
+        updatedAt: record!.updatedAt,
       });
       const { uri } = await Print.printToFileAsync({ html });
       await Sharing.shareAsync(uri, { mimeType: 'application/pdf', UTI: 'com.adobe.pdf' });
@@ -175,7 +164,7 @@ export function FormDetail({ navigation, route }: Props) {
       <ScrollView contentContainerStyle={styles.container}>
         {updatedAtLabel && (
           <Text
-            style={[styles.updatedAt, { color: colors.textSecondary }]}
+            style={[styles.updatedAt, { color: alpha(colors.text, 70) }]}
             testID="form-detail-updated-at"
           >
             Última atualização em {updatedAtLabel}
@@ -197,11 +186,11 @@ export function FormDetail({ navigation, route }: Props) {
             <SectionTitle>Panorama geral</SectionTitle>
             {moodLabel && (
               <View style={styles.field}>
-                <Text style={[styles.fieldLabel, { color: colors.textSecondary }]}>
+                <Text style={[styles.fieldLabel, { color: alpha(colors.text, 70) }]}>
                   Como você tem estado
                 </Text>
                 <Text
-                  style={[styles.fieldValue, { color: colors.textHeading }]}
+                  style={[styles.fieldValue, { color: colors.text }]}
                   testID="form-detail-overall-mood"
                 >
                   {moodLabel}
@@ -259,7 +248,7 @@ export function FormDetail({ navigation, route }: Props) {
         >
           Exportar PDF
         </Button>
-        <LoadingIndicator visible={exporting} testID="form-detail-exporting-indicator" />
+        {exporting ? <Spinner /> : null}
         <Button
           variant="danger"
           onPress={() => setDeleteDialogVisible(true)}
@@ -268,12 +257,12 @@ export function FormDetail({ navigation, route }: Props) {
           Excluir
         </Button>
 
-        <Dialog
-          open={deleteDialogVisible}
-          onClose={() => setDeleteDialogVisible(false)}
-          title="Excluir formulário"
+        <Sheet
           testID="form-detail-delete-dialog"
-          footer={
+          open={deleteDialogVisible}
+          onDismiss={() => setDeleteDialogVisible(false)}
+          title="Excluir formulário"
+          actions={
             <>
               <Button
                 variant="ghost"
@@ -293,10 +282,10 @@ export function FormDetail({ navigation, route }: Props) {
             </>
           }
         >
-          <Text style={{ color: colors.textPrimary }}>
+          <Text style={{ color: colors.text }}>
             Tem certeza que deseja excluir este formulário? Essa ação não pode ser desfeita.
           </Text>
-        </Dialog>
+        </Sheet>
       </ScrollView>
     </SafeAreaView>
   );

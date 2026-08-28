@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { fontSize, space } from '@vuotto/tokens';
+import { fontSize, space } from '@industry/tokens';
 
 export const styles = StyleSheet.create({
   keyboardView: { flex: 1 },
@@ -10,7 +10,7 @@ export const styles = StyleSheet.create({
     gap: space[8],
   },
   header: { alignItems: 'center', gap: space[2] },
-  appTitle: { fontSize: fontSize['3xl'], fontWeight: 'bold' },
-  appSubtitle: { fontSize: fontSize.md },
+  appTitle: { fontSize: fontSize.h2, fontWeight: 'bold' },
+  appSubtitle: { fontSize: fontSize.body },
   form: { gap: space[3] },
 });

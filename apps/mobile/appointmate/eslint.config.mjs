@@ -12,8 +12,8 @@ export default defineConfig([
   // noCrossGenerationImports so its more specific (files-scoped) rule wins
   // for domain/services files instead of being silently overwritten by the
   // unscoped one — see the comment on domainServicesBoundaries.
-  ...noCrossGenerationImports('@industry'),
-  ...domainServicesBoundaries('src', '@industry'),
+  ...noCrossGenerationImports('@vuotto'),
+  ...domainServicesBoundaries('src', '@vuotto'),
   {
     ignores: ['node_modules/**', 'android/**', 'ios/**', '.expo/**'],
   },

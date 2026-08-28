@@ -1,5 +1,6 @@
 import { NavigationContainer } from '@react-navigation/native';
-import { LoadingView, ToastProvider } from '@vuotto/mobile';
+import { ToastProvider } from '@industry/mobile';
+import { LoadingView } from './src/components/LoadingView';
 import { AuthProvider, useAuth } from './src/context/AuthContext';
 import { AuthStack } from './src/navigation/AuthStack';
 import { AppStack } from './src/navigation/AppStack';

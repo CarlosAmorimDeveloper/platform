@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { KeyboardAvoidingView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { AppBar, Button, Field, Input, LoadingIndicator, useTheme, useToast } from '@vuotto/mobile';
+import { AppBar, Button, Spinner, TextField, useTheme, useToast } from '@industry/mobile';
+import { alpha } from '@industry/tokens';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { AuthStackParamList } from '../../navigation/types';
 import { register } from '../../services/authService';
@@ -24,7 +25,6 @@ export function Register({ navigation }: Props) {
   const canSubmit = Boolean(name.trim()) && Boolean(email) && !emailError && !passwordError;
 
   async function handleRegister() {
-    if (!canSubmit) return;
     setLoading(true);
     try {
       await register(name, email, password);
@@ -44,43 +44,42 @@ export function Register({ navigation }: Props) {
         testID="register-app-bar"
       />
       <KeyboardAvoidingView style={styles.keyboardView} behavior="padding">
-        <View style={[styles.container, { backgroundColor: colors.bgCanvas }]}>
+        <View style={[styles.container, { backgroundColor: colors.bg }]}>
           <View style={styles.header}>
-            <Text style={[styles.title, { color: colors.textHeading }]}>Criar conta</Text>
-            <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
+            <Text style={[styles.title, { color: colors.text }]}>Criar conta</Text>
+            <Text style={[styles.subtitle, { color: alpha(colors.text, 70) }]}>
               Preencha os dados para começar
             </Text>
           </View>
           <View style={styles.form}>
-            <Field label="Nome">
-              <Input
-                placeholder="Seu nome completo"
-                value={name}
-                onChangeText={setName}
-                testID="register-name-input"
-              />
-            </Field>
-            <Field label="E-mail" error={emailError}>
-              <Input
-                placeholder="email@exemplo.com"
-                value={email}
-                onChangeText={setEmail}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                testID="register-email-input"
-              />
-            </Field>
-            <Field label="Senha" error={passwordError}>
-              <Input
-                placeholder="Mínimo 6 caracteres"
-                secureTextEntry
-                secureToggle
-                value={password}
-                onChangeText={setPassword}
-                testID="register-password-input"
-              />
-            </Field>
-            <LoadingIndicator visible={loading} testID="register-loading-indicator" />
+            <TextField
+              label="Nome"
+              placeholder="Seu nome completo"
+              value={name}
+              onChangeText={setName}
+              testID="register-name-input"
+            />
+            <TextField
+              label="E-mail"
+              error={emailError}
+              placeholder="email@exemplo.com"
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              testID="register-email-input"
+            />
+            <TextField
+              label="Senha"
+              error={passwordError}
+              placeholder="Mínimo 6 caracteres"
+              secureTextEntry
+              secureToggle
+              value={password}
+              onChangeText={setPassword}
+              testID="register-password-input"
+            />
+            {loading ? <Spinner /> : null}
             <Button
               onPress={handleRegister}
               disabled={!canSubmit || loading}

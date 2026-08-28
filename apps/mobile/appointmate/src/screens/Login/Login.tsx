@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { KeyboardAvoidingView, Text, View } from 'react-native';
-import { Button, Field, Input, LoadingIndicator, useTheme, useToast } from '@vuotto/mobile';
+import { Button, Spinner, TextField, useTheme, useToast } from '@industry/mobile';
+import { alpha } from '@industry/tokens';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { AuthStackParamList } from '../../navigation/types';
 import { login } from '../../services/authService';
@@ -31,35 +32,33 @@ export function Login({ navigation }: Props) {
 
   return (
     <KeyboardAvoidingView style={styles.keyboardView} behavior="padding">
-      <View style={[styles.container, { backgroundColor: colors.bgCanvas }]}>
+      <View style={[styles.container, { backgroundColor: colors.bg }]}>
         <View style={styles.header}>
-          <Text style={[styles.appTitle, { color: colors.textHeading }]}>AppointMate</Text>
-          <Text style={[styles.appSubtitle, { color: colors.textSecondary }]}>
+          <Text style={[styles.appTitle, { color: colors.text }]}>AppointMate</Text>
+          <Text style={[styles.appSubtitle, { color: alpha(colors.text, 70) }]}>
             Acompanhe seu bem-estar
           </Text>
         </View>
         <View style={styles.form}>
-          <Field label="E-mail">
-            <Input
-              placeholder="email@exemplo.com"
-              value={email}
-              onChangeText={setEmail}
-              keyboardType="email-address"
-              autoCapitalize="none"
-              testID="login-email-input"
-            />
-          </Field>
-          <Field label="Senha">
-            <Input
-              placeholder="Sua senha"
-              secureTextEntry
-              secureToggle
-              value={password}
-              onChangeText={setPassword}
-              testID="login-password-input"
-            />
-          </Field>
-          <LoadingIndicator visible={loading} testID="login-loading-indicator" />
+          <TextField
+            label="E-mail"
+            placeholder="email@exemplo.com"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+            autoCapitalize="none"
+            testID="login-email-input"
+          />
+          <TextField
+            label="Senha"
+            placeholder="Sua senha"
+            secureTextEntry
+            secureToggle
+            value={password}
+            onChangeText={setPassword}
+            testID="login-password-input"
+          />
+          {loading ? <Spinner /> : null}
           <Button onPress={handleLogin} disabled={loading} testID="login-submit-button">
             Entrar
           </Button>

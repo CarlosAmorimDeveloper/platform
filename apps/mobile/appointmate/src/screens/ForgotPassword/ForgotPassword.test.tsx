@@ -117,7 +117,15 @@ describe('ForgotPassword', () => {
     fireEvent.press(screen.getByText('Enviar link'));
 
     await waitFor(() => {
-      expect(screen.queryByTestId('forgot-password-loading-indicator')).toBeNull();
+      expect(screen.queryByRole('progressbar')).toBeNull();
     }, ASYNC_TIMEOUT);
   }, 40000);
+
+  it('navigates back when the AppBar back button is pressed', () => {
+    render(<ForgotPassword navigation={mockNavigation} route={mockRoute} />);
+
+    fireEvent.press(screen.getByLabelText('Voltar'));
+
+    expect(mockNavigation.goBack).toHaveBeenCalled();
+  });
 });

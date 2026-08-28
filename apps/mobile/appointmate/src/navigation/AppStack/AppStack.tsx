@@ -1,5 +1,5 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { useTheme } from '@vuotto/mobile';
+import { useTheme } from '@industry/mobile';
 import { Home } from '../../screens/Home';
 import { FormEntry } from '../../screens/FormEntry';
 import { FormDetail } from '../../screens/FormDetail';
@@ -12,7 +12,7 @@ export function AppStack() {
 
   return (
     <Stack.Navigator
-      screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.bgCanvas } }}
+      screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.bg } }}
     >
       <Stack.Screen name="Home" component={Home} />
       <Stack.Screen name="FormEntry" component={FormEntry} />

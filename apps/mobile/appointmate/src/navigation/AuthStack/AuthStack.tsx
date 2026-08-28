@@ -1,5 +1,5 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { useTheme } from '@vuotto/mobile';
+import { useTheme } from '@industry/mobile';
 import { Login } from '../../screens/Login';
 import { Register } from '../../screens/Register';
 import { ForgotPassword } from '../../screens/ForgotPassword';
@@ -12,7 +12,7 @@ export function AuthStack() {
 
   return (
     <Stack.Navigator
-      screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.bgCanvas } }}
+      screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.bg } }}
     >
       <Stack.Screen name="Login" component={Login} />
       <Stack.Screen name="Register" component={Register} />

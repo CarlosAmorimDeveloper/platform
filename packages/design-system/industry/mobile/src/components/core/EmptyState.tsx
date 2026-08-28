@@ -10,11 +10,13 @@ export interface EmptyStateProps {
   /** Usually a primary `<Button>`. */
   action?: ReactNode;
   style?: StyleProp<ViewStyle>;
+  testID?: string;
 }
 
-export function EmptyState({ icon, title, body, action, style }: EmptyStateProps) {
+export function EmptyState({ icon, title, body, action, style, testID }: EmptyStateProps) {
   return (
     <View
+      testID={testID}
       style={[
         {
           alignItems: 'center',

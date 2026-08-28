@@ -52,7 +52,7 @@ describe('Login', () => {
   it('does not show a loading indicator until a submission is made', () => {
     render(<Login navigation={mockNavigation} route={mockRoute} />);
 
-    expect(screen.queryByTestId('login-loading-indicator')).toBeNull();
+    expect(screen.queryByRole('progressbar')).toBeNull();
   });
 
   it('does not call login when submitting with empty fields', () => {
@@ -107,13 +107,13 @@ describe('Login', () => {
     fireEvent.press(screen.getByText('Entrar'));
 
     await waitFor(() => {
-      expect(screen.getByTestId('login-loading-indicator')).toBeTruthy();
+      expect(screen.getByRole('progressbar')).toBeTruthy();
     });
 
     resolveLogin({ uid: 'abc123', email: 'user@example.com' });
 
     await waitFor(() => {
-      expect(screen.queryByTestId('login-loading-indicator')).toBeNull();
+      expect(screen.queryByRole('progressbar')).toBeNull();
     }, ASYNC_TIMEOUT);
   }, 40000);
 
@@ -139,7 +139,7 @@ describe('Login', () => {
     fireEvent.press(screen.getByText('Entrar'));
 
     await waitFor(() => {
-      expect(screen.queryByTestId('login-loading-indicator')).toBeNull();
+      expect(screen.queryByRole('progressbar')).toBeNull();
     }, ASYNC_TIMEOUT);
   }, 40000);
 });
