@@ -40,7 +40,7 @@ import { nextJsConfig } from '@repo/eslint-config/next-js';
 export default nextJsConfig;
 ```
 
-### Pacote React interno (`packages/design-system/vuotto-web`)
+### Pacote React interno (`packages/design-system/industry/web`)
 
 ```js
 // eslint.config.mjs
@@ -60,34 +60,14 @@ export default config;
 
 ## Fronteiras de import
 
-`@repo/eslint-config/architecture-boundaries` exporta duas funções que geram blocos de config (`no-restricted-imports`), pra quem consome compor no próprio `eslint.config.mjs`:
-
-- **`domainServicesBoundaries(appSrcDir, forbiddenGenerationScope?)`** — aplica a camada `domain/` → `services/` → `screens/`/`hooks/`/`components/`/`context/`/`store/`/`navigation/` documentada no `CLAUDE.md` raiz ("Clean Architecture"): `domain/` não pode importar de nenhuma camada externa, `services/` não pode importar de `screens/`/`hooks/`/etc. Usado por `appointmate`/`tickets-app`.
-- **`noCrossGenerationImports(forbiddenScope)`** — impede um pacote de importar de uma geração irmã do design system (ex.: `@vuotto/*` não pode importar `@industry/*`, e vice-versa), pra manter as gerações independentes enquanto coexistem.
-
-**Importante:** ambas as funções setam a mesma regra ESLint (`no-restricted-imports`). O flat config do ESLint não mescla `patterns` de blocos diferentes que casam com o mesmo arquivo — o último bloco que casa _substitui_ o anterior inteiro. Por isso, quando um app usa as duas funções juntas, `noCrossGenerationImports(...)` precisa vir **antes** de `domainServicesBoundaries(dir, scope)` no array (a segunda, mais específica por `files:`, já recebe o `scope` como segundo parâmetro pra combinar os dois conjuntos de patterns numa única chamada da regra) — ver `apps/mobile/appointmate/eslint.config.mjs` para o padrão de uso.
+`@repo/eslint-config/architecture-boundaries` exporta `domainServicesBoundaries(appSrcDir)`, que gera blocos de config (`no-restricted-imports`) aplicando a camada `domain/` → `services/` → `screens/`/`hooks/`/`components/`/`context/`/`store/`/`navigation/` documentada no `CLAUDE.md` raiz ("Clean Architecture"): `domain/` não pode importar de nenhuma camada externa, `services/` não pode importar de `screens/`/`hooks/`/etc. Usado por `appointmate`/`tickets-app`.
 
 ```js
 // eslint.config.mjs (app com domain/services/screens)
 import { config } from '@repo/eslint-config/react-internal';
-import {
-  domainServicesBoundaries,
-  noCrossGenerationImports,
-} from '@repo/eslint-config/architecture-boundaries';
+import { domainServicesBoundaries } from '@repo/eslint-config/architecture-boundaries';
 
-export default [
-  ...config,
-  ...noCrossGenerationImports('@industry'), // resto do app (screens/, hooks/, ...)
-  ...domainServicesBoundaries('src', '@industry'), // domain/ e services/ — inclui as duas restrições
-];
-```
-
-```js
-// eslint.config.mjs (pacote de design system)
-import { config } from '@repo/eslint-config/react-internal';
-import { noCrossGenerationImports } from '@repo/eslint-config/architecture-boundaries';
-
-export default [...config, ...noCrossGenerationImports('@industry')];
+export default [...config, ...domainServicesBoundaries('src')];
 ```
 
 ## Plugins incluídos

@@ -10,19 +10,15 @@ Turborepo + Yarn Workspaces v1 monorepo. **Always use Yarn** — the lockfile an
 apps/web/todo-app/          # Next.js 16 app (App Router) — deployed to Vercel
 apps/mobile/appointmate/    # Expo app — mental health check-in log (LGPD sensitive data)
 apps/mobile/tickets-app/    # Expo app — multi-tenant ticketing, published on Play Store
-packages/design-system/
-  vuotto-web/               # @vuotto/web — React components (Vuotto Tech), legacy, no longer consumed by any app
-  vuotto-mobile/            # @vuotto/mobile — React Native components (Vuotto Tech), legacy, no longer consumed by any app
-  vuotto-tokens/            # @vuotto/tokens — shared design tokens (Vuotto Tech), legacy, no longer consumed by any app
-  industry/
-    web/                    # @industry/web — React components (Industry design system), no MUI/Emotion
-    mobile/                 # @industry/mobile — React Native components (Industry design system), no React Native Paper
-    tokens/                 # @industry/tokens — shared design tokens (TS + CSS vars), adopted by all 3 apps
+packages/design-system/industry/
+  web/                        # @industry/web — React components (Industry design system), no MUI/Emotion
+  mobile/                     # @industry/mobile — React Native components (Industry design system), no React Native Paper
+  tokens/                     # @industry/tokens — shared design tokens (TS + CSS vars), adopted by all 3 apps
 packages/eslint-config/     # @repo/eslint-config — ESLint v9 flat configs
 packages/typescript-config/ # @repo/typescript-config — shared tsconfigs
 ```
 
-The Industry design system (`@industry/*`) is now the active design system — all three apps (todo-app, tickets-app, appointmate) migrated to it from Vuotto Tech (REB-88/89/90). Vuotto Tech (`@vuotto/*`) is the previous generation: its packages and Storybook/Chromatic pipeline still exist but have no remaining app consumers — don't add new ones.
+The Industry design system (`@industry/*`) is the design system used by all three apps (todo-app, tickets-app, appointmate), migrated to it in REB-88/89/90. Its previous generation, Vuotto Tech (`@vuotto/*`), was fully removed from the monorepo (REB-100) once the migration completed.
 
 ## Git workflow
 
@@ -111,18 +107,18 @@ yarn test --watch            # watch mode
 yarn test --testPathPattern=TaskItem  # run a single test file
 ```
 
-### @vuotto/web (`packages/design-system/vuotto-web`)
+### @industry/web (`packages/design-system/industry/web`)
 
 ```sh
-yarn workspace @vuotto/web storybook        # Storybook dev on :6008
-yarn workspace @vuotto/web build-storybook  # static build
+yarn workspace @industry/web storybook        # Storybook dev on :6010
+yarn workspace @industry/web build-storybook  # static build
 ```
 
-### @vuotto/mobile (`packages/design-system/vuotto-mobile`)
+### @industry/mobile (`packages/design-system/industry/mobile`)
 
 ```sh
-yarn workspace @vuotto/mobile storybook  # Storybook dev on :6009
-yarn workspace @vuotto/mobile jest       # Jest (node env, babel-jest only)
+yarn workspace @industry/mobile storybook  # Storybook dev on :6011
+yarn workspace @industry/mobile jest       # Jest (node env, babel-jest only)
 ```
 
 ## Architecture
@@ -141,8 +137,6 @@ Actions: `addTask`, `toggleTask`, `editTask`, `removeTask`, `hydrateState` (bulk
 - **`@industry/web`** — React components, own implementation (no MUI/Emotion), themed from `@industry/tokens` via CSS custom properties. Documented in Storybook; visual regression tests run via Chromatic on every push/PR to `main` that touches `packages/design-system/industry/web/` or `industry/tokens/`.
 - **`@industry/mobile`** — React Native components, own implementation (no React Native Paper), themed from `@industry/tokens` via `StyleSheet.create`. Tests run in Node env (not jsdom) with a minimal Babel config that bypasses `metro-react-native-babel-preset`.
 
-`@vuotto/*` (`packages/design-system/vuotto-{web,mobile,tokens}`) is the previous generation, superseded by `@industry/*` in the REB-88/89/90 migrations — it has no remaining app consumers. Its own Storybook/Chromatic pipeline is still wired up, but treat it as legacy: don't add new consumers or extend it for app-level work.
-
 ### CI workflows
 
 | Workflow                        | Trigger                                                                                           | What it does                                                                   |
@@ -150,8 +144,6 @@ Actions: `addTask`, `toggleTask`, `editTask`, `removeTask`, `hydrateState` (bulk
 | `coverage.yml`                  | PR → main (todo-app, tickets-app, appointmate, industry/{web,mobile,tokens} paths)                | Runs Jest only on changed source files; enforces ≥ 95% coverage on those files |
 | `deploy.yml`                    | Push/PR → main (todo-app, industry/web, industry/tokens paths)                                    | Vercel deploy                                                                  |
 | `mobile-apps.yml`               | PR → main (mobile apps, industry/mobile, industry/tokens, eslint-config, typescript-config paths) | Lint/check-types/test for appointmate + tickets-app                            |
-| `storybook-vuotto-web.yml`      | Push/PR → main (vuotto-web, vuotto-tokens paths)                                                  | Chromatic publish for `@vuotto/web`                                            |
-| `storybook-vuotto-mobile.yml`   | Push/PR → main (vuotto-mobile, vuotto-tokens paths)                                               | Chromatic publish for `@vuotto/mobile`                                         |
 | `storybook-industry-web.yml`    | Push/PR → main (industry/web, industry/tokens paths)                                              | Chromatic publish for `@industry/web`                                          |
 | `storybook-industry-mobile.yml` | Push/PR → main (industry/mobile, industry/tokens paths)                                           | Chromatic publish for `@industry/mobile`                                       |
 | `version.yml`                   | Push → main (`.changeset/**`)                                                                     | Opens/updates the Changesets "Version Packages" PR                             |

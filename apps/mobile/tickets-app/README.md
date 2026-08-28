@@ -28,9 +28,9 @@ Sistema de tickets multi-tenant construído com [Expo](https://expo.dev) / React
 
 - **Autenticação** — login, cadastro (cria um novo workspace automaticamente) e recuperação de senha via Firebase Auth.
 - **Gestão de tickets** — criação, listagem com filtros por status/prioridade, detalhe com thread de comentários, atribuição a um responsável do workspace.
-- **Prioridade e status configuráveis** — 5 níveis de prioridade (`very_low` → `very_high`) e 3 estágios de status (`open`, `in_progress`, `done`), cada um com um tom de `Badge` de `@vuotto/mobile`.
+- **Prioridade e status configuráveis** — 5 níveis de prioridade (`very_low` → `very_high`) e 3 estágios de status (`open`, `in_progress`, `done`), cada um com um tom de `Badge` de `@industry/mobile`.
 - **Gestão de usuários (admin)** — convite de novos membros para o próprio workspace, sem exigir que o convidado já tenha conta.
-- **Dashboard** — visão consolidada dos tickets do workspace com gráficos (`PieChart` de `@vuotto/mobile`).
+- **Dashboard** — visão consolidada dos tickets do workspace com gráficos (`PieChart` de `@industry/mobile`).
 
 ## Multi-tenancy e papéis
 
@@ -141,17 +141,17 @@ apps/mobile/tickets-app/
 
 ## Tecnologias
 
-| Camada        | Tecnologia                                          |
-| ------------- | --------------------------------------------------- |
-| Framework     | Expo SDK 54 (React Native 0.81, New Architecture)   |
-| UI            | React 19 + `@vuotto/mobile` / `@vuotto/tokens`      |
-| Navegação     | React Navigation (native-stack)                     |
-| Estado global | Zustand                                             |
-| Backend       | Firebase Auth + Firestore                           |
-| Gráficos      | `PieChart` (`@vuotto/mobile`, via react-native-svg) |
-| Testes        | Jest + Testing Library + Firestore emulator         |
-| Build/Deploy  | EAS Build + EAS Submit                              |
-| Tipos         | TypeScript 5.9 (strict)                             |
+| Camada        | Tecnologia                                            |
+| ------------- | ----------------------------------------------------- |
+| Framework     | Expo SDK 54 (React Native 0.81, New Architecture)     |
+| UI            | React 19 + `@industry/mobile` / `@industry/tokens`    |
+| Navegação     | React Navigation (native-stack)                       |
+| Estado global | Zustand                                               |
+| Backend       | Firebase Auth + Firestore                             |
+| Gráficos      | `PieChart` (`@industry/mobile`, via react-native-svg) |
+| Testes        | Jest + Testing Library + Firestore emulator           |
+| Build/Deploy  | EAS Build + EAS Submit                                |
+| Tipos         | TypeScript 5.9 (strict)                               |
 
 ## Contribuindo
 

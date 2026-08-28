@@ -2,7 +2,7 @@
 
 Fonte única dos tokens de design do **Industry** — o design system de blueprint sobre fundo escuro — compartilhada por `@industry/web` e `@industry/mobile`. Portado de `~/Documents/ds/theme.json` e `styles.css`; ver `~/Documents/ds/readme.md` e `~/Documents/ds/DESIGN-SYSTEM.md` para o briefing completo do sistema.
 
-Ao contrário do [`@vuotto/tokens`](../vuotto-tokens/README.md), o Industry **não tem tema claro** — `color-scheme: dark` é fixo no `:root` (`~/Documents/ds/DESIGN-SYSTEM.md`, §13).
+Ao contrário do `@vuotto/tokens` (removido do monorepo, REB-100), o Industry **não tem tema claro** — `color-scheme: dark` é fixo no `:root` (`~/Documents/ds/DESIGN-SYSTEM.md`, §13).
 
 ## Duas saídas, um valor de origem
 

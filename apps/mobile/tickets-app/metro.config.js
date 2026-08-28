@@ -44,18 +44,18 @@ config.resolver.nodeModulesPaths = [
 //   app-local makes registration and lookup use the same Map.
 //
 // WHY react-native-safe-area-context is also pinned:
-//   @vuotto/mobile's TabBar imports react-native-safe-area-context directly,
+//   @industry/mobile's Sheet imports react-native-safe-area-context directly,
 //   and its own package.json (needed to run its Storybook) pulls in a private
-//   copy under packages/design-system/vuotto-mobile/node_modules — yarn does
+//   copy under packages/design-system/industry/mobile/node_modules — yarn does
 //   not reliably dedupe it against the app-local install even when the
 //   version ranges overlap. Without this branch, Metro resolves two separate
-//   copies (root/app-local vs. the one nested in vuotto-mobile), each
+//   copies (root/app-local vs. the one nested in industry/mobile), each
 //   registering the RNCSafeAreaProvider native view, producing "Invariant
 //   Violation: Tried to register two views with the same name
 //   RNCSafeAreaProvider" at runtime.
 //
 // WHY react-native-svg is also pinned:
-//   lucide-react-native (root-only, not nohoisted) and @vuotto/mobile's own
+//   lucide-react-native (root-only, not nohoisted) and @industry/mobile's own
 //   chart components require('react-native-svg') from directories whose
 //   upward node_modules walk lands on the ROOT copy, while
 //   react-native-svg is nohoisted app-local (apps/mobile/tickets-app's own
