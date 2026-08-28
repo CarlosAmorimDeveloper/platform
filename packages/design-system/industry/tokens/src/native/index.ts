@@ -8,7 +8,18 @@ export {
   danger,
   semanticColor,
   viz,
+  lightColor,
+  lightNeutral,
+  lightAccentRamp,
+  lightAccent2Ramp,
+  lightSuccess,
+  lightWarning,
+  lightDanger,
+  lightSemanticColor,
+  lightViz,
+  themeColor,
 } from './colors.generated';
+export type { ThemeMode } from './colors.generated';
 export { alpha } from './color-utils';
 export {
   fontSize,

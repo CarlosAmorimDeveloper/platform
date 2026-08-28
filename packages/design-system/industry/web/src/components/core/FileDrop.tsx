@@ -131,7 +131,7 @@ export const FileDrop = forwardRef<HTMLLabelElement, FileDropProps>(function Fil
           padding: 'var(--space-8) var(--space-5)',
           textAlign: 'center',
           borderRadius: 0,
-          background: over ? 'var(--color-surface2)' : 'var(--color-surface)',
+          background: over ? 'var(--color-surface-2)' : 'var(--color-surface)',
           border: `1px dashed ${borderColor}`,
           opacity: disabled ? 0.45 : 1,
           cursor: disabled ? 'not-allowed' : 'pointer',

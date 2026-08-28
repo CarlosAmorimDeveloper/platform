@@ -89,3 +89,96 @@ export const viz = {
   '6': '#b098cd',
   grid: 'rgba(230, 233, 236, 0.10)',
 } as const;
+
+// ── Light theme mirrors — same shape, resolved against `[data-theme='light']` ──
+
+export const lightColor = {
+  bg: '#f5f7f9',
+  surface: '#fcfdff',
+  surface2: '#f0f2f4',
+  text: '#191b1d',
+  accent: '#547596',
+  accent2: '#4a7892',
+  divider: 'rgba(25, 27, 29, 0.16)',
+  dividerStrong: 'rgba(25, 27, 29, 0.30)',
+} as const;
+
+export const lightNeutral = {
+  '100': '#1d2022',
+  '200': '#36383b',
+  '300': '#535659',
+  '400': '#6f7275',
+  '500': '#898c90',
+  '600': '#a2a5a8',
+  '700': '#bbbec1',
+  '800': '#d5d8db',
+  '900': '#ebeff2',
+} as const;
+
+export const lightAccentRamp = {
+  '100': '#182029',
+  '200': '#2a394a',
+  '300': '#405870',
+  '400': '#547596',
+  '500': '#6990b8',
+  '600': '#83a8cf',
+  '700': '#a1c1e4',
+  '800': '#c2daf5',
+  '900': '#e0f1ff',
+} as const;
+
+export const lightAccent2Ramp = {
+  '100': '#162127',
+  '200': '#263b48',
+  '300': '#395a6d',
+  '400': '#4a7892',
+  '500': '#5d94b3',
+  '600': '#79accb',
+  '700': '#99c5df',
+  '800': '#bcddf1',
+  '900': '#dcf2ff',
+} as const;
+
+export const lightSuccess = {
+  '200': '#283e31',
+  '300': '#3a5f4a',
+  '400': '#4d7e62',
+  '700': '#9ecaaf',
+  '900': '#dff5e7',
+} as const;
+
+export const lightWarning = {
+  '200': '#44361b',
+  '300': '#695123',
+  '400': '#8a6c32',
+  '700': '#d3ba8e',
+  '900': '#faedd5',
+} as const;
+
+export const lightDanger = {
+  '200': '#4b302c',
+  '300': '#754741',
+  '400': '#9f5c54',
+  '700': '#edaba1',
+  '900': '#ffe4de',
+} as const;
+
+export const lightSemanticColor = {
+  success: '#4d7e62',
+  warning: '#8a6c32',
+  danger: '#9f5c54',
+  info: '#4a7892',
+} as const;
+
+export const lightViz = {
+  '1': '#3e668f',
+  '2': '#157079',
+  '3': '#357153',
+  '4': '#726328',
+  '5': '#8b5243',
+  '6': '#6e5788',
+  grid: 'rgba(25, 27, 29, 0.10)',
+} as const;
+
+export const themeColor = { dark: color, light: lightColor } as const;
+export type ThemeMode = keyof typeof themeColor;
