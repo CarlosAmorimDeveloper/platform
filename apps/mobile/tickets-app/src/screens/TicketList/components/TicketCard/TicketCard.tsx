@@ -1,6 +1,6 @@
-import { Text } from 'react-native';
-import { Badge, Card, useTheme } from '@vuotto/mobile';
-import { space } from '@vuotto/tokens';
+import { Pressable, Text } from 'react-native';
+import { Badge, Card, useTheme } from '@industry/mobile';
+import { alpha, space } from '@industry/tokens';
 import { formatDate } from '../../../../domain/ticket';
 import type { TicketStatus } from '../../../../constants/ticketStatus';
 import {
@@ -31,18 +31,20 @@ export function TicketCard({
 }: Props) {
   const { colors } = useTheme();
   return (
-    <Card interactive onPress={onPress} padding="md" style={{ gap: space[1] }}>
-      <Text style={[styles.title, { color: colors.textHeading }]}>{title}</Text>
-      <Badge tone={PRIORITY_TONES[priority]}>{PRIORITY_LABELS[priority]}</Badge>
-      <Text style={[styles.meta, { color: colors.textSecondary }]}>
-        Criado por: {creatorName}
-        {createdAt ? ` · ${formatDate(createdAt)}` : ''}
-      </Text>
-      {assigneeName ? (
-        <Text style={[styles.meta, { color: colors.textSecondary }]}>
-          Responsável: {assigneeName}
+    <Pressable onPress={onPress}>
+      <Card style={{ gap: space[1] }}>
+        <Text style={[styles.title, { color: colors.text }]}>{title}</Text>
+        <Badge tone={PRIORITY_TONES[priority]}>{PRIORITY_LABELS[priority]}</Badge>
+        <Text style={[styles.meta, { color: alpha(colors.text, 70) }]}>
+          Criado por: {creatorName}
+          {createdAt ? ` · ${formatDate(createdAt)}` : ''}
         </Text>
-      ) : null}
-    </Card>
+        {assigneeName ? (
+          <Text style={[styles.meta, { color: alpha(colors.text, 70) }]}>
+            Responsável: {assigneeName}
+          </Text>
+        ) : null}
+      </Card>
+    </Pressable>
   );
 }

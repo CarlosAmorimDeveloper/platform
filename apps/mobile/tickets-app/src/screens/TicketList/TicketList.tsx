@@ -1,7 +1,8 @@
 import { useEffect } from 'react';
 import { View, Text, FlatList } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { AppBar, LoadingIndicator, useTheme, useToast } from '@vuotto/mobile';
+import { AppBar, Spinner, useTheme, useToast } from '@industry/mobile';
+import { alpha } from '@industry/tokens';
 import { useTicketList } from '../../hooks/useTicketList';
 import { STATUS_LABELS } from '../../constants/ticketStatus';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -35,7 +36,7 @@ export function TicketList({ route, navigation }: Props) {
       <SafeAreaView edges={['top']} style={styles.flex}>
         {appBar}
         <View style={styles.center}>
-          <LoadingIndicator />
+          <Spinner />
         </View>
       </SafeAreaView>
     );
@@ -44,7 +45,7 @@ export function TicketList({ route, navigation }: Props) {
   return (
     <SafeAreaView edges={['top']} style={styles.flex}>
       {appBar}
-      <View style={[styles.container, { backgroundColor: colors.bgCanvas }]}>
+      <View style={[styles.container, { backgroundColor: colors.bg }]}>
         <FlatList
           data={tickets}
           keyExtractor={(item) => item.id}
@@ -63,7 +64,7 @@ export function TicketList({ route, navigation }: Props) {
           )}
           ListEmptyComponent={
             <View style={styles.center}>
-              <Text style={[styles.emptyText, { color: colors.textSecondary }]}>
+              <Text style={[styles.emptyText, { color: alpha(colors.text, 70) }]}>
                 Nenhum ticket encontrado.
               </Text>
             </View>

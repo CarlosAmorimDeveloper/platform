@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Alert, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { LoadingIndicator, ToastProvider } from '@vuotto/mobile';
+import { Spinner, ToastProvider } from '@industry/mobile';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
@@ -49,7 +49,7 @@ export default function App() {
   if (loading) {
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <LoadingIndicator />
+        <Spinner />
       </View>
     );
   }

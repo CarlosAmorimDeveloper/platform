@@ -1,4 +1,4 @@
-import type { BadgeTone } from '@vuotto/mobile';
+import type { BadgeTone } from '@industry/mobile';
 
 export type TicketStatus = 'open' | 'in_progress' | 'done';
 
@@ -11,7 +11,7 @@ export const STATUS_LABELS: Record<TicketStatus, string> = {
 };
 
 export const STATUS_TONES: Record<TicketStatus, BadgeTone> = {
-  open: 'info',
+  open: 'accent',
   in_progress: 'warning',
   done: 'success',
 };

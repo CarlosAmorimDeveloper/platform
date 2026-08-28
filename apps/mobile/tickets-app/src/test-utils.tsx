@@ -3,7 +3,7 @@ import type { ReactElement } from 'react';
 import { render } from '@testing-library/react-native';
 import type { RenderOptions } from '@testing-library/react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { ToastProvider } from '@vuotto/mobile';
+import { ToastProvider } from '@industry/mobile';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 function AllProviders({ children }: { children: ReactElement }) {

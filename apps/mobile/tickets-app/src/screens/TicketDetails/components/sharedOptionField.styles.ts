@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { space } from '@vuotto/tokens';
+import { space } from '@industry/tokens';
 
 export const sharedOptionFieldStyles = StyleSheet.create({
   badge: { alignSelf: 'flex-start', marginHorizontal: space[4] },

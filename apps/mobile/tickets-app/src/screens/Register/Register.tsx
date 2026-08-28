@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { View, Text, KeyboardAvoidingView, Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { AppBar, Button, Field, Input, LoadingIndicator, useTheme, useToast } from '@vuotto/mobile';
+import { AppBar, Button, Spinner, TextField, useTheme, useToast } from '@industry/mobile';
+import { alpha } from '@industry/tokens';
 import { register, mapFirebaseAuthError } from '../../services/authService';
 import { passwordMinLengthError } from '../../domain/validation';
 import { useAuthStore } from '../../store/useAuthStore';
@@ -50,41 +51,42 @@ export function Register({ navigation }: Props) {
         style={styles.keyboardView}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
-        <View style={[styles.container, { backgroundColor: colors.bgCanvas }]}>
-          <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
+        <View style={[styles.container, { backgroundColor: colors.bg }]}>
+          <Text style={[styles.subtitle, { color: alpha(colors.text, 70) }]}>
             Preencha os dados para criar sua conta
           </Text>
           <View style={styles.form}>
-            <Field label="Nome">
-              <Input placeholder="Seu nome completo" value={name} onChangeText={setName} />
-            </Field>
-            <Field label="E-mail">
-              <Input
-                placeholder="email@exemplo.com"
-                value={email}
-                onChangeText={setEmail}
-                keyboardType="email-address"
-                autoCapitalize="none"
-              />
-            </Field>
-            <Field label="Senha" error={passwordError}>
-              <Input
-                placeholder="Mínimo 6 caracteres"
-                secureTextEntry
-                secureToggle
-                value={password}
-                onChangeText={setPassword}
-                invalid={Boolean(passwordError)}
-              />
-            </Field>
+            <TextField
+              label="Nome"
+              placeholder="Seu nome completo"
+              value={name}
+              onChangeText={setName}
+            />
+            <TextField
+              label="E-mail"
+              placeholder="email@exemplo.com"
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+              autoCapitalize="none"
+            />
+            <TextField
+              label="Senha"
+              error={passwordError}
+              placeholder="Mínimo 6 caracteres"
+              secureTextEntry
+              secureToggle
+              value={password}
+              onChangeText={setPassword}
+            />
             {isFirstUser && (
-              <View style={[styles.adminNotice, { backgroundColor: colors.glass2 }]}>
-                <Text style={[styles.adminNoticeText, { color: colors.textHeading }]}>
+              <View style={[styles.adminNotice, { backgroundColor: colors.surface2 }]}>
+                <Text style={[styles.adminNoticeText, { color: colors.text }]}>
                   Esta será a primeira conta criada e terá perfil de Administrador.
                 </Text>
               </View>
             )}
-            <LoadingIndicator visible={loading} />
+            {loading ? <Spinner /> : null}
             <Button
               onPress={handleRegister}
               disabled={!name.trim() || !email.trim() || password.length < 6 || loading}

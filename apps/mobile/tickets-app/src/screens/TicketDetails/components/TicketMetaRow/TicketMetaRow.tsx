@@ -1,5 +1,6 @@
 import { View, Text } from 'react-native';
-import { useTheme } from '@vuotto/mobile';
+import { useTheme } from '@industry/mobile';
+import { alpha } from '@industry/tokens';
 import { formatDate } from '../../../../domain/ticket';
 import { styles } from './TicketMetaRow.styles';
 
@@ -12,7 +13,7 @@ interface Props {
 
 export function TicketMetaRow({ creatorName, createdAt, assigneeName, editing }: Props) {
   const { colors } = useTheme();
-  const metaText = [styles.metaText, { color: colors.textSecondary }];
+  const metaText = [styles.metaText, { color: alpha(colors.text, 70) }];
   return (
     <View style={styles.metaRow}>
       <Text style={metaText}>Criado por: {creatorName}</Text>

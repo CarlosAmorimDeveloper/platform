@@ -1,5 +1,5 @@
 import { View, FlatList } from 'react-native';
-import { Badge, Button, type BadgeTone } from '@vuotto/mobile';
+import { Badge, Button, type BadgeTone } from '@industry/mobile';
 import { sharedOptionFieldStyles as styles } from '../sharedOptionField.styles';
 
 interface Props<T extends string> {

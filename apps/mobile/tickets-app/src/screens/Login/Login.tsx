@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { View, Text, KeyboardAvoidingView, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { AppBar, Button, Field, Input, LoadingIndicator, useTheme, useToast } from '@vuotto/mobile';
-import { vtColors } from '@vuotto/tokens';
+import { AppBar, Button, Spinner, TextField, useTheme, useToast } from '@industry/mobile';
+import { alpha, color } from '@industry/tokens';
 import { login, mapFirebaseAuthError } from '../../services/authService';
 import { useAuthStore } from '../../store/useAuthStore';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -39,33 +39,31 @@ export function Login({ navigation }: Props) {
         style={styles.keyboardView}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
-        <View style={[styles.container, { backgroundColor: colors.bgCanvas }]}>
+        <View style={[styles.container, { backgroundColor: colors.bg }]}>
           <View style={styles.header}>
-            <Text style={[styles.appTitle, { color: vtColors.cool }]}>Tickets App</Text>
-            <Text style={[styles.appSubtitle, { color: colors.textSecondary }]}>
+            <Text style={[styles.appTitle, { color: color.accent }]}>Tickets App</Text>
+            <Text style={[styles.appSubtitle, { color: alpha(colors.text, 70) }]}>
               Gerencie seus chamados
             </Text>
           </View>
           <View style={styles.form}>
-            <Field label="E-mail">
-              <Input
-                placeholder="email@exemplo.com"
-                value={email}
-                onChangeText={setEmail}
-                keyboardType="email-address"
-                autoCapitalize="none"
-              />
-            </Field>
-            <Field label="Senha">
-              <Input
-                placeholder="Sua senha"
-                secureTextEntry
-                secureToggle
-                value={password}
-                onChangeText={setPassword}
-              />
-            </Field>
-            <LoadingIndicator visible={loading} />
+            <TextField
+              label="E-mail"
+              placeholder="email@exemplo.com"
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+              autoCapitalize="none"
+            />
+            <TextField
+              label="Senha"
+              placeholder="Sua senha"
+              secureTextEntry
+              secureToggle
+              value={password}
+              onChangeText={setPassword}
+            />
+            {loading ? <Spinner /> : null}
             <Button onPress={handleLogin} disabled={loading}>
               Entrar
             </Button>

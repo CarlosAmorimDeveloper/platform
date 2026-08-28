@@ -6,17 +6,16 @@ import {
   Badge,
   Button,
   Card,
-  Dialog,
   FAB,
   Icon,
-  LoadingIndicator,
   PieChart,
+  Sheet,
+  Spinner,
   useTheme,
   useToast,
   type AppBarAction,
-  type BadgeTone,
-} from '@vuotto/mobile';
-import { vtColors } from '@vuotto/tokens';
+} from '@industry/mobile';
+import { alpha, viz } from '@industry/tokens';
 import { useTicketList } from '../../hooks/useTicketList';
 import { useAuthStore } from '../../store/useAuthStore';
 import { formatDate } from '../../domain/ticket';
@@ -27,12 +26,10 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { AppStackParamList } from '../../navigation/types';
 import { styles } from './Dashboard.styles';
 
-const TONE_COLOR: Record<BadgeTone, string> = {
-  neutral: vtColors.mute,
-  success: vtColors.success,
-  warning: vtColors.warning,
-  danger: vtColors.danger,
-  info: vtColors.cool,
+const STATUS_VIZ_COLOR: Record<TicketStatus, string> = {
+  open: viz['1'],
+  in_progress: viz['4'],
+  done: viz['3'],
 };
 
 type Props = NativeStackScreenProps<AppStackParamList, 'Dashboard'>;
@@ -66,20 +63,20 @@ function RecentTicketsCard({
   const recent = tickets.slice(0, 3);
   if (recent.length === 0) return null;
   return (
-    <Card padding="md">
-      <Text style={[styles.cardTitle, { color: colors.textHeading }]}>Chamados Recentes</Text>
+    <Card>
+      <Text style={[styles.cardTitle, { color: colors.text }]}>Chamados Recentes</Text>
       {recent.map((t, i) => (
         <Pressable
           key={t.id}
           onPress={() => onPressTicket(t.id)}
           style={[
             styles.recentItem,
-            { borderBottomColor: colors.lineHairline },
+            { borderBottomColor: colors.divider },
             i === recent.length - 1 && { borderBottomWidth: 0 },
           ]}
         >
-          <Text style={[styles.recentTitle, { color: colors.textHeading }]}>{t.title}</Text>
-          <Text style={[styles.recentMeta, { color: colors.textSecondary }]}>
+          <Text style={[styles.recentTitle, { color: colors.text }]}>{t.title}</Text>
+          <Text style={[styles.recentMeta, { color: alpha(colors.text, 70) }]}>
             Criado por: {t.creatorName} · {formatDate(t.createdAt)}
           </Text>
         </Pressable>
@@ -114,13 +111,12 @@ export function Dashboard({ navigation }: Props) {
 
   const appBar = <AppBar title="Painel" actions={actions} />;
 
-  const logoutDialog = (
-    <Dialog
+  const logoutSheet = (
+    <Sheet
       open={logoutOpen}
-      onClose={() => setLogoutOpen(false)}
+      onDismiss={() => setLogoutOpen(false)}
       title="Sair da conta"
-      description="Tem certeza que deseja sair?"
-      footer={
+      actions={
         <>
           <Button key="cancel" variant="ghost" onPress={() => setLogoutOpen(false)}>
             Cancelar
@@ -130,7 +126,9 @@ export function Dashboard({ navigation }: Props) {
           </Button>
         </>
       }
-    />
+    >
+      <Text style={{ color: colors.text }}>Tem certeza que deseja sair?</Text>
+    </Sheet>
   );
 
   if (loading) {
@@ -138,9 +136,9 @@ export function Dashboard({ navigation }: Props) {
       <SafeAreaView edges={['top']} style={styles.flex}>
         {appBar}
         <View style={styles.center}>
-          <LoadingIndicator />
+          <Spinner />
         </View>
-        {logoutDialog}
+        {logoutSheet}
       </SafeAreaView>
     );
   }
@@ -149,13 +147,11 @@ export function Dashboard({ navigation }: Props) {
     return (
       <SafeAreaView edges={['top']} style={styles.flex}>
         {appBar}
-        <View style={[styles.container, { backgroundColor: colors.bgCanvas }]}>
+        <View style={[styles.container, { backgroundColor: colors.bg }]}>
           <View style={styles.emptyState}>
-            <Icon name="Inbox" size={64} color={colors.textTertiary} />
-            <Text style={[styles.emptyTitle, { color: colors.textPrimary }]}>
-              Nenhum chamado ainda
-            </Text>
-            <Text style={[styles.emptySubtitle, { color: colors.textTertiary }]}>
+            <Icon name="Inbox" size={64} color={alpha(colors.text, 50)} />
+            <Text style={[styles.emptyTitle, { color: colors.text }]}>Nenhum chamado ainda</Text>
+            <Text style={[styles.emptySubtitle, { color: alpha(colors.text, 50) }]}>
               Crie o primeiro chamado usando o botão abaixo
             </Text>
           </View>
@@ -165,7 +161,7 @@ export function Dashboard({ navigation }: Props) {
             label="New ticket"
           />
         </View>
-        {logoutDialog}
+        {logoutSheet}
       </SafeAreaView>
     );
   }
@@ -173,7 +169,7 @@ export function Dashboard({ navigation }: Props) {
   return (
     <SafeAreaView edges={['top']} style={styles.flex}>
       {appBar}
-      <View style={[styles.container, { backgroundColor: colors.bgCanvas }]}>
+      <View style={[styles.container, { backgroundColor: colors.bg }]}>
         {tickets.length > 0 && (
           <View>
             <FlatList
@@ -202,7 +198,7 @@ export function Dashboard({ navigation }: Props) {
               slices={ALL_STATUSES.map((s) => ({
                 label: STATUS_LABELS[s],
                 value: tickets.filter((t) => t.status === s).length,
-                color: TONE_COLOR[STATUS_TONES[s]],
+                color: STATUS_VIZ_COLOR[s],
               }))}
             />
           </Pressable>
@@ -219,7 +215,7 @@ export function Dashboard({ navigation }: Props) {
           label="New ticket"
         />
       </View>
-      {logoutDialog}
+      {logoutSheet}
     </SafeAreaView>
   );
 }
