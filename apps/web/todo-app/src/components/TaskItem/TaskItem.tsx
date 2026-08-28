@@ -7,7 +7,7 @@ import { toggleTask, editTask, removeTask } from '@/redux/taskSlice';
 import type { Task } from '@/redux/taskSlice';
 import type { AppDispatch } from '@/redux/store';
 import { isValidTaskTitle, sanitizeTaskTitle } from '@/domain/task';
-import { Button, Card, Checkbox } from '@vuotto/web';
+import { Button, Card, Checkbox } from '@industry/web';
 import { EditableTaskTitle } from './EditableTaskTitle';
 
 interface TaskItemProps {
@@ -63,7 +63,14 @@ export function TaskItem({ task }: TaskItemProps) {
 
   return (
     <li style={{ listStyle: 'none' }}>
-      <Card padding="sm" style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
+      <Card
+        style={{
+          padding: 'var(--space-3)',
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: 'var(--space-3)',
+        }}
+      >
         <Checkbox
           label={
             <span style={srOnlyStyle}>

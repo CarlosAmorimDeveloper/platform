@@ -1,3 +1,2 @@
-@import '@vuotto/tokens/styles.css';
-@import '@vuotto/web/styles.css';
+@import '@industry/tokens/styles.css';
 @import 'tailwindcss';
