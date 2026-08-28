@@ -11,18 +11,18 @@ apps/web/todo-app/          # Next.js 16 app (App Router) — deployed to Vercel
 apps/mobile/appointmate/    # Expo app — mental health check-in log (LGPD sensitive data)
 apps/mobile/tickets-app/    # Expo app — multi-tenant ticketing, published on Play Store
 packages/design-system/
-  vuotto-web/               # @vuotto/web — React components (Vuotto Tech), no MUI/Emotion
-  vuotto-mobile/            # @vuotto/mobile — React Native components (Vuotto Tech), no React Native Paper
-  vuotto-tokens/            # @vuotto/tokens — shared design tokens (TS + CSS vars), adopted by all 3 apps
+  vuotto-web/               # @vuotto/web — React components (Vuotto Tech), legacy, no longer consumed by any app
+  vuotto-mobile/            # @vuotto/mobile — React Native components (Vuotto Tech), legacy, no longer consumed by any app
+  vuotto-tokens/            # @vuotto/tokens — shared design tokens (Vuotto Tech), legacy, no longer consumed by any app
   industry/
-    web/                    # @industry/web — React components (Industry design system, in development)
-    mobile/                 # @industry/mobile — React Native components (Industry design system, in development)
-    tokens/                 # @industry/tokens — shared design tokens (Industry design system, in development)
+    web/                    # @industry/web — React components (Industry design system), no MUI/Emotion
+    mobile/                 # @industry/mobile — React Native components (Industry design system), no React Native Paper
+    tokens/                 # @industry/tokens — shared design tokens (TS + CSS vars), adopted by all 3 apps
 packages/eslint-config/     # @repo/eslint-config — ESLint v9 flat configs
 packages/typescript-config/ # @repo/typescript-config — shared tsconfigs
 ```
 
-The Industry design system (`@industry/*`) is a second generation built in parallel to Vuotto Tech — not yet adopted by any app. Don't assume app code should migrate to it without being asked.
+The Industry design system (`@industry/*`) is now the active design system — all three apps (todo-app, tickets-app, appointmate) migrated to it from Vuotto Tech (REB-88/89/90). Vuotto Tech (`@vuotto/*`) is the previous generation: its packages and Storybook/Chromatic pipeline still exist but have no remaining app consumers — don't add new ones.
 
 ## Git workflow
 
@@ -73,7 +73,7 @@ Every app in this repo already follows the same layering — keep new code insid
 - **Domain (`src/domain/`)** — plain TypeScript, no React, no Firebase, no navigation imports. Pure functions and types (`form.ts`, `pdf.ts`, `timeFilter.ts` in `appointmate`). This layer should be testable with zero mocks.
 - **Services (`src/services/`)** — the only place that talks to Firebase (or any external system). Screens and hooks call a service function; they never import `firebase/firestore` or `firebase/auth` directly.
 - **Screens/Components (`src/screens/`, `src/components/`)** — composition and presentation. Business rules belong in `domain/`, not here; data access belongs in `services/`, not here.
-- **Design system (`@vuotto/web`, `@vuotto/mobile`, `@vuotto/tokens`)** — the only place that owns visual styling primitives (colors, spacing, component variants). App-level code should not hardcode a hex color or a magic spacing number that already exists as a token.
+- **Design system (`@industry/web`, `@industry/mobile`, `@industry/tokens`)** — the only place that owns visual styling primitives (colors, spacing, component variants). App-level code should not hardcode a hex color or a magic spacing number that already exists as a token.
 - Dependencies point inward: screens depend on services and domain; services depend on domain; domain depends on nothing app-specific. Never have `src/domain/` import from `src/screens/` or `src/services/`.
 - Cross-cutting state (`AuthContext` in `appointmate`, the Zustand `useAuthStore` in `tickets-app`, the Redux store in `todo-app`) is a single, explicit place per app — don't introduce a second competing state mechanism in the same app for the same concern.
 
@@ -137,26 +137,26 @@ Actions: `addTask`, `toggleTask`, `editTask`, `removeTask`, `hydrateState` (bulk
 
 ### Design system layers
 
-- **`@vuotto/tokens`** — the source of truth for colors, spacing, font sizes, radii. Exported as TypeScript constants and as CSS custom properties via `styles.css`.
-- **`@vuotto/web`** — React components, own implementation (no MUI/Emotion), themed from `@vuotto/tokens` via CSS custom properties. Documented in Storybook; visual regression tests run via Chromatic on every push/PR to `main` that touches `packages/design-system/vuotto-web/` or `vuotto-tokens/`.
-- **`@vuotto/mobile`** — React Native components, own implementation (no React Native Paper), themed from `@vuotto/tokens` via `StyleSheet.create`. Tests run in Node env (not jsdom) with a minimal Babel config that bypasses `metro-react-native-babel-preset`.
+- **`@industry/tokens`** — the source of truth for colors, spacing, font sizes. Exported as TypeScript constants and as CSS custom properties via `styles.css`.
+- **`@industry/web`** — React components, own implementation (no MUI/Emotion), themed from `@industry/tokens` via CSS custom properties. Documented in Storybook; visual regression tests run via Chromatic on every push/PR to `main` that touches `packages/design-system/industry/web/` or `industry/tokens/`.
+- **`@industry/mobile`** — React Native components, own implementation (no React Native Paper), themed from `@industry/tokens` via `StyleSheet.create`. Tests run in Node env (not jsdom) with a minimal Babel config that bypasses `metro-react-native-babel-preset`.
 
-A separate, not-yet-adopted `@industry/*` generation (`packages/design-system/industry/*`) is under active development in parallel — treat it as a distinct, in-progress system, not an extension of Vuotto Tech.
+`@vuotto/*` (`packages/design-system/vuotto-{web,mobile,tokens}`) is the previous generation, superseded by `@industry/*` in the REB-88/89/90 migrations — it has no remaining app consumers. Its own Storybook/Chromatic pipeline is still wired up, but treat it as legacy: don't add new consumers or extend it for app-level work.
 
 ### CI workflows
 
-| Workflow                        | Trigger                                                                                       | What it does                                                                   |
-| ------------------------------- | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
-| `coverage.yml`                  | PR → main (todo-app, vuotto-web, vuotto-tokens paths)                                         | Runs Jest only on changed source files; enforces ≥ 95% coverage on those files |
-| `deploy.yml`                    | Push/PR → main (todo-app, vuotto-web, vuotto-tokens paths)                                    | Vercel deploy                                                                  |
-| `mobile-apps.yml`               | PR → main (mobile apps, vuotto-mobile, vuotto-tokens, eslint-config, typescript-config paths) | Lint/check-types/test for appointmate + tickets-app                            |
-| `storybook-vuotto-web.yml`      | Push/PR → main (vuotto-web, vuotto-tokens paths)                                              | Chromatic publish for `@vuotto/web`                                            |
-| `storybook-vuotto-mobile.yml`   | Push/PR → main (vuotto-mobile, vuotto-tokens paths)                                           | Chromatic publish for `@vuotto/mobile`                                         |
-| `storybook-industry-web.yml`    | Push/PR → main (industry/web, industry/tokens paths)                                          | Chromatic publish for `@industry/web`                                          |
-| `storybook-industry-mobile.yml` | Push/PR → main (industry/mobile, industry/tokens paths)                                       | Chromatic publish for `@industry/mobile`                                       |
-| `version.yml`                   | Push → main (`.changeset/**`)                                                                 | Opens/updates the Changesets "Version Packages" PR                             |
-| `copilot-review.yml`            | PR opened/synchronized (any)                                                                  | Requests a Copilot code review                                                 |
-| `auto-update-prs.yml`           | Push → main                                                                                   | Merges `main` into open PRs                                                    |
+| Workflow                        | Trigger                                                                                           | What it does                                                                   |
+| ------------------------------- | ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| `coverage.yml`                  | PR → main (todo-app, tickets-app, appointmate, industry/{web,mobile,tokens} paths)                | Runs Jest only on changed source files; enforces ≥ 95% coverage on those files |
+| `deploy.yml`                    | Push/PR → main (todo-app, industry/web, industry/tokens paths)                                    | Vercel deploy                                                                  |
+| `mobile-apps.yml`               | PR → main (mobile apps, industry/mobile, industry/tokens, eslint-config, typescript-config paths) | Lint/check-types/test for appointmate + tickets-app                            |
+| `storybook-vuotto-web.yml`      | Push/PR → main (vuotto-web, vuotto-tokens paths)                                                  | Chromatic publish for `@vuotto/web`                                            |
+| `storybook-vuotto-mobile.yml`   | Push/PR → main (vuotto-mobile, vuotto-tokens paths)                                               | Chromatic publish for `@vuotto/mobile`                                         |
+| `storybook-industry-web.yml`    | Push/PR → main (industry/web, industry/tokens paths)                                              | Chromatic publish for `@industry/web`                                          |
+| `storybook-industry-mobile.yml` | Push/PR → main (industry/mobile, industry/tokens paths)                                           | Chromatic publish for `@industry/mobile`                                       |
+| `version.yml`                   | Push → main (`.changeset/**`)                                                                     | Opens/updates the Changesets "Version Packages" PR                             |
+| `copilot-review.yml`            | PR opened/synchronized (any)                                                                      | Requests a Copilot code review                                                 |
+| `auto-update-prs.yml`           | Push → main                                                                                       | Merges `main` into open PRs                                                    |
 
 ## Next.js version note
 
@@ -167,7 +167,7 @@ A separate, not-yet-adopted `@industry/*` generation (`packages/design-system/in
 Three flat-config exports from `@repo/eslint-config`:
 
 - `base` — any TypeScript package
-- `react-internal` — React packages (e.g. `@vuotto/web`)
+- `react-internal` — React packages (e.g. `@industry/web`)
 - `next-js` — Next.js apps (e.g. `todo-app`)
 
 `eslint-plugin-only-warn` converts errors to warnings in all configs.
