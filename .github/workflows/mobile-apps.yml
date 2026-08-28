@@ -6,8 +6,6 @@ on:
       - main
     paths:
       - 'apps/mobile/**'
-      - 'packages/design-system/vuotto-mobile/**'
-      - 'packages/design-system/vuotto-tokens/**'
       - 'packages/design-system/industry/mobile/**'
       - 'packages/design-system/industry/tokens/**'
       - 'packages/eslint-config/**'
