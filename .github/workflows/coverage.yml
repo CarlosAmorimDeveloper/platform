@@ -8,8 +8,6 @@ on:
       - "apps/web/todo-app/**"
       - "apps/mobile/tickets-app/**"
       - "apps/mobile/appointmate/**"
-      - "packages/design-system/vuotto-mobile/**"
-      - "packages/design-system/vuotto-tokens/**"
       - "packages/design-system/industry/mobile/**"
       - "packages/design-system/industry/web/**"
       - "packages/design-system/industry/tokens/**"
