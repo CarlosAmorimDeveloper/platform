@@ -69,3 +69,9 @@ export type { AccordionProps, AccordionItem } from './Accordion';
 
 export { AppBar } from './AppBar';
 export type { AppBarProps, AppBarAction } from './AppBar';
+
+export { FAB } from './FAB';
+export type { FABProps, FABSize } from './FAB';
+
+export { PieChart, defaultValueFormatter } from './PieChart';
+export type { PieChartProps, PieChartSlice } from './PieChart';

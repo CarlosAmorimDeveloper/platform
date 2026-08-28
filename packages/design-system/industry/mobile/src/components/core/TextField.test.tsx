@@ -89,4 +89,41 @@ describe('TextField', () => {
     expect(() => fireEvent(input, 'focus', { nativeEvent: {} })).not.toThrow();
     expect(() => fireEvent(input, 'blur', { nativeEvent: {} })).not.toThrow();
   });
+
+  describe('secureToggle', () => {
+    it('starts hidden and shows a "Mostrar senha" toggle', () => {
+      const { getByPlaceholderText, getByLabelText } = render(
+        <TextField secureToggle placeholder="Senha" />,
+      );
+      expect(getByPlaceholderText('Senha').props.secureTextEntry).toBe(true);
+      expect(getByLabelText('Mostrar senha')).toBeTruthy();
+    });
+
+    it('reveals the value and flips to "Ocultar senha" when pressed', () => {
+      const { getByPlaceholderText, getByLabelText } = render(
+        <TextField secureToggle placeholder="Senha" />,
+      );
+
+      fireEvent.press(getByLabelText('Mostrar senha'));
+
+      expect(getByPlaceholderText('Senha').props.secureTextEntry).toBe(false);
+      expect(getByLabelText('Ocultar senha')).toBeTruthy();
+    });
+
+    it('hides the value again on a second press', () => {
+      const { getByPlaceholderText, getByLabelText } = render(
+        <TextField secureToggle placeholder="Senha" />,
+      );
+
+      fireEvent.press(getByLabelText('Mostrar senha'));
+      fireEvent.press(getByLabelText('Ocultar senha'));
+
+      expect(getByPlaceholderText('Senha').props.secureTextEntry).toBe(true);
+    });
+
+    it('does not render a toggle when secureToggle is not set', () => {
+      const { queryByLabelText } = render(<TextField secureTextEntry placeholder="Senha" />);
+      expect(queryByLabelText('Mostrar senha')).toBeNull();
+    });
+  });
 });
