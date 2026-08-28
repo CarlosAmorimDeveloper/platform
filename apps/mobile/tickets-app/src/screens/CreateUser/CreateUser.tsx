@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { AppBar, Button, Field, Input, LoadingIndicator, Select, useToast } from '@vuotto/mobile';
+import { AppBar, Button, Select, Spinner, TextField, useToast } from '@industry/mobile';
 import { createUser } from '../../services/authService';
 import { passwordMinLengthError } from '../../domain/validation';
 import { useAuthStore } from '../../store/useAuthStore';
@@ -36,7 +36,6 @@ export function CreateUser({ navigation }: Props) {
   const isValid = name.trim() !== '' && email.trim() !== '' && password.length >= 6;
 
   async function handleCreate() {
-    if (!isValid) return;
     setLoading(true);
     try {
       await createUser(name, email, password, role, currentUser!);
@@ -56,26 +55,29 @@ export function CreateUser({ navigation }: Props) {
     <SafeAreaView edges={['top']} style={styles.flex}>
       <AppBar title="Criar Usuário" onBackPress={() => navigation.goBack()} />
       <View style={styles.container}>
-        <Field label="Nome">
-          <Input placeholder="Nome completo" value={name} onChangeText={setName} />
-        </Field>
-        <Field label="Email">
-          <Input placeholder="email@exemplo.com" value={email} onChangeText={setEmail} />
-        </Field>
-        <Field label="Senha" error={passwordError}>
-          <Input
-            placeholder="Mínimo 6 caracteres"
-            secureTextEntry
-            secureToggle
-            value={password}
-            onChangeText={setPassword}
-            invalid={Boolean(passwordError)}
-          />
-        </Field>
-        <Field label="Perfil">
-          <Select value={role} onChange={(v) => setRole(v as UserRole)} options={ROLE_OPTIONS} />
-        </Field>
-        <LoadingIndicator visible={loading} />
+        <TextField label="Nome" placeholder="Nome completo" value={name} onChangeText={setName} />
+        <TextField
+          label="Email"
+          placeholder="email@exemplo.com"
+          value={email}
+          onChangeText={setEmail}
+        />
+        <TextField
+          label="Senha"
+          error={passwordError}
+          placeholder="Mínimo 6 caracteres"
+          secureTextEntry
+          secureToggle
+          value={password}
+          onChangeText={setPassword}
+        />
+        <Select
+          label="Perfil"
+          value={role}
+          onValueChange={(v) => setRole(v as UserRole)}
+          options={ROLE_OPTIONS}
+        />
+        {loading ? <Spinner /> : null}
         <Button onPress={handleCreate} disabled={!isValid || loading}>
           Criar Usuário
         </Button>

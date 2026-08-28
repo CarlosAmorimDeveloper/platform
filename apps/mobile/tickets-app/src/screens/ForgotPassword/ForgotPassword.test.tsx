@@ -1,5 +1,6 @@
 import '@testing-library/react-native/extend-expect';
 import { FirebaseError } from 'firebase/app';
+import { Platform } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { act, fireEvent, render, screen, waitFor } from '../../test-utils';
 import { sendPasswordReset } from '../../services/authService';
@@ -154,5 +155,24 @@ describe('ForgotPassword', () => {
       index: 0,
       routes: [{ name: 'Login' }],
     });
+  });
+
+  it('navigates back when the AppBar back button is pressed', () => {
+    render(<ForgotPassword navigation={mockNavigation} route={mockRoute} />);
+
+    fireEvent.press(screen.getByLabelText('Voltar'));
+
+    expect(mockNavigation.goBack).toHaveBeenCalled();
+  });
+
+  it('renders on Android without throwing', () => {
+    const originalOS = Platform.OS;
+    Platform.OS = 'android';
+
+    expect(() =>
+      render(<ForgotPassword navigation={mockNavigation} route={mockRoute} />),
+    ).not.toThrow();
+
+    Platform.OS = originalOS;
   });
 });

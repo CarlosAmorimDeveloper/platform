@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { fontSize, space } from '@vuotto/tokens';
+import { fontSize, space } from '@industry/tokens';
 
 export const styles = StyleSheet.create({
   flex: { flex: 1 },
@@ -11,6 +11,6 @@ export const styles = StyleSheet.create({
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   fillHeight: { flex: 1 },
   list: { paddingVertical: space[2] },
-  emptyText: { fontSize: fontSize.md },
+  emptyText: { fontSize: fontSize.body },
   ticketItem: { marginBottom: space[4], marginHorizontal: space[1] },
 });

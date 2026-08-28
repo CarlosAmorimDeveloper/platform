@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
-import { fontSize, fontWeight } from '@vuotto/tokens';
+import { fontWeight } from '@industry/tokens';
 
 export const styles = StyleSheet.create({
-  title: { fontSize: fontSize.sm, fontWeight: fontWeight.semibold },
-  meta: { fontSize: fontSize.xs },
+  title: { fontSize: 15, fontWeight: fontWeight.heading },
+  meta: { fontSize: 12 },
 });

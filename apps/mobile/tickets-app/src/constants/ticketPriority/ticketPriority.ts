@@ -1,4 +1,4 @@
-import type { BadgeTone } from '@vuotto/mobile';
+import type { BadgeTone } from '@industry/mobile';
 
 export type TicketPriority = 'very_low' | 'low' | 'medium' | 'high' | 'very_high';
 
@@ -15,7 +15,7 @@ export const PRIORITY_LABELS: Record<TicketPriority, string> = {
 export const PRIORITY_TONES: Record<TicketPriority, BadgeTone> = {
   very_low: 'neutral',
   low: 'success',
-  medium: 'info',
+  medium: 'accent',
   high: 'warning',
   very_high: 'danger',
 };

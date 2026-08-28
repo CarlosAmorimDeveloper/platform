@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { View, Text, KeyboardAvoidingView, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { AppBar, Button, Field, Input, LoadingIndicator, useTheme, useToast } from '@vuotto/mobile';
+import { AppBar, Button, Spinner, TextField, useTheme, useToast } from '@industry/mobile';
+import { alpha } from '@industry/tokens';
 import { sendPasswordReset, mapFirebaseAuthError } from '../../services/authService';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { AuthStackParamList } from '../../navigation/types';
@@ -20,7 +21,6 @@ export function ForgotPassword({ navigation }: Props) {
   const [loading, setLoading] = useState(false);
 
   async function handleResetPassword() {
-    if (!email) return;
     setLoading(true);
     try {
       await sendPasswordReset(email);
@@ -43,21 +43,20 @@ export function ForgotPassword({ navigation }: Props) {
         style={styles.keyboardView}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
-        <View style={[styles.container, { backgroundColor: colors.bgCanvas }]}>
-          <Text style={[styles.description, { color: colors.textSecondary }]}>
+        <View style={[styles.container, { backgroundColor: colors.bg }]}>
+          <Text style={[styles.description, { color: alpha(colors.text, 70) }]}>
             Informe seu e-mail e enviaremos um link para redefinir sua senha.
           </Text>
           <View style={styles.form}>
-            <Field label="E-mail">
-              <Input
-                placeholder="email@exemplo.com"
-                value={email}
-                onChangeText={setEmail}
-                keyboardType="email-address"
-                autoCapitalize="none"
-              />
-            </Field>
-            <LoadingIndicator visible={loading} />
+            <TextField
+              label="E-mail"
+              placeholder="email@exemplo.com"
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+              autoCapitalize="none"
+            />
+            {loading ? <Spinner /> : null}
             <Button onPress={handleResetPassword} disabled={!email || loading}>
               Enviar link
             </Button>

@@ -8,6 +8,8 @@ on:
       - 'apps/mobile/**'
       - 'packages/design-system/vuotto-mobile/**'
       - 'packages/design-system/vuotto-tokens/**'
+      - 'packages/design-system/industry/mobile/**'
+      - 'packages/design-system/industry/tokens/**'
       - 'packages/eslint-config/**'
       - 'packages/typescript-config/**'
 
@@ -29,8 +31,8 @@ jobs:
       - name: Install dependencies
         run: npx yarn install
 
-      - name: Build @vuotto/tokens and @vuotto/mobile
-        run: yarn workspace @vuotto/tokens build && yarn workspace @vuotto/mobile build
+      - name: Build @industry/tokens and @industry/mobile
+        run: yarn workspace @industry/tokens build && yarn workspace @industry/mobile build
 
       - name: Lint
         run: yarn workspace @app/tickets lint

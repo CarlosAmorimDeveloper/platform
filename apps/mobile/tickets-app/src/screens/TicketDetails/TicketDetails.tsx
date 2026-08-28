@@ -4,14 +4,14 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   AppBar,
   Button,
-  Dialog,
-  Field,
-  LoadingIndicator,
   Select,
+  Sheet,
+  Spinner,
   useTheme,
   useToast,
   type AppBarAction,
-} from '@vuotto/mobile';
+} from '@industry/mobile';
+import { alpha } from '@industry/tokens';
 import { useTicketDetails } from '../../hooks/useTicketDetails';
 import { useUserList } from '../../hooks/useUserList';
 import { useAuthStore } from '../../store/useAuthStore';
@@ -94,7 +94,7 @@ export function TicketDetails({ route, navigation }: Props) {
       <SafeAreaView edges={['top']} style={styles.flex}>
         {appBar}
         <View style={styles.center}>
-          <LoadingIndicator />
+          <Spinner />
         </View>
       </SafeAreaView>
     );
@@ -120,8 +120,8 @@ export function TicketDetails({ route, navigation }: Props) {
         keyboardVerticalOffset={80}
       >
         <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-          <Text style={[styles.title, { color: colors.textHeading }]}>{ticket.title}</Text>
-          <Text style={[styles.description, { color: colors.textSecondary }]}>
+          <Text style={[styles.title, { color: colors.text }]}>{ticket.title}</Text>
+          <Text style={[styles.description, { color: alpha(colors.text, 70) }]}>
             {ticket.description}
           </Text>
 
@@ -134,20 +134,19 @@ export function TicketDetails({ route, navigation }: Props) {
 
           {editMode.editing && (
             <View style={styles.paddedRow}>
-              <Field label="Responsável">
-                <Select
-                  value={editMode.draftAssigneeId}
-                  onChange={(v) => editMode.setDraftAssigneeId(v)}
-                  options={[
-                    { label: 'Nenhum', value: '' },
-                    ...users.map((u) => ({ label: u.name, value: u.uid })),
-                  ]}
-                />
-              </Field>
+              <Select
+                label="Responsável"
+                value={editMode.draftAssigneeId}
+                onValueChange={(v) => editMode.setDraftAssigneeId(v)}
+                options={[
+                  { label: 'Nenhum', value: '' },
+                  ...users.map((u) => ({ label: u.name, value: u.uid })),
+                ]}
+              />
             </View>
           )}
 
-          <Text style={[styles.sectionLabel, { color: colors.textPrimary }]}>Status</Text>
+          <Text style={[styles.sectionLabel, { color: colors.text }]}>Status</Text>
           <TicketOptionField
             value={ticket.status}
             editing={editMode.editing}
@@ -158,7 +157,7 @@ export function TicketDetails({ route, navigation }: Props) {
             tones={STATUS_TONES}
           />
 
-          <Text style={[styles.sectionLabel, { color: colors.textPrimary }]}>Prioridade</Text>
+          <Text style={[styles.sectionLabel, { color: colors.text }]}>Prioridade</Text>
           <TicketOptionField
             value={ticket.priority}
             editing={editMode.editing}
@@ -169,10 +168,10 @@ export function TicketDetails({ route, navigation }: Props) {
             tones={PRIORITY_TONES}
           />
 
-          <Text style={[styles.sectionLabel, { color: colors.textPrimary }]}>Comentários</Text>
+          <Text style={[styles.sectionLabel, { color: colors.text }]}>Comentários</Text>
 
           {comments.length === 0 && (
-            <Text style={[styles.emptyComments, { color: colors.textTertiary }]}>
+            <Text style={[styles.emptyComments, { color: alpha(colors.text, 50) }]}>
               Nenhum comentário ainda.
             </Text>
           )}
@@ -196,11 +195,11 @@ export function TicketDetails({ route, navigation }: Props) {
             />
           </View>
 
-          <Dialog
+          <Sheet
             open={editMode.saveVisible}
-            onClose={editMode.handleCancelSave}
+            onDismiss={editMode.handleCancelSave}
             title="Salvar alterações"
-            footer={
+            actions={
               <>
                 <Button key="cancel" variant="ghost" onPress={editMode.handleCancelSave}>
                   Cancelar
@@ -211,21 +210,21 @@ export function TicketDetails({ route, navigation }: Props) {
               </>
             }
           >
-            <Text>
+            <Text style={{ color: colors.text }}>
               Status: <Text style={styles.bold}>{STATUS_LABELS[editMode.draftStatus]}</Text>
               {'\n'}
               Prioridade: <Text style={styles.bold}>{PRIORITY_LABELS[editMode.draftPriority]}</Text>
               {'\n'}
               Responsável: <Text style={styles.bold}>{assigneeName}</Text>
             </Text>
-          </Dialog>
+          </Sheet>
 
-          <Dialog
+          <Sheet
+            testID="delete-ticket-sheet"
             open={deletion.deleteVisible}
-            onClose={() => deletion.setDeleteVisible(false)}
+            onDismiss={() => deletion.setDeleteVisible(false)}
             title="Apagar ticket"
-            description="Esta ação não pode ser desfeita."
-            footer={
+            actions={
               <>
                 <Button
                   key="cancel"
@@ -239,14 +238,15 @@ export function TicketDetails({ route, navigation }: Props) {
                 </Button>
               </>
             }
-          />
+          >
+            <Text style={{ color: colors.text }}>Esta ação não pode ser desfeita.</Text>
+          </Sheet>
 
-          <Dialog
+          <Sheet
             open={commentDeletion.deleteCommentVisible}
-            onClose={commentDeletion.handleCancelDeleteComment}
+            onDismiss={commentDeletion.handleCancelDeleteComment}
             title="Apagar comentário"
-            description="Esta ação não pode ser desfeita."
-            footer={
+            actions={
               <>
                 <Button
                   key="cancel"
@@ -264,7 +264,9 @@ export function TicketDetails({ route, navigation }: Props) {
                 </Button>
               </>
             }
-          />
+          >
+            <Text style={{ color: colors.text }}>Esta ação não pode ser desfeita.</Text>
+          </Sheet>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>

@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { fontSize, radii, space } from '@vuotto/tokens';
+import { fontSize, space } from '@industry/tokens';
 
 export const styles = StyleSheet.create({
   keyboardView: { flex: 1 },
@@ -9,14 +9,13 @@ export const styles = StyleSheet.create({
     padding: space[6],
     gap: space[6],
   },
-  subtitle: { fontSize: fontSize.md, textAlign: 'center' },
+  subtitle: { fontSize: fontSize.body, textAlign: 'center' },
   form: { gap: space[3] },
   adminNotice: {
-    borderRadius: radii.sm,
     padding: space[3],
   },
   adminNoticeText: {
-    fontSize: fontSize.sm,
+    fontSize: 12,
     textAlign: 'center',
   },
 });

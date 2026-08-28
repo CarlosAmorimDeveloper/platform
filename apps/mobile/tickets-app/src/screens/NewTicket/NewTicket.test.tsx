@@ -1,4 +1,4 @@
-import { act } from '@testing-library/react-native';
+import { act, waitFor } from '@testing-library/react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { render, screen, fireEvent } from '../../test-utils';
 import { createTicket } from '../../services/ticketService';
@@ -84,6 +84,42 @@ describe('NewTicket', () => {
     expect(mockCreateTicket).not.toHaveBeenCalled();
   });
 
+  it('navigates back when the AppBar back button is pressed', () => {
+    const { goBack } = renderNewTicket();
+
+    fireEvent.press(screen.getByLabelText('Voltar'));
+
+    expect(goBack).toHaveBeenCalledTimes(1);
+  });
+
+  it('changes the selected priority', async () => {
+    mockCreateTicket.mockResolvedValue(undefined);
+    renderNewTicket();
+
+    fireEvent.press(screen.getByText('Médio'));
+    fireEvent.press(await screen.findByText('Alto'));
+    fireEvent.changeText(screen.getByPlaceholderText('Título do chamado'), 'Impressora quebrada');
+
+    await act(async () => {
+      fireEvent.press(screen.getByText('Salvar Ticket'));
+    });
+
+    expect(mockCreateTicket).toHaveBeenCalledWith(
+      expect.objectContaining({ priority: 'high' }),
+      standardUser,
+    );
+  });
+
+  it('does not create a ticket when there is no signed-in user', () => {
+    mockCurrentUser = null;
+    renderNewTicket();
+
+    fireEvent.changeText(screen.getByPlaceholderText('Título do chamado'), 'Impressora quebrada');
+    fireEvent.press(screen.getByText('Salvar Ticket'));
+
+    expect(mockCreateTicket).not.toHaveBeenCalled();
+  });
+
   it('shows error snackbar on ticket creation failure', async () => {
     mockCreateTicket.mockRejectedValue(new Error('Falha de rede'));
     renderNewTicket();
@@ -118,6 +154,41 @@ describe('NewTicket', () => {
       standardUser,
     );
     expect(goBack).toHaveBeenCalledTimes(1);
+  });
+
+  it('shows a generic error message when creation fails with a non-Error value', async () => {
+    mockCreateTicket.mockRejectedValue('network down');
+    renderNewTicket();
+
+    fireEvent.changeText(screen.getByPlaceholderText('Título do chamado'), 'Impressora quebrada');
+
+    await act(async () => {
+      fireEvent.press(screen.getByText('Salvar Ticket'));
+    });
+
+    expect(screen.getByText('Falha ao criar o chamado.')).toBeTruthy();
+  });
+
+  it('shows a loading indicator while the request is in flight', async () => {
+    let resolveCreateTicket: () => void = () => {};
+    mockCreateTicket.mockImplementation(
+      () =>
+        new Promise<void>((resolve) => {
+          resolveCreateTicket = resolve;
+        }),
+    );
+    renderNewTicket();
+
+    fireEvent.changeText(screen.getByPlaceholderText('Título do chamado'), 'Impressora quebrada');
+    fireEvent.press(screen.getByText('Salvar Ticket'));
+
+    await waitFor(() => {
+      expect(screen.getByRole('progressbar')).toBeTruthy();
+    });
+
+    await act(async () => {
+      resolveCreateTicket();
+    });
   });
 
   it('creates a ticket with the selected assignee when an admin picks one', async () => {

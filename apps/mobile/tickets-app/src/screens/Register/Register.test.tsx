@@ -1,5 +1,6 @@
 import '@testing-library/react-native/extend-expect';
 import { FirebaseError } from 'firebase/app';
+import { Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { fireEvent, render, screen, waitFor } from '../../test-utils';
@@ -188,5 +189,22 @@ describe('Register', () => {
     await waitFor(() => {
       expect(mockedGetItem).toHaveBeenCalledWith('first_user_registered');
     });
+  });
+
+  it('navigates back when the AppBar back button is pressed', () => {
+    render(<Register navigation={mockNavigation} route={mockRoute} />);
+
+    fireEvent.press(screen.getByLabelText('Voltar'));
+
+    expect(mockNavigation.goBack).toHaveBeenCalled();
+  });
+
+  it('renders on Android without throwing', () => {
+    const originalOS = Platform.OS;
+    Platform.OS = 'android';
+
+    expect(() => render(<Register navigation={mockNavigation} route={mockRoute} />)).not.toThrow();
+
+    Platform.OS = originalOS;
   });
 });
