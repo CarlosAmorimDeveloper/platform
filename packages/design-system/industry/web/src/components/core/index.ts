@@ -72,3 +72,6 @@ export type { DatePickerProps } from './DatePicker';
 
 export { FileDrop } from './FileDrop';
 export type { FileDropProps, RejectedFile } from './FileDrop';
+
+export { Breadcrumbs } from './Breadcrumbs';
+export type { BreadcrumbsProps, Crumb } from './Breadcrumbs';
