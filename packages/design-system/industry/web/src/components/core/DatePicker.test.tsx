@@ -128,8 +128,8 @@ describe('DatePicker', () => {
 
     fireEvent.mouseEnter(nextMonth);
     fireEvent.mouseEnter(day);
-    expect(nextMonth).toHaveStyle({ background: 'var(--color-surface2)' });
-    expect(day).toHaveStyle({ background: 'var(--color-surface2)' });
+    expect(nextMonth).toHaveStyle({ background: 'var(--color-surface-2)' });
+    expect(day).toHaveStyle({ background: 'var(--color-surface-2)' });
 
     fireEvent.mouseLeave(nextMonth);
     fireEvent.mouseLeave(day);

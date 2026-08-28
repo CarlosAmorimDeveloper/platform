@@ -229,7 +229,7 @@ function NavButton({
       style={{
         display: 'flex',
         padding: 4,
-        background: hovered ? 'var(--color-surface2)' : 'transparent',
+        background: hovered ? 'var(--color-surface-2)' : 'transparent',
         border: 'none',
         cursor: 'pointer',
       }}
@@ -278,7 +278,7 @@ function DayCell({
         background: selected
           ? 'var(--color-accent)'
           : hovered
-            ? 'var(--color-surface2)'
+            ? 'var(--color-surface-2)'
             : 'transparent',
         border:
           isToday && !selected ? '1px solid var(--color-divider-strong)' : '1px solid transparent',
