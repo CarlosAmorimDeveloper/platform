@@ -34,7 +34,7 @@ Cada app tem seu próprio README com detalhes de arquitetura, funcionalidades e 
 | [AppointMate](apps/mobile/appointmate/README.md) | Mobile (Expo/Android/iOS) | Registro estruturado de humor/sono/medicação entre consultas de saúde mental, com exportação em PDF | Firebase, React Hook Form, `@industry/mobile` |
 | [Tickets App](apps/mobile/tickets-app/README.md) | Mobile (Expo/Android/iOS) | Sistema de tickets multi-tenant por workspace, publicado na Play Store                              | Firebase, Zustand, `@industry/mobile`         |
 
-As três consomem o mesmo Design System Industry (`@industry/web` na web, `@industry/mobile` nos apps nativos), temado a partir de `@industry/tokens`. O design system anterior, Vuotto Tech (`@vuotto/web`/`@vuotto/mobile`/`@vuotto/tokens`), foi substituído nessa migração e não é mais consumido por nenhum app.
+As três consomem o mesmo Design System Industry (`@industry/web` na web, `@industry/mobile` nos apps nativos), temado a partir de `@industry/tokens`. O design system anterior, Vuotto Tech, foi substituído nessa migração e removido do monorepo.
 
 ## Construído com
 
@@ -73,9 +73,6 @@ platform/
 │       └── tickets-app/        # Expo — tickets multi-tenant (Play Store)
 ├── packages/
 │   ├── design-system/
-│   │   ├── vuotto-web/          # Componentes React (@vuotto/web, geração anterior, sem apps consumidores)
-│   │   ├── vuotto-mobile/       # Componentes React Native (@vuotto/mobile, geração anterior, sem apps consumidores)
-│   │   ├── vuotto-tokens/       # Tokens de design (@vuotto/tokens, geração anterior, sem apps consumidores)
 │   │   └── industry/
 │   │       ├── web/             # Componentes React (@industry/web)
 │   │       ├── mobile/          # Componentes React Native (@industry/mobile)
@@ -101,7 +98,7 @@ O Yarn Workspaces instala as dependências de todos os pacotes em uma única eta
 ```sh
 yarn dev                                # Roda o dev script persistente de cada workspace em paralelo
 yarn dev --filter=todo-app              # Só a Todo App -> http://localhost:3000
-yarn workspace @vuotto/web storybook    # Storybook do design system web -> http://localhost:6008
+yarn workspace @industry/web storybook  # Storybook do design system web -> http://localhost:6010
 yarn workspace @app/appointmate start   # Um app mobile (ou @app/tickets)
 ```
 
@@ -131,7 +128,7 @@ O design system adotado pelos três apps é o **Industry**, três pacotes temado
 - **[`@industry/mobile`](packages/design-system/industry/mobile/README.md)** — componentes React Native, próprios (sem React Native Paper).
 - **[`@industry/tokens`](packages/design-system/industry/tokens/README.md)** — cores, espaçamentos e tamanhos de fonte, como constantes TypeScript e variáveis CSS.
 
-O design system anterior, **Vuotto Tech** (`@vuotto/web`/`@vuotto/mobile`/`@vuotto/tokens` em `packages/design-system/vuotto-*`), foi substituído pelo Industry nessa migração e não tem mais nenhum app consumidor.
+O design system anterior, **Vuotto Tech**, foi substituído pelo Industry nessa migração e removido do monorepo.
 
 ## Tecnologias
 
@@ -154,7 +151,7 @@ O design system anterior, **Vuotto Tech** (`@vuotto/web`/`@vuotto/mobile`/`@vuot
 
 Pull requests são bem-vindos. Para mudanças maiores, abra uma issue primeiro.
 
-Ao alterar pacotes do design system (`@vuotto/web`, `@vuotto/mobile`, `@vuotto/tokens`, `@industry/web`, `@industry/mobile` ou `@industry/tokens`), lembre-se de criar um changeset:
+Ao alterar pacotes do design system (`@industry/web`, `@industry/mobile` ou `@industry/tokens`), lembre-se de criar um changeset:
 
 ```sh
 yarn changeset

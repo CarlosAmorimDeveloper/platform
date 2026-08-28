@@ -127,17 +127,17 @@ apps/mobile/appointmate/
 
 ## Tecnologias
 
-| Camada       | Tecnologia                                        |
-| ------------ | ------------------------------------------------- |
-| Framework    | Expo SDK 54 (React Native 0.81, New Architecture) |
-| UI           | React 19 + `@vuotto/mobile` / `@vuotto/tokens`    |
-| Navegação    | React Navigation (native-stack)                   |
-| Formulários  | React Hook Form                                   |
-| Backend      | Firebase Auth + Firestore                         |
-| Exportação   | expo-print + expo-sharing                         |
-| Testes       | Jest + Testing Library + Firestore emulator       |
-| Build/Deploy | EAS Build + EAS Submit                            |
-| Tipos        | TypeScript 5.9 (strict)                           |
+| Camada       | Tecnologia                                         |
+| ------------ | -------------------------------------------------- |
+| Framework    | Expo SDK 54 (React Native 0.81, New Architecture)  |
+| UI           | React 19 + `@industry/mobile` / `@industry/tokens` |
+| Navegação    | React Navigation (native-stack)                    |
+| Formulários  | React Hook Form                                    |
+| Backend      | Firebase Auth + Firestore                          |
+| Exportação   | expo-print + expo-sharing                          |
+| Testes       | Jest + Testing Library + Firestore emulator        |
+| Build/Deploy | EAS Build + EAS Submit                             |
+| Tipos        | TypeScript 5.9 (strict)                            |
 
 ## Contribuindo
 

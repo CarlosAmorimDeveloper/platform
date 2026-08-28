@@ -49,7 +49,6 @@
       "apps/web/*",
       "apps/mobile/*",
       "packages/*",
-      "packages/design-system/*",
       "packages/design-system/industry/*"
     ],
     "nohoist": [

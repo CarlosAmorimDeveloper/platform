@@ -134,7 +134,7 @@ apps/web/todo-app/
 | UI            | React 19                |
 | Estado global | Redux Toolkit           |
 | Estilização   | Tailwind CSS v4         |
-| Design System | `@vuotto/web`           |
+| Design System | `@industry/web`         |
 | Testes        | Jest + Testing Library  |
 | Deploy        | Vercel                  |
 | Tipos         | TypeScript 5.9 (strict) |
