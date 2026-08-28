@@ -66,3 +66,6 @@ export type { BreadcrumbsProps, Crumb } from './Breadcrumbs';
 
 export { Accordion } from './Accordion';
 export type { AccordionProps, AccordionItem } from './Accordion';
+
+export { AppBar } from './AppBar';
+export type { AppBarProps, AppBarAction } from './AppBar';
