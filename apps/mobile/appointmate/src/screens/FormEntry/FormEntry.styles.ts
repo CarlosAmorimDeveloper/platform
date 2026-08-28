@@ -1,16 +1,16 @@
 import { StyleSheet } from 'react-native';
-import { fontSize, radii, space } from '@vuotto/tokens';
+import { fontSize, space } from '@industry/tokens';
 
 export const styles = StyleSheet.create({
   screen: { flex: 1 },
   keyboardView: { flex: 1 },
   container: {
     padding: space[6],
-    paddingBottom: space[16],
+    paddingBottom: space[12],
     gap: space[4],
   },
   sectionTitle: {
-    fontSize: fontSize.lg,
+    fontSize: fontSize.h5,
     fontWeight: 'bold',
     marginTop: space[4],
   },
@@ -20,11 +20,10 @@ export const styles = StyleSheet.create({
     gap: space[2],
   },
   errorText: {
-    fontSize: fontSize.sm,
+    fontSize: 13,
   },
   dynamicRow: {
     gap: space[2],
     padding: space[3],
-    borderRadius: radii.lg,
   },
 });

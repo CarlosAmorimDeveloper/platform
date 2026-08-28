@@ -133,13 +133,13 @@ describe('Register', () => {
     fireEvent.press(screen.getByText('Cadastrar'));
 
     await waitFor(() => {
-      expect(screen.getByTestId('register-loading-indicator')).toBeTruthy();
+      expect(screen.getByRole('progressbar')).toBeTruthy();
     });
 
     resolveRegister({ uid: 'abc123', email: 'user@example.com' });
 
     await waitFor(() => {
-      expect(screen.queryByTestId('register-loading-indicator')).toBeNull();
+      expect(screen.queryByRole('progressbar')).toBeNull();
     }, ASYNC_TIMEOUT);
   }, 40000);
 
@@ -163,7 +163,15 @@ describe('Register', () => {
     fireEvent.press(screen.getByText('Cadastrar'));
 
     await waitFor(() => {
-      expect(screen.queryByTestId('register-loading-indicator')).toBeNull();
+      expect(screen.queryByRole('progressbar')).toBeNull();
     }, ASYNC_TIMEOUT);
   }, 40000);
+
+  it('navigates back when the AppBar back button is pressed', () => {
+    render(<Register navigation={mockNavigation} route={mockRoute} />);
+
+    fireEvent.press(screen.getByLabelText('Voltar'));
+
+    expect(mockNavigation.goBack).toHaveBeenCalled();
+  });
 });

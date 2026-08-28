@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { fontSize, space } from '@vuotto/tokens';
+import { fontSize, space } from '@industry/tokens';
 
 export const styles = StyleSheet.create({
   screen: {
@@ -29,11 +29,11 @@ export const styles = StyleSheet.create({
   },
   cardDate: {
     flex: 1,
-    fontSize: fontSize.md,
+    fontSize: fontSize.body,
     fontWeight: '600',
   },
   cardSummary: {
-    fontSize: fontSize.sm,
+    fontSize: 13,
     marginTop: space[2],
   },
 });

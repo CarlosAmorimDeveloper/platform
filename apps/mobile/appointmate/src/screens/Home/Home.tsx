@@ -1,16 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { FlatList, RefreshControl, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import {
-  AppBar,
-  Button,
-  EmptyState,
-  ErrorView,
-  IconButton,
-  LoadingView,
-  Menu,
-  useToast,
-} from '@vuotto/mobile';
+import { AppBar, Button, EmptyState, IconButton, Menu, useToast } from '@industry/mobile';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { AppStackParamList } from '../../navigation/types';
 import { useAuth } from '../../context/AuthContext';
@@ -22,6 +13,8 @@ import {
   isWithinTimeFilter,
   type TimeFilter,
 } from '../../domain/timeFilter';
+import { LoadingView } from '../../components/LoadingView';
+import { ErrorView } from '../../components/ErrorView';
 import { FormCard } from './FormCard';
 import { styles } from './Home.styles';
 
@@ -99,9 +92,9 @@ export function Home({ navigation }: Props) {
     loadForms({ silent: true });
   }
 
-  function closeFilterMenu() {
-    setFilterMenuVisible(false);
-    loadForms({ silent: true });
+  function onFilterMenuOpenChange(open: boolean) {
+    setFilterMenuVisible(open);
+    if (!open) loadForms({ silent: true });
   }
 
   if (loading) {
@@ -155,9 +148,9 @@ export function Home({ navigation }: Props) {
                 Novo formulário
               </Button>
               <Menu
-                visible={filterMenuVisible}
-                onDismiss={closeFilterMenu}
-                anchor={
+                open={filterMenuVisible}
+                onOpenChange={onFilterMenuOpenChange}
+                trigger={
                   <IconButton
                     icon="ListFilter"
                     variant="solid"
@@ -167,10 +160,10 @@ export function Home({ navigation }: Props) {
                   />
                 }
                 items={SELECTABLE_PRESETS.map((preset) => ({
+                  key: preset.value,
                   label: preset.label,
-                  onPress: () => {
+                  onSelect: () => {
                     setFilter({ preset: preset.value, customStart: '', customEnd: '' });
-                    closeFilterMenu();
                   },
                 }))}
                 testID="home-filter-menu"

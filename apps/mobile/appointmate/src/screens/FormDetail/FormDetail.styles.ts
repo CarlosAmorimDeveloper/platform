@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { fontSize, space } from '@vuotto/tokens';
+import { fontSize, space } from '@industry/tokens';
 
 export const styles = StyleSheet.create({
   screen: { flex: 1 },
@@ -8,25 +8,25 @@ export const styles = StyleSheet.create({
     gap: space[4],
   },
   updatedAt: {
-    fontSize: fontSize.sm,
+    fontSize: 13,
   },
   sectionTitle: {
-    fontSize: fontSize.lg,
+    fontSize: fontSize.h5,
     fontWeight: 'bold',
     marginTop: space[4],
   },
   fieldLabel: {
-    fontSize: fontSize.sm,
+    fontSize: 13,
     fontWeight: '600',
   },
   fieldValue: {
-    fontSize: fontSize.md,
+    fontSize: fontSize.body,
   },
   field: {
     gap: space[1],
   },
   listItem: {
-    fontSize: fontSize.md,
+    fontSize: fontSize.body,
     marginLeft: space[2],
   },
   editButton: {

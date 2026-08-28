@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { fontSize, space } from '@vuotto/tokens';
+import { fontSize, space } from '@industry/tokens';
 
 export const styles = StyleSheet.create({
   screen: { flex: 1 },
@@ -11,7 +11,7 @@ export const styles = StyleSheet.create({
     gap: space[8],
   },
   header: { alignItems: 'center', gap: space[2] },
-  title: { fontSize: fontSize['3xl'], fontWeight: 'bold' },
-  subtitle: { fontSize: fontSize.md, textAlign: 'center' },
+  title: { fontSize: fontSize.h2, fontWeight: 'bold' },
+  subtitle: { fontSize: fontSize.body, textAlign: 'center' },
   form: { gap: space[3] },
 });
