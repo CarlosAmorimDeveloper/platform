@@ -41,3 +41,11 @@ export const Multiline: Story = {
     </View>
   ),
 };
+
+export const WithSecureToggle: Story = {
+  render: () => (
+    <View style={{ width: 280 }}>
+      <TextField label="Senha" placeholder="Sua senha" secureToggle />
+    </View>
+  ),
+};
