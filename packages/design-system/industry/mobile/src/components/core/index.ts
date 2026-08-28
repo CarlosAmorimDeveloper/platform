@@ -63,3 +63,6 @@ export type { FileDropProps } from './FileDrop';
 
 export { Breadcrumbs } from './Breadcrumbs';
 export type { BreadcrumbsProps, Crumb } from './Breadcrumbs';
+
+export { Accordion } from './Accordion';
+export type { AccordionProps, AccordionItem } from './Accordion';
