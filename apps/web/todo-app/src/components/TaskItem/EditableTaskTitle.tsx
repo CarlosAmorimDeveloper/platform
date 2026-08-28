@@ -1,4 +1,4 @@
-import { Input } from '@vuotto/web';
+import { TextField } from '@industry/web';
 import type { Task } from '@/redux/taskSlice';
 
 interface EditableTaskTitleProps {
@@ -34,9 +34,8 @@ export function EditableTaskTitle({
 
   if (isEditing) {
     return (
-      <Input
+      <TextField
         type="text"
-        size="sm"
         value={editValue}
         onChange={(e) => onEditValueChange(e.target.value)}
         onBlur={onSubmit}
@@ -52,8 +51,12 @@ export function EditableTaskTitle({
     <span
       style={{
         flex: 1,
-        font: 'var(--weight-regular) var(--text-md)/1.4 var(--font-sans)',
-        color: task.completed ? 'var(--text-tertiary)' : 'var(--text-primary)',
+        fontFamily: 'var(--font-body)',
+        fontSize: 'var(--text-body)',
+        lineHeight: 1.4,
+        color: task.completed
+          ? 'color-mix(in srgb, var(--color-text) 45%, transparent)'
+          : 'var(--color-text)',
         textDecoration: task.completed ? 'line-through' : 'none',
         cursor: task.completed ? 'default' : 'pointer',
       }}

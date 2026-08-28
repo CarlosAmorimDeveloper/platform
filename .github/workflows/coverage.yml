@@ -8,10 +8,10 @@ on:
       - "apps/web/todo-app/**"
       - "apps/mobile/tickets-app/**"
       - "apps/mobile/appointmate/**"
-      - "packages/design-system/vuotto-web/**"
       - "packages/design-system/vuotto-mobile/**"
       - "packages/design-system/vuotto-tokens/**"
       - "packages/design-system/industry/mobile/**"
+      - "packages/design-system/industry/web/**"
       - "packages/design-system/industry/tokens/**"
 
 jobs:
@@ -24,7 +24,7 @@ jobs:
         include:
           - name: todo-app
             path: apps/web/todo-app
-            build: yarn workspace @vuotto/tokens build && yarn workspace @vuotto/web build
+            build: yarn workspace @industry/tokens build && yarn workspace @industry/web build
             # Next.js infra files (layout, page, theme provider) aren't unit-testable.
             exclude_pattern: '/(layout|page|ThemeRegistry)\.'
           - name: tickets-app

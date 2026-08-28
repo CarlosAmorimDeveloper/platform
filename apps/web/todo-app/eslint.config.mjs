@@ -4,6 +4,6 @@ import { defineConfig, globalIgnores } from 'eslint/config';
 
 export default defineConfig([
   ...nextJsConfig,
-  ...noCrossGenerationImports('@industry'),
+  ...noCrossGenerationImports('@vuotto'),
   globalIgnores(['jest.config.js', '.next/**', 'out/**', 'build/**', 'next-env.d.ts']),
 ]);

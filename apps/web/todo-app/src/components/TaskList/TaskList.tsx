@@ -2,7 +2,7 @@
 
 import { useSelector } from 'react-redux';
 import type { RootState } from '@/redux/store';
-import { EmptyState } from '@vuotto/web';
+import { EmptyState } from '@industry/web';
 import { TaskItem } from '../TaskItem/TaskItem';
 
 export function TaskList() {

@@ -5,7 +5,7 @@ const config = {
   testEnvironment: 'jsdom',
   transform: {
     '^.+\\.tsx?$': ['ts-jest', { tsconfig: { jsx: 'react-jsx' } }],
-    // lucide-react's "dynamic" entrypoint (@vuotto/web's Icon) ships a root
+    // lucide-react's "dynamic" entrypoint (@industry/web's Icon) ships a root
     // dynamic.js that is really `export * from './dynamic.mjs'` — ESM
     // syntax under a .js extension, which Jest's CJS loader can't parse
     // without a transform.

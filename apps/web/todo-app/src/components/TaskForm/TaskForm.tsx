@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 import { addTask } from '@/redux/taskSlice';
 import type { AppDispatch } from '@/redux/store';
 import { isValidTaskTitle, sanitizeTaskTitle } from '@/domain/task';
-import { Button, Input } from '@vuotto/web';
+import { Button, TextField } from '@industry/web';
 
 export function TaskForm() {
   const dispatch = useDispatch<AppDispatch>();
@@ -25,7 +25,7 @@ export function TaskForm() {
       aria-label="Task form"
       style={{ display: 'flex', gap: 'var(--space-3)' }}
     >
-      <Input
+      <TextField
         type="text"
         value={value}
         onChange={(e) => setValue(e.target.value)}
