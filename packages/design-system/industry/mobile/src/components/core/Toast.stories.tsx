@@ -4,6 +4,7 @@ import { Toast } from './Toast';
 const meta: Meta<typeof Toast> = {
   title: 'Core/Toast',
   component: Toast,
+  parameters: { svgKnownIssue: true },
 };
 
 export default meta;

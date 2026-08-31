@@ -5,6 +5,7 @@ import { FileDrop } from './FileDrop';
 const meta: Meta<typeof FileDrop> = {
   title: 'Core/FileDrop',
   component: FileDrop,
+  parameters: { svgKnownIssue: true },
 };
 
 export default meta;

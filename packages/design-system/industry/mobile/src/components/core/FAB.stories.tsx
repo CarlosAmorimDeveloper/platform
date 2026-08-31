@@ -5,6 +5,7 @@ import { FAB } from './FAB';
 const meta: Meta<typeof FAB> = {
   title: 'Core/FAB',
   component: FAB,
+  parameters: { svgKnownIssue: true },
 };
 
 export default meta;

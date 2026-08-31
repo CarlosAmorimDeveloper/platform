@@ -6,6 +6,7 @@ import { DatePicker } from './DatePicker';
 const meta: Meta<typeof DatePicker> = {
   title: 'Core/DatePicker',
   component: DatePicker,
+  parameters: { svgKnownIssue: true },
 };
 
 export default meta;

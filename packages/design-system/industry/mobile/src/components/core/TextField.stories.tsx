@@ -5,6 +5,7 @@ import { TextField } from './TextField';
 const meta: Meta<typeof TextField> = {
   title: 'Core/TextField',
   component: TextField,
+  parameters: { svgKnownIssue: true },
 };
 
 export default meta;

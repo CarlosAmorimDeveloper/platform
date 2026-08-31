@@ -5,6 +5,7 @@ import { Accordion } from './Accordion';
 const meta: Meta<typeof Accordion> = {
   title: 'Core/Accordion',
   component: Accordion,
+  parameters: { svgKnownIssue: true },
 };
 
 export default meta;

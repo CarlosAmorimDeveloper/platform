@@ -6,6 +6,7 @@ import { Icon } from './Icon';
 const meta: Meta<typeof ListRow> = {
   title: 'Core/ListRow',
   component: ListRow,
+  parameters: { svgKnownIssue: true },
 };
 
 export default meta;

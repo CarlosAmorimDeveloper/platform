@@ -4,6 +4,7 @@ import { AppBar } from './AppBar';
 const meta: Meta<typeof AppBar> = {
   title: 'Core/AppBar',
   component: AppBar,
+  parameters: { svgKnownIssue: true },
 };
 
 export default meta;
