@@ -1,39 +1,35 @@
 import { StyleSheet } from 'react-native';
-import { fontSize, space } from '@industry/tokens';
+import { space } from '@industry/tokens';
 
 export const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
+  screen: { flex: 1 },
+  countRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: space[6],
+    paddingVertical: space[4],
   },
-  header: {
-    paddingTop: space[6],
+  countText: { fontSize: 13 },
+  listContent: {
+    paddingHorizontal: space[6],
     paddingBottom: space[6],
   },
-  actionsRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  listContent: {
-    padding: space[6],
-    gap: space[3],
-  },
-  card: {
-    marginBottom: space[3],
-  },
-  cardHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    gap: space[1],
-  },
-  cardDate: {
+  loadingContainer: {
     flex: 1,
-    fontSize: fontSize.body,
-    fontWeight: '600',
+    paddingHorizontal: space[6],
   },
-  cardSummary: {
-    fontSize: 13,
-    marginTop: space[2],
+  loadingRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: space[3],
+    paddingVertical: space[4],
+  },
+  loadingCaption: { fontSize: 13 },
+  skeletonCard: { marginBottom: space[3] },
+  bottomBar: {
+    borderTopWidth: 1,
+    paddingTop: space[3],
+    paddingHorizontal: space[6],
   },
 });
