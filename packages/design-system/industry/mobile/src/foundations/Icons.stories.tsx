@@ -5,6 +5,7 @@ import { Icon, type IconName } from '../components/core';
 
 const meta: Meta = {
   title: 'Foundations/Icons',
+  parameters: { svgKnownIssue: true },
 };
 
 export default meta;

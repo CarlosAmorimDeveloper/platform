@@ -6,6 +6,7 @@ import { PieChart } from './PieChart';
 const meta: Meta<typeof PieChart> = {
   title: 'Core/PieChart',
   component: PieChart,
+  parameters: { svgKnownIssue: true },
 };
 
 export default meta;

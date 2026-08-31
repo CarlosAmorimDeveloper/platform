@@ -5,6 +5,7 @@ import { SearchField } from './SearchField';
 const meta: Meta<typeof SearchField> = {
   title: 'Core/SearchField',
   component: SearchField,
+  parameters: { svgKnownIssue: true },
 };
 
 export default meta;

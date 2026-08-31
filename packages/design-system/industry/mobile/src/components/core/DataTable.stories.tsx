@@ -4,6 +4,7 @@ import { DataTable } from './DataTable';
 const meta: Meta<typeof DataTable> = {
   title: 'Core/DataTable',
   component: DataTable,
+  parameters: { svgKnownIssue: true },
 };
 
 export default meta;

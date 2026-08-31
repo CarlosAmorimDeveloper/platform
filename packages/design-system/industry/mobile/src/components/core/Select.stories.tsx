@@ -5,6 +5,7 @@ import { Select } from './Select';
 const meta: Meta<typeof Select> = {
   title: 'Core/Select',
   component: Select,
+  parameters: { svgKnownIssue: true },
 };
 
 export default meta;

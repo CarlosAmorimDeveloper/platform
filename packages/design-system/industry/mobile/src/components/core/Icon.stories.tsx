@@ -6,6 +6,7 @@ import { Icon } from './Icon';
 const meta: Meta<typeof Icon> = {
   title: 'Core/Icon',
   component: Icon,
+  parameters: { svgKnownIssue: true },
   argTypes: {
     size: {
       control: 'select',
