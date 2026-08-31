@@ -1,5 +1,6 @@
 import { Pressable, Text, View } from 'react-native';
 import type { StyleProp, ViewStyle } from 'react-native';
+import type { ReactNode } from 'react';
 import { color, fontFamily, fontSize, fontWeight, space } from '@industry/tokens';
 import { Icon, type IconName } from './Icon';
 
@@ -14,13 +15,15 @@ export interface AppBarAction {
 export interface AppBarProps {
   title: string;
   onBackPress?: () => void;
+  /** For a trigger that needs more than a plain icon button, e.g. a `Menu`-anchored filter. Renders between the title and `actions`. */
+  trailing?: ReactNode;
   actions?: AppBarAction[];
   style?: StyleProp<ViewStyle>;
   testID?: string;
 }
 
 /** Top navigation bar — title with an optional back button and trailing icon actions. */
-export function AppBar({ title, onBackPress, actions = [], style, testID }: AppBarProps) {
+export function AppBar({ title, onBackPress, trailing, actions = [], style, testID }: AppBarProps) {
   return (
     <View
       testID={testID}
@@ -62,6 +65,7 @@ export function AppBar({ title, onBackPress, actions = [], style, testID }: AppB
       >
         {title}
       </Text>
+      {trailing}
       {actions.map((action) => (
         <Pressable
           key={action.label}
