@@ -10,7 +10,7 @@ import { color } from '@industry/tokens';
 // this banner is a stopgap so the gap is visible in every affected story
 // instead of silently looking broken. Opt in per story file via
 // `parameters: { svgKnownIssue: true }`.
-const withSvgKnownIssueNote: Decorator = (Story, context) => {
+export const withSvgKnownIssueNote: Decorator = (Story, context) => {
   const hasSvgKnownIssue = Boolean(context.parameters.svgKnownIssue);
 
   return (
