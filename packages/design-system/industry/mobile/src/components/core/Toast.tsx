@@ -55,13 +55,18 @@ export function Toast({ tone = 'accent', title, onDismiss, children, style }: To
       <View style={{ flex: 1, gap: 2 }}>
         {title ? (
           <Text
-            style={{ fontFamily: fontFamily.heading, fontWeight: fontWeight.heading, fontSize: 16 }}
+            style={{
+              fontFamily: fontFamily.heading,
+              fontWeight: fontWeight.heading,
+              fontSize: 16,
+              color: ACCENT_COLOR[tone],
+            }}
           >
             {title}
           </Text>
         ) : null}
         {children ? (
-          <Text style={{ fontSize: 13, color: alpha(color.text, 65) }}>{children}</Text>
+          <Text style={{ fontSize: 13, color: alpha(ACCENT_COLOR[tone], 65) }}>{children}</Text>
         ) : null}
       </View>
       {onDismiss ? (
