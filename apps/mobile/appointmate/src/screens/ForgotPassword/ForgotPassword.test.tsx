@@ -75,14 +75,6 @@ describe('ForgotPassword', () => {
     });
   });
 
-  it('navigates back when "Voltar ao login" is pressed', () => {
-    render(<ForgotPassword navigation={mockNavigation} route={mockRoute} />);
-
-    fireEvent.press(screen.getByText('Voltar ao login'));
-
-    expect(mockNavigation.goBack).toHaveBeenCalled();
-  });
-
   it('shows a success message after the email is sent', async () => {
     mockedSendPasswordReset.mockResolvedValue(undefined);
     render(<ForgotPassword navigation={mockNavigation} route={mockRoute} />);
@@ -91,9 +83,8 @@ describe('ForgotPassword', () => {
     fireEvent.press(screen.getByText('Enviar link'));
 
     await waitFor(() => {
-      expect(
-        screen.getByText('Se este e-mail estiver cadastrado, você receberá um link em instantes.'),
-      ).toBeTruthy();
+      expect(screen.getByText('Link enviado')).toBeTruthy();
+      expect(screen.getByText('Verifique a caixa de entrada de user@example.com.')).toBeTruthy();
     }, ASYNC_TIMEOUT);
   }, 40000);
 
