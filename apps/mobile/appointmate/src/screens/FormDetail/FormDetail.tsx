@@ -1,21 +1,60 @@
 import { useEffect, useState } from 'react';
-import { ScrollView, Text, View } from 'react-native';
+import { Platform, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
-import { AppBar, Button, EmptyState, Sheet, Spinner, useTheme, useToast } from '@industry/mobile';
-import { alpha } from '@industry/tokens';
+import {
+  AppBar,
+  Badge,
+  Button,
+  EmptyState,
+  IconButton,
+  Sheet,
+  Spinner,
+  useTheme,
+  useToast,
+} from '@industry/mobile';
+import { alpha, fontFamilyMono } from '@industry/tokens';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { AppStackParamList } from '../../navigation/types';
 import { deleteForm, getFormRecord, type FormRecord } from '../../services/formsService';
 import { mapFirestoreError } from '../../utils/firebaseErrors';
-import { MOOD_OPTIONS, formatDate, isFormValuesEmpty } from '../../domain/form';
+import {
+  MOOD_OPTIONS,
+  formatDateLong,
+  formatDateTimeShort,
+  isFormValuesEmpty,
+} from '../../domain/form';
 import { buildFormHtml } from '../../domain/pdf';
 import { LoadingView } from '../../components/LoadingView';
 import { ErrorView } from '../../components/ErrorView';
+import { SectionLabel } from '../../components/SectionLabel';
+import { BottomBar } from '../../components/BottomBar';
 import { styles } from './FormDetail.styles';
 
 type Props = NativeStackScreenProps<AppStackParamList, 'FormDetail'>;
+
+const monoFontFamily = Platform.select(fontFamilyMono);
+
+function SummaryCell({
+  label,
+  value,
+  testID,
+}: {
+  label: string;
+  value: string | null | undefined;
+  testID?: string;
+}) {
+  const { colors } = useTheme();
+  return (
+    <View style={[styles.summaryCell, { backgroundColor: colors.bg }]}>
+      <Text style={[styles.summaryCellLabel, { color: alpha(colors.text, 50) }]}>{label}</Text>
+      <Text style={[styles.summaryCellValue, { color: colors.text }]} testID={testID}>
+        {value?.trim() ? value : '—'}
+      </Text>
+    </View>
+  );
+}
 
 function Field({ label, value }: { label: string; value: string }) {
   const { colors } = useTheme();
@@ -23,17 +62,20 @@ function Field({ label, value }: { label: string; value: string }) {
   return (
     <View style={styles.field}>
       <Text style={[styles.fieldLabel, { color: alpha(colors.text, 70) }]}>{label}</Text>
-      <Text style={[styles.fieldValue, { color: colors.text }]}>{value}</Text>
+      <Text style={[styles.fieldValue, { color: alpha(colors.text, 80) }]}>{value}</Text>
     </View>
   );
 }
 
-function SectionTitle({ children }: { children: string }) {
-  const { colors } = useTheme();
-  return <Text style={[styles.sectionTitle, { color: colors.text }]}>{children}</Text>;
-}
-
-function ListField({ label, items }: { label: string; items: { text: string }[] }) {
+function ListField({
+  label,
+  items,
+  numbered,
+}: {
+  label: string;
+  items: { text: string }[];
+  numbered?: boolean;
+}) {
   const { colors } = useTheme();
   const filled = items.filter((item) => item.text.trim());
   if (filled.length === 0) return null;
@@ -41,9 +83,17 @@ function ListField({ label, items }: { label: string; items: { text: string }[] 
     <View style={styles.field}>
       <Text style={[styles.fieldLabel, { color: alpha(colors.text, 70) }]}>{label}</Text>
       {filled.map((item, index) => (
-        <Text key={`${index}-${item.text}`} style={[styles.listItem, { color: colors.text }]}>
-          • {item.text}
-        </Text>
+        <View key={`${index}-${item.text}`} style={styles.listItemRow}>
+          <Text
+            style={[
+              styles.listItemNumber,
+              { fontFamily: numbered ? monoFontFamily : undefined, color: alpha(colors.text, 50) },
+            ]}
+          >
+            {numbered ? String(index + 1).padStart(2, '0') : '•'}
+          </Text>
+          <Text style={[styles.listItem, { color: alpha(colors.text, 80) }]}>{item.text}</Text>
+        </View>
       ))}
     </View>
   );
@@ -117,8 +167,15 @@ export function FormDetail({ navigation, route }: Props) {
 
   const appBar = (
     <AppBar
-      title="Detalhes do formulário"
+      title="Formulário"
       onBackPress={() => navigation.goBack()}
+      trailing={
+        record ? (
+          <Badge tone={record.status === 'submitted' ? 'success' : 'warning'}>
+            {record.status === 'submitted' ? 'Salvo' : 'Rascunho'}
+          </Badge>
+        ) : undefined
+      }
       testID="form-detail-app-bar"
     />
   );
@@ -155,21 +212,32 @@ export function FormDetail({ navigation, route }: Props) {
   }
 
   const { values } = record;
-  const updatedAtLabel = formatDate(record.updatedAt) ?? formatDate(record.createdAt);
+  const dateHeading = formatDateLong(values.appointmentDate);
+  const updatedAtLabel =
+    formatDateTimeShort(record.updatedAt) ?? formatDateTimeShort(record.createdAt);
   const moodLabel = MOOD_OPTIONS.find((option) => option.value === values.overallMood)?.label;
 
   return (
     <SafeAreaView edges={['top']} style={styles.screen}>
       {appBar}
       <ScrollView contentContainerStyle={styles.container}>
-        {updatedAtLabel && (
-          <Text
-            style={[styles.updatedAt, { color: alpha(colors.text, 70) }]}
-            testID="form-detail-updated-at"
-          >
-            Última atualização em {updatedAtLabel}
-          </Text>
-        )}
+        <View style={styles.titleBlock}>
+          <Text style={[styles.kicker, { color: alpha(colors.text, 50) }]}>Consulta</Text>
+          {dateHeading && (
+            <Text style={[styles.heading, { color: colors.text }]}>{dateHeading}</Text>
+          )}
+          {updatedAtLabel && (
+            <Text
+              style={[
+                styles.updatedAt,
+                { fontFamily: monoFontFamily, color: alpha(colors.text, 50) },
+              ]}
+              testID="form-detail-updated-at"
+            >
+              Última atualização em {updatedAtLabel}
+            </Text>
+          )}
+        </View>
 
         {isFormValuesEmpty(values) ? (
           <EmptyState
@@ -179,33 +247,22 @@ export function FormDetail({ navigation, route }: Props) {
           />
         ) : (
           <>
-            <SectionTitle>Cabeçalho</SectionTitle>
-            <Field label="Data desta consulta" value={values.appointmentDate} />
-            <Field label="Última consulta foi em" value={values.lastAppointmentDate} />
-
-            <SectionTitle>Panorama geral</SectionTitle>
-            {moodLabel && (
-              <View style={styles.field}>
-                <Text style={[styles.fieldLabel, { color: alpha(colors.text, 70) }]}>
-                  Como você tem estado
-                </Text>
-                <Text
-                  style={[styles.fieldValue, { color: colors.text }]}
-                  testID="form-detail-overall-mood"
-                >
-                  {moodLabel}
-                </Text>
+            <View style={[styles.summaryGrid, { backgroundColor: colors.divider }]}>
+              <View style={styles.summaryRow}>
+                <SummaryCell label="Humor" value={moodLabel} testID="form-detail-overall-mood" />
+                <SummaryCell label="Sono" value={values.sleep} />
               </View>
-            )}
-            <Field label="Em poucas palavras" value={values.overallSummary} />
+              <View style={styles.summaryRow}>
+                <SummaryCell label="Energia" value={values.energy} />
+                <SummaryCell label="Apetite" value={values.appetite} />
+              </View>
+            </View>
 
-            <SectionTitle>No dia a dia</SectionTitle>
-            <Field label="Sono" value={values.sleep} />
-            <Field label="Energia e disposição" value={values.energy} />
-            <Field label="Apetite e alimentação" value={values.appetite} />
+            <Field label="Última consulta foi em" value={values.lastAppointmentDate} />
+            <Field label="Em poucas palavras" value={values.overallSummary} />
             <Field label="Concentração e memória" value={values.concentration} />
 
-            <SectionTitle>Medicação</SectionTitle>
+            <SectionLabel>Medicação</SectionLabel>
             <ListField label="Medicamentos e doses" items={values.medications} />
             <Field
               label="Tenho conseguido tomar como combinado?"
@@ -213,34 +270,40 @@ export function FormDetail({ navigation, route }: Props) {
             />
             <Field label="Efeitos que percebi (bons e ruins)" value={values.medicationEffects} />
 
-            <SectionTitle>O que foi bem ou melhorou</SectionTitle>
+            <SectionLabel>O que foi bem ou melhorou</SectionLabel>
             <Field label="O que foi bem ou melhorou" value={values.whatWentWell} />
 
-            <SectionTitle>O que tem sido difícil</SectionTitle>
+            <SectionLabel>O que tem sido difícil</SectionLabel>
             <Field label="O que tem sido difícil" value={values.whatHasBeenHard} />
 
-            <SectionTitle>Contexto</SectionTitle>
+            <SectionLabel>Contexto</SectionLabel>
             <Field label="Situações importantes desde a última consulta" value={values.context} />
 
-            <SectionTitle>Minhas perguntas</SectionTitle>
-            <ListField label="Perguntas" items={values.questions} />
+            <SectionLabel>Perguntas para o médico</SectionLabel>
+            <ListField label="Perguntas" items={values.questions} numbered />
 
-            <SectionTitle>Foco do dia</SectionTitle>
+            <SectionLabel>Foco do dia</SectionLabel>
             <Field label="O que quero desta consulta" value={values.todayFocus} />
 
-            <SectionTitle>Durante a consulta</SectionTitle>
+            <SectionLabel>Durante a consulta</SectionLabel>
             <Field label="Anotações e orientações" value={values.consultationNotes} />
           </>
         )}
+      </ScrollView>
 
+      {exporting ? <Spinner /> : null}
+      <BottomBar>
         <Button
-          style={styles.editButton}
+          style={styles.bottomBarPrimary}
+          variant="primary"
+          framed
           onPress={() => navigation.navigate('FormEntry', { formId })}
           testID="form-detail-edit-button"
         >
           Editar
         </Button>
         <Button
+          style={styles.bottomBarSecondary}
           variant="secondary"
           onPress={onExportPdf}
           disabled={exporting}
@@ -248,45 +311,44 @@ export function FormDetail({ navigation, route }: Props) {
         >
           Exportar PDF
         </Button>
-        {exporting ? <Spinner /> : null}
-        <Button
+        <IconButton
+          icon="Trash2"
           variant="danger"
+          label="Excluir"
           onPress={() => setDeleteDialogVisible(true)}
           testID="form-detail-delete-button"
-        >
-          Excluir
-        </Button>
+        />
+      </BottomBar>
 
-        <Sheet
-          testID="form-detail-delete-dialog"
-          open={deleteDialogVisible}
-          onDismiss={() => setDeleteDialogVisible(false)}
-          title="Excluir formulário"
-          actions={
-            <>
-              <Button
-                variant="ghost"
-                onPress={() => setDeleteDialogVisible(false)}
-                testID="form-detail-delete-cancel-button"
-              >
-                Cancelar
-              </Button>
-              <Button
-                variant="danger"
-                onPress={onConfirmDelete}
-                disabled={deleting}
-                testID="form-detail-delete-confirm-button"
-              >
-                Excluir
-              </Button>
-            </>
-          }
-        >
-          <Text style={{ color: colors.text }}>
-            Tem certeza que deseja excluir este formulário? Essa ação não pode ser desfeita.
-          </Text>
-        </Sheet>
-      </ScrollView>
+      <Sheet
+        testID="form-detail-delete-dialog"
+        open={deleteDialogVisible}
+        onDismiss={() => setDeleteDialogVisible(false)}
+        title="Excluir formulário"
+        actions={
+          <>
+            <Button
+              variant="ghost"
+              onPress={() => setDeleteDialogVisible(false)}
+              testID="form-detail-delete-cancel-button"
+            >
+              Cancelar
+            </Button>
+            <Button
+              variant="danger"
+              onPress={onConfirmDelete}
+              disabled={deleting}
+              testID="form-detail-delete-confirm-button"
+            >
+              Excluir
+            </Button>
+          </>
+        }
+      >
+        <Text style={{ color: colors.text }}>
+          Tem certeza que deseja excluir este formulário? Essa ação não pode ser desfeita.
+        </Text>
+      </Sheet>
     </SafeAreaView>
   );
 }
