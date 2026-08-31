@@ -18,6 +18,7 @@ export function LoadingView({ message, testID }: LoadingViewProps) {
         gap: space[3],
         paddingHorizontal: space[6],
         paddingVertical: space[8],
+        backgroundColor: color.bg,
       }}
     >
       <Spinner />

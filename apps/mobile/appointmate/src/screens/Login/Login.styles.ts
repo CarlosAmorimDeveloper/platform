@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { fontSize, space } from '@industry/tokens';
+import { fontFamily, fontWeight, letterSpacing, space } from '@industry/tokens';
 
 export const styles = StyleSheet.create({
   keyboardView: { flex: 1 },
@@ -9,8 +9,21 @@ export const styles = StyleSheet.create({
     padding: space[6],
     gap: space[8],
   },
-  header: { alignItems: 'center', gap: space[2] },
-  appTitle: { fontSize: fontSize.h2, fontWeight: 'bold' },
-  appSubtitle: { fontSize: fontSize.body },
+  header: { gap: space[2] },
+  kicker: {
+    fontSize: 11,
+    letterSpacing: 1.1,
+    textTransform: 'uppercase',
+  },
+  appTitle: {
+    fontFamily: fontFamily.heading,
+    fontWeight: fontWeight.heading,
+    fontSize: 38,
+    letterSpacing: letterSpacing.heading,
+  },
   form: { gap: space[3] },
+  forgotPasswordLabel: { fontSize: 15 },
+  footer: { gap: space[4] },
+  divider: { height: 1 },
+  footerHint: { textAlign: 'center', fontSize: 13 },
 });

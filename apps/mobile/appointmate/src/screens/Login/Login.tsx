@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { KeyboardAvoidingView, Text, View } from 'react-native';
 import { Button, Spinner, TextField, useTheme, useToast } from '@industry/mobile';
-import { alpha } from '@industry/tokens';
+import { accentRamp, alpha } from '@industry/tokens';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { AuthStackParamList } from '../../navigation/types';
 import { login } from '../../services/authService';
@@ -34,10 +34,10 @@ export function Login({ navigation }: Props) {
     <KeyboardAvoidingView style={styles.keyboardView} behavior="padding">
       <View style={[styles.container, { backgroundColor: colors.bg }]}>
         <View style={styles.header}>
-          <Text style={[styles.appTitle, { color: colors.text }]}>AppointMate</Text>
-          <Text style={[styles.appSubtitle, { color: alpha(colors.text, 70) }]}>
-            Acompanhe seu bem-estar
+          <Text style={[styles.kicker, { color: accentRamp['300'] }]}>
+            Acompanhamento de consultas
           </Text>
+          <Text style={[styles.appTitle, { color: colors.text }]}>AppointMate</Text>
         </View>
         <View style={styles.form}>
           <TextField
@@ -59,7 +59,14 @@ export function Login({ navigation }: Props) {
             testID="login-password-input"
           />
           {loading ? <Spinner /> : null}
-          <Button onPress={handleLogin} disabled={loading} testID="login-submit-button">
+          <Button
+            variant="primary"
+            block
+            framed
+            onPress={handleLogin}
+            disabled={loading}
+            testID="login-submit-button"
+          >
             Entrar
           </Button>
           <Button
@@ -67,10 +74,19 @@ export function Login({ navigation }: Props) {
             onPress={() => navigation.navigate('ForgotPassword')}
             testID="login-forgot-password-button"
           >
-            Esqueceu a senha?
+            <Text style={[styles.forgotPasswordLabel, { color: accentRamp['300'] }]}>
+              Esqueceu a senha?
+            </Text>
           </Button>
+        </View>
+        <View style={styles.footer}>
+          <View style={[styles.divider, { backgroundColor: colors.divider }]} />
+          <Text style={[styles.footerHint, { color: alpha(colors.text, 60) }]}>
+            Primeira vez por aqui?
+          </Text>
           <Button
             variant="secondary"
+            block
             onPress={() => navigation.navigate('Register')}
             testID="login-create-account-button"
           >
