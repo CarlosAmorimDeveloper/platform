@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { fontSize, space } from '@industry/tokens';
+import { space } from '@industry/tokens';
 
 export const styles = StyleSheet.create({
   flex: { flex: 1 },
@@ -11,6 +11,20 @@ export const styles = StyleSheet.create({
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   fillHeight: { flex: 1 },
   list: { paddingVertical: space[2] },
-  emptyText: { fontSize: fontSize.body },
   ticketItem: { marginBottom: space[4], marginHorizontal: space[1] },
+  scopeRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: space[4],
+    paddingVertical: space[3],
+    borderBottomWidth: 1,
+  },
+  scopeCount: { fontSize: 13 },
+  scopeTag: {
+    borderWidth: 1,
+    paddingHorizontal: space[3],
+    paddingVertical: space[1],
+  },
+  scopeTagText: { fontSize: 13 },
 });
