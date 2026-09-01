@@ -10,12 +10,18 @@
       "android": {
         "buildType": "apk",
         "autoIncrement": true
+      },
+      "ios": {
+        "autoIncrement": true
       }
     },
     "production": {
       "credentialsSource": "remote",
       "android": {
         "buildType": "app-bundle",
+        "autoIncrement": true
+      },
+      "ios": {
         "autoIncrement": true
       }
     }
