@@ -1,10 +1,20 @@
 import { useState } from 'react';
-import { View } from 'react-native';
+import { ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { AppBar, Button, Select, Spinner, TextField, useToast } from '@industry/mobile';
+import {
+  AppBar,
+  Button,
+  SegmentedControl,
+  Spinner,
+  TextField,
+  useTheme,
+  useToast,
+} from '@industry/mobile';
+import { accentRamp, alpha } from '@industry/tokens';
 import { createUser } from '../../services/authService';
 import { passwordMinLengthError } from '../../domain/validation';
 import { useAuthStore } from '../../store/useAuthStore';
+import { BottomBar } from '../../components/BottomBar';
 import type { UserRole } from '../../domain/user';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { AppStackParamList } from '../../navigation/types';
@@ -17,7 +27,18 @@ const ROLE_OPTIONS = [
   { label: 'Administrador', value: 'admin' },
 ];
 
+function SectionLabel({ children }: { children: string }) {
+  const { colors } = useTheme();
+  return (
+    <View style={styles.sectionLabelBlock}>
+      <Text style={[styles.sectionLabel, { color: accentRamp['300'] }]}>{children}</Text>
+      <View style={[styles.sectionHairline, { backgroundColor: colors.divider }]} />
+    </View>
+  );
+}
+
 export function CreateUser({ navigation }: Props) {
+  const { colors } = useTheme();
   const currentUser = useAuthStore((s) => s.user);
   const toast = useToast();
   const [name, setName] = useState('');
@@ -53,8 +74,22 @@ export function CreateUser({ navigation }: Props) {
 
   return (
     <SafeAreaView edges={['top']} style={styles.flex}>
-      <AppBar title="Criar Usuário" onBackPress={() => navigation.goBack()} />
-      <View style={styles.container}>
+      <AppBar
+        title="Criar usuário"
+        onBackPress={() => navigation.goBack()}
+        trailing={
+          <View style={[styles.adminTag, { borderColor: colors.accent }]}>
+            <Text style={[styles.adminTagText, { color: colors.accent }]}>Admin</Text>
+          </View>
+        }
+      />
+      <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+        <Text style={[styles.intro, { color: alpha(colors.text, 70) }]}>
+          A conta é criada já dentro deste workspace, com a senha que você definir. Não há link de
+          convite — entregue as credenciais à pessoa.
+        </Text>
+
+        <SectionLabel>Dados de acesso</SectionLabel>
         <TextField label="Nome" placeholder="Nome completo" value={name} onChangeText={setName} />
         <TextField
           label="Email"
@@ -65,26 +100,45 @@ export function CreateUser({ navigation }: Props) {
         <TextField
           label="Senha"
           error={passwordError}
+          hint="Mínimo de 6 caracteres"
           placeholder="Mínimo 6 caracteres"
           secureTextEntry
           secureToggle
           value={password}
           onChangeText={setPassword}
         />
-        <Select
-          label="Perfil"
+
+        <SectionLabel>Perfil</SectionLabel>
+        <SegmentedControl
+          options={ROLE_OPTIONS}
           value={role}
           onValueChange={(v) => setRole(v as UserRole)}
-          options={ROLE_OPTIONS}
         />
+        <Text style={[styles.roleHint, { color: alpha(colors.text, 60) }]}>
+          Padrão vê apenas os chamados que criou ou que lhe foram designados. Administrador vê o
+          workspace todo e pode editar, excluir e criar usuários.
+        </Text>
+
         {loading ? <Spinner /> : null}
-        <Button onPress={handleCreate} disabled={!isValid || loading}>
-          Criar Usuário
-        </Button>
-        <Button variant="secondary" onPress={() => navigation.goBack()}>
+      </ScrollView>
+      <BottomBar>
+        <Button
+          style={styles.bottomBarButton}
+          variant="secondary"
+          onPress={() => navigation.goBack()}
+        >
           Cancelar
         </Button>
-      </View>
+        <Button
+          style={styles.bottomBarButton}
+          variant="primary"
+          framed
+          onPress={handleCreate}
+          disabled={!isValid || loading}
+        >
+          Criar usuário
+        </Button>
+      </BottomBar>
     </SafeAreaView>
   );
 }
