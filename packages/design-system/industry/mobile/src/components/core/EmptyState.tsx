@@ -38,6 +38,7 @@ export function EmptyState({ icon, title, body, action, style, testID }: EmptySt
             fontWeight: fontWeight.heading,
             fontSize: 21,
             textAlign: 'center',
+            color: color.text,
           }}
         >
           {title}

@@ -1,5 +1,6 @@
 import { fireEvent, render } from '@testing-library/react-native';
 import { Text } from 'react-native';
+import { color } from '@industry/tokens';
 import { Sheet } from './Sheet';
 
 describe('Sheet', () => {
@@ -57,5 +58,12 @@ describe('Sheet', () => {
     );
 
     expect(queryByTestId('status-sheet')).toBeTruthy();
+  });
+
+  it('colors the title with the theme text color, not the default black', () => {
+    const { getByText } = render(<Sheet title="Título" />);
+
+    const styles = [getByText('Título').props.style].flat();
+    expect(styles.some((s) => s?.color === color.text)).toBe(true);
   });
 });

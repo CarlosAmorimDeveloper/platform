@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { KeyboardAvoidingView, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button, Spinner, TextField, useTheme, useToast } from '@industry/mobile';
 import { accentRamp, alpha } from '@industry/tokens';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -31,69 +32,71 @@ export function Login({ navigation }: Props) {
   }
 
   return (
-    <KeyboardAvoidingView style={styles.keyboardView} behavior="padding">
-      <View style={[styles.container, { backgroundColor: colors.bg }]}>
-        <View style={styles.header}>
-          <Text style={[styles.kicker, { color: accentRamp['300'] }]}>
-            Acompanhamento de consultas
-          </Text>
-          <Text style={[styles.appTitle, { color: colors.text }]}>AppointMate</Text>
-        </View>
-        <View style={styles.form}>
-          <TextField
-            label="E-mail"
-            placeholder="email@exemplo.com"
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-            autoCapitalize="none"
-            testID="login-email-input"
-          />
-          <TextField
-            label="Senha"
-            placeholder="Sua senha"
-            secureTextEntry
-            secureToggle
-            value={password}
-            onChangeText={setPassword}
-            testID="login-password-input"
-          />
-          {loading ? <Spinner /> : null}
-          <Button
-            variant="primary"
-            block
-            framed
-            onPress={handleLogin}
-            disabled={loading}
-            testID="login-submit-button"
-          >
-            Entrar
-          </Button>
-          <Button
-            variant="ghost"
-            onPress={() => navigation.navigate('ForgotPassword')}
-            testID="login-forgot-password-button"
-          >
-            <Text style={[styles.forgotPasswordLabel, { color: accentRamp['300'] }]}>
-              Esqueceu a senha?
+    <SafeAreaView edges={['top', 'bottom']} style={[styles.screen, { backgroundColor: colors.bg }]}>
+      <KeyboardAvoidingView style={styles.keyboardView} behavior="padding">
+        <View style={styles.container}>
+          <View style={styles.header}>
+            <Text style={[styles.kicker, { color: accentRamp['300'] }]}>
+              Acompanhamento de consultas
             </Text>
-          </Button>
+            <Text style={[styles.appTitle, { color: colors.text }]}>AppointMate</Text>
+          </View>
+          <View style={styles.form}>
+            <TextField
+              label="E-mail"
+              placeholder="email@exemplo.com"
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              testID="login-email-input"
+            />
+            <TextField
+              label="Senha"
+              placeholder="Sua senha"
+              secureTextEntry
+              secureToggle
+              value={password}
+              onChangeText={setPassword}
+              testID="login-password-input"
+            />
+            {loading ? <Spinner /> : null}
+            <Button
+              variant="primary"
+              block
+              framed
+              onPress={handleLogin}
+              disabled={loading}
+              testID="login-submit-button"
+            >
+              Entrar
+            </Button>
+            <Button
+              variant="ghost"
+              onPress={() => navigation.navigate('ForgotPassword')}
+              testID="login-forgot-password-button"
+            >
+              <Text style={[styles.forgotPasswordLabel, { color: accentRamp['300'] }]}>
+                Esqueceu a senha?
+              </Text>
+            </Button>
+          </View>
+          <View style={styles.footer}>
+            <View style={[styles.divider, { backgroundColor: colors.divider }]} />
+            <Text style={[styles.footerHint, { color: alpha(colors.text, 60) }]}>
+              Primeira vez por aqui?
+            </Text>
+            <Button
+              variant="secondary"
+              block
+              onPress={() => navigation.navigate('Register')}
+              testID="login-create-account-button"
+            >
+              Criar conta
+            </Button>
+          </View>
         </View>
-        <View style={styles.footer}>
-          <View style={[styles.divider, { backgroundColor: colors.divider }]} />
-          <Text style={[styles.footerHint, { color: alpha(colors.text, 60) }]}>
-            Primeira vez por aqui?
-          </Text>
-          <Button
-            variant="secondary"
-            block
-            onPress={() => navigation.navigate('Register')}
-            testID="login-create-account-button"
-          >
-            Criar conta
-          </Button>
-        </View>
-      </View>
-    </KeyboardAvoidingView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
