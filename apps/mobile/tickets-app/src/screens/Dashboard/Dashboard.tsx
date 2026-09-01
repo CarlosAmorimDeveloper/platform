@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Platform, View, Text, Pressable, FlatList } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   AppBar,
   Badge,
@@ -15,7 +15,7 @@ import {
   useTheme,
   useToast,
 } from '@industry/mobile';
-import { accentRamp, alpha, fontFamilyMono, viz } from '@industry/tokens';
+import { accentRamp, alpha, fontFamilyMono, space, viz } from '@industry/tokens';
 import { useTicketList } from '../../hooks/useTicketList';
 import { useAuthStore } from '../../store/useAuthStore';
 import { formatDate } from '../../domain/ticket';
@@ -96,6 +96,7 @@ function RecentTicketsCard({
 
 export function Dashboard({ navigation }: Props) {
   const { colors } = useTheme();
+  const insets = useSafeAreaInsets();
   const toast = useToast();
   const user = useAuthStore((s) => s.user);
   const logout = useAuthStore((s) => s.logout);
@@ -188,7 +189,7 @@ export function Dashboard({ navigation }: Props) {
           </View>
           <FAB
             onPress={() => navigation.navigate('NewTicket')}
-            style={styles.fab}
+            style={[styles.fab, { bottom: space[8] + insets.bottom }]}
             label="New ticket"
           />
         </View>

@@ -9,7 +9,7 @@ export const styles = StyleSheet.create({
     paddingTop: space[4],
   },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  fab: { position: 'absolute', right: space[6], bottom: space[8] },
+  fab: { position: 'absolute', right: space[6] },
   trailingActions: { flexDirection: 'row', alignItems: 'center' },
   trailingIconButton: { padding: space[2] },
   trailingTextButton: { paddingHorizontal: space[3], paddingVertical: space[2] },
