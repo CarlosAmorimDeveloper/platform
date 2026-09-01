@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
-import { View, Text, Pressable, FlatList } from 'react-native';
+import { Platform, View, Text, Pressable, FlatList } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   AppBar,
   Badge,
   Button,
   Card,
+  EmptyState,
   FAB,
   Icon,
   PieChart,
@@ -13,18 +14,20 @@ import {
   Spinner,
   useTheme,
   useToast,
-  type AppBarAction,
 } from '@industry/mobile';
-import { alpha, viz } from '@industry/tokens';
+import { accentRamp, alpha, fontFamilyMono, viz } from '@industry/tokens';
 import { useTicketList } from '../../hooks/useTicketList';
 import { useAuthStore } from '../../store/useAuthStore';
 import { formatDate } from '../../domain/ticket';
 import type { Ticket } from '../../domain/ticket';
 import type { TicketStatus } from '../../constants/ticketStatus';
 import { ALL_STATUSES, STATUS_LABELS, STATUS_TONES } from '../../constants/ticketStatus';
+import { PRIORITY_LABELS, PRIORITY_TONES, isPriorityMaximum } from '../../constants/ticketPriority';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { AppStackParamList } from '../../navigation/types';
 import { styles } from './Dashboard.styles';
+
+const monoFontFamily = Platform.select(fontFamilyMono);
 
 const STATUS_VIZ_COLOR: Record<TicketStatus, string> = {
   open: viz['1'],
@@ -63,8 +66,7 @@ function RecentTicketsCard({
   const recent = tickets.slice(0, 3);
   if (recent.length === 0) return null;
   return (
-    <Card>
-      <Text style={[styles.cardTitle, { color: colors.text }]}>Chamados Recentes</Text>
+    <Card framed>
       {recent.map((t, i) => (
         <Pressable
           key={t.id}
@@ -75,9 +77,16 @@ function RecentTicketsCard({
             i === recent.length - 1 && { borderBottomWidth: 0 },
           ]}
         >
-          <Text style={[styles.recentTitle, { color: colors.text }]}>{t.title}</Text>
+          <View style={styles.recentHeader}>
+            <Text style={[styles.recentTitle, { color: colors.text }]}>{t.title}</Text>
+            <Badge tone={PRIORITY_TONES[t.priority]} solid={isPriorityMaximum(t.priority)}>
+              {PRIORITY_LABELS[t.priority]}
+            </Badge>
+          </View>
           <Text style={[styles.recentMeta, { color: alpha(colors.text, 70) }]}>
-            Criado por: {t.creatorName} · {formatDate(t.createdAt)}
+            {t.creatorName}
+            {t.createdAt ? ` · ${formatDate(t.createdAt)}` : ''} ·{' '}
+            {t.assigneeName ?? 'não designado'}
           </Text>
         </Pressable>
       ))}
@@ -99,17 +108,32 @@ export function Dashboard({ navigation }: Props) {
     clearError();
   }, [error, toast, clearError]);
 
-  const actions: AppBarAction[] = [];
-  if (user?.role === 'admin') {
-    actions.push({
-      icon: 'UserPlus',
-      label: 'Criar usuário',
-      onPress: () => navigation.navigate('CreateUser'),
-    });
-  }
-  actions.push({ icon: 'LogOut', label: 'Sair', onPress: () => setLogoutOpen(true) });
+  const trailing = (
+    <View style={styles.trailingActions}>
+      {user?.role === 'admin' && (
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Criar usuário"
+          onPress={() => navigation.navigate('CreateUser')}
+          hitSlop={8}
+          style={styles.trailingIconButton}
+        >
+          <Icon name="UserPlus" size="md" color={colors.text} />
+        </Pressable>
+      )}
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel="Sair"
+        onPress={() => setLogoutOpen(true)}
+        hitSlop={8}
+        style={styles.trailingTextButton}
+      >
+        <Text style={[styles.trailingTextButtonLabel, { color: accentRamp['300'] }]}>Sair</Text>
+      </Pressable>
+    </View>
+  );
 
-  const appBar = <AppBar title="Painel" actions={actions} />;
+  const appBar = <AppBar title="Painel" trailing={trailing} />;
 
   const logoutSheet = (
     <Sheet
@@ -149,12 +173,18 @@ export function Dashboard({ navigation }: Props) {
       <SafeAreaView edges={['top']} style={styles.flex}>
         {appBar}
         <View style={[styles.container, { backgroundColor: colors.bg }]}>
-          <View style={styles.emptyState}>
-            <Icon name="Inbox" size={64} color={alpha(colors.text, 50)} />
-            <Text style={[styles.emptyTitle, { color: colors.text }]}>Nenhum chamado ainda</Text>
-            <Text style={[styles.emptySubtitle, { color: alpha(colors.text, 50) }]}>
-              Crie o primeiro chamado usando o botão abaixo
-            </Text>
+          <View style={styles.center}>
+            <EmptyState
+              style={styles.emptyState}
+              icon={<Icon name="MessageSquare" size={30} color={accentRamp['400']} />}
+              title="Nenhum chamado ainda"
+              body="Quando alguém do workspace abrir um chamado, ele aparece aqui com o status e a prioridade."
+              action={
+                <Button variant="primary" framed onPress={() => navigation.navigate('NewTicket')}>
+                  Abrir o primeiro
+                </Button>
+              }
+            />
           </View>
           <FAB
             onPress={() => navigation.navigate('NewTicket')}
@@ -167,45 +197,72 @@ export function Dashboard({ navigation }: Props) {
     );
   }
 
+  const total = tickets.length;
+
   return (
     <SafeAreaView edges={['top']} style={styles.flex}>
       {appBar}
       <View style={[styles.container, { backgroundColor: colors.bg }]}>
-        {tickets.length > 0 && (
-          <View>
-            <FlatList
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              data={ALL_STATUSES}
-              renderItem={({ item: s }) => (
-                <StatusStatCard
-                  key={s}
-                  status={s}
-                  count={tickets.filter((t) => t.status === s).length}
-                  onPress={() => navigation.navigate('TicketList', { status: s })}
-                />
-              )}
-              ListHeaderComponent={<View style={styles.listHeaderSpacer} />}
-              ListFooterComponent={<View style={styles.listFooterSpacer} />}
-            />
-          </View>
-        )}
-        {tickets.length > 0 && (
+        <View>
+          <FlatList
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            data={ALL_STATUSES}
+            renderItem={({ item: s }) => (
+              <StatusStatCard
+                key={s}
+                status={s}
+                count={tickets.filter((t) => t.status === s).length}
+                onPress={() => navigation.navigate('TicketList', { status: s })}
+              />
+            )}
+            ListHeaderComponent={<View style={styles.listHeaderSpacer} />}
+            ListFooterComponent={<View style={styles.listFooterSpacer} />}
+          />
+        </View>
+        <View style={styles.sectionPad}>
           <Pressable
             accessibilityLabel="Ver todos os chamados"
-            style={styles.sectionPad}
+            style={[styles.chartCard, { borderColor: colors.divider }]}
             onPress={() => navigation.navigate('TicketList', {})}
           >
-            <PieChart
-              slices={ALL_STATUSES.map((s) => ({
-                label: STATUS_LABELS[s],
-                value: tickets.filter((t) => t.status === s).length,
-                color: STATUS_VIZ_COLOR[s],
-              }))}
-            />
+            <View style={styles.chartDonutWrapper}>
+              <PieChart
+                size={140}
+                slices={ALL_STATUSES.map((s) => ({
+                  label: STATUS_LABELS[s],
+                  value: tickets.filter((t) => t.status === s).length,
+                  color: STATUS_VIZ_COLOR[s],
+                }))}
+              />
+              <View style={styles.chartTotal} pointerEvents="none">
+                <Text
+                  style={[
+                    styles.chartTotalText,
+                    { fontFamily: monoFontFamily, color: colors.text },
+                  ]}
+                >
+                  {total}
+                </Text>
+              </View>
+            </View>
           </Pressable>
-        )}
+        </View>
         <View style={styles.sectionPad}>
+          <View style={styles.sectionLabelRow}>
+            <Text style={[styles.sectionLabel, { color: accentRamp['300'] }]}>
+              Chamados recentes
+            </Text>
+            <Text
+              style={[
+                styles.sectionLabelCount,
+                { fontFamily: monoFontFamily, color: alpha(colors.text, 50) },
+              ]}
+            >
+              {Math.min(total, 3)}
+            </Text>
+          </View>
+          <View style={[styles.sectionHairline, { backgroundColor: colors.divider }]} />
           <RecentTicketsCard
             tickets={tickets}
             onPressTicket={(id) => navigation.navigate('TicketDetails', { ticketId: id })}
