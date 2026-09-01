@@ -16,6 +16,7 @@ export default defineConfig([
       'jest.config.js',
       'babel.config.js',
       'metro.config.js',
+      'scripts/**/*.js',
     ],
     languageOptions: {
       globals: {
@@ -25,6 +26,12 @@ export default defineConfig([
     },
     rules: {
       '@typescript-eslint/no-require-imports': 'off',
+    },
+  },
+  {
+    files: ['scripts/**/*.js'],
+    rules: {
+      'no-console': 'off',
     },
   },
   {

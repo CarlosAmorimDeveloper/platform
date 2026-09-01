@@ -13,7 +13,8 @@
       "backgroundColor": "#14161A"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "buildNumber": "1"
     },
     "android": {
       "adaptiveIcon": {

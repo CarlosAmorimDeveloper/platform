@@ -11,8 +11,8 @@
     "android": "npx expo start --android",
     "ios": "npx expo start --ios",
     "web": "npx expo start --web",
-    "build:android": "eas build --platform android --profile production",
-    "build:preview": "eas build --platform android --profile preview",
+    "build:android": "node scripts/bump-app-version.js && eas build --platform android --profile production",
+    "build:preview": "node scripts/bump-app-version.js && eas build --platform android --profile preview",
     "submit:android": "eas submit --platform android",
     "emulators": "firebase emulators:start --only firestore",
     "test:rules": "firebase emulators:exec --only firestore \"jest firestore.rules.test\""
