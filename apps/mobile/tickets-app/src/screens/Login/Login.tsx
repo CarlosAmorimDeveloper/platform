@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { View, Text, KeyboardAvoidingView, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { AppBar, Button, Spinner, TextField, useTheme, useToast } from '@industry/mobile';
-import { alpha, color } from '@industry/tokens';
+import { Button, Spinner, TextField, useTheme, useToast } from '@industry/mobile';
+import { accentRamp, alpha } from '@industry/tokens';
 import { login, mapFirebaseAuthError } from '../../services/authService';
 import { useAuthStore } from '../../store/useAuthStore';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -34,17 +34,14 @@ export function Login({ navigation }: Props) {
 
   return (
     <SafeAreaView edges={['top']} style={styles.keyboardView}>
-      <AppBar title="Login" />
       <KeyboardAvoidingView
         style={styles.keyboardView}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
         <View style={[styles.container, { backgroundColor: colors.bg }]}>
           <View style={styles.header}>
-            <Text style={[styles.appTitle, { color: color.accent }]}>Tickets App</Text>
-            <Text style={[styles.appSubtitle, { color: alpha(colors.text, 70) }]}>
-              Gerencie seus chamados
-            </Text>
+            <Text style={[styles.kicker, { color: accentRamp['300'] }]}>Gestão de chamados</Text>
+            <Text style={[styles.appTitle, { color: colors.text }]}>tickets</Text>
           </View>
           <View style={styles.form}>
             <TextField
@@ -64,13 +61,19 @@ export function Login({ navigation }: Props) {
               onChangeText={setPassword}
             />
             {loading ? <Spinner /> : null}
-            <Button onPress={handleLogin} disabled={loading}>
+            <Button variant="primary" block framed onPress={handleLogin} disabled={loading}>
               Entrar
             </Button>
-            <Button variant="ghost" onPress={() => navigation.navigate('ForgotPassword')}>
+            <Button variant="ghost" block onPress={() => navigation.navigate('ForgotPassword')}>
               Esqueceu a senha?
             </Button>
-            <Button variant="secondary" onPress={() => navigation.navigate('Register')}>
+          </View>
+          <View style={styles.footer}>
+            <View style={[styles.divider, { backgroundColor: colors.divider }]} />
+            <Text style={[styles.footerHint, { color: alpha(colors.text, 60) }]}>
+              Criar conta abre um workspace novo
+            </Text>
+            <Button variant="secondary" block onPress={() => navigation.navigate('Register')}>
               Criar conta
             </Button>
           </View>
