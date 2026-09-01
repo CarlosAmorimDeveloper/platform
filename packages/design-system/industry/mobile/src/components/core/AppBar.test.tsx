@@ -1,3 +1,4 @@
+import { Text } from 'react-native';
 import { fireEvent, render, screen } from '@testing-library/react-native';
 import { AppBar } from './AppBar';
 
@@ -42,6 +43,18 @@ describe('AppBar', () => {
     fireEvent.press(screen.getByLabelText('Notificações'));
 
     expect(onPress).toHaveBeenCalled();
+  });
+
+  it('renders trailing content between the title and the actions', () => {
+    render(
+      <AppBar
+        title="Painel"
+        trailing={<Text>filtro</Text>}
+        actions={[{ icon: 'Bell', label: 'Notificações', onPress: jest.fn() }]}
+      />,
+    );
+
+    expect(screen.getByText('filtro')).toBeTruthy();
   });
 
   it('works without a testID on the back button', () => {
