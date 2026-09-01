@@ -1,4 +1,4 @@
-import { Pressable, Text } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import { Badge, Card, useTheme } from '@industry/mobile';
 import { alpha, space } from '@industry/tokens';
 import { formatDate } from '../../../../domain/ticket';
@@ -6,6 +6,7 @@ import type { TicketStatus } from '../../../../constants/ticketStatus';
 import {
   PRIORITY_LABELS,
   PRIORITY_TONES,
+  isPriorityMaximum,
   type TicketPriority,
 } from '../../../../constants/ticketPriority';
 import { styles } from './TicketCard.styles';
@@ -32,18 +33,20 @@ export function TicketCard({
   const { colors } = useTheme();
   return (
     <Pressable onPress={onPress}>
-      <Card style={{ gap: space[1] }}>
-        <Text style={[styles.title, { color: colors.text }]}>{title}</Text>
-        <Badge tone={PRIORITY_TONES[priority]}>{PRIORITY_LABELS[priority]}</Badge>
-        <Text style={[styles.meta, { color: alpha(colors.text, 70) }]}>
-          Criado por: {creatorName}
+      <Card framed style={{ gap: space[1] }}>
+        <View style={styles.header}>
+          <Text style={[styles.title, { color: colors.text }]}>{title}</Text>
+          <Badge tone={PRIORITY_TONES[priority]} solid={isPriorityMaximum(priority)}>
+            {PRIORITY_LABELS[priority]}
+          </Badge>
+        </View>
+        <Text style={[styles.meta, { color: alpha(colors.text, 50) }]}>
+          Aberto por {creatorName}
           {createdAt ? ` · ${formatDate(createdAt)}` : ''}
         </Text>
-        {assigneeName ? (
-          <Text style={[styles.meta, { color: alpha(colors.text, 70) }]}>
-            Responsável: {assigneeName}
-          </Text>
-        ) : null}
+        <Text style={[styles.meta, { color: alpha(colors.text, 50) }]}>
+          Responsável: {assigneeName ?? 'não designado'}
+        </Text>
       </Card>
     </Pressable>
   );
