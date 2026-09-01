@@ -27,7 +27,8 @@ export function ForgotPassword({ navigation }: Props) {
       await sendPasswordReset(email);
       toast.show({
         tone: 'success',
-        title: 'Se este e-mail estiver cadastrado, você receberá um link em instantes.',
+        title: 'Link enviado',
+        description: `Verifique a caixa de entrada de ${email}.`,
       });
       navigation.goBack();
     } catch (err: unknown) {
@@ -40,7 +41,7 @@ export function ForgotPassword({ navigation }: Props) {
   return (
     <SafeAreaView edges={['top']} style={styles.screen}>
       <AppBar
-        title="Esqueci minha senha"
+        title="Recuperar senha"
         onBackPress={() => navigation.goBack()}
         testID="forgot-password-app-bar"
       />
@@ -62,18 +63,14 @@ export function ForgotPassword({ navigation }: Props) {
             />
             {loading ? <Spinner /> : null}
             <Button
+              variant="primary"
+              block
+              framed
               onPress={handleResetPassword}
               disabled={!canSubmit || loading}
               testID="forgot-password-submit-button"
             >
               Enviar link
-            </Button>
-            <Button
-              variant="ghost"
-              onPress={() => navigation.goBack()}
-              testID="forgot-password-back-button"
-            >
-              Voltar ao login
             </Button>
           </View>
         </View>
