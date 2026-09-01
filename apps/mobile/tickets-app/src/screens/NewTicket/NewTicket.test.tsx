@@ -73,7 +73,21 @@ describe('NewTicket', () => {
     expect(screen.getByPlaceholderText('Título do chamado')).toBeTruthy();
     expect(screen.getByPlaceholderText('Descreva o problema...')).toBeTruthy();
     expect(screen.getByText('Prioridade')).toBeTruthy();
-    expect(screen.queryByText('Responsável')).toBeNull();
+  });
+
+  it('shows "Responsável" disabled with an explanatory hint for non-admin users', () => {
+    renderNewTicket();
+
+    expect(screen.getByText('Responsável')).toBeTruthy();
+    expect(screen.getByText('Somente administradores designam responsável')).toBeTruthy();
+  });
+
+  it('shows "Responsável" enabled with no hint for admin users', () => {
+    mockCurrentUser = adminUser;
+    renderNewTicket();
+
+    expect(screen.getByText('Responsável')).toBeTruthy();
+    expect(screen.queryByText('Somente administradores designam responsável')).toBeNull();
   });
 
   it('disables save button when title is empty', () => {
@@ -196,7 +210,7 @@ describe('NewTicket', () => {
     mockCreateTicket.mockResolvedValue(undefined);
     const { goBack } = renderNewTicket();
 
-    fireEvent.press(screen.getByText('Nenhum'));
+    fireEvent.press(screen.getByText('Não designado'));
     fireEvent.press(await screen.findByText('Alice'));
     fireEvent.changeText(screen.getByPlaceholderText('Título do chamado'), 'Impressora quebrada');
 
