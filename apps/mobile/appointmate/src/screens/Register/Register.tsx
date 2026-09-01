@@ -1,8 +1,7 @@
 import { useState } from 'react';
-import { KeyboardAvoidingView, Text, View } from 'react-native';
+import { KeyboardAvoidingView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AppBar, Button, Spinner, TextField, useTheme, useToast } from '@industry/mobile';
-import { alpha } from '@industry/tokens';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { AuthStackParamList } from '../../navigation/types';
 import { register } from '../../services/authService';
@@ -45,12 +44,6 @@ export function Register({ navigation }: Props) {
       />
       <KeyboardAvoidingView style={styles.keyboardView} behavior="padding">
         <View style={[styles.container, { backgroundColor: colors.bg }]}>
-          <View style={styles.header}>
-            <Text style={[styles.title, { color: colors.text }]}>Criar conta</Text>
-            <Text style={[styles.subtitle, { color: alpha(colors.text, 70) }]}>
-              Preencha os dados para começar
-            </Text>
-          </View>
           <View style={styles.form}>
             <TextField
               label="Nome"
@@ -72,7 +65,8 @@ export function Register({ navigation }: Props) {
             <TextField
               label="Senha"
               error={passwordError}
-              placeholder="Mínimo 6 caracteres"
+              hint="Mínimo de 6 caracteres"
+              placeholder="Sua senha"
               secureTextEntry
               secureToggle
               value={password}
@@ -81,6 +75,9 @@ export function Register({ navigation }: Props) {
             />
             {loading ? <Spinner /> : null}
             <Button
+              variant="primary"
+              block
+              framed
               onPress={handleRegister}
               disabled={!canSubmit || loading}
               testID="register-submit-button"
@@ -88,7 +85,8 @@ export function Register({ navigation }: Props) {
               Cadastrar
             </Button>
             <Button
-              variant="secondary"
+              variant="ghost"
+              block
               onPress={() => navigation.navigate('Login')}
               testID="register-back-to-login-button"
             >
