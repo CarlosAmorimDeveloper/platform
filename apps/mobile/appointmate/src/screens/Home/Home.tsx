@@ -1,7 +1,21 @@
 import { useCallback, useEffect, useState } from 'react';
-import { FlatList, RefreshControl, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { AppBar, Button, EmptyState, IconButton, Menu, useToast } from '@industry/mobile';
+import { FlatList, Platform, RefreshControl, Text, View } from 'react-native';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import {
+  AppBar,
+  Badge,
+  Button,
+  Card,
+  EmptyState,
+  Icon,
+  IconButton,
+  Menu,
+  Skeleton,
+  Spinner,
+  useTheme,
+  useToast,
+} from '@industry/mobile';
+import { accentRamp, alpha, fontFamilyMono } from '@industry/tokens';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { AppStackParamList } from '../../navigation/types';
 import { useAuth } from '../../context/AuthContext';
@@ -13,20 +27,23 @@ import {
   isWithinTimeFilter,
   type TimeFilter,
 } from '../../domain/timeFilter';
-import { LoadingView } from '../../components/LoadingView';
 import { ErrorView } from '../../components/ErrorView';
 import { FormCard } from './FormCard';
 import { styles } from './Home.styles';
 
 type Props = NativeStackScreenProps<AppStackParamList, 'Home'>;
 
+const monoFontFamily = Platform.select(fontFamilyMono);
+
 // "Personalizado" needs its own date-range inputs, which don't fit this
 // compact menu — left out of the selectable presets for now.
 const SELECTABLE_PRESETS = TIME_FILTER_PRESETS.filter((preset) => preset.value !== 'personalizado');
 
 export function Home({ navigation }: Props) {
+  const { colors } = useTheme();
   const { user, logout } = useAuth();
   const toast = useToast();
+  const insets = useSafeAreaInsets();
 
   const [forms, setForms] = useState<FormSummary[]>([]);
   const [loading, setLoading] = useState(true);
@@ -72,9 +89,42 @@ export function Home({ navigation }: Props) {
     return unsubscribe;
   }, [navigation, loadForms]);
 
+  function onFilterMenuOpenChange(open: boolean) {
+    setFilterMenuVisible(open);
+    if (!open) loadForms({ silent: true });
+  }
+
+  const activePresetLabel =
+    TIME_FILTER_PRESETS.find((preset) => preset.value === filter.preset)?.label ?? 'Todos';
+
   const appBar = (
     <AppBar
       title="Meus formulários"
+      trailing={
+        <Menu
+          open={filterMenuVisible}
+          onOpenChange={onFilterMenuOpenChange}
+          header="Período"
+          trigger={
+            <IconButton
+              icon="ListFilter"
+              variant="ghost"
+              label="Filtrar por período"
+              onPress={() => setFilterMenuVisible(true)}
+              testID="home-filter-icon-button"
+            />
+          }
+          items={SELECTABLE_PRESETS.map((preset) => ({
+            key: preset.value,
+            label: preset.label,
+            selected: preset.value === filter.preset,
+            onSelect: () => {
+              setFilter({ preset: preset.value, customStart: '', customEnd: '' });
+            },
+          }))}
+          testID="home-filter-menu"
+        />
+      }
       actions={[
         {
           icon: 'LogOut',
@@ -87,21 +137,47 @@ export function Home({ navigation }: Props) {
     />
   );
 
-  function onRefresh() {
-    setRefreshing(true);
-    loadForms({ silent: true });
-  }
-
-  function onFilterMenuOpenChange(open: boolean) {
-    setFilterMenuVisible(open);
-    if (!open) loadForms({ silent: true });
-  }
+  const bottomBar = (
+    <View
+      style={[
+        styles.bottomBar,
+        {
+          borderTopColor: colors.divider,
+          backgroundColor: colors.bg,
+          paddingBottom: 20 + insets.bottom,
+        },
+      ]}
+    >
+      <Button
+        variant="primary"
+        block
+        onPress={() => navigation.navigate('FormEntry', undefined)}
+        disabled={loading}
+        testID="home-new-form-button"
+      >
+        Novo formulário
+      </Button>
+    </View>
+  );
 
   if (loading) {
     return (
       <SafeAreaView edges={['top']} style={styles.screen}>
         {appBar}
-        <LoadingView testID="home-loading" />
+        <View testID="home-loading" style={styles.loadingContainer}>
+          <View style={styles.loadingRow}>
+            <Spinner />
+            <Text style={[styles.loadingCaption, { color: alpha(colors.text, 70) }]}>
+              Carregando formulários
+            </Text>
+          </View>
+          {[0, 1, 2].map((index) => (
+            <Card key={index} framed style={styles.skeletonCard}>
+              <Skeleton lines={3} />
+            </Card>
+          ))}
+        </View>
+        {bottomBar}
       </SafeAreaView>
     );
   }
@@ -117,9 +193,22 @@ export function Home({ navigation }: Props) {
 
   const filteredForms = forms.filter((form) => isWithinTimeFilter(form.createdAt, filter));
 
+  function onRefresh() {
+    setRefreshing(true);
+    loadForms({ silent: true });
+  }
+
   return (
     <SafeAreaView edges={['top']} style={styles.screen}>
       {appBar}
+      <View style={styles.countRow}>
+        <Text
+          style={[styles.countText, { color: alpha(colors.text, 60), fontFamily: monoFontFamily }]}
+        >
+          {forms.length} {forms.length === 1 ? 'formulário' : 'formulários'}
+        </Text>
+        <Badge tone="neutral">{activePresetLabel}</Badge>
+      </View>
       <FlatList
         testID="home-list"
         data={filteredForms}
@@ -138,44 +227,22 @@ export function Home({ navigation }: Props) {
             testID="home-refresh-control"
           />
         }
-        ListHeaderComponent={
-          <View style={styles.header}>
-            <View style={styles.actionsRow}>
-              <Button
-                onPress={() => navigation.navigate('FormEntry', undefined)}
-                testID="home-new-form-button"
-              >
-                Novo formulário
-              </Button>
-              <Menu
-                open={filterMenuVisible}
-                onOpenChange={onFilterMenuOpenChange}
-                trigger={
-                  <IconButton
-                    icon="ListFilter"
-                    variant="solid"
-                    label="Filtrar por período"
-                    onPress={() => setFilterMenuVisible(true)}
-                    testID="home-filter-icon-button"
-                  />
-                }
-                items={SELECTABLE_PRESETS.map((preset) => ({
-                  key: preset.value,
-                  label: preset.label,
-                  onSelect: () => {
-                    setFilter({ preset: preset.value, customStart: '', customEnd: '' });
-                  },
-                }))}
-                testID="home-filter-menu"
-              />
-            </View>
-          </View>
-        }
         ListEmptyComponent={
           forms.length === 0 ? (
             <EmptyState
+              icon={<Icon name="Calendar" size={30} color={accentRamp['400']} />}
               title="Nenhum formulário ainda"
-              body="Crie seu primeiro formulário de preparação para o retorno."
+              body="Os formulários que você preencher para as consultas aparecem aqui, do mais recente para o mais antigo."
+              action={
+                <Button
+                  variant="primary"
+                  framed
+                  onPress={() => navigation.navigate('FormEntry', undefined)}
+                  testID="home-empty-cta-button"
+                >
+                  Criar o primeiro
+                </Button>
+              }
               testID="home-empty-state"
             />
           ) : (
@@ -187,6 +254,7 @@ export function Home({ navigation }: Props) {
           )
         }
       />
+      {bottomBar}
     </SafeAreaView>
   );
 }

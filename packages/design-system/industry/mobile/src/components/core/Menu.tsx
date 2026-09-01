@@ -1,18 +1,22 @@
 import { useEffect, useRef, useState } from 'react';
 import { Dimensions, Modal, Pressable, Text, View } from 'react-native';
 import type { ReactNode } from 'react';
-import { color, shadow, space } from '@industry/tokens';
+import { accentRamp, alpha, color, shadow, space } from '@industry/tokens';
+import { Icon } from './Icon';
 
 export interface MenuItem {
   key?: string;
   label: string;
   onSelect?: () => void;
   disabled?: boolean;
+  selected?: boolean;
 }
 
 export interface MenuProps {
   /** Usually a `<Button>` or `<IconButton>` — receives the press that opens the menu. */
   trigger: ReactNode;
+  /** Small uppercase label above the items, e.g. a group heading like "Período". */
+  header?: string;
   items?: MenuItem[];
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
@@ -32,6 +36,7 @@ export function resolveMenuPosition(
 /** Anchored dropdown list of actions, positioned below and right-aligned to the trigger. */
 export function Menu({
   trigger,
+  header,
   items = [],
   open: controlledOpen,
   onOpenChange,
@@ -85,6 +90,21 @@ export function Menu({
               shadow.md,
             ]}
           >
+            {header ? (
+              <Text
+                style={{
+                  fontSize: 11,
+                  letterSpacing: 1.1,
+                  textTransform: 'uppercase',
+                  color: alpha(color.text, 50),
+                  paddingHorizontal: space[4],
+                  paddingTop: space[2],
+                  paddingBottom: space[1],
+                }}
+              >
+                {header}
+              </Text>
+            ) : null}
             {items.map((item, index) => (
               <MenuItemRow
                 key={item.key ?? index}
@@ -109,12 +129,22 @@ function MenuItemRow({ item, onSelect }: { item: MenuItem; onSelect: () => void 
       disabled={item.disabled}
       onPress={item.disabled ? undefined : onSelect}
       style={({ pressed }) => ({
-        paddingVertical: space[3],
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: space[2],
+        minHeight: 44,
         paddingHorizontal: space[4],
-        backgroundColor: pressed ? color.surface2 : 'transparent',
+        backgroundColor: item.selected
+          ? accentRamp['200']
+          : pressed
+            ? color.surface2
+            : 'transparent',
         opacity: item.disabled ? 0.5 : 1,
       })}
     >
+      <View style={{ width: 16 }}>
+        {item.selected ? <Icon name="Check" size={16} color={color.text} /> : null}
+      </View>
       <Text style={{ fontSize: 14, color: color.text }}>{item.label}</Text>
     </Pressable>
   );

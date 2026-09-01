@@ -1,7 +1,7 @@
 import { RefreshControl } from 'react-native';
 import { FirebaseError } from 'firebase/app';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { fireEvent, render, screen, waitFor } from '../../test-utils';
+import { fireEvent, render, screen, waitFor, within } from '../../test-utils';
 import { useAuth } from '../../context/AuthContext';
 import { listForms } from '../../services/formsService';
 import type { AppStackParamList } from '../../navigation/types';
@@ -268,9 +268,13 @@ describe('Home', () => {
 
       fireEvent.press(screen.getByTestId('home-filter-icon-button'));
 
-      expect(screen.getByText('Todos')).toBeTruthy();
-      expect(screen.getByText('Últimos 7 dias')).toBeTruthy();
-      expect(screen.getByText('Últimos 30 dias')).toBeTruthy();
+      // The active filter is also echoed as a badge next to the form count,
+      // so "Todos" here must be scoped to the menu panel to avoid matching
+      // both.
+      const menu = within(screen.getByTestId('home-filter-menu-panel'));
+      expect(menu.getByText('Todos')).toBeTruthy();
+      expect(menu.getByText('Últimos 7 dias')).toBeTruthy();
+      expect(menu.getByText('Últimos 30 dias')).toBeTruthy();
       // "Personalizado" needs its own date-range UI that doesn't fit this menu.
       expect(screen.queryByText('Personalizado')).toBeNull();
     }, 20000);
