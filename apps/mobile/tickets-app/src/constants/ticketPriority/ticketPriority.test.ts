@@ -1,4 +1,9 @@
-import { ALL_PRIORITIES, PRIORITY_TONES, PRIORITY_LABELS } from './ticketPriority';
+import {
+  ALL_PRIORITIES,
+  PRIORITY_TONES,
+  PRIORITY_LABELS,
+  isPriorityMaximum,
+} from './ticketPriority';
 
 describe('ticketPriority', () => {
   beforeEach(() => jest.clearAllMocks());
@@ -31,5 +36,15 @@ describe('ticketPriority', () => {
       expect(typeof color).toBe('string');
       expect(color.length).toBeGreaterThan(0);
     });
+  });
+});
+
+describe('isPriorityMaximum', () => {
+  it('is true only for very_high', () => {
+    expect(isPriorityMaximum('very_high')).toBe(true);
+    expect(isPriorityMaximum('high')).toBe(false);
+    expect(isPriorityMaximum('medium')).toBe(false);
+    expect(isPriorityMaximum('low')).toBe(false);
+    expect(isPriorityMaximum('very_low')).toBe(false);
   });
 });
