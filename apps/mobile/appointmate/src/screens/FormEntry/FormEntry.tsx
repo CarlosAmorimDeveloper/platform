@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import { KeyboardAvoidingView, ScrollView, Text, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Controller, useFieldArray, useForm, type Control } from 'react-hook-form';
 import { AppBar, Button, Chip, Spinner, TextField, useTheme, useToast } from '@industry/mobile';
-import { semanticColor } from '@industry/tokens';
+import { alpha, fontFamilyMono, semanticColor } from '@industry/tokens';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { AppStackParamList } from '../../navigation/types';
 import { useAuth } from '../../context/AuthContext';
@@ -18,9 +18,13 @@ import {
   type FormValues,
 } from '../../domain/form';
 import { LoadingView } from '../../components/LoadingView';
+import { SectionLabel } from '../../components/SectionLabel';
+import { BottomBar } from '../../components/BottomBar';
 import { styles } from './FormEntry.styles';
 import { DynamicListField } from './DynamicListField';
 import { REQUIRED_MESSAGE } from './constants';
+
+const monoFontFamily = Platform.select(fontFamilyMono);
 
 type Props = NativeStackScreenProps<AppStackParamList, 'FormEntry'>;
 
@@ -159,43 +163,47 @@ export function FormEntry({ navigation, route }: Props) {
       {appBar}
       <KeyboardAvoidingView style={styles.keyboardView} behavior="padding">
         <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>Cabeçalho</Text>
-          <Controller
-            control={control}
-            name="appointmentDate"
-            rules={{
-              required: REQUIRED_MESSAGE,
-              validate: (value) =>
-                isDateOnOrAfterToday(value) || 'A data não pode ser anterior a hoje',
-            }}
-            render={({ field, fieldState }) => (
-              <TextField
-                label="Data desta consulta"
-                error={fieldState.error?.message}
-                placeholder="dd/mm/aaaa"
-                value={field.value}
-                onChangeText={(text) => field.onChange(formatDateInput(text))}
-                testID="form-entry-appointment-date-input"
-              />
-            )}
-          />
-          <Controller
-            control={control}
-            name="lastAppointmentDate"
-            rules={{ required: REQUIRED_MESSAGE }}
-            render={({ field, fieldState }) => (
-              <TextField
-                label="Última consulta foi em"
-                error={fieldState.error?.message}
-                placeholder="dd/mm/aaaa"
-                value={field.value}
-                onChangeText={(text) => field.onChange(formatDateInput(text))}
-                testID="form-entry-last-appointment-date-input"
-              />
-            )}
-          />
+          <SectionLabel>Cabeçalho</SectionLabel>
+          <View style={styles.fieldRow}>
+            <Controller
+              control={control}
+              name="appointmentDate"
+              rules={{
+                required: REQUIRED_MESSAGE,
+                validate: (value) =>
+                  isDateOnOrAfterToday(value) || 'A data não pode ser anterior a hoje',
+              }}
+              render={({ field, fieldState }) => (
+                <TextField
+                  style={styles.fieldRowItem}
+                  label="Data desta consulta"
+                  error={fieldState.error?.message}
+                  placeholder="dd/mm/aaaa"
+                  value={field.value}
+                  onChangeText={(text) => field.onChange(formatDateInput(text))}
+                  testID="form-entry-appointment-date-input"
+                />
+              )}
+            />
+            <Controller
+              control={control}
+              name="lastAppointmentDate"
+              rules={{ required: REQUIRED_MESSAGE }}
+              render={({ field, fieldState }) => (
+                <TextField
+                  style={styles.fieldRowItem}
+                  label="Última consulta foi em"
+                  error={fieldState.error?.message}
+                  placeholder="dd/mm/aaaa"
+                  value={field.value}
+                  onChangeText={(text) => field.onChange(formatDateInput(text))}
+                  testID="form-entry-last-appointment-date-input"
+                />
+              )}
+            />
+          </View>
 
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>Panorama geral</Text>
+          <SectionLabel>Panorama geral</SectionLabel>
           <Controller
             control={control}
             name="overallMood"
@@ -232,7 +240,7 @@ export function FormEntry({ navigation, route }: Props) {
             testID="form-entry-overall-summary-input"
           />
 
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>No dia a dia</Text>
+          <SectionLabel>No dia a dia</SectionLabel>
           <TextareaField
             control={control}
             name="sleep"
@@ -258,7 +266,21 @@ export function FormEntry({ navigation, route }: Props) {
             testID="form-entry-concentration-input"
           />
 
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>Medicação</Text>
+          <SectionLabel
+            trailing={
+              <Text
+                style={[
+                  styles.sectionCount,
+                  { fontFamily: monoFontFamily, color: alpha(colors.text, 60) },
+                ]}
+              >
+                {medicationsArray.fields.length}{' '}
+                {medicationsArray.fields.length === 1 ? 'item' : 'itens'}
+              </Text>
+            }
+          >
+            Medicação
+          </SectionLabel>
           <DynamicListField
             control={control}
             name="medications"
@@ -280,9 +302,7 @@ export function FormEntry({ navigation, route }: Props) {
             testID="form-entry-medication-effects-input"
           />
 
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>
-            O que foi bem ou melhorou
-          </Text>
+          <SectionLabel>O que foi bem ou melhorou</SectionLabel>
           <TextareaField
             control={control}
             name="whatWentWell"
@@ -290,7 +310,7 @@ export function FormEntry({ navigation, route }: Props) {
             testID="form-entry-what-went-well-input"
           />
 
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>O que tem sido difícil</Text>
+          <SectionLabel>O que tem sido difícil</SectionLabel>
           <TextareaField
             control={control}
             name="whatHasBeenHard"
@@ -298,7 +318,7 @@ export function FormEntry({ navigation, route }: Props) {
             testID="form-entry-what-has-been-hard-input"
           />
 
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>Contexto</Text>
+          <SectionLabel>Contexto</SectionLabel>
           <TextareaField
             control={control}
             name="context"
@@ -306,7 +326,21 @@ export function FormEntry({ navigation, route }: Props) {
             testID="form-entry-context-input"
           />
 
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>Minhas perguntas</Text>
+          <SectionLabel
+            trailing={
+              <Text
+                style={[
+                  styles.sectionCount,
+                  { fontFamily: monoFontFamily, color: alpha(colors.text, 60) },
+                ]}
+              >
+                {questionsArray.fields.length}{' '}
+                {questionsArray.fields.length === 1 ? 'item' : 'itens'}
+              </Text>
+            }
+          >
+            Minhas perguntas
+          </SectionLabel>
           <DynamicListField
             control={control}
             name="questions"
@@ -316,7 +350,7 @@ export function FormEntry({ navigation, route }: Props) {
             testIdKind="question"
           />
 
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>Foco do dia</Text>
+          <SectionLabel>Foco do dia</SectionLabel>
           <TextareaField
             control={control}
             name="todayFocus"
@@ -324,16 +358,18 @@ export function FormEntry({ navigation, route }: Props) {
             testID="form-entry-today-focus-input"
           />
 
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>Durante a consulta</Text>
+          <SectionLabel>Durante a consulta</SectionLabel>
           <TextareaField
             control={control}
             name="consultationNotes"
             label="Anotações e orientações"
             testID="form-entry-consultation-notes-input"
           />
-
-          {saving ? <Spinner /> : null}
+        </ScrollView>
+        {saving ? <Spinner /> : null}
+        <BottomBar>
           <Button
+            style={styles.bottomBarButton}
             variant="secondary"
             onPress={onSaveDraft}
             disabled={saving}
@@ -342,13 +378,15 @@ export function FormEntry({ navigation, route }: Props) {
             Salvar rascunho
           </Button>
           <Button
+            style={styles.bottomBarButton}
+            variant="primary"
             onPress={handleSubmit((values) => onSave(values, 'submitted'))}
             disabled={saving}
             testID="form-entry-submit-button"
           >
             Enviar
           </Button>
-        </ScrollView>
+        </BottomBar>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );

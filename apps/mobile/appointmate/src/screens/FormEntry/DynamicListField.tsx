@@ -1,6 +1,6 @@
 import { View } from 'react-native';
 import { Controller, type Control, type UseFieldArrayReturn } from 'react-hook-form';
-import { Button, TextField, useTheme } from '@industry/mobile';
+import { Button, IconButton, TextField } from '@industry/mobile';
 import type { FormValues } from '../../domain/form';
 import { REQUIRED_MESSAGE } from './constants';
 import { styles } from './FormEntry.styles';
@@ -24,18 +24,17 @@ export function DynamicListField({
   addLabel,
   testIdKind,
 }: DynamicListFieldProps) {
-  const { colors } = useTheme();
-
   return (
     <>
       {fieldArray.fields.map((field, index) => (
-        <View key={field.id} style={[styles.dynamicRow, { backgroundColor: colors.surface2 }]}>
+        <View key={field.id} style={styles.dynamicRow}>
           <Controller
             control={control}
             name={`${name}.${index}.text`}
             rules={{ required: REQUIRED_MESSAGE }}
             render={({ field: f, fieldState }) => (
               <TextField
+                style={styles.dynamicRowInput}
                 label={itemLabel}
                 error={fieldState.error?.message}
                 value={f.value}
@@ -44,21 +43,22 @@ export function DynamicListField({
               />
             )}
           />
-          <Button
-            variant="ghost"
+          <IconButton
+            icon="Trash2"
+            variant="danger"
+            label="Remover"
             onPress={() => fieldArray.remove(index)}
             testID={`form-entry-remove-${testIdKind}-${index}-button`}
-          >
-            Remover
-          </Button>
+          />
         </View>
       ))}
       <Button
-        variant="secondary"
+        variant="ghost"
+        block
         onPress={() => fieldArray.append({ text: '' })}
         testID={`form-entry-add-${testIdKind}-button`}
       >
-        {addLabel}
+        {`+ ${addLabel}`}
       </Button>
     </>
   );
