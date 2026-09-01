@@ -48,8 +48,8 @@ describe('TicketCard', () => {
     expect(screen.getByText('Responsável: Bob')).toBeTruthy();
   });
 
-  it('does not render assignee row when assigneeName is null', () => {
+  it('shows "não designado" for the assignee row when assigneeName is null', () => {
     render(<TicketCard {...baseProps} assigneeName={null} />);
-    expect(screen.queryByText(/Responsável/)).toBeNull();
+    expect(screen.getByText('Responsável: não designado')).toBeTruthy();
   });
 });
