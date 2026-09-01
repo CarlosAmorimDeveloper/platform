@@ -2,12 +2,19 @@ import { StyleSheet } from 'react-native';
 import { fontSize, space } from '@industry/tokens';
 
 export const styles = StyleSheet.create({
-  commentCard: {
-    padding: space[3],
-    gap: space[1],
+  commentRow: { flexDirection: 'row', gap: space[3] },
+  avatar: {
+    width: 32,
+    height: 32,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
+  avatarText: { fontSize: 12, fontWeight: '600' },
+  commentBody: { flex: 1, gap: space[1] },
   commentHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  commentAuthor: { fontSize: 13, fontWeight: '600' },
-  commentDate: { fontSize: 12 },
+  commentAuthor: { fontSize: 14, fontWeight: '500' },
+  commentDate: { fontSize: 10 },
   commentText: { fontSize: fontSize.body },
+  deleteButton: { alignSelf: 'flex-start' },
 });

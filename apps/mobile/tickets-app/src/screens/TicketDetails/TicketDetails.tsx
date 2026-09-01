@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useRef } from 'react';
-import { View, Text, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import { Platform, View, Text, ScrollView, KeyboardAvoidingView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   AppBar,
+  Badge,
   Button,
   Select,
   Sheet,
@@ -11,12 +12,17 @@ import {
   useToast,
   type AppBarAction,
 } from '@industry/mobile';
-import { alpha } from '@industry/tokens';
+import { accentRamp, alpha, fontFamilyMono } from '@industry/tokens';
 import { useTicketDetails } from '../../hooks/useTicketDetails';
 import { useUserList } from '../../hooks/useUserList';
 import { useAuthStore } from '../../store/useAuthStore';
 import { ALL_STATUSES, STATUS_LABELS, STATUS_TONES } from '../../constants/ticketStatus';
-import { ALL_PRIORITIES, PRIORITY_LABELS, PRIORITY_TONES } from '../../constants/ticketPriority';
+import {
+  ALL_PRIORITIES,
+  PRIORITY_LABELS,
+  PRIORITY_TONES,
+  isPriorityMaximum,
+} from '../../constants/ticketPriority';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { AppStackParamList } from '../../navigation/types';
 import { useTicketEditMode } from './hooks/useTicketEditMode';
@@ -28,6 +34,40 @@ import { TicketOptionField } from './components/TicketOptionField';
 import { CommentItem } from './components/CommentItem';
 import { CommentInput } from './components/CommentInput';
 import { styles } from './TicketDetails.styles';
+
+const monoFontFamily = Platform.select(fontFamilyMono);
+const UNASSIGNED_LABEL = 'não designado';
+
+function SectionLabel({ children, trailing }: { children: string; trailing?: string }) {
+  const { colors } = useTheme();
+  return (
+    <View style={styles.sectionLabelRow}>
+      <Text style={[styles.sectionLabel, { color: accentRamp['300'] }]}>{children}</Text>
+      {trailing ? (
+        <Text
+          style={[
+            styles.sectionLabelCount,
+            { fontFamily: monoFontFamily, color: alpha(colors.text, 50) },
+          ]}
+        >
+          {trailing}
+        </Text>
+      ) : null}
+    </View>
+  );
+}
+
+function DiffRow({ label, from, to }: { label: string; from: string; to: string }) {
+  const { colors } = useTheme();
+  return (
+    <View style={[styles.diffRow, { borderBottomColor: colors.divider }]}>
+      <Text style={[styles.diffLabel, { color: alpha(colors.text, 50) }]}>{label}</Text>
+      <Text style={[styles.diffValue, { color: colors.text }]}>
+        {from} → {to}
+      </Text>
+    </View>
+  );
+}
 
 type Props = NativeStackScreenProps<AppStackParamList, 'TicketDetails'>;
 
@@ -66,8 +106,8 @@ export function TicketDetails({ route, navigation }: Props) {
     dismissError.current();
   }, [displayError]);
 
-  const assigneeName = useMemo(
-    () => users.find((u) => u.uid === editMode.draftAssigneeId)?.name ?? 'Nenhum',
+  const draftAssigneeName = useMemo(
+    () => users.find((u) => u.uid === editMode.draftAssigneeId)?.name ?? UNASSIGNED_LABEL,
     [users, editMode.draftAssigneeId],
   );
 
@@ -86,7 +126,11 @@ export function TicketDetails({ route, navigation }: Props) {
   }
 
   const appBar = (
-    <AppBar title="Detalhes do Chamado" onBackPress={() => navigation.goBack()} actions={actions} />
+    <AppBar
+      title={editMode.editing ? 'Editando' : 'Chamado'}
+      onBackPress={() => navigation.goBack()}
+      actions={actions}
+    />
   );
 
   if (loading) {
@@ -120,80 +164,111 @@ export function TicketDetails({ route, navigation }: Props) {
         keyboardVerticalOffset={80}
       >
         <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-          <Text style={[styles.title, { color: colors.text }]}>{ticket.title}</Text>
-          <Text style={[styles.description, { color: alpha(colors.text, 70) }]}>
-            {ticket.description}
-          </Text>
-
-          <TicketMetaRow
-            creatorName={ticket.creatorName}
-            createdAt={ticket.createdAt}
-            assigneeName={ticket.assigneeName}
-            editing={editMode.editing}
-          />
-
-          {editMode.editing && (
-            <View style={styles.paddedRow}>
-              <Select
-                label="Responsável"
-                value={editMode.draftAssigneeId}
-                onValueChange={(v) => editMode.setDraftAssigneeId(v)}
-                options={[
-                  { label: 'Nenhum', value: '' },
-                  ...users.map((u) => ({ label: u.name, value: u.uid })),
-                ]}
-              />
+          {!editMode.editing && (
+            <View style={styles.badgeRow}>
+              <Badge tone={STATUS_TONES[ticket.status]}>{STATUS_LABELS[ticket.status]}</Badge>
+              <Badge
+                tone={PRIORITY_TONES[ticket.priority]}
+                solid={isPriorityMaximum(ticket.priority)}
+              >
+                {PRIORITY_LABELS[ticket.priority]}
+              </Badge>
             </View>
           )}
 
-          <Text style={[styles.sectionLabel, { color: colors.text }]}>Status</Text>
-          <TicketOptionField
-            value={ticket.status}
-            editing={editMode.editing}
-            draft={editMode.draftStatus}
-            onChangeDraft={editMode.setDraftStatus}
-            options={ALL_STATUSES}
-            labels={STATUS_LABELS}
-            tones={STATUS_TONES}
-          />
+          <Text
+            style={[editMode.editing ? styles.titleEditing : styles.title, { color: colors.text }]}
+          >
+            {ticket.title}
+          </Text>
 
-          <Text style={[styles.sectionLabel, { color: colors.text }]}>Prioridade</Text>
-          <TicketOptionField
-            value={ticket.priority}
-            editing={editMode.editing}
-            draft={editMode.draftPriority}
-            onChangeDraft={editMode.setDraftPriority}
-            options={ALL_PRIORITIES}
-            labels={PRIORITY_LABELS}
-            tones={PRIORITY_TONES}
-          />
-
-          <Text style={[styles.sectionLabel, { color: colors.text }]}>Comentários</Text>
-
-          {comments.length === 0 && (
-            <Text style={[styles.emptyComments, { color: alpha(colors.text, 50) }]}>
-              Nenhum comentário ainda.
+          {!editMode.editing && (
+            <Text style={[styles.description, { color: alpha(colors.text, 80) }]}>
+              {ticket.description}
             </Text>
           )}
 
-          {comments.map((c) => (
-            <View style={styles.paddedRow} key={c.id}>
-              <CommentItem
-                comment={c}
-                canDelete={user?.uid === c.authorId || user?.role === 'admin'}
-                onDeletePress={() => commentDeletion.handleRequestDeleteComment(c.id)}
-              />
-            </View>
-          ))}
-
-          <View style={styles.paddedRow}>
-            <CommentInput
-              value={commentForm.commentText}
-              onChangeText={commentForm.setCommentText}
-              onSubmit={commentForm.handleAddComment}
-              disabled={!commentForm.commentText.trim() || commentForm.sendingComment}
+          {!editMode.editing && (
+            <TicketMetaRow
+              creatorName={ticket.creatorName}
+              createdAt={ticket.createdAt}
+              assigneeName={ticket.assigneeName}
+              editing={editMode.editing}
             />
-          </View>
+          )}
+
+          {editMode.editing && (
+            <>
+              <SectionLabel>Status</SectionLabel>
+              <View style={styles.paddedRow}>
+                <TicketOptionField
+                  value={ticket.status}
+                  editing={editMode.editing}
+                  draft={editMode.draftStatus}
+                  onChangeDraft={editMode.setDraftStatus}
+                  options={ALL_STATUSES}
+                  labels={STATUS_LABELS}
+                  tones={STATUS_TONES}
+                />
+              </View>
+
+              <SectionLabel>Prioridade</SectionLabel>
+              <View style={styles.paddedRow}>
+                <TicketOptionField
+                  value={ticket.priority}
+                  editing={editMode.editing}
+                  draft={editMode.draftPriority}
+                  onChangeDraft={editMode.setDraftPriority}
+                  options={ALL_PRIORITIES}
+                  labels={PRIORITY_LABELS}
+                  tones={PRIORITY_TONES}
+                />
+              </View>
+
+              <SectionLabel>Responsável</SectionLabel>
+              <View style={styles.paddedRow}>
+                <Select
+                  value={editMode.draftAssigneeId}
+                  onValueChange={(v) => editMode.setDraftAssigneeId(v)}
+                  options={[
+                    { label: UNASSIGNED_LABEL, value: '' },
+                    ...users.map((u) => ({ label: u.name, value: u.uid })),
+                  ]}
+                />
+              </View>
+            </>
+          )}
+
+          {!editMode.editing && (
+            <>
+              <SectionLabel trailing={String(comments.length)}>Comentários</SectionLabel>
+
+              {comments.length === 0 && (
+                <Text style={[styles.emptyComments, { color: alpha(colors.text, 50) }]}>
+                  Nenhum comentário ainda.
+                </Text>
+              )}
+
+              {comments.map((c) => (
+                <View style={styles.paddedRow} key={c.id}>
+                  <CommentItem
+                    comment={c}
+                    canDelete={user?.uid === c.authorId || user?.role === 'admin'}
+                    onDeletePress={() => commentDeletion.handleRequestDeleteComment(c.id)}
+                  />
+                </View>
+              ))}
+
+              <View style={styles.paddedRow}>
+                <CommentInput
+                  value={commentForm.commentText}
+                  onChangeText={commentForm.setCommentText}
+                  onSubmit={commentForm.handleAddComment}
+                  disabled={!commentForm.commentText.trim() || commentForm.sendingComment}
+                />
+              </View>
+            </>
+          )}
 
           <Sheet
             open={editMode.saveVisible}
@@ -210,13 +285,23 @@ export function TicketDetails({ route, navigation }: Props) {
               </>
             }
           >
-            <Text style={{ color: colors.text }}>
-              Status: <Text style={styles.bold}>{STATUS_LABELS[editMode.draftStatus]}</Text>
-              {'\n'}
-              Prioridade: <Text style={styles.bold}>{PRIORITY_LABELS[editMode.draftPriority]}</Text>
-              {'\n'}
-              Responsável: <Text style={styles.bold}>{assigneeName}</Text>
-            </Text>
+            <View style={styles.diffGrid}>
+              <DiffRow
+                label="Status"
+                from={STATUS_LABELS[ticket.status]}
+                to={STATUS_LABELS[editMode.draftStatus]}
+              />
+              <DiffRow
+                label="Prioridade"
+                from={PRIORITY_LABELS[ticket.priority]}
+                to={PRIORITY_LABELS[editMode.draftPriority]}
+              />
+              <DiffRow
+                label="Responsável"
+                from={ticket.assigneeName ?? UNASSIGNED_LABEL}
+                to={draftAssigneeName}
+              />
+            </View>
           </Sheet>
 
           <Sheet
