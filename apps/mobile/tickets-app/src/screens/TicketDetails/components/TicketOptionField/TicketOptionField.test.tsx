@@ -44,7 +44,7 @@ describe('TicketOptionField — status', () => {
       />,
     );
     expect(screen.getByText('Aberto')).toBeTruthy();
-    expect(screen.getByText('Em Progresso')).toBeTruthy();
+    expect(screen.getByText('Em andamento')).toBeTruthy();
     expect(screen.getByText('Concluído')).toBeTruthy();
   });
 
@@ -61,7 +61,7 @@ describe('TicketOptionField — status', () => {
       />,
     );
     expect(screen.getByText('Aberto')).toBeTruthy();
-    expect(screen.getByText('Em Progresso')).toBeTruthy();
+    expect(screen.getByText('Em andamento')).toBeTruthy();
     expect(screen.getByText('Concluído')).toBeTruthy();
   });
 

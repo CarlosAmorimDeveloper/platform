@@ -72,7 +72,7 @@ describe('AppStack', () => {
 
     expect(screen.getByText('Tem certeza que deseja sair?')).toBeTruthy();
 
-    fireEvent.press(screen.getByText('Sair'));
+    fireEvent.press(screen.getAllByText('Sair').at(-1)!);
 
     expect(mockLogout).toHaveBeenCalledTimes(1);
 
