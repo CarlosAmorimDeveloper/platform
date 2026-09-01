@@ -141,7 +141,7 @@ describe('FormDetail', () => {
     render(<FormDetail navigation={mockNavigation} route={makeRoute('form-1')} />);
 
     await waitFor(() => {
-      expect(screen.getByText('20/04/2026')).toBeTruthy();
+      expect(screen.getByText('20 de abril de 2026')).toBeTruthy();
     }, ASYNC_TIMEOUT);
     expect(screen.getByText('10/01/2026')).toBeTruthy();
     expect(screen.getByTestId('form-detail-overall-mood').props.children).toBe('Estável');
@@ -160,7 +160,7 @@ describe('FormDetail', () => {
     render(<FormDetail navigation={mockNavigation} route={makeRoute('form-1')} />);
 
     await waitFor(() => {
-      expect(screen.getByText('20/04/2026')).toBeTruthy();
+      expect(screen.getByText('20 de abril de 2026')).toBeTruthy();
     }, ASYNC_TIMEOUT);
     expect(screen.queryByText('Medicamentos e doses')).toBeNull();
     expect(screen.queryByText('Perguntas')).toBeNull();

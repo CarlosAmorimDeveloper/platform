@@ -3,6 +3,8 @@ import {
   MOOD_OPTIONS,
   formatDate,
   formatDateInput,
+  formatDateLong,
+  formatDateTimeShort,
   isDateOnOrAfterToday,
   isFormValuesEmpty,
 } from './form';
@@ -109,6 +111,28 @@ describe('formatDate', () => {
   it('formats a date as dd/mm/aaaa, hh:mm in pt-BR', () => {
     const date = new Date(2026, 2, 15, 9, 5);
     expect(formatDate(date)).toBe('15/03/2026, 09:05');
+  });
+});
+
+describe('formatDateLong', () => {
+  it('returns null for an incomplete or unparseable date', () => {
+    expect(formatDateLong('')).toBeNull();
+    expect(formatDateLong('15/03')).toBeNull();
+  });
+
+  it('formats a "dd/mm/aaaa" text field as a long pt-BR date', () => {
+    expect(formatDateLong('28/02/2026')).toBe('28 de fevereiro de 2026');
+  });
+});
+
+describe('formatDateTimeShort', () => {
+  it('returns null for a null date', () => {
+    expect(formatDateTimeShort(null)).toBeNull();
+  });
+
+  it('formats a date as "dd mon aaaa · hh:mm" in pt-BR', () => {
+    const date = new Date(2026, 1, 27, 21, 10);
+    expect(formatDateTimeShort(date)).toBe('27 fev 2026 · 21:10');
   });
 });
 
