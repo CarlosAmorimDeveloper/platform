@@ -1,14 +1,17 @@
 import { useEffect } from 'react';
-import { View, Text, FlatList } from 'react-native';
+import { Platform, View, Text, FlatList } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { AppBar, Spinner, useTheme, useToast } from '@industry/mobile';
-import { alpha } from '@industry/tokens';
+import { AppBar, Button, EmptyState, Icon, Spinner, useTheme, useToast } from '@industry/mobile';
+import { accentRamp, alpha, fontFamilyMono } from '@industry/tokens';
 import { useTicketList } from '../../hooks/useTicketList';
+import { useAuthStore } from '../../store/useAuthStore';
 import { STATUS_LABELS } from '../../constants/ticketStatus';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { AppStackParamList } from '../../navigation/types';
 import { styles } from './TicketList.styles';
 import { TicketCard } from './components/TicketCard';
+
+const monoFontFamily = Platform.select(fontFamilyMono);
 
 type Props = NativeStackScreenProps<AppStackParamList, 'TicketList'>;
 
@@ -17,6 +20,7 @@ export function TicketList({ route, navigation }: Props) {
   const toast = useToast();
   const { status } = route.params;
   const { tickets, loading, error, clearError } = useTicketList(status);
+  const isAdmin = useAuthStore((s) => s.user?.role === 'admin');
 
   useEffect(() => {
     if (!error) return;
@@ -42,9 +46,26 @@ export function TicketList({ route, navigation }: Props) {
     );
   }
 
+  const statusLabelLower = status ? STATUS_LABELS[status].toLowerCase() : null;
+
   return (
     <SafeAreaView edges={['top']} style={styles.flex}>
       {appBar}
+      <View style={[styles.scopeRow, { borderBottomColor: colors.divider }]}>
+        <Text style={[styles.scopeCount, { fontFamily: monoFontFamily, color: colors.text }]}>
+          {tickets.length} {tickets.length === 1 ? 'chamado' : 'chamados'}
+        </Text>
+        <View style={[styles.scopeTag, { borderColor: isAdmin ? colors.accent : colors.divider }]}>
+          <Text
+            style={[
+              styles.scopeTagText,
+              { color: isAdmin ? colors.accent : alpha(colors.text, 70) },
+            ]}
+          >
+            {isAdmin ? 'Admin · workspace todo' : 'Padrão · meus chamados'}
+          </Text>
+        </View>
+      </View>
       <View style={[styles.container, { backgroundColor: colors.bg }]}>
         <FlatList
           data={tickets}
@@ -64,9 +85,20 @@ export function TicketList({ route, navigation }: Props) {
           )}
           ListEmptyComponent={
             <View style={styles.center}>
-              <Text style={[styles.emptyText, { color: alpha(colors.text, 70) }]}>
-                Nenhum ticket encontrado.
-              </Text>
+              <EmptyState
+                icon={<Icon name="Inbox" size={30} color={accentRamp['400']} />}
+                title="Nada com este status"
+                body={
+                  statusLabelLower
+                    ? `Você não tem chamados ${statusLabelLower}. O filtro vem da Dashboard e pode ser trocado voltando para lá.`
+                    : 'Nenhum ticket encontrado.'
+                }
+                action={
+                  <Button variant="secondary" onPress={() => navigation.navigate('Dashboard')}>
+                    Voltar ao painel
+                  </Button>
+                }
+              />
             </View>
           }
           contentContainerStyle={tickets.length === 0 ? styles.fillHeight : styles.list}
