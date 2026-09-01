@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/react-native';
-import { accentRamp, color } from '@industry/tokens';
+import { accentRamp, color, danger } from '@industry/tokens';
 import { IconButton, resolveIconButtonBackground, resolveIconButtonIconColor } from './IconButton';
 
 describe('resolveIconButtonBackground', () => {
@@ -12,6 +12,11 @@ describe('resolveIconButtonBackground', () => {
     expect(resolveIconButtonBackground('ghost', false)).toBe('transparent');
     expect(resolveIconButtonBackground('ghost', true)).not.toBe('transparent');
   });
+
+  it('stays transparent for the danger variant until pressed', () => {
+    expect(resolveIconButtonBackground('danger', false)).toBe('transparent');
+    expect(resolveIconButtonBackground('danger', true)).not.toBe('transparent');
+  });
 });
 
 describe('resolveIconButtonIconColor', () => {
@@ -21,6 +26,10 @@ describe('resolveIconButtonIconColor', () => {
 
   it('uses an accent tone for ghost', () => {
     expect(resolveIconButtonIconColor('ghost')).toBe(accentRamp['300']);
+  });
+
+  it('uses a danger tone for danger', () => {
+    expect(resolveIconButtonIconColor('danger')).toBe(danger['300']);
   });
 });
 
