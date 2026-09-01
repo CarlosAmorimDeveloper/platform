@@ -3,7 +3,7 @@ import { View, Text, KeyboardAvoidingView, Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AppBar, Button, Spinner, TextField, useTheme, useToast } from '@industry/mobile';
-import { alpha } from '@industry/tokens';
+import { accentRamp } from '@industry/tokens';
 import { register, mapFirebaseAuthError } from '../../services/authService';
 import { passwordMinLengthError } from '../../domain/validation';
 import { useAuthStore } from '../../store/useAuthStore';
@@ -45,15 +45,28 @@ export function Register({ navigation }: Props) {
 
   return (
     <SafeAreaView edges={['top']} style={styles.keyboardView}>
-      <AppBar title="Cadastro" onBackPress={() => navigation.goBack()} />
+      <AppBar title="Criar conta" onBackPress={() => navigation.goBack()} />
       <KeyboardAvoidingView
         style={styles.keyboardView}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
         <View style={[styles.container, { backgroundColor: colors.bg }]}>
-          <Text style={[styles.subtitle, { color: alpha(colors.text, 70) }]}>
-            Preencha os dados para criar sua conta
-          </Text>
+          {isFirstUser && (
+            <View
+              style={[
+                styles.adminNotice,
+                { backgroundColor: accentRamp['900'], borderLeftColor: colors.accent },
+              ]}
+            >
+              <Text style={[styles.adminNoticeKicker, { color: accentRamp['200'] }]}>
+                Primeiro acesso
+              </Text>
+              <Text style={[styles.adminNoticeText, { color: colors.text }]}>
+                Esta conta abre um workspace novo e você fica como administrador dele. Para entrar
+                num workspace existente, peça ao administrador para criar seu acesso.
+              </Text>
+            </View>
+          )}
           <View style={styles.form}>
             <TextField
               label="Nome"
@@ -72,28 +85,25 @@ export function Register({ navigation }: Props) {
             <TextField
               label="Senha"
               error={passwordError}
+              hint="Mínimo de 6 caracteres"
               placeholder="Mínimo 6 caracteres"
               secureTextEntry
               secureToggle
               value={password}
               onChangeText={setPassword}
             />
-            {isFirstUser && (
-              <View style={[styles.adminNotice, { backgroundColor: colors.surface2 }]}>
-                <Text style={[styles.adminNoticeText, { color: colors.text }]}>
-                  Esta será a primeira conta criada e terá perfil de Administrador.
-                </Text>
-              </View>
-            )}
             {loading ? <Spinner /> : null}
             <Button
+              variant="primary"
+              framed
               onPress={handleRegister}
               disabled={!name.trim() || !email.trim() || password.length < 6 || loading}
             >
               Cadastrar
             </Button>
             <Button
-              variant="secondary"
+              variant="ghost"
+              block
               onPress={() => navigation.reset({ index: 0, routes: [{ name: 'Login' }] })}
             >
               Voltar para o login
