@@ -1,5 +1,6 @@
 import { render } from '@testing-library/react-native';
 import { Text } from 'react-native';
+import { color } from '@industry/tokens';
 import { EmptyState } from './EmptyState';
 
 describe('EmptyState', () => {
@@ -35,5 +36,12 @@ describe('EmptyState', () => {
     const { getByText } = render(<EmptyState body="Só corpo" />);
 
     expect(getByText('Só corpo')).toBeTruthy();
+  });
+
+  it('colors the title with the theme text color, not the default black', () => {
+    const { getByText } = render(<EmptyState title="Nenhum formulário" />);
+
+    const styles = [getByText('Nenhum formulário').props.style].flat();
+    expect(styles.some((s) => s?.color === color.text)).toBe(true);
   });
 });

@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { DarkTheme, NavigationContainer } from '@react-navigation/native';
 import type { Theme } from '@react-navigation/native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ToastProvider, useTheme } from '@industry/mobile';
 import { LoadingView } from './src/components/LoadingView';
 import { AuthProvider, useAuth } from './src/context/AuthContext';
@@ -45,10 +46,12 @@ function RootNavigator() {
 
 export default function App() {
   return (
-    <ToastProvider>
-      <AuthProvider>
-        <RootNavigator />
-      </AuthProvider>
-    </ToastProvider>
+    <SafeAreaProvider>
+      <ToastProvider>
+        <AuthProvider>
+          <RootNavigator />
+        </AuthProvider>
+      </ToastProvider>
+    </SafeAreaProvider>
   );
 }

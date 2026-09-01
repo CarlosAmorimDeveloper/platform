@@ -1,4 +1,5 @@
 import { render } from '@testing-library/react-native';
+import { alpha, color } from '@industry/tokens';
 import { Progress, Spinner } from './Progress';
 
 describe('Progress', () => {
@@ -49,6 +50,15 @@ describe('Progress', () => {
     const { getByText } = render(<Progress value={999} max={100} />);
 
     expect(getByText('100%')).toBeTruthy();
+  });
+
+  it('colors the label and percentage with the theme text color, not the default black', () => {
+    const { getByText } = render(<Progress value={33} label="Enviando" />);
+
+    const labelStyles = [getByText('Enviando').props.style].flat();
+    const valueStyles = [getByText('33%').props.style].flat();
+    expect(labelStyles.some((s) => s?.color === alpha(color.text, 60))).toBe(true);
+    expect(valueStyles.some((s) => s?.color === alpha(color.text, 60))).toBe(true);
   });
 });
 

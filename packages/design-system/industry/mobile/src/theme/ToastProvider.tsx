@@ -8,6 +8,7 @@ import {
   useState,
 } from 'react';
 import { View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { ReactNode } from 'react';
 import { space } from '@industry/tokens';
 import { Toast, type ToastTone } from '../components/core/Toast';
@@ -44,6 +45,7 @@ export function useToast(): ToastContextValue {
 
 /** Mount once near the app root, wrapping the whole tree. */
 export function ToastProvider({ children }: { children: ReactNode }) {
+  const insets = useSafeAreaInsets();
   const [visible, setVisible] = useState<QueuedToast[]>([]);
   const [queue, setQueue] = useState<QueuedToast[]>([]);
   const idCounter = useRef(0);
@@ -98,6 +100,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     <ToastContext.Provider value={contextValue}>
       <View style={{ flex: 1 }}>{children}</View>
       <View
+        testID="toast-stack"
         pointerEvents="box-none"
         accessibilityLiveRegion="polite"
         style={{
@@ -107,7 +110,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
           right: 0,
           alignItems: 'center',
           gap: space[2],
-          paddingTop: space[6],
+          paddingTop: space[6] + insets.top,
           zIndex: 1000,
         }}
       >

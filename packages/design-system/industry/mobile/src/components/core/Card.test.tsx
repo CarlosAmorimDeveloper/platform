@@ -1,5 +1,6 @@
 import { render } from '@testing-library/react-native';
 import { Text } from 'react-native';
+import { color } from '@industry/tokens';
 import { Card } from './Card';
 
 describe('Card', () => {
@@ -56,5 +57,12 @@ describe('Card', () => {
     const { queryByText } = render(<Card body="Só corpo" />);
 
     expect(queryByText('Só corpo')).toBeTruthy();
+  });
+
+  it('colors the title with the theme text color, not the default black', () => {
+    const { getByText } = render(<Card title="Título" />);
+
+    const styles = [getByText('Título').props.style].flat();
+    expect(styles.some((s) => s?.color === color.text)).toBe(true);
   });
 });
