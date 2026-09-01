@@ -1,18 +1,27 @@
-import { Pressable, Text, View } from 'react-native';
-import { Badge, Card, useTheme } from '@industry/mobile';
-import { alpha } from '@industry/tokens';
+import { Pressable, StyleSheet } from 'react-native';
+import { Badge, Card } from '@industry/mobile';
+import { space } from '@industry/tokens';
+import { formatDate } from '../../domain/form';
 import type { FormSummary } from '../../services/formsService';
-import { styles } from './Home.styles';
 
 const STATUS_LABELS: Record<FormSummary['status'], string> = {
   draft: 'Rascunho',
   submitted: 'Salvo',
 };
 
+const STATUS_TONES: Record<FormSummary['status'], 'warning' | 'success'> = {
+  draft: 'warning',
+  submitted: 'success',
+};
+
+const styles = StyleSheet.create({
+  card: { marginBottom: space[3] },
+  badge: { position: 'absolute', top: space[4], right: space[4] },
+});
+
 export function FormCard({ form, onPress }: { form: FormSummary; onPress: () => void }) {
-  const { colors } = useTheme();
-  const isSubmitted = form.status === 'submitted';
-  const dateLabel = form.appointmentDate || 'sem data';
+  const dateLabel = form.appointmentDate || 'Sem data';
+  const filledAt = formatDate(form.createdAt);
   const accessibilityLabel = `Formulário de consulta em ${dateLabel}, ${STATUS_LABELS[form.status].toLowerCase()}`;
 
   return (
@@ -21,22 +30,16 @@ export function FormCard({ form, onPress }: { form: FormSummary; onPress: () => 
       testID={`home-form-card-${form.id}`}
       accessibilityLabel={accessibilityLabel}
     >
-      <Card style={styles.card}>
-        <View style={styles.cardHeader}>
-          <View>
-            <Text style={{ color: alpha(colors.text, 70) }}>Data da consulta:</Text>
-            <Text style={[styles.cardDate, { color: colors.text }]} numberOfLines={1}>
-              {form.appointmentDate || 'Sem data'}
-            </Text>
-          </View>
-
-          <Badge tone={isSubmitted ? 'success' : 'neutral'}>{STATUS_LABELS[form.status]}</Badge>
-        </View>
-        {form.overallSummary ? (
-          <Text style={[styles.cardSummary, { color: alpha(colors.text, 70) }]} numberOfLines={2}>
-            {form.overallSummary}
-          </Text>
-        ) : null}
+      <Card
+        framed
+        style={styles.card}
+        kicker="Consulta"
+        title={dateLabel}
+        meta={filledAt ? `Preenchido em ${filledAt}` : undefined}
+      >
+        <Badge tone={STATUS_TONES[form.status]} style={styles.badge}>
+          {STATUS_LABELS[form.status]}
+        </Badge>
       </Card>
     </Pressable>
   );

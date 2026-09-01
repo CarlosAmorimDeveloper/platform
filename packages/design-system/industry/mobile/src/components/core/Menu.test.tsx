@@ -172,6 +172,46 @@ describe('Menu', () => {
     expect(getByText('Sem chave')).toBeTruthy();
   });
 
+  it('renders the header above the items when provided', () => {
+    const { getByTestId, getByText } = render(
+      <Menu trigger={<Text>Ações</Text>} header="Período" items={ITEMS} testID="menu" />,
+    );
+
+    fireEvent.press(getByTestId('menu'));
+
+    expect(getByText('Período')).toBeTruthy();
+  });
+
+  it('does not render a header by default', () => {
+    const { getByTestId, queryByText } = render(
+      <Menu trigger={<Text>Ações</Text>} items={ITEMS} testID="menu" />,
+    );
+
+    fireEvent.press(getByTestId('menu'));
+
+    expect(queryByText('Período')).toBeNull();
+  });
+
+  it('shows a checkmark on the selected item and not on the others', () => {
+    const { getByTestId } = render(
+      <Menu
+        trigger={<Text>Ações</Text>}
+        items={[
+          { key: 'a', label: 'Todos', selected: true },
+          { key: 'b', label: 'Últimos 7 dias' },
+        ]}
+        testID="menu"
+      />,
+    );
+
+    fireEvent.press(getByTestId('menu'));
+
+    expect(getByTestId('menu-item-a').props.style).toMatchObject({
+      backgroundColor: expect.any(String),
+    });
+    expect(getByTestId('menu-item-b').props.style.backgroundColor).toBe('transparent');
+  });
+
   it('tints an item darker while pressed', () => {
     const { getByTestId } = render(
       <Menu trigger={<Text>Ações</Text>} items={ITEMS} testID="menu" />,
