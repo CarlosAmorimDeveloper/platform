@@ -63,7 +63,7 @@ describe('CreateUser', () => {
     const { goBack } = renderCreateUser();
 
     expect(goBack).toHaveBeenCalledTimes(1);
-    expect(screen.queryByText('Criar Usuário')).toBeNull();
+    expect(screen.queryByText('Criar usuário')).toBeNull();
   });
 
   it('renders name, email, password and role fields for admin', () => {
@@ -74,7 +74,7 @@ describe('CreateUser', () => {
     expect(screen.getByPlaceholderText('email@exemplo.com')).toBeTruthy();
     expect(screen.getByPlaceholderText('Mínimo 6 caracteres')).toBeTruthy();
     expect(screen.getByText('Perfil')).toBeTruthy();
-    expect(screen.getAllByText('Criar Usuário')).toHaveLength(2);
+    expect(screen.getAllByText('Criar usuário')).toHaveLength(2);
   });
 
   it('shows password validation error for short password', () => {
@@ -90,7 +90,7 @@ describe('CreateUser', () => {
     mockCurrentUser = adminUser;
     renderCreateUser();
 
-    fireEvent.press(screen.getAllByText('Criar Usuário').at(-1)!);
+    fireEvent.press(screen.getAllByText('Criar usuário').at(-1)!);
 
     expect(mockCreateUser).not.toHaveBeenCalled();
   });
@@ -126,7 +126,7 @@ describe('CreateUser', () => {
     mockCreateUser.mockResolvedValue(undefined);
 
     await act(async () => {
-      fireEvent.press(screen.getAllByText('Criar Usuário').at(-1)!);
+      fireEvent.press(screen.getAllByText('Criar usuário').at(-1)!);
     });
 
     expect(mockCreateUser).toHaveBeenCalledWith(
@@ -148,7 +148,7 @@ describe('CreateUser', () => {
     fireEvent.changeText(screen.getByPlaceholderText('Mínimo 6 caracteres'), 'secret1');
 
     await act(async () => {
-      fireEvent.press(screen.getAllByText('Criar Usuário').at(-1)!);
+      fireEvent.press(screen.getAllByText('Criar usuário').at(-1)!);
     });
 
     expect(screen.getByText('Falha de rede')).toBeTruthy();
@@ -164,7 +164,7 @@ describe('CreateUser', () => {
     fireEvent.changeText(screen.getByPlaceholderText('Mínimo 6 caracteres'), 'secret1');
 
     await act(async () => {
-      fireEvent.press(screen.getAllByText('Criar Usuário').at(-1)!);
+      fireEvent.press(screen.getAllByText('Criar usuário').at(-1)!);
     });
 
     expect(screen.getByText('Falha ao criar usuário')).toBeTruthy();
@@ -184,7 +184,7 @@ describe('CreateUser', () => {
     fireEvent.changeText(screen.getByPlaceholderText('Nome completo'), 'Alice');
     fireEvent.changeText(screen.getByPlaceholderText('email@exemplo.com'), 'alice@test.com');
     fireEvent.changeText(screen.getByPlaceholderText('Mínimo 6 caracteres'), 'secret1');
-    fireEvent.press(screen.getAllByText('Criar Usuário').at(-1)!);
+    fireEvent.press(screen.getAllByText('Criar usuário').at(-1)!);
 
     await waitFor(() => {
       expect(screen.getByRole('progressbar')).toBeTruthy();
@@ -206,7 +206,7 @@ describe('CreateUser', () => {
     fireEvent.changeText(screen.getByPlaceholderText('Mínimo 6 caracteres'), 'secret1');
 
     await act(async () => {
-      fireEvent.press(screen.getAllByText('Criar Usuário').at(-1)!);
+      fireEvent.press(screen.getAllByText('Criar usuário').at(-1)!);
     });
 
     expect(mockCreateUser).toHaveBeenCalledWith(
