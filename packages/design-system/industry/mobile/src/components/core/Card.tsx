@@ -66,6 +66,7 @@ export function Card({
             fontWeight: fontWeight.heading,
             fontSize: 19,
             lineHeight: 23,
+            color: color.text,
           }}
         >
           {title}

@@ -1,5 +1,6 @@
 import { act, fireEvent, render, renderHook, screen } from '@testing-library/react-native';
 import { Text } from 'react-native';
+import { space } from '@industry/tokens';
 import { ToastProvider, useToast } from './ToastProvider';
 
 describe('useToast', () => {
@@ -128,6 +129,22 @@ describe('ToastProvider', () => {
     unmount();
 
     expect(() => act(() => jest.advanceTimersByTime(4000))).not.toThrow();
+  });
+
+  it('pushes the toast stack below the top safe-area inset using a spacing token', () => {
+    render(
+      <ToastProvider>
+        <Trigger title="Salvo com sucesso" />
+      </ToastProvider>,
+    );
+
+    const style = [screen.getByTestId('toast-stack').props.style].flat();
+    const paddingTop = style.reduce((found, s) => found ?? s?.paddingTop, undefined);
+
+    // The mocked useSafeAreaInsets() always returns top: 0 here, so this
+    // pins down that the gap comes from `space[6]` (not a hardcoded number)
+    // plus whatever the real device's inset turns out to be.
+    expect(paddingTop).toBe(space[6]);
   });
 
   it('respects a custom duration', () => {

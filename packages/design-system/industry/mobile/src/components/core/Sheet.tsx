@@ -65,6 +65,7 @@ export function Sheet({
                 fontFamily: fontFamily.heading,
                 fontWeight: fontWeight.heading,
                 fontSize: 21,
+                color: color.text,
               }}
             >
               {title}

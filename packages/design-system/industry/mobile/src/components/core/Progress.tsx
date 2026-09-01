@@ -38,9 +38,13 @@ export function Progress({
             marginBottom: 5,
           }}
         >
-          <Text style={{ fontFamily: fontFamily.body, fontSize: 11, opacity: 0.6 }}>{label}</Text>
+          <Text style={{ fontFamily: fontFamily.body, fontSize: 11, color: alpha(color.text, 60) }}>
+            {label}
+          </Text>
           {showValue ? (
-            <Text style={{ fontFamily: fontFamily.body, fontSize: 11, opacity: 0.6 }}>
+            <Text
+              style={{ fontFamily: fontFamily.body, fontSize: 11, color: alpha(color.text, 60) }}
+            >
               {Math.round(pct)}%
             </Text>
           ) : null}
