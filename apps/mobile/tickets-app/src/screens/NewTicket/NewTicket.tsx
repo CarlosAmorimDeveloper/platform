@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { ScrollView } from 'react-native';
+import { Platform, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { AppBar, Button, Select, Spinner, TextField, useToast } from '@industry/mobile';
+import { AppBar, Button, Select, Spinner, TextField, useTheme, useToast } from '@industry/mobile';
+import { accentRamp, alpha, fontFamilyMono } from '@industry/tokens';
 import { createTicket } from '../../services/ticketService';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useUserList } from '../../hooks/useUserList';
@@ -10,13 +11,27 @@ import {
   PRIORITY_LABELS,
   type TicketPriority,
 } from '../../constants/ticketPriority';
+import { BottomBar } from '../../components/BottomBar';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { AppStackParamList } from '../../navigation/types';
 import { styles } from './NewTicket.styles';
 
+const monoFontFamily = Platform.select(fontFamilyMono);
+
 type Props = NativeStackScreenProps<AppStackParamList, 'NewTicket'>;
 
+function SectionLabel({ children }: { children: string }) {
+  const { colors } = useTheme();
+  return (
+    <View style={styles.sectionLabelBlock}>
+      <Text style={[styles.sectionLabel, { color: accentRamp['300'] }]}>{children}</Text>
+      <View style={[styles.sectionHairline, { backgroundColor: colors.divider }]} />
+    </View>
+  );
+}
+
 export function NewTicket({ navigation }: Props) {
+  const { colors } = useTheme();
   const toast = useToast();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -57,25 +72,28 @@ export function NewTicket({ navigation }: Props) {
 
   return (
     <SafeAreaView edges={['top']} style={styles.flex}>
-      <AppBar title="Novo Chamado" onBackPress={() => navigation.goBack()} />
+      <AppBar title="Novo chamado" onBackPress={() => navigation.goBack()} />
       <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+        <SectionLabel>Classificação</SectionLabel>
         <Select
           label="Prioridade"
           value={priority}
           onValueChange={(v) => setPriority(v as TicketPriority)}
           options={ALL_PRIORITIES.map((p) => ({ label: PRIORITY_LABELS[p], value: p }))}
         />
-        {isAdmin && (
-          <Select
-            label="Responsável"
-            value={assigneeId}
-            onValueChange={(v) => setAssigneeId(v)}
-            options={[
-              { label: 'Nenhum', value: '' },
-              ...users.map((u) => ({ label: u.name, value: u.uid })),
-            ]}
-          />
-        )}
+        <Select
+          label="Responsável"
+          value={assigneeId}
+          onValueChange={(v) => setAssigneeId(v)}
+          disabled={!isAdmin}
+          hint={isAdmin ? undefined : 'Somente administradores designam responsável'}
+          options={[
+            { label: 'Não designado', value: '' },
+            ...users.map((u) => ({ label: u.name, value: u.uid })),
+          ]}
+        />
+
+        <SectionLabel>Descrição</SectionLabel>
         <TextField
           label="Título"
           placeholder="Título do chamado"
@@ -83,18 +101,34 @@ export function NewTicket({ navigation }: Props) {
           onChangeText={setTitle}
         />
         <TextField
-          label="Descrição"
+          label="Detalhes"
           placeholder="Descreva o problema..."
           value={description}
           onChangeText={setDescription}
           multiline
-          numberOfLines={4}
+          numberOfLines={5}
         />
+
+        <Text
+          style={[styles.metaLine, { fontFamily: monoFontFamily, color: alpha(colors.text, 50) }]}
+        >
+          status: open · criador: sessão atual · workspace: implícito
+        </Text>
+
         {loading ? <Spinner /> : null}
-        <Button onPress={handleSave} disabled={!title.trim() || loading}>
+      </ScrollView>
+      <BottomBar>
+        <Button
+          style={styles.submitButton}
+          variant="primary"
+          framed
+          block
+          onPress={handleSave}
+          disabled={!title.trim() || loading}
+        >
           Salvar Ticket
         </Button>
-      </ScrollView>
+      </BottomBar>
     </SafeAreaView>
   );
 }
