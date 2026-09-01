@@ -81,7 +81,9 @@ describe('Register', () => {
 
     await waitFor(() => {
       expect(
-        screen.getByText('Esta será a primeira conta criada e terá perfil de Administrador.'),
+        screen.getByText(
+          'Esta conta abre um workspace novo e você fica como administrador dele. Para entrar num workspace existente, peça ao administrador para criar seu acesso.',
+        ),
       ).toBeTruthy();
     });
   });
@@ -98,7 +100,9 @@ describe('Register', () => {
 
     await waitFor(() => {
       expect(
-        screen.queryByText('Esta será a primeira conta criada e terá perfil de Administrador.'),
+        screen.queryByText(
+          'Esta conta abre um workspace novo e você fica como administrador dele. Para entrar num workspace existente, peça ao administrador para criar seu acesso.',
+        ),
       ).toBeNull();
     });
   });
