@@ -26,7 +26,8 @@ export function ForgotPassword({ navigation }: Props) {
       await sendPasswordReset(email);
       toast.show({
         tone: 'success',
-        title: 'Se este e-mail estiver cadastrado, você receberá um link em instantes.',
+        title: 'Link enviado',
+        description: 'Voltando para o login em 2 segundos.',
       });
       setTimeout(() => backToLogin(navigation), 2000);
     } catch (err: unknown) {
@@ -38,7 +39,7 @@ export function ForgotPassword({ navigation }: Props) {
 
   return (
     <SafeAreaView edges={['top']} style={styles.keyboardView}>
-      <AppBar title="Recuperar Senha" onBackPress={() => navigation.goBack()} />
+      <AppBar title="Recuperar senha" onBackPress={() => navigation.goBack()} />
       <KeyboardAvoidingView
         style={styles.keyboardView}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -57,11 +58,14 @@ export function ForgotPassword({ navigation }: Props) {
               autoCapitalize="none"
             />
             {loading ? <Spinner /> : null}
-            <Button onPress={handleResetPassword} disabled={!email || loading}>
+            <Button
+              variant="primary"
+              block
+              framed
+              onPress={handleResetPassword}
+              disabled={!email || loading}
+            >
               Enviar link
-            </Button>
-            <Button variant="ghost" onPress={() => backToLogin(navigation)}>
-              Voltar ao login
             </Button>
           </View>
         </View>

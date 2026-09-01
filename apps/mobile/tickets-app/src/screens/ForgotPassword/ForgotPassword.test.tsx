@@ -103,9 +103,8 @@ describe('ForgotPassword', () => {
     });
 
     await waitFor(() => {
-      expect(
-        screen.getByText('Se este e-mail estiver cadastrado, você receberá um link em instantes.'),
-      ).toBeTruthy();
+      expect(screen.getByText('Link enviado')).toBeTruthy();
+      expect(screen.getByText('Voltando para o login em 2 segundos.')).toBeTruthy();
     }, ASYNC_TIMEOUT);
   }, 40000);
 
@@ -131,9 +130,7 @@ describe('ForgotPassword', () => {
       fireEvent.press(screen.getByText('Enviar link'));
     });
 
-    expect(
-      screen.getByText('Se este e-mail estiver cadastrado, você receberá um link em instantes.'),
-    ).toBeTruthy();
+    expect(screen.getByText('Link enviado')).toBeTruthy();
 
     act(() => {
       jest.advanceTimersByTime(2000);
@@ -144,17 +141,6 @@ describe('ForgotPassword', () => {
       routes: [{ name: 'Login' }],
     });
     jest.useRealTimers();
-  });
-
-  it('resets the navigation stack to Login on "Voltar ao login" press', () => {
-    render(<ForgotPassword navigation={mockNavigation} route={mockRoute} />);
-
-    fireEvent.press(screen.getByText('Voltar ao login'));
-
-    expect(mockNavigation.reset).toHaveBeenCalledWith({
-      index: 0,
-      routes: [{ name: 'Login' }],
-    });
   });
 
   it('navigates back when the AppBar back button is pressed', () => {
