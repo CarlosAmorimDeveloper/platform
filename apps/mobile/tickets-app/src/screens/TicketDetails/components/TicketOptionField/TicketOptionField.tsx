@@ -1,5 +1,5 @@
-import { View, FlatList } from 'react-native';
-import { Badge, Button, type BadgeTone } from '@industry/mobile';
+import { View } from 'react-native';
+import { Badge, RadioGroup, SegmentedControl, type BadgeTone } from '@industry/mobile';
 import { sharedOptionFieldStyles as styles } from '../sharedOptionField.styles';
 
 interface Props<T extends string> {
@@ -12,8 +12,10 @@ interface Props<T extends string> {
   tones: Record<T, BadgeTone>;
 }
 
-const ListEdge = () => <View style={styles.listLeadingSpace} />;
-const ListSeparator = () => <View style={styles.listSeparator} />;
+// 3 short-label options (status) fit a segmented control; 5 longer labels
+// (priority) would truncate in one, so they render as stacked radios
+// instead — matches the spec's rule for which widget each field gets.
+const SEGMENTED_MAX_OPTIONS = 3;
 
 export function TicketOptionField<T extends string>({
   value,
@@ -25,28 +27,19 @@ export function TicketOptionField<T extends string>({
   tones,
 }: Props<T>) {
   if (editing) {
-    return (
-      <View>
-        <FlatList
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          ListHeaderComponent={ListEdge}
-          ListFooterComponent={ListEdge}
-          ItemSeparatorComponent={ListSeparator}
-          data={options as T[]}
-          renderItem={({ item }) => (
-            <Button
-              variant={draft === item ? 'primary' : 'secondary'}
-              size="sm"
-              onPress={() => onChangeDraft(item)}
-              style={styles.optionButton}
-            >
-              {labels[item]}
-            </Button>
-          )}
-          keyExtractor={(item) => item}
-        />
-      </View>
+    const widgetOptions = options.map((o) => ({ value: o, label: labels[o] }));
+    return options.length <= SEGMENTED_MAX_OPTIONS ? (
+      <SegmentedControl
+        options={widgetOptions}
+        value={draft}
+        onValueChange={(v) => onChangeDraft(v as T)}
+      />
+    ) : (
+      <RadioGroup
+        options={widgetOptions}
+        value={draft}
+        onValueChange={(v) => onChangeDraft(v as T)}
+      />
     );
   }
 

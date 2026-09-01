@@ -1,9 +1,11 @@
-import { View, Text } from 'react-native';
+import { Platform, View, Text } from 'react-native';
 import { Button, useTheme } from '@industry/mobile';
-import { alpha } from '@industry/tokens';
+import { alpha, fontFamilyMono } from '@industry/tokens';
 import { formatDate } from '../../../../domain/ticket';
 import type { Comment } from '../../../../domain/ticket';
 import { styles } from './CommentItem.styles';
+
+const monoFontFamily = Platform.select(fontFamilyMono);
 
 interface Props {
   comment: Comment;
@@ -11,22 +13,43 @@ interface Props {
   onDeletePress: () => void;
 }
 
+function initialsOf(name: string): string {
+  const parts = name.trim().split(/\s+/);
+  const first = parts[0]?.[0] ?? '';
+  const last = parts.length > 1 ? (parts[parts.length - 1]?.[0] ?? '') : '';
+  return (first + last).toUpperCase();
+}
+
 export function CommentItem({ comment, canDelete, onDeletePress }: Props) {
   const { colors } = useTheme();
   return (
-    <View style={[styles.commentCard, { backgroundColor: colors.surface }]}>
-      <View style={styles.commentHeader}>
-        <Text style={[styles.commentAuthor, { color: colors.text }]}>{comment.authorName}</Text>
-        <Text style={[styles.commentDate, { color: alpha(colors.text, 50) }]}>
-          {formatDate(comment.createdAt)}
+    <View style={styles.commentRow}>
+      <View
+        style={[styles.avatar, { backgroundColor: colors.surface2, borderColor: colors.divider }]}
+      >
+        <Text style={[styles.avatarText, { color: alpha(colors.text, 70) }]}>
+          {initialsOf(comment.authorName)}
         </Text>
       </View>
-      <Text style={[styles.commentText, { color: alpha(colors.text, 70) }]}>{comment.text}</Text>
-      {canDelete && (
-        <Button variant="ghost" size="sm" onPress={onDeletePress}>
-          Apagar
-        </Button>
-      )}
+      <View style={styles.commentBody}>
+        <View style={styles.commentHeader}>
+          <Text style={[styles.commentAuthor, { color: colors.text }]}>{comment.authorName}</Text>
+          <Text
+            style={[
+              styles.commentDate,
+              { fontFamily: monoFontFamily, color: alpha(colors.text, 45) },
+            ]}
+          >
+            {formatDate(comment.createdAt)}
+          </Text>
+        </View>
+        <Text style={[styles.commentText, { color: alpha(colors.text, 78) }]}>{comment.text}</Text>
+        {canDelete && (
+          <Button style={styles.deleteButton} variant="ghost" onPress={onDeletePress}>
+            Apagar
+          </Button>
+        )}
+      </View>
     </View>
   );
 }

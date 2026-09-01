@@ -151,7 +151,8 @@ describe('TicketDetails', () => {
 
     expect(screen.getByText('Impressora não liga')).toBeTruthy();
     expect(screen.getByText('A impressora do 2º andar não liga.')).toBeTruthy();
-    expect(screen.getByText('Criado por: Bruna')).toBeTruthy();
+    expect(screen.getByText('Criador')).toBeTruthy();
+    expect(screen.getByText('Bruna')).toBeTruthy();
   });
 
   it('renders status and priority badges', () => {
@@ -320,11 +321,11 @@ describe('TicketDetails', () => {
     render(<TicketDetails navigation={mockNavigation} route={makeRoute('t1')} />);
 
     fireEvent.press(screen.getByLabelText('Editar chamado'));
-    fireEvent.press(screen.getByText('Nenhum'));
+    fireEvent.press(screen.getByText('não designado'));
     fireEvent.press(await screen.findByText('Alice'));
 
     expect(screen.getByText('Alice')).toBeTruthy();
-    expect(screen.queryByText('Nenhum')).toBeNull();
+    expect(screen.queryByText('não designado')).toBeNull();
   });
 
   it('user can delete own comment', async () => {

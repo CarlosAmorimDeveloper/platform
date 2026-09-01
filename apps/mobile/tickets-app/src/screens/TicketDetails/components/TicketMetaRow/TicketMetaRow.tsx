@@ -11,14 +11,64 @@ interface Props {
   editing: boolean;
 }
 
+function MetaCell({
+  label,
+  value,
+  labelColor,
+  valueColor,
+  bg,
+}: {
+  label: string;
+  value: string;
+  labelColor: string;
+  valueColor: string;
+  bg: string;
+}) {
+  return (
+    <View style={[styles.cell, { backgroundColor: bg }]}>
+      <Text style={[styles.cellLabel, { color: labelColor }]}>{label}</Text>
+      <Text style={[styles.cellValue, { color: valueColor }]}>{value}</Text>
+    </View>
+  );
+}
+
 export function TicketMetaRow({ creatorName, createdAt, assigneeName, editing }: Props) {
   const { colors } = useTheme();
-  const metaText = [styles.metaText, { color: alpha(colors.text, 70) }];
+  const labelColor = alpha(colors.text, 50);
+  const valueColor = colors.text;
+  const bg = colors.bg;
+
   return (
-    <View style={styles.metaRow}>
-      <Text style={metaText}>Criado por: {creatorName}</Text>
-      {createdAt && <Text style={metaText}>Em: {formatDate(createdAt)}</Text>}
-      {!editing && assigneeName && <Text style={metaText}>Responsável: {assigneeName}</Text>}
+    <View style={[styles.grid, { backgroundColor: colors.divider }]}>
+      <View style={styles.row}>
+        <MetaCell
+          label="Criador"
+          value={creatorName}
+          labelColor={labelColor}
+          valueColor={valueColor}
+          bg={bg}
+        />
+        {createdAt && (
+          <MetaCell
+            label="Abertura"
+            value={formatDate(createdAt)}
+            labelColor={labelColor}
+            valueColor={valueColor}
+            bg={bg}
+          />
+        )}
+      </View>
+      {!editing && assigneeName && (
+        <View style={styles.row}>
+          <MetaCell
+            label="Responsável"
+            value={assigneeName}
+            labelColor={labelColor}
+            valueColor={valueColor}
+            bg={bg}
+          />
+        </View>
+      )}
     </View>
   );
 }

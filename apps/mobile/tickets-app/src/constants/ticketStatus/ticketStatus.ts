@@ -6,7 +6,7 @@ export const ALL_STATUSES: TicketStatus[] = ['open', 'in_progress', 'done'];
 
 export const STATUS_LABELS: Record<TicketStatus, string> = {
   open: 'Aberto',
-  in_progress: 'Em Progresso',
+  in_progress: 'Em andamento',
   done: 'Concluído',
 };
 
