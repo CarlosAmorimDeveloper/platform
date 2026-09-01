@@ -92,6 +92,40 @@ export function formatDate(date: Date | null): string | null {
   });
 }
 
+// "28 de fevereiro de 2026" — used for the FormDetail heading, derived from
+// the "dd/mm/aaaa" appointmentDate text field rather than a Date value.
+export function formatDateLong(text: string): string | null {
+  const date = parseDateInput(text);
+  if (!date) return null;
+  return date.toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' });
+}
+
+const MONTH_ABBREVIATIONS = [
+  'jan',
+  'fev',
+  'mar',
+  'abr',
+  'mai',
+  'jun',
+  'jul',
+  'ago',
+  'set',
+  'out',
+  'nov',
+  'dez',
+];
+
+// "27 fev 2026 · 21:10" — the compact mono timestamp used next to the
+// FormDetail heading. pt-BR's `Intl` short month format renders as
+// "27 de fev. de 2026", so the date part is built manually instead.
+export function formatDateTimeShort(date: Date | null): string | null {
+  if (!date) return null;
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = MONTH_ABBREVIATIONS[date.getMonth()];
+  const timePart = date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+  return `${day} ${month} ${date.getFullYear()} · ${timePart}`;
+}
+
 export function isFormValuesEmpty(values: FormValues): boolean {
   const hasText = [
     values.appointmentDate,
