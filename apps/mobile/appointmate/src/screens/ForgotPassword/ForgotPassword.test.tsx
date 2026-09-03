@@ -22,8 +22,6 @@ const mockRoute = {
   name: 'ForgotPassword',
 } as unknown as ForgotPasswordProps['route'];
 
-// See Login.test.tsx — this environment needs generous timeouts for
-// assertions that depend on flushing re-renders across the full provider tree.
 const ASYNC_TIMEOUT = { timeout: 30000 };
 
 describe('ForgotPassword', () => {

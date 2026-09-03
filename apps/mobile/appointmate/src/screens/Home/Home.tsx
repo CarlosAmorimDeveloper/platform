@@ -35,8 +35,6 @@ type Props = NativeStackScreenProps<AppStackParamList, 'Home'>;
 
 const monoFontFamily = Platform.select(fontFamilyMono);
 
-// "Personalizado" needs its own date-range inputs, which don't fit this
-// compact menu — left out of the selectable presets for now.
 const SELECTABLE_PRESETS = TIME_FILTER_PRESETS.filter((preset) => preset.value !== 'personalizado');
 
 export function Home({ navigation }: Props) {
@@ -78,10 +76,6 @@ export function Home({ navigation }: Props) {
     loadForms();
   }, [loadForms]);
 
-  // Refetch whenever Home regains focus (e.g. returning here after deleting
-  // a form on FormDetail) — using the `navigation` prop's own `addListener`
-  // instead of the `useFocusEffect`/`useNavigation()` hook, since the latter
-  // needs a real Navigator context that this app's tests don't provide.
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       loadForms({ silent: true });

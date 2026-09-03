@@ -2,20 +2,31 @@ import { RefreshControl } from 'react-native';
 import { FirebaseError } from 'firebase/app';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { fireEvent, render, screen, waitFor, within } from '../../test-utils';
-import { useAuth } from '../../context/AuthContext';
+import { AuthProvider } from '../../context/AuthContext';
+import { logout, subscribeToAuthChanges, type AuthUser } from '../../services/authService';
 import { listForms } from '../../services/formsService';
 import type { AppStackParamList } from '../../navigation/types';
 import { Home } from './Home';
 
-jest.mock('../../context/AuthContext', () => ({
-  useAuth: jest.fn(),
+jest.mock('../../services/authService', () => ({
+  subscribeToAuthChanges: jest.fn(),
+  logout: jest.fn(),
 }));
 
 jest.mock('../../services/formsService', () => ({
   listForms: jest.fn(),
 }));
 
-const mockedUseAuth = useAuth as jest.Mock;
+const mockedSubscribeToAuthChanges = subscribeToAuthChanges as jest.Mock;
+const mockedLogout = logout as jest.Mock;
+
+function signedInAs(user: AuthUser | null) {
+  mockedSubscribeToAuthChanges.mockImplementation((callback: (u: AuthUser | null) => void) => {
+    callback(user);
+    return jest.fn();
+  });
+}
+
 const mockedListForms = listForms as jest.Mock;
 
 type HomeProps = NativeStackScreenProps<AppStackParamList, 'Home'>;
@@ -46,11 +57,17 @@ const formB = {
   updatedAt: null,
 };
 
-describe('Home', () => {
-  const logout = jest.fn();
+function renderHome() {
+  return render(
+    <AuthProvider>
+      <Home navigation={mockNavigation} route={mockRoute} />
+    </AuthProvider>,
+  );
+}
 
+describe('Home', () => {
   beforeEach(() => {
-    mockedUseAuth.mockReturnValue({ user: { uid: 'user-abc', email: 'user@example.com' }, logout });
+    signedInAs({ uid: 'user-abc', email: 'user@example.com' });
   });
 
   afterEach(() => {
@@ -60,7 +77,7 @@ describe('Home', () => {
   it('shows a loading state while forms are fetched', () => {
     mockedListForms.mockReturnValue(new Promise(() => {}));
 
-    render(<Home navigation={mockNavigation} route={mockRoute} />);
+    renderHome();
 
     expect(screen.getByTestId('home-loading')).toBeTruthy();
   });
@@ -68,7 +85,7 @@ describe('Home', () => {
   it('shows a full-screen error when the initial load fails', async () => {
     mockedListForms.mockRejectedValue(new Error('network error'));
 
-    render(<Home navigation={mockNavigation} route={mockRoute} />);
+    renderHome();
 
     await waitFor(() => {
       expect(screen.getByTestId('home-error')).toBeTruthy();
@@ -78,7 +95,7 @@ describe('Home', () => {
   it('retries the load when the error action is pressed', async () => {
     mockedListForms.mockRejectedValue(new Error('network error'));
 
-    render(<Home navigation={mockNavigation} route={mockRoute} />);
+    renderHome();
 
     await waitFor(() => {
       expect(screen.getByTestId('home-error')).toBeTruthy();
@@ -96,7 +113,7 @@ describe('Home', () => {
   it('shows a connectivity-specific message when the load fails offline', async () => {
     mockedListForms.mockRejectedValue(new FirebaseError('unavailable', ''));
 
-    render(<Home navigation={mockNavigation} route={mockRoute} />);
+    renderHome();
 
     await waitFor(() => {
       expect(
@@ -108,7 +125,7 @@ describe('Home', () => {
   it('shows an empty state when the user has no forms', async () => {
     mockedListForms.mockResolvedValue([]);
 
-    render(<Home navigation={mockNavigation} route={mockRoute} />);
+    renderHome();
 
     await waitFor(() => {
       expect(screen.getByTestId('home-empty-state')).toBeTruthy();
@@ -118,7 +135,7 @@ describe('Home', () => {
   it('renders a card for each form', async () => {
     mockedListForms.mockResolvedValue([formA, formB]);
 
-    render(<Home navigation={mockNavigation} route={mockRoute} />);
+    renderHome();
 
     await waitFor(() => {
       expect(screen.getByTestId('home-form-card-form-a')).toBeTruthy();
@@ -131,7 +148,7 @@ describe('Home', () => {
   it('navigates to FormDetail when a card is pressed', async () => {
     mockedListForms.mockResolvedValue([formA]);
 
-    render(<Home navigation={mockNavigation} route={mockRoute} />);
+    renderHome();
 
     await waitFor(() => {
       expect(screen.getByTestId('home-form-card-form-a')).toBeTruthy();
@@ -145,7 +162,7 @@ describe('Home', () => {
   it('navigates to FormEntry when "Novo formulário" is pressed', async () => {
     mockedListForms.mockResolvedValue([]);
 
-    render(<Home navigation={mockNavigation} route={mockRoute} />);
+    renderHome();
 
     await waitFor(() => {
       expect(screen.getByTestId('home-new-form-button')).toBeTruthy();
@@ -159,7 +176,7 @@ describe('Home', () => {
   it('shows a toast when a silent (pull-to-refresh) reload fails', async () => {
     mockedListForms.mockResolvedValue([formA]);
 
-    render(<Home navigation={mockNavigation} route={mockRoute} />);
+    renderHome();
 
     await waitFor(() => {
       expect(screen.getByTestId('home-list')).toBeTruthy();
@@ -174,9 +191,9 @@ describe('Home', () => {
   }, 20000);
 
   it('does not fetch forms when there is no signed-in user', () => {
-    mockedUseAuth.mockReturnValue({ user: null, logout });
+    signedInAs(null);
 
-    render(<Home navigation={mockNavigation} route={mockRoute} />);
+    renderHome();
 
     expect(mockedListForms).not.toHaveBeenCalled();
   });
@@ -184,7 +201,7 @@ describe('Home', () => {
   it('re-fetches the list on pull-to-refresh', async () => {
     mockedListForms.mockResolvedValue([formA]);
 
-    render(<Home navigation={mockNavigation} route={mockRoute} />);
+    renderHome();
 
     await waitFor(() => {
       expect(screen.getByTestId('home-list')).toBeTruthy();
@@ -192,8 +209,6 @@ describe('Home', () => {
 
     mockedListForms.mockClear();
     mockedListForms.mockResolvedValue([formA, formB]);
-    // `onRefresh` lives on the RefreshControl element itself, not on an
-    // ancestor of the FlatList, so `fireEvent` needs to target it directly.
     fireEvent(screen.UNSAFE_getByType(RefreshControl), 'refresh');
 
     await waitFor(() => {
@@ -207,16 +222,16 @@ describe('Home', () => {
   it('re-fetches the list when the screen regains focus (e.g. after deleting a form elsewhere)', async () => {
     mockedListForms.mockResolvedValue([formA]);
 
-    render(<Home navigation={mockNavigation} route={mockRoute} />);
+    renderHome();
 
     await waitFor(() => {
       expect(screen.getByTestId('home-form-card-form-a')).toBeTruthy();
     }, ASYNC_TIMEOUT);
 
     expect(mockNavigation.addListener).toHaveBeenCalledWith('focus', expect.any(Function));
-    const focusHandler = (mockNavigation.addListener as jest.Mock).mock.calls.find(
-      ([eventName]) => eventName === 'focus',
-    )?.[1];
+    const focusHandler = (mockNavigation.addListener as jest.Mock).mock.calls
+      .filter(([eventName]) => eventName === 'focus')
+      .at(-1)?.[1];
 
     mockedListForms.mockClear();
     mockedListForms.mockResolvedValue([]);
@@ -234,7 +249,7 @@ describe('Home', () => {
     it('shows "Meus formulários" as the header title', async () => {
       mockedListForms.mockResolvedValue([]);
 
-      render(<Home navigation={mockNavigation} route={mockRoute} />);
+      renderHome();
 
       await waitFor(() => {
         expect(screen.getByText('Meus formulários')).toBeTruthy();
@@ -244,7 +259,7 @@ describe('Home', () => {
     it('renders a "Sair" action in the header that calls logout when pressed', async () => {
       mockedListForms.mockResolvedValue([]);
 
-      render(<Home navigation={mockNavigation} route={mockRoute} />);
+      renderHome();
 
       await waitFor(() => {
         expect(screen.getByTestId('home-logout-button')).toBeTruthy();
@@ -252,7 +267,7 @@ describe('Home', () => {
 
       fireEvent.press(screen.getByTestId('home-logout-button'));
 
-      expect(logout).toHaveBeenCalled();
+      expect(mockedLogout).toHaveBeenCalled();
     }, 20000);
   });
 
@@ -260,7 +275,7 @@ describe('Home', () => {
     it('opens a menu with the period presets when the filter icon is pressed', async () => {
       mockedListForms.mockResolvedValue([]);
 
-      render(<Home navigation={mockNavigation} route={mockRoute} />);
+      renderHome();
 
       await waitFor(() => {
         expect(screen.getByTestId('home-filter-icon-button')).toBeTruthy();
@@ -268,14 +283,10 @@ describe('Home', () => {
 
       fireEvent.press(screen.getByTestId('home-filter-icon-button'));
 
-      // The active filter is also echoed as a badge next to the form count,
-      // so "Todos" here must be scoped to the menu panel to avoid matching
-      // both.
       const menu = within(screen.getByTestId('home-filter-menu-panel'));
       expect(menu.getByText('Todos')).toBeTruthy();
       expect(menu.getByText('Últimos 7 dias')).toBeTruthy();
       expect(menu.getByText('Últimos 30 dias')).toBeTruthy();
-      // "Personalizado" needs its own date-range UI that doesn't fit this menu.
       expect(screen.queryByText('Personalizado')).toBeNull();
     }, 20000);
 
@@ -289,7 +300,7 @@ describe('Home', () => {
       };
       mockedListForms.mockResolvedValue([recent, old]);
 
-      render(<Home navigation={mockNavigation} route={mockRoute} />);
+      renderHome();
 
       await waitFor(() => {
         expect(screen.getByTestId('home-form-card-form-old')).toBeTruthy();
@@ -311,17 +322,13 @@ describe('Home', () => {
     it('does not reload the list when the filter menu opens', async () => {
       mockedListForms.mockResolvedValue([formA]);
 
-      render(<Home navigation={mockNavigation} route={mockRoute} />);
+      renderHome();
 
       await waitFor(() => {
         expect(screen.getByTestId('home-filter-menu')).toBeTruthy();
       }, ASYNC_TIMEOUT);
 
       mockedListForms.mockClear();
-      // Menu's own trigger-wrapping Pressable (shares the Menu's testID) is
-      // what actually calls onOpenChange(true) — the nested IconButton has
-      // its own onPress for opening, so this exercises the open path Menu's
-      // API contract still allows.
       fireEvent.press(screen.getByTestId('home-filter-menu'));
 
       expect(mockedListForms).not.toHaveBeenCalled();
@@ -330,7 +337,7 @@ describe('Home', () => {
     it('reloads the list when the filter menu is dismissed without selecting a period', async () => {
       mockedListForms.mockResolvedValue([formA]);
 
-      render(<Home navigation={mockNavigation} route={mockRoute} />);
+      renderHome();
 
       await waitFor(() => {
         expect(screen.getByTestId('home-filter-icon-button')).toBeTruthy();
@@ -338,9 +345,6 @@ describe('Home', () => {
 
       fireEvent.press(screen.getByTestId('home-filter-icon-button'));
       mockedListForms.mockClear();
-      // The Menu dismisses via a tap on its backdrop overlay — same
-      // interaction a real user would perform to close it without picking
-      // an item.
       fireEvent.press(screen.getByTestId('home-filter-menu-backdrop'));
 
       await waitFor(() => {
@@ -356,7 +360,7 @@ describe('Home', () => {
       };
       mockedListForms.mockResolvedValue([old]);
 
-      render(<Home navigation={mockNavigation} route={mockRoute} />);
+      renderHome();
 
       await waitFor(() => {
         expect(screen.getByTestId('home-filter-icon-button')).toBeTruthy();

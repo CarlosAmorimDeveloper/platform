@@ -9,7 +9,6 @@ export interface BottomBarProps {
   testID?: string;
 }
 
-/** Fixed action bar below the scrollable content, per the Industry "barra de ação inferior" rule. */
 export function BottomBar({ children, testID }: BottomBarProps) {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();

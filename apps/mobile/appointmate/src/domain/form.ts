@@ -60,9 +60,6 @@ export const EMPTY_FORM_VALUES: FormValues = {
   consultationNotes: '',
 };
 
-// Progressively formats free-typed digits into "dd/mm/aaaa" as the user
-// types (and un-formats correctly on backspace, since it's re-derived from
-// the digits present rather than tracked as separate state).
 export function formatDateInput(text: string): string {
   const digits = text.replace(/\D/g, '').slice(0, 8);
   if (digits.length <= 2) return digits;
@@ -70,9 +67,6 @@ export function formatDateInput(text: string): string {
   return `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4)}`;
 }
 
-// Used to validate "Data desta consulta" isn't retroactive — an incomplete
-// or unparseable date passes here on purpose, since that's the `required`
-// rule's concern, not this one's.
 export function isDateOnOrAfterToday(text: string, now = new Date()): boolean {
   const date = parseDateInput(text);
   if (!date) return true;
@@ -92,8 +86,6 @@ export function formatDate(date: Date | null): string | null {
   });
 }
 
-// "28 de fevereiro de 2026" — used for the FormDetail heading, derived from
-// the "dd/mm/aaaa" appointmentDate text field rather than a Date value.
 export function formatDateLong(text: string): string | null {
   const date = parseDateInput(text);
   if (!date) return null;
@@ -115,9 +107,6 @@ const MONTH_ABBREVIATIONS = [
   'dez',
 ];
 
-// "27 fev 2026 · 21:10" — the compact mono timestamp used next to the
-// FormDetail heading. pt-BR's `Intl` short month format renders as
-// "27 de fev. de 2026", so the date part is built manually instead.
 export function formatDateTimeShort(date: Date | null): string | null {
   if (!date) return null;
   const day = String(date.getDate()).padStart(2, '0');

@@ -4,12 +4,10 @@ import { accentRamp, color, space } from '@industry/tokens';
 
 export interface SectionLabelProps {
   children: string;
-  /** e.g. an item count, right-aligned next to the label. */
   trailing?: ReactNode;
   testID?: string;
 }
 
-/** Uppercase section heading with a hairline below, per the Industry "rótulo de seção" rule. */
 export function SectionLabel({ children, trailing, testID }: SectionLabelProps) {
   return (
     <View style={{ gap: space[2] }} testID={testID}>

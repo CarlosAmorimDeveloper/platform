@@ -129,8 +129,6 @@ export function FormEntry({ navigation, route }: Props) {
       } else {
         savedFormId = await createForm(user.uid, values, status);
       }
-      // Always `replace` (not `goBack`) so FormDetail remounts and shows the
-      // values just saved, instead of the stale data it fetched on its first mount.
       navigation.replace('FormDetail', { formId: savedFormId! });
     } catch (err) {
       toast.show({
@@ -142,9 +140,6 @@ export function FormEntry({ navigation, route }: Props) {
     }
   }
 
-  // Drafts intentionally skip validation — reads current values directly
-  // instead of going through `handleSubmit`, which would enforce the
-  // `required` rules meant only for "Enviar".
   function onSaveDraft() {
     onSave(getValues(), 'draft');
   }
