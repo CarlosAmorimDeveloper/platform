@@ -1,6 +1,7 @@
 const path = require('path');
 
 const sharedReact = path.resolve(__dirname, '../../../../node_modules/react');
+const sharedSvg = path.resolve(__dirname, 'node_modules/react-native-svg');
 
 /** @type {import('jest').Config} */
 module.exports = {
@@ -18,6 +19,8 @@ module.exports = {
   moduleNameMapper: {
     '^react$': sharedReact,
     '^react/(.*)$': `${sharedReact}/$1`,
+    '^react-native-svg$': sharedSvg,
+    '^react-native-svg/(.*)$': `${sharedSvg}/$1`,
     '^react-native-safe-area-context$': '<rootDir>/__mocks__/react-native-safe-area-context.js',
     '^@react-native-async-storage/async-storage$':
       '<rootDir>/../../../../node_modules/@react-native-async-storage/async-storage/jest/async-storage-mock.js',
@@ -27,5 +30,4 @@ module.exports = {
     '^react-native/Libraries/ReactNative/RendererProxy$': '<rootDir>/__mocks__/renderer-proxy.js',
   },
   setupFiles: ['<rootDir>/jest.setup.js'],
-  setupFilesAfterEnv: ['<rootDir>/jest.setup-after-env.js'],
 };
