@@ -192,8 +192,6 @@ describe('Home', () => {
 
     mockedListForms.mockClear();
     mockedListForms.mockResolvedValue([formA, formB]);
-    // `onRefresh` lives on the RefreshControl element itself, not on an
-    // ancestor of the FlatList, so `fireEvent` needs to target it directly.
     fireEvent(screen.UNSAFE_getByType(RefreshControl), 'refresh');
 
     await waitFor(() => {
@@ -268,14 +266,10 @@ describe('Home', () => {
 
       fireEvent.press(screen.getByTestId('home-filter-icon-button'));
 
-      // The active filter is also echoed as a badge next to the form count,
-      // so "Todos" here must be scoped to the menu panel to avoid matching
-      // both.
       const menu = within(screen.getByTestId('home-filter-menu-panel'));
       expect(menu.getByText('Todos')).toBeTruthy();
       expect(menu.getByText('Últimos 7 dias')).toBeTruthy();
       expect(menu.getByText('Últimos 30 dias')).toBeTruthy();
-      // "Personalizado" needs its own date-range UI that doesn't fit this menu.
       expect(screen.queryByText('Personalizado')).toBeNull();
     }, 20000);
 
@@ -318,10 +312,6 @@ describe('Home', () => {
       }, ASYNC_TIMEOUT);
 
       mockedListForms.mockClear();
-      // Menu's own trigger-wrapping Pressable (shares the Menu's testID) is
-      // what actually calls onOpenChange(true) — the nested IconButton has
-      // its own onPress for opening, so this exercises the open path Menu's
-      // API contract still allows.
       fireEvent.press(screen.getByTestId('home-filter-menu'));
 
       expect(mockedListForms).not.toHaveBeenCalled();
@@ -338,9 +328,6 @@ describe('Home', () => {
 
       fireEvent.press(screen.getByTestId('home-filter-icon-button'));
       mockedListForms.mockClear();
-      // The Menu dismisses via a tap on its backdrop overlay — same
-      // interaction a real user would perform to close it without picking
-      // an item.
       fireEvent.press(screen.getByTestId('home-filter-menu-backdrop'));
 
       await waitFor(() => {

@@ -23,7 +23,6 @@ export function Login({ navigation }: Props) {
     setLoading(true);
     try {
       await login(email, password);
-      // Sucesso: o onAuthStateChanged global (App.tsx) detecta a sessão e troca de stack sozinho.
     } catch (err: unknown) {
       toast.show({ tone: 'danger', title: mapFirebaseAuthError(err) });
     } finally {

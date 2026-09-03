@@ -37,13 +37,8 @@ function makeRoute(formId?: string): Props['route'] {
   } as unknown as Props['route'];
 }
 
-// See Login.test.tsx — this environment needs generous timeouts for
-// assertions that depend on flushing re-renders across the full provider tree.
 const ASYNC_TIMEOUT = { timeout: 15000 };
 
-// The consultation date can't be in the past, so fixtures compute it
-// relative to whenever the suite actually runs instead of hardcoding a
-// calendar date that would eventually — or already — be in the past.
 function dateOffsetFromToday(days: number): string {
   const date = new Date();
   date.setDate(date.getDate() + days);

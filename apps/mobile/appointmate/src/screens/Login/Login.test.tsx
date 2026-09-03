@@ -16,11 +16,6 @@ type LoginProps = NativeStackScreenProps<AuthStackParamList, 'Login'>;
 const mockNavigation = { navigate: jest.fn() } as unknown as LoginProps['navigation'];
 const mockRoute = { key: 'Login', name: 'Login' } as unknown as LoginProps['route'];
 
-// This environment's Jest/react-test-renderer combo is slow to flush
-// re-renders across the KeyboardAvoidingView/Paper/Navigation/SafeArea
-// provider tree — the state-transition assertions below need more room
-// than the 5s Jest default to avoid flaking (paired with a longer
-// per-test timeout, passed as each affected it()'s third argument).
 const ASYNC_TIMEOUT = { timeout: 30000 };
 
 describe('Login', () => {

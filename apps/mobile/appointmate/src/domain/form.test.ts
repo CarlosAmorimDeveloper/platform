@@ -83,7 +83,7 @@ describe('formatDateInput', () => {
 });
 
 describe('isDateOnOrAfterToday', () => {
-  const now = new Date(2026, 2, 20); // 20/03/2026
+  const now = new Date(2026, 2, 20);
 
   it('accepts today', () => {
     expect(isDateOnOrAfterToday('20/03/2026', now)).toBe(true);

@@ -147,7 +147,6 @@ describe('FormDetail', () => {
     expect(screen.getByTestId('form-detail-overall-mood').props.children).toBe('Estável');
     expect(screen.getByText('Losartana 25mg 1x ao dia', { exact: false })).toBeTruthy();
     expect(screen.getByText('Posso reduzir a dose?', { exact: false })).toBeTruthy();
-    // consultationNotes is blank in the fixture — its label must not render.
     expect(screen.queryByText('Anotações e orientações')).toBeNull();
   }, 20000);
 

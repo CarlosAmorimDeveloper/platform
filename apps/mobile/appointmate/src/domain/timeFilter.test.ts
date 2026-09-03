@@ -45,7 +45,7 @@ describe('parseDateInput', () => {
 });
 
 describe('isWithinTimeFilter', () => {
-  const now = new Date(2026, 2, 20); // 20/03/2026
+  const now = new Date(2026, 2, 20);
 
   it('always returns true for the "todos" preset, even with a null date', () => {
     expect(isWithinTimeFilter(null, DEFAULT_TIME_FILTER, now)).toBe(true);
@@ -60,14 +60,14 @@ describe('isWithinTimeFilter', () => {
 
   it('"ultimos_7_dias" includes dates within the last 7 days and excludes older ones', () => {
     const filter = { preset: 'ultimos_7_dias' as const, customStart: '', customEnd: '' };
-    expect(isWithinTimeFilter(new Date(2026, 2, 15), filter, now)).toBe(true); // 5 days ago
-    expect(isWithinTimeFilter(new Date(2026, 2, 10), filter, now)).toBe(false); // 10 days ago
+    expect(isWithinTimeFilter(new Date(2026, 2, 15), filter, now)).toBe(true);
+    expect(isWithinTimeFilter(new Date(2026, 2, 10), filter, now)).toBe(false);
   });
 
   it('"ultimos_30_dias" includes dates within the last 30 days and excludes older ones', () => {
     const filter = { preset: 'ultimos_30_dias' as const, customStart: '', customEnd: '' };
-    expect(isWithinTimeFilter(new Date(2026, 1, 25), filter, now)).toBe(true); // ~23 days ago
-    expect(isWithinTimeFilter(new Date(2026, 0, 1), filter, now)).toBe(false); // ~78 days ago
+    expect(isWithinTimeFilter(new Date(2026, 1, 25), filter, now)).toBe(true);
+    expect(isWithinTimeFilter(new Date(2026, 0, 1), filter, now)).toBe(false);
   });
 
   describe('"personalizado"', () => {
@@ -79,7 +79,6 @@ describe('isWithinTimeFilter', () => {
       };
       expect(isWithinTimeFilter(new Date(2026, 2, 5), filter, now)).toBe(true);
       expect(isWithinTimeFilter(new Date(2026, 2, 1), filter, now)).toBe(true);
-      // customEnd is inclusive through the end of that day
       expect(isWithinTimeFilter(new Date(2026, 2, 10, 23, 0), filter, now)).toBe(true);
     });
 

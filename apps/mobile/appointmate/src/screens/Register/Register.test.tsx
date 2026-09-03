@@ -19,8 +19,6 @@ const mockNavigation = {
 } as unknown as RegisterProps['navigation'];
 const mockRoute = { key: 'Register', name: 'Register' } as unknown as RegisterProps['route'];
 
-// See Login.test.tsx — this environment needs generous timeouts for
-// assertions that depend on flushing re-renders across the full provider tree.
 const ASYNC_TIMEOUT = { timeout: 30000 };
 
 function fillValidForm() {
