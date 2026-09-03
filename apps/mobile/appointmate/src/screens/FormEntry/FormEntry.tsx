@@ -204,6 +204,10 @@ export function FormEntry({ navigation, route }: Props) {
           </View>
 
           <SectionLabel>Panorama geral</SectionLabel>
+          <Text style={[styles.sectionPrompt, { color: alpha(colors.text, 70) }]}>
+            Como tem se sentido desde a última consulta?
+          </Text>
+
           <Controller
             control={control}
             name="overallMood"

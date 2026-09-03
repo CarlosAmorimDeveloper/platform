@@ -13,6 +13,9 @@ export const styles = StyleSheet.create({
     gap: space[3],
   },
   fieldRowItem: { flex: 1 },
+  sectionPrompt: {
+    fontSize: 13,
+  },
   chipRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
