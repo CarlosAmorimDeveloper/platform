@@ -32,5 +32,4 @@ module.exports = {
     '^react-native/Libraries/ReactNative/RendererProxy$': '<rootDir>/__mocks__/renderer-proxy.js',
   },
   setupFiles: ['<rootDir>/jest.setup.js'],
-  setupFilesAfterEnv: ['<rootDir>/jest.setup-after-env.js'],
 };

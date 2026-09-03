@@ -27,10 +27,11 @@ config.resolver.nodeModulesPaths = [
 //   unconditionally.
 //
 // WHY pin react to app-local (not root):
-//   react-native 0.81.5 ships a renderer built against React 19.1.0 and does
-//   an exact version check: throws if React.version !== "19.1.0". The monorepo
-//   root has react 19.2.5 (for the web app). Pinning to app-local ensures
-//   the renderer sees exactly 19.1.0 from every import site.
+//   react-native 0.86.3 ships a renderer built against React 19.2.3 and does
+//   an exact version check: throws if React.version !== "19.2.3". The monorepo
+//   root has react ^19.2.5 (for the web app), which can resolve to a
+//   different patch version. Pinning to app-local ensures the renderer sees
+//   exactly 19.2.3 from every import site.
 //
 // WHY 'react/*' and 'react-native/*' matter:
 //   The automatic JSX transform imports 'react/jsx-runtime' and
