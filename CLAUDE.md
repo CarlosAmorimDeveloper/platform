@@ -104,8 +104,10 @@ yarn format:check     # Prettier check (CI)
 yarn dev --filter=todo-app  # or: cd apps/web/todo-app && yarn dev
 yarn test                   # Jest (jsdom, ts-jest)
 yarn test --watch            # watch mode
-yarn test --testPathPattern=TaskItem  # run a single test file
+yarn test --testPathPatterns=TaskItem  # run a single test file
 ```
+
+Jest 30 (used by every workspace, hoisted at the repo root) renamed `--testPathPattern` to `--testPathPatterns`. The singular form exits 1 with a "was replaced by" error — the same applies to the mobile workspaces' `yarn test`.
 
 ### @industry/web (`packages/design-system/industry/web`)
 
