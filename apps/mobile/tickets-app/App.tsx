@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Alert, View } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import { Spinner, ToastProvider } from '@industry/mobile';
+import { DarkTheme, NavigationContainer } from '@react-navigation/native';
+import type { Theme } from '@react-navigation/native';
+import { Spinner, ToastProvider, useTheme } from '@industry/mobile';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
@@ -13,6 +14,11 @@ import { AppStack } from './src/navigation/AppStack';
 export default function App() {
   const [loading, setLoading] = useState(true);
   const { isAuthenticated, setUser } = useAuthStore();
+  const { colors, preference, setTheme } = useTheme();
+
+  useEffect(() => {
+    if (preference === 'system') setTheme('dark');
+  }, [preference, setTheme]);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
@@ -48,16 +54,37 @@ export default function App() {
 
   if (loading) {
     return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <View
+        style={{
+          flex: 1,
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: colors.bg,
+        }}
+      >
         <Spinner />
       </View>
     );
   }
 
+  const navigationTheme: Theme = {
+    ...DarkTheme,
+    colors: {
+      ...DarkTheme.colors,
+      primary: colors.accent,
+      background: colors.bg,
+      card: colors.surface,
+      text: colors.text,
+      border: colors.divider,
+    },
+  };
+
   return (
     <SafeAreaProvider>
       <ToastProvider>
-        <NavigationContainer>{isAuthenticated ? <AppStack /> : <AuthStack />}</NavigationContainer>
+        <NavigationContainer theme={navigationTheme}>
+          {isAuthenticated ? <AppStack /> : <AuthStack />}
+        </NavigationContainer>
       </ToastProvider>
     </SafeAreaProvider>
   );
