@@ -64,7 +64,6 @@ function RecentTicketsCard({
 }) {
   const { colors } = useTheme();
   const recent = tickets.slice(0, 3);
-  if (recent.length === 0) return null;
   return (
     <Card framed>
       {recent.map((t, i) => (

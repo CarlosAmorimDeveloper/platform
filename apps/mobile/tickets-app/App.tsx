@@ -16,11 +16,6 @@ export default function App() {
   const { isAuthenticated, setUser } = useAuthStore();
   const { colors, preference, setTheme } = useTheme();
 
-  // Tickets App has no light theme of its own — useTheme() defaults to
-  // following the OS appearance, which falls back to @industry/tokens'
-  // lightColor palette on a device/simulator set to light mode. Pin the
-  // preference to dark so the app doesn't inherit a color scheme it was
-  // never designed for.
   useEffect(() => {
     if (preference === 'system') setTheme('dark');
   }, [preference, setTheme]);

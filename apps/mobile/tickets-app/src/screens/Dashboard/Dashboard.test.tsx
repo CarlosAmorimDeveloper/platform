@@ -4,6 +4,7 @@ import { ActivityIndicator } from 'react-native';
 import { render, screen, fireEvent } from '../../test-utils';
 import { useTicketList } from '../../hooks/useTicketList';
 import { STATUS_LABELS } from '../../constants/ticketStatus';
+import { formatDate } from '../../domain/ticket';
 import type { Ticket } from '../../domain/ticket';
 import type { User } from '../../domain/user';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -159,6 +160,27 @@ describe('Dashboard', () => {
     render(<Dashboard navigation={mockNavigation} route={mockRoute} />);
 
     fireEvent.press(screen.UNSAFE_getByProps({ accessibilityLabel: 'New ticket' }));
+
+    expect(mockNavigation.navigate).toHaveBeenCalledWith('NewTicket');
+  });
+
+  it('renders the creation date of a recent ticket that has one', () => {
+    const createdAt = new Date('2026-03-04T15:30:00Z');
+    mockUseTicketList.mockReturnValue(
+      mockTicketListReturn({ tickets: [makeTicket({ title: 'Chamado 1', createdAt })] }),
+    );
+
+    render(<Dashboard navigation={mockNavigation} route={mockRoute} />);
+
+    expect(screen.getByText(`Alice · ${formatDate(createdAt)} · não designado`)).toBeTruthy();
+  });
+
+  it('navigates to NewTicket from the empty state action button', () => {
+    mockUseTicketList.mockReturnValue(mockTicketListReturn({ tickets: [] }));
+
+    render(<Dashboard navigation={mockNavigation} route={mockRoute} />);
+
+    fireEvent.press(screen.getByText('Abrir o primeiro'));
 
     expect(mockNavigation.navigate).toHaveBeenCalledWith('NewTicket');
   });
