@@ -2,7 +2,8 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { FirebaseError } from 'firebase/app';
 import { fireEvent, render, screen, waitFor } from '../../test-utils';
 import { createForm, getForm, updateForm } from '../../services/formsService';
-import { useAuth } from '../../context/AuthContext';
+import { AuthProvider } from '../../context/AuthContext';
+import { subscribeToAuthChanges, type AuthUser } from '../../services/authService';
 import type { AppStackParamList } from '../../navigation/types';
 import { FormEntry } from './FormEntry';
 
@@ -12,14 +13,21 @@ jest.mock('../../services/formsService', () => ({
   getForm: jest.fn(),
 }));
 
-jest.mock('../../context/AuthContext', () => ({
-  useAuth: jest.fn(),
+jest.mock('../../services/authService', () => ({
+  subscribeToAuthChanges: jest.fn(),
 }));
 
 const mockedCreateForm = createForm as jest.Mock;
 const mockedUpdateForm = updateForm as jest.Mock;
 const mockedGetForm = getForm as jest.Mock;
-const mockedUseAuth = useAuth as jest.Mock;
+const mockedSubscribeToAuthChanges = subscribeToAuthChanges as jest.Mock;
+
+function signedInAs(user: AuthUser | null) {
+  mockedSubscribeToAuthChanges.mockImplementation((callback: (u: AuthUser | null) => void) => {
+    callback(user);
+    return jest.fn();
+  });
+}
 
 type Props = NativeStackScreenProps<AppStackParamList, 'FormEntry'>;
 
@@ -38,6 +46,14 @@ function makeRoute(formId?: string): Props['route'] {
 }
 
 const ASYNC_TIMEOUT = { timeout: 15000 };
+
+function renderFormEntry(formId?: string) {
+  return render(
+    <AuthProvider>
+      <FormEntry navigation={mockNavigation} route={makeRoute(formId)} />
+    </AuthProvider>,
+  );
+}
 
 function dateOffsetFromToday(days: number): string {
   const date = new Date();
@@ -103,7 +119,7 @@ function fillAllRequiredFields() {
 
 describe('FormEntry', () => {
   beforeEach(() => {
-    mockedUseAuth.mockReturnValue({ user: { uid: 'user-abc', email: 'user@example.com' } });
+    signedInAs({ uid: 'user-abc', email: 'user@example.com' });
   });
 
   afterEach(() => {
@@ -112,7 +128,7 @@ describe('FormEntry', () => {
 
   describe('creating a new form', () => {
     it('renders all 10 sections with their fields', () => {
-      render(<FormEntry navigation={mockNavigation} route={makeRoute()} />);
+      renderFormEntry();
 
       expect(screen.getByTestId('form-entry-appointment-date-input')).toBeTruthy();
       expect(screen.getByTestId('form-entry-last-appointment-date-input')).toBeTruthy();
@@ -134,7 +150,7 @@ describe('FormEntry', () => {
     });
 
     it('navigates back when the AppBar back button is pressed', () => {
-      render(<FormEntry navigation={mockNavigation} route={makeRoute()} />);
+      renderFormEntry();
 
       fireEvent.press(screen.getByLabelText('Voltar'));
 
@@ -142,7 +158,7 @@ describe('FormEntry', () => {
     });
 
     it('starts with exactly 1 medication row and 1 question row', () => {
-      render(<FormEntry navigation={mockNavigation} route={makeRoute()} />);
+      renderFormEntry();
 
       expect(screen.getByTestId('form-entry-medication-0-input')).toBeTruthy();
       expect(screen.queryByTestId('form-entry-medication-1-input')).toBeNull();
@@ -152,7 +168,7 @@ describe('FormEntry', () => {
     });
 
     it('formats the date fields as dd/mm/aaaa as digits are typed', () => {
-      render(<FormEntry navigation={mockNavigation} route={makeRoute()} />);
+      renderFormEntry();
 
       fireEvent.changeText(screen.getByTestId('form-entry-appointment-date-input'), '15032026');
 
@@ -162,7 +178,7 @@ describe('FormEntry', () => {
     });
 
     it('selects a single mood chip at a time', () => {
-      render(<FormEntry navigation={mockNavigation} route={makeRoute()} />);
+      renderFormEntry();
 
       fireEvent.press(screen.getByTestId('form-entry-overall-mood-chip-estavel'));
 
@@ -176,7 +192,7 @@ describe('FormEntry', () => {
     });
 
     it('adds and removes a medication row', () => {
-      render(<FormEntry navigation={mockNavigation} route={makeRoute()} />);
+      renderFormEntry();
 
       fireEvent.press(screen.getByTestId('form-entry-add-medication-button'));
       expect(screen.getByTestId('form-entry-medication-1-input')).toBeTruthy();
@@ -186,7 +202,7 @@ describe('FormEntry', () => {
     });
 
     it('adds and removes a question row', () => {
-      render(<FormEntry navigation={mockNavigation} route={makeRoute()} />);
+      renderFormEntry();
 
       fireEvent.press(screen.getByTestId('form-entry-add-question-button'));
       expect(screen.getByTestId('form-entry-question-1-input')).toBeTruthy();
@@ -196,7 +212,7 @@ describe('FormEntry', () => {
     });
 
     it('removes the only medication row, leaving zero', () => {
-      render(<FormEntry navigation={mockNavigation} route={makeRoute()} />);
+      renderFormEntry();
 
       fireEvent.press(screen.getByTestId('form-entry-remove-medication-0-button'));
 
@@ -205,7 +221,7 @@ describe('FormEntry', () => {
 
     it('saves as draft with the form completely empty — drafts skip validation', async () => {
       mockedCreateForm.mockResolvedValue('new-form-id');
-      render(<FormEntry navigation={mockNavigation} route={makeRoute()} />);
+      renderFormEntry();
 
       fireEvent.press(screen.getByTestId('form-entry-save-draft-button'));
 
@@ -224,7 +240,7 @@ describe('FormEntry', () => {
     }, 20000);
 
     it('does not submit and shows validation errors when required fields are empty', async () => {
-      render(<FormEntry navigation={mockNavigation} route={makeRoute()} />);
+      renderFormEntry();
 
       fireEvent.press(screen.getByTestId('form-entry-submit-button'));
 
@@ -236,7 +252,7 @@ describe('FormEntry', () => {
     }, 20000);
 
     it('blocks submit and shows an error when the consultation date is in the past', async () => {
-      render(<FormEntry navigation={mockNavigation} route={makeRoute()} />);
+      renderFormEntry();
 
       fillAllRequiredFields();
       fireEvent.changeText(
@@ -253,7 +269,7 @@ describe('FormEntry', () => {
 
     it('accepts today as a valid consultation date', async () => {
       mockedCreateForm.mockResolvedValue('new-form-id');
-      render(<FormEntry navigation={mockNavigation} route={makeRoute()} />);
+      renderFormEntry();
 
       fillAllRequiredFields();
       fireEvent.changeText(
@@ -273,7 +289,7 @@ describe('FormEntry', () => {
 
     it('calls createForm with status "submitted" once every field is filled in', async () => {
       mockedCreateForm.mockResolvedValue('new-form-id');
-      render(<FormEntry navigation={mockNavigation} route={makeRoute()} />);
+      renderFormEntry();
 
       fillAllRequiredFields();
       fireEvent.press(screen.getByTestId('form-entry-submit-button'));
@@ -297,7 +313,7 @@ describe('FormEntry', () => {
 
     it('shows an error message when saving fails', async () => {
       mockedCreateForm.mockRejectedValue(new Error('network error'));
-      render(<FormEntry navigation={mockNavigation} route={makeRoute()} />);
+      renderFormEntry();
 
       fillAllRequiredFields();
       fireEvent.press(screen.getByTestId('form-entry-submit-button'));
@@ -312,7 +328,7 @@ describe('FormEntry', () => {
 
     it('shows a connectivity-specific message when saving fails offline', async () => {
       mockedCreateForm.mockRejectedValue(new FirebaseError('unavailable', ''));
-      render(<FormEntry navigation={mockNavigation} route={makeRoute()} />);
+      renderFormEntry();
 
       fillAllRequiredFields();
       fireEvent.press(screen.getByTestId('form-entry-submit-button'));
@@ -326,8 +342,8 @@ describe('FormEntry', () => {
   });
 
   it('does not save when there is no signed-in user', () => {
-    mockedUseAuth.mockReturnValue({ user: null });
-    render(<FormEntry navigation={mockNavigation} route={makeRoute()} />);
+    signedInAs(null);
+    renderFormEntry();
 
     fireEvent.press(screen.getByTestId('form-entry-save-draft-button'));
 
@@ -344,9 +360,7 @@ describe('FormEntry', () => {
           }),
       );
 
-      const { unmount } = render(
-        <FormEntry navigation={mockNavigation} route={makeRoute('form-1')} />,
-      );
+      const { unmount } = renderFormEntry('form-1');
       unmount();
 
       expect(() => resolveGetForm(existingValues)).not.toThrow();
@@ -361,9 +375,7 @@ describe('FormEntry', () => {
           }),
       );
 
-      const { unmount } = render(
-        <FormEntry navigation={mockNavigation} route={makeRoute('form-1')} />,
-      );
+      const { unmount } = renderFormEntry('form-1');
       unmount();
 
       expect(() => rejectGetForm(new Error('network error'))).not.toThrow();
@@ -372,7 +384,7 @@ describe('FormEntry', () => {
     it('stops loading without resetting the form when no values are found', async () => {
       mockedGetForm.mockResolvedValue(null);
 
-      render(<FormEntry navigation={mockNavigation} route={makeRoute('form-1')} />);
+      renderFormEntry('form-1');
 
       await waitFor(() => {
         expect(screen.getByTestId('form-entry-submit-button')).toBeTruthy();
@@ -383,7 +395,7 @@ describe('FormEntry', () => {
     it('shows a loading state while the existing form is fetched', () => {
       mockedGetForm.mockReturnValue(new Promise(() => {}));
 
-      render(<FormEntry navigation={mockNavigation} route={makeRoute('form-1')} />);
+      renderFormEntry('form-1');
 
       expect(screen.getByTestId('form-entry-loading')).toBeTruthy();
     });
@@ -391,7 +403,7 @@ describe('FormEntry', () => {
     it('populates all sections with the loaded values', async () => {
       mockedGetForm.mockResolvedValue(existingValues);
 
-      render(<FormEntry navigation={mockNavigation} route={makeRoute('form-1')} />);
+      renderFormEntry('form-1');
 
       await waitFor(() => {
         expect(screen.getByTestId('form-entry-appointment-date-input').props.value).toBe(
@@ -421,7 +433,7 @@ describe('FormEntry', () => {
       mockedGetForm.mockResolvedValue(existingValues);
       mockedUpdateForm.mockResolvedValue(undefined);
 
-      render(<FormEntry navigation={mockNavigation} route={makeRoute('form-1')} />);
+      renderFormEntry('form-1');
 
       await waitFor(() => {
         expect(screen.getByTestId('form-entry-submit-button')).toBeTruthy();
@@ -441,7 +453,7 @@ describe('FormEntry', () => {
     it('shows an error message when the form fails to load', async () => {
       mockedGetForm.mockRejectedValue(new Error('not found'));
 
-      render(<FormEntry navigation={mockNavigation} route={makeRoute('form-1')} />);
+      renderFormEntry('form-1');
 
       await waitFor(() => {
         expect(screen.getByText('Não foi possível carregar o formulário.')).toBeTruthy();
