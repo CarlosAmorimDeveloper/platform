@@ -2,6 +2,18 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Before you write code
+
+Two things happen before any code change, every time — no exceptions for "small" changes.
+
+**1. Read the architecture reference.** The technical architecture of this monorepo lives in Notion:
+
+> **[🏗️ Platform — Technical Architecture](https://app.notion.com/p/Platform-Technical-Architecture-3d0f7dde8f43812a8ceffb9de1b09141)**
+
+Read it before developing anything. It is the _what/how_ — what exists, how the pieces fit together, where the sensitive-data boundaries are; this file is the _rules to follow while changing it_. When the code and that document disagree, the code wins — say so explicitly and flag the drift instead of coding against the stale description.
+
+**2. Plan before implementing.** State the plan first — which files change, in what order, and how the result gets verified — and only then start editing. For anything beyond a single obvious edit, get the plan agreed before writing code. A plan that turns out wrong mid-way is a signal to stop and re-plan, not to keep patching forward.
+
 ## Monorepo overview
 
 Turborepo + Yarn Workspaces v1 monorepo. **Always use Yarn** — the lockfile and workspace resolution are Yarn-specific; `npm` and `pnpm` will break things.
@@ -51,7 +63,18 @@ These rules apply to every workspace in this monorepo. They override generic def
 
 ### Comments: default to none
 
-Do not add comments that restate what the code already says. Before writing a comment, ask whether removing it would confuse a future reader — if not, don't write it. A comment is justified only for: a non-obvious invariant, a workaround for a specific external bug, a constraint that isn't visible from the code itself (e.g. _why_ `react-native-paper` is pinned to the local `node_modules` in `appointmate`'s `jest.config.js`), or a warning about something a future edit could easily break silently. Never write a comment that explains _what_ a function does when its name and signature already say so, and never reference the current task/ticket/PR in a comment — that context belongs in the commit message, not the file.
+**Write code without comments unless the comment is critical.** The default is zero. Do not add one proactively — not to restate what the code says, not to narrate test setup, not to explain a subtle workaround, and never to reference the current task/ticket/PR. That context belongs in the commit message and the PR description, not in the file.
+
+A comment is critical only when it documents a constraint that is **invisible in the code** and that a future edit would break **silently** — no failing test, no error, just wrong behavior. If breaking it produces a loud failure, the failure is the documentation; don't write the comment.
+
+The comments that currently meet that bar, as the calibration reference:
+
+- `metro.config.js` (both mobile apps) — why `react`/`react-native`/`react-native-safe-area-context`/`react-native-svg` are pinned to app-local `node_modules`. Without it, icons and charts mount with no error and render nothing.
+- `jest.config.js` — the `react` mapping that prevents a dual-instance "invalid hook call", and why `firestore.rules.test.ts` is excluded from the default run.
+- `jest.setup.js` — the shape the `addListener` mock must have for `Animated`'s internal cleanup.
+- `appointmate`'s `formsService.ts` — the `userId` filter is **required** by the security rules, not an optimization; a query without it is denied outright.
+
+Everything else gets deleted. Also never write a comment explaining _what_ a function does when its name and signature already say so.
 
 ### Clean Code
 
