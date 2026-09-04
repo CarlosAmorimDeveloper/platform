@@ -5,8 +5,7 @@ module.exports = {
     '^.+\\.tsx?$': ['ts-jest', { tsconfig: { jsx: 'react-jsx' } }],
     // lucide-react's "dynamic" entrypoint (Icon.tsx) ships a root dynamic.js
     // that is really `export * from './dynamic.mjs'` — ESM syntax under a
-    // .js extension, which Jest's CJS loader can't parse without a
-    // transform (same workaround as apps/web/todo-app/jest.config.js).
+    // .js extension, which Jest's CJS loader can't parse without a transform.
     '^.+\\.(js|mjs)$': ['babel-jest', { presets: ['@babel/preset-env'] }],
   },
   transformIgnorePatterns: ['node_modules/(?!(lucide-react)/)'],

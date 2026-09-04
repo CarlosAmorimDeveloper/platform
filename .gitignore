@@ -21,7 +21,6 @@ coverage
 
 # Vercel
 .vercel
-!apps/web/todo-app/vercel.json
 
 # Build Outputs
 .next/

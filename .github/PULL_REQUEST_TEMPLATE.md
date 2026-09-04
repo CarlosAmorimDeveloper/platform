@@ -2,7 +2,6 @@
 
 ## 🎯 Escopo
 
-- [ ] `apps/web`
 - [ ] `apps/mobile`
 - [ ] `packages/ui`
 - [ ] Outro: \***\*\_\*\***

@@ -23,7 +23,7 @@ Configurações TypeScript compartilhadas do monorepo `platform`. Fornece preset
 | Arquivo              | Uso recomendado                                    |
 | -------------------- | -------------------------------------------------- |
 | `base.json`          | Qualquer pacote TypeScript (tokens, eslint-config) |
-| `nextjs.json`        | Aplicações Next.js (`apps/web/todo-app`)           |
+| `nextjs.json`        | Aplicações Next.js                                 |
 | `react-library.json` | Pacotes React com JSX (`@industry/web`)            |
 | `react-native.json`  | Pacotes React Native (`@industry/mobile`)          |
 
