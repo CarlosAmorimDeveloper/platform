@@ -1,6 +1,7 @@
 import type { Preview, Decorator } from '@storybook/react';
 import React, { useEffect } from 'react';
 import '@industry/tokens/styles.css';
+import { industryTheme } from './theme';
 
 const WithTheme: Decorator = (Story, context) => {
   const theme = context.globals.theme as 'dark' | 'light';
@@ -45,6 +46,11 @@ const preview: Preview = {
     theme: 'dark',
   },
   parameters: {
+    backgrounds: {
+      default: 'industry',
+      values: [{ name: 'industry', value: 'var(--color-bg)' }],
+    },
+    docs: { theme: industryTheme },
     controls: {
       matchers: {
         color: /(background|color)$/i,

@@ -1,7 +1,8 @@
 import type { Preview, Decorator } from '@storybook/react';
 import { Text, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { color } from '@industry/tokens';
+import { color, lightColor } from '@industry/tokens';
+import { industryTheme } from './theme';
 
 // react-native-svg's WebShape never mounts a real <svg> in this Storybook's
 // react-native-web preview (Icon and PieChart render empty) — confirmed not
@@ -37,6 +38,16 @@ export const withSvgKnownIssueNote: Decorator = (Story, context) => {
 
 const preview: Preview = {
   decorators: [withSvgKnownIssueNote],
+  parameters: {
+    backgrounds: {
+      default: 'industry',
+      values: [
+        { name: 'industry', value: color.bg },
+        { name: 'industry-light', value: lightColor.bg },
+      ],
+    },
+    docs: { theme: industryTheme },
+  },
 };
 
 export default preview;
