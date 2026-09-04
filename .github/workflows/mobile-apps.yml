@@ -69,3 +69,32 @@ jobs:
 
       - name: Test
         run: yarn workspace @app/appointmate test --runInBand
+
+  industry-mobile:
+    name: "@industry/mobile — lint, check-types, test"
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npx yarn install
+
+      - name: Build @industry/tokens
+        run: yarn workspace @industry/tokens build
+
+      - name: Lint
+        run: yarn workspace @industry/mobile lint
+
+      - name: Check types
+        run: yarn workspace @industry/mobile check-types
+
+      - name: Test
+        run: yarn workspace @industry/mobile test --runInBand
