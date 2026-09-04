@@ -5,12 +5,11 @@ on:
     branches:
       - main
     paths:
-      - "apps/web/todo-app/**"
-      - "apps/mobile/tickets-app/**"
-      - "apps/mobile/appointmate/**"
-      - "packages/design-system/industry/mobile/**"
-      - "packages/design-system/industry/web/**"
-      - "packages/design-system/industry/tokens/**"
+      - 'apps/mobile/tickets-app/**'
+      - 'apps/mobile/appointmate/**'
+      - 'packages/design-system/industry/mobile/**'
+      - 'packages/design-system/industry/web/**'
+      - 'packages/design-system/industry/tokens/**'
 
 jobs:
   coverage:
@@ -20,19 +19,14 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: todo-app
-            path: apps/web/todo-app
-            build: yarn workspace @industry/tokens build && yarn workspace @industry/web build
-            # Next.js infra files (layout, page, theme provider) aren't unit-testable.
-            exclude_pattern: '/(layout|page|ThemeRegistry)\.'
           - name: tickets-app
             path: apps/mobile/tickets-app
             build: yarn workspace @industry/tokens build && yarn workspace @industry/mobile build
-            exclude_pattern: ""
+            exclude_pattern: ''
           - name: appointmate
             path: apps/mobile/appointmate
             build: yarn workspace @industry/tokens build && yarn workspace @industry/mobile build
-            exclude_pattern: ""
+            exclude_pattern: ''
           - name: industry-mobile
             path: packages/design-system/industry/mobile
             build: yarn workspace @industry/tokens build
@@ -71,7 +65,7 @@ jobs:
           # changes falls below the 100% similarity threshold and is
           # reported as Added, so it's still included.
           #
-          # Exclude test files (and, for todo-app, Next.js infrastructure).
+          # Exclude test files.
           # || true prevents grep's exit code 1 (no match) from failing the
           # step when pipefail is active (GitHub Actions default shell)
           FILES=$(git diff --name-only -M100% --diff-filter=ACM ${{ github.event.pull_request.base.sha }}...HEAD \

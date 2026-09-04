@@ -31,7 +31,7 @@ Configurações ESLint compartilhadas do monorepo `platform`. Fornece três conf
 
 ## Uso
 
-### Aplicação Next.js (`apps/web/todo-app`)
+### Aplicação Next.js
 
 ```js
 // eslint.config.mjs

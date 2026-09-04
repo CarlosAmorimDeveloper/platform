@@ -7,11 +7,5 @@
   "access": "restricted",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": [
-    "todo-app",
-    "@repo/eslint-config",
-    "@repo/typescript-config",
-    "@app/tickets",
-    "@app/appointmate"
-  ]
+  "ignore": ["@repo/eslint-config", "@repo/typescript-config", "@app/tickets", "@app/appointmate"]
 }

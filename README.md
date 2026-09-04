@@ -6,9 +6,9 @@
 [![Issues][issues-shield]][issues-url]
 [![Vercel][vercel-shield]][vercel-url]
 
-Monorepo pessoal reunindo uma aplicação web, dois apps mobile publicados na Google Play Store e um Design System compartilhado entre as duas plataformas — construído com [Turborepo](https://turborepo.dev), [Yarn Workspaces](https://classic.yarnpkg.com/en/docs/workspaces/), [Next.js](https://nextjs.org) e [Expo](https://expo.dev).
+Monorepo pessoal reunindo dois apps mobile publicados na Google Play Store e um Design System compartilhado entre web e nativo — construído com [Turborepo](https://turborepo.dev), [Yarn Workspaces](https://classic.yarnpkg.com/en/docs/workspaces/) e [Expo](https://expo.dev).
 
-**Todo App:** [https://todo-app-vuotto.vercel.app](https://todo-app-vuotto.vercel.app)
+**Storybook:** [industry-web-sable.vercel.app](https://industry-web-sable.vercel.app) · [industry-mobile.vercel.app](https://industry-mobile.vercel.app)
 
 ## Índice
 
@@ -30,21 +30,18 @@ Cada app tem seu próprio README com detalhes de arquitetura, funcionalidades e 
 
 | App                                              | Plataforma                | O que é                                                                                             | Stack principal                               |
 | ------------------------------------------------ | ------------------------- | --------------------------------------------------------------------------------------------------- | --------------------------------------------- |
-| [Todo App](apps/web/todo-app/README.md)          | Web (Next.js 16)          | Gerenciador de tarefas com persistência local                                                       | Redux Toolkit, Tailwind CSS, `@industry/web`  |
 | [AppointMate](apps/mobile/appointmate/README.md) | Mobile (Expo/Android/iOS) | Registro estruturado de humor/sono/medicação entre consultas de saúde mental, com exportação em PDF | Firebase, React Hook Form, `@industry/mobile` |
 | [Tickets App](apps/mobile/tickets-app/README.md) | Mobile (Expo/Android/iOS) | Sistema de tickets multi-tenant por workspace, publicado na Play Store                              | Firebase, Zustand, `@industry/mobile`         |
 
-As três consomem o mesmo Design System Industry (`@industry/web` na web, `@industry/mobile` nos apps nativos), temado a partir de `@industry/tokens`. O design system anterior, Vuotto Tech, foi substituído nessa migração e removido do monorepo.
+Os dois consomem o Design System Industry (`@industry/mobile`), temado a partir de `@industry/tokens`. O `@industry/web` continua mantido e documentado no Storybook, sem aplicação consumidora no momento. O design system anterior, Vuotto Tech, foi substituído nessa migração e removido do monorepo.
 
 ## Construído com
 
 [![Turborepo][turborepo-shield]][turborepo-url]
-[![Next.js][nextjs-shield]][nextjs-url]
 [![React][react-shield]][react-url]
 [![Expo][expo-shield]][expo-url]
 [![React Native][reactnative-shield]][reactnative-url]
 [![Firebase][firebase-shield]][firebase-url]
-[![Redux][redux-shield]][redux-url]
 [![TypeScript][typescript-shield]][typescript-url]
 [![Tailwind CSS][tailwind-shield]][tailwind-url]
 [![Storybook][storybook-shield]][storybook-url]
@@ -66,8 +63,6 @@ As três consomem o mesmo Design System Industry (`@industry/web` na web, `@indu
 ```
 platform/
 ├── apps/
-│   ├── web/
-│   │   └── todo-app/           # Next.js 16 — ver README do projeto
 │   └── mobile/
 │       ├── appointmate/        # Expo — registro de saúde mental (LGPD)
 │       └── tickets-app/        # Expo — tickets multi-tenant (Play Store)
@@ -97,7 +92,6 @@ O Yarn Workspaces instala as dependências de todos os pacotes em uma única eta
 
 ```sh
 yarn dev                                # Roda o dev script persistente de cada workspace em paralelo
-yarn dev --filter=todo-app              # Só a Todo App -> http://localhost:3000
 yarn workspace @industry/web storybook  # Storybook do design system web -> http://localhost:6010
 yarn workspace @app/appointmate start   # Um app mobile (ou @app/tickets)
 ```
@@ -135,9 +129,7 @@ O design system anterior, **Vuotto Tech**, foi substituído pelo Industry nessa 
 | Camada                | Tecnologia                                                |
 | --------------------- | --------------------------------------------------------- |
 | Monorepo              | Turborepo + Yarn Workspaces v1                            |
-| Framework (web)       | Next.js 16 (App Router)                                   |
-| Framework (mobile)    | Expo SDK 54 (React Native 0.81, New Architecture)         |
-| Estado (web)          | Redux Toolkit                                             |
+| Framework (mobile)    | Expo SDK 57 (React Native 0.86, New Architecture)         |
 | Estado (mobile)       | Zustand (Tickets App) / Context API (AppointMate)         |
 | Backend (mobile)      | Firebase Auth + Firestore                                 |
 | Design System         | `@industry/web` / `@industry/mobile` + `@industry/tokens` |
@@ -172,15 +164,11 @@ Uso interno — repositório privado.
 [issues-shield]: https://img.shields.io/github/issues/CarlosAmorimDeveloper/platform.svg?style=for-the-badge
 [issues-url]: https://github.com/CarlosAmorimDeveloper/platform/issues
 [vercel-shield]: https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white
-[vercel-url]: https://todo-app-vuotto.vercel.app
+[vercel-url]: https://industry-mobile.vercel.app
 [turborepo-shield]: https://img.shields.io/badge/Turborepo-EF4444?style=for-the-badge&logo=turborepo&logoColor=white
 [turborepo-url]: https://turborepo.dev
-[nextjs-shield]: https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white
-[nextjs-url]: https://nextjs.org
 [react-shield]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
 [react-url]: https://react.dev
-[redux-shield]: https://img.shields.io/badge/Redux-593D88?style=for-the-badge&logo=redux&logoColor=white
-[redux-url]: https://redux-toolkit.js.org
 [typescript-shield]: https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white
 [typescript-url]: https://www.typescriptlang.org
 [tailwind-shield]: https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white

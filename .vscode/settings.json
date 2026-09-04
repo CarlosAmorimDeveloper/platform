@@ -7,7 +7,6 @@
   },
   "eslint.useFlatConfig": true,
   "eslint.workingDirectories": [
-    { "pattern": "apps/web/todo-app" },
     { "pattern": "apps/mobile/tickets-app" },
     { "pattern": "packages/design-system/web" },
     { "pattern": "packages/design-system/mobile" },

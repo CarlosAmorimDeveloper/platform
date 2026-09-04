@@ -19,7 +19,6 @@ Read it before developing anything. It is the _what/how_ — what exists, how th
 Turborepo + Yarn Workspaces v1 monorepo. **Always use Yarn** — the lockfile and workspace resolution are Yarn-specific; `npm` and `pnpm` will break things.
 
 ```
-apps/web/todo-app/          # Next.js 16 app (App Router) — deployed to Vercel
 apps/mobile/appointmate/    # Expo app — mental health check-in log (LGPD sensitive data)
 apps/mobile/tickets-app/    # Expo app — multi-tenant ticketing, published on Play Store
 packages/design-system/industry/
@@ -30,7 +29,7 @@ packages/eslint-config/     # @repo/eslint-config — ESLint v9 flat configs
 packages/typescript-config/ # @repo/typescript-config — shared tsconfigs
 ```
 
-The Industry design system (`@industry/*`) is the design system used by all three apps (todo-app, tickets-app, appointmate), migrated to it in REB-88/89/90. Its previous generation, Vuotto Tech (`@vuotto/*`), was fully removed from the monorepo (REB-100) once the migration completed.
+The Industry design system (`@industry/*`) is the design system used by both mobile apps (tickets-app, appointmate), migrated to it in REB-88/89/90. `@industry/web` is still maintained and documented in Storybook, but has no consuming application since todo-app was removed. Its previous generation, Vuotto Tech (`@vuotto/*`), was fully removed from the monorepo (REB-100) once the migration completed.
 
 ## Git workflow
 
@@ -94,13 +93,12 @@ Every app in this repo already follows the same layering — keep new code insid
 - **Screens/Components (`src/screens/`, `src/components/`)** — composition and presentation. Business rules belong in `domain/`, not here; data access belongs in `services/`, not here.
 - **Design system (`@industry/web`, `@industry/mobile`, `@industry/tokens`)** — the only place that owns visual styling primitives (colors, spacing, component variants). App-level code should not hardcode a hex color or a magic spacing number that already exists as a token.
 - Dependencies point inward: screens depend on services and domain; services depend on domain; domain depends on nothing app-specific. Never have `src/domain/` import from `src/screens/` or `src/services/`.
-- Cross-cutting state (`AuthContext` in `appointmate`, the Zustand `useAuthStore` in `tickets-app`, the Redux store in `todo-app`) is a single, explicit place per app — don't introduce a second competing state mechanism in the same app for the same concern.
+- Cross-cutting state (`AuthContext` in `appointmate`, the Zustand `useAuthStore` in `tickets-app`) is a single, explicit place per app — don't introduce a second competing state mechanism in the same app for the same concern.
 
 ### Language & framework knowledge
 
 - **TypeScript everywhere**, `strict: true` + `noUncheckedIndexedAccess: true` (`@repo/typescript-config/base.json`) — don't disable strictness locally to make a type error go away; fix the type.
-- **Next.js 16 (`todo-app`)** has real breaking changes vs. older training data — read `node_modules/next/dist/docs/` for the relevant API before writing App Router code here. Never read/write `localStorage` or the Redux store outside a `useEffect` (SSR hydration safety, see `ReduxProvider.tsx`).
-- **React 19** across all apps — no `React.FC`, prefer plain function components; hooks rules are enforced by `eslint-plugin-react-hooks` in `react-internal`/`next-js` configs.
+- **React 19** across all apps — no `React.FC`, prefer plain function components; hooks rules are enforced by `eslint-plugin-react-hooks` in the `react-internal` config.
 - **Expo/React Native 0.81.5 (`tickets-app`, `appointmate`)** — both apps pin `react`/`react-native`/`react-native-paper` to their own local `node_modules` via a custom Metro `resolveRequest` (see either app's `metro.config.js`). Do not "simplify" that resolver — it exists because a hoisted, differently-versioned copy of these packages breaks at runtime with an opaque renderer error. When adding a new native-module dependency to a mobile app, check whether it also needs a `nohoist` entry in the root `package.json`.
 - **React Native Paper + Portals (`Dialog`, `Menu`)** — these rely on React Context identity to find their `PortalHost`. If a Portal-based component works in the app but crashes with an opaque error in Jest, suspect a dual-module-instance problem before anything else (see `appointmate/jest.config.js`'s `react-native-paper` `moduleNameMapper` entry and its inline comment for the full explanation).
 - **Firebase (`firebase` v11, modular SDK)** — always use `initializeAuth(app, { persistence: getReactNativePersistence(AsyncStorage) })` on React Native, never bare `getAuth()`, or session persistence silently breaks. Firestore composite indexes (`firestore.indexes.json`) are required whenever a query combines an equality filter with an `orderBy` on a different field — the local emulator won't catch a missing index, but production will fail at query time.
@@ -113,7 +111,7 @@ Every app in this repo already follows the same layering — keep new code insid
 
 ```sh
 yarn install          # install all workspaces in one shot
-yarn dev              # runs each workspace's persistent dev script in parallel (todo-app's `next dev`, design-system packages' `tsup --watch` — not Storybook, start that per-package with `yarn workspace <pkg> storybook`)
+yarn dev              # runs each workspace's persistent dev script in parallel (the design-system packages' `tsup --watch` — not Storybook, start that per-package with `yarn workspace <pkg> storybook`)
 yarn build            # build all packages and apps (respects turbo dep order)
 yarn lint             # ESLint across all workspaces
 yarn check-types      # TypeScript across all workspaces
@@ -121,16 +119,16 @@ yarn format           # Prettier write
 yarn format:check     # Prettier check (CI)
 ```
 
-### todo-app (`apps/web/todo-app`)
+### Tests
+
+Every workspace resolves the same `jest@30.3.0`, hoisted at the repo root. Jest 30 renamed `--testPathPattern` to `--testPathPatterns` (plural); the singular form exits 1.
 
 ```sh
-yarn dev --filter=todo-app  # or: cd apps/web/todo-app && yarn dev
-yarn test                   # Jest (jsdom, ts-jest)
-yarn test --watch            # watch mode
-yarn test --testPathPatterns=TaskItem  # run a single test file
+yarn workspace @app/appointmate test                          # full suite
+yarn workspace @app/appointmate test --testPathPatterns=Home  # a single file
 ```
 
-Jest 30 (used by every workspace, hoisted at the repo root) renamed `--testPathPattern` to `--testPathPatterns`. The singular form exits 1 with a "was replaced by" error — the same applies to the mobile workspaces' `yarn test`.
+Run these from the repo root — `yarn workspace <pkg> test` from inside the package directory fails with Yarn v1's help output.
 
 ### @industry/web (`packages/design-system/industry/web`)
 
@@ -148,14 +146,6 @@ yarn workspace @industry/mobile jest       # Jest (node env, babel-jest only)
 
 ## Architecture
 
-### todo-app state
-
-Redux Toolkit store with localStorage persistence. The `ReduxProvider` hydrates via `useEffect` to avoid SSR mismatches — do not access the store directly during server render.
-
-Actions: `addTask`, `toggleTask`, `editTask`, `removeTask`, `hydrateState` (bulk replace for hydration).
-
-`Task` model: `{ id: string (UUID), title: string, completed: boolean, createdAt: string (ISO 8601) }`.
-
 ### Design system layers
 
 - **`@industry/tokens`** — the source of truth for colors, spacing, font sizes. Exported as TypeScript constants and as CSS custom properties via `styles.css`.
@@ -166,8 +156,8 @@ Actions: `addTask`, `toggleTask`, `editTask`, `removeTask`, `hydrateState` (bulk
 
 | Workflow                        | Trigger                                                                                           | What it does                                                                   |
 | ------------------------------- | ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
-| `coverage.yml`                  | PR → main (todo-app, tickets-app, appointmate, industry/{web,mobile,tokens} paths)                | Runs Jest only on changed source files; enforces ≥ 95% coverage on those files |
-| `deploy.yml`                    | Push/PR → main (todo-app, industry/web, industry/tokens paths)                                    | Vercel deploy                                                                  |
+| `coverage.yml`                  | PR → main (tickets-app, appointmate, industry/{web,mobile,tokens} paths)                          | Runs Jest only on changed source files; enforces ≥ 95% coverage on those files |
+| `storybook-vercel.yml`          | Push → main (industry/{web,mobile,tokens} paths) + manual                                         | Builds both Storybooks and deploys them to Vercel                              |
 | `mobile-apps.yml`               | PR → main (mobile apps, industry/mobile, industry/tokens, eslint-config, typescript-config paths) | Lint/check-types/test for appointmate + tickets-app                            |
 | `storybook-industry-web.yml`    | Push/PR → main (industry/web, industry/tokens paths)                                              | Chromatic publish for `@industry/web`                                          |
 | `storybook-industry-mobile.yml` | Push/PR → main (industry/mobile, industry/tokens paths)                                           | Chromatic publish for `@industry/mobile`                                       |
@@ -175,16 +165,12 @@ Actions: `addTask`, `toggleTask`, `editTask`, `removeTask`, `hydrateState` (bulk
 | `copilot-review.yml`            | PR opened/synchronized (any)                                                                      | Requests a Copilot code review                                                 |
 | `auto-update-prs.yml`           | Push → main                                                                                       | Merges `main` into open PRs                                                    |
 
-## Next.js version note
-
-`apps/web/todo-app` uses **Next.js 16** with the App Router. This version has breaking changes from prior versions — APIs, conventions, and file structure may differ from training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code for this app, and heed deprecation notices.
-
 ## ESLint configs
 
 Three flat-config exports from `@repo/eslint-config`:
 
 - `base` — any TypeScript package
 - `react-internal` — React packages (e.g. `@industry/web`)
-- `next-js` — Next.js apps (e.g. `todo-app`)
+- `next-js` — Next.js apps; kept for future use, no workspace consumes it today
 
 `eslint-plugin-only-warn` converts errors to warnings in all configs.

@@ -21,7 +21,6 @@
     "@babel/preset-typescript": "^7.28.5",
     "@react-native/babel-preset": "^0.85.3",
     "@react-native/jest-preset": "^0.85.3",
-    "@reduxjs/toolkit": "^2.11.2",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@types/jest": "^30.0.0",
@@ -34,7 +33,6 @@
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
     "react-native-web": "^0.19",
-    "react-redux": "^9.2.0",
     "ts-jest": "^29.4.9",
     "turbo": "^2.9.6",
     "typescript": "5.9.2"
@@ -46,14 +44,11 @@
   "workspaces": {
     "packages": [
       "apps/*",
-      "apps/web/*",
       "apps/mobile/*",
       "packages/*",
       "packages/design-system/industry/*"
     ],
     "nohoist": [
-      "todo-app/scheduler",
-      "todo-app/scheduler/**",
       "@app/tickets/react",
       "@app/tickets/react/**",
       "@app/tickets/react-native",
