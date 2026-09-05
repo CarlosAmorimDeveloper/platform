@@ -8,7 +8,7 @@
 
 Monorepo pessoal reunindo dois apps mobile publicados na Google Play Store e um Design System compartilhado entre web e nativo — construído com [Turborepo](https://turborepo.dev), [Yarn Workspaces](https://classic.yarnpkg.com/en/docs/workspaces/) e [Expo](https://expo.dev).
 
-**Storybook:** [industry-web-sable.vercel.app](https://industry-web-sable.vercel.app) · [industry-mobile.vercel.app](https://industry-mobile.vercel.app)
+**Storybook:** [industry-web-ds.vercel.app](https://industry-web-ds.vercel.app) · [industry-mobile-ds.vercel.app](https://industry-mobile-ds.vercel.app)
 
 ## Índice
 
@@ -164,7 +164,7 @@ Uso interno — repositório privado.
 [issues-shield]: https://img.shields.io/github/issues/CarlosAmorimDeveloper/platform.svg?style=for-the-badge
 [issues-url]: https://github.com/CarlosAmorimDeveloper/platform/issues
 [vercel-shield]: https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white
-[vercel-url]: https://industry-mobile.vercel.app
+[vercel-url]: https://industry-mobile-ds.vercel.app
 [turborepo-shield]: https://img.shields.io/badge/Turborepo-EF4444?style=for-the-badge&logo=turborepo&logoColor=white
 [turborepo-url]: https://turborepo.dev
 [react-shield]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
